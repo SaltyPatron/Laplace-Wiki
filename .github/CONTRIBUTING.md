@@ -1,5 +1,7 @@
 # Contributing
 
+Everyone who takes part follows the [Code of Conduct](CODE_OF_CONDUCT.md), which is enforced strictly.
+
 Laplace-Wiki is written by the inventor of Laplace. Every page holds only the inventor's words, so pull requests that add or rewrite page text are not accepted.
 
 ## Reporting a problem
