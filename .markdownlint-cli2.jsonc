@@ -5,7 +5,7 @@
     // Prose is written one paragraph per line.
     "MD013": false,
     // Collapsible sections and small inline tags are allowed.
-    "MD033": { "allowed_elements": ["details", "summary", "br", "kbd", "sub", "sup"] },
+    "MD033": { "allowed_elements": ["p", "img", "picture", "source", "details", "summary", "br", "kbd", "sub", "sup"] },
     "MD024": { "siblings_only": true },
     "MD046": { "style": "fenced" },
     "MD004": { "style": "dash" }

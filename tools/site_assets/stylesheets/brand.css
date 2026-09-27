@@ -1,0 +1,38 @@
+/* Colours taken from assets/laplace-logo.webp: navy lettering, steel blue, copper trim, teal gems. */
+:root {
+  --laplace-navy: #253f5e;
+  --laplace-blue: #4e7bad;
+  --laplace-copper: #a46744;
+  --laplace-teal: #39bbae;
+}
+
+[data-md-color-primary="custom"] {
+  --md-primary-fg-color: var(--laplace-navy);
+  --md-primary-fg-color--light: var(--laplace-blue);
+  --md-primary-fg-color--dark: #1a2d44;
+  --md-primary-bg-color: #fdfaf7;
+  --md-primary-bg-color--light: #fdfaf7b3;
+}
+
+[data-md-color-accent="custom"] {
+  --md-accent-fg-color: var(--laplace-copper);
+  --md-accent-fg-color--transparent: #a4674419;
+}
+
+[data-md-color-scheme="default"] {
+  --md-typeset-a-color: #2f5d8f;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-typeset-a-color: var(--laplace-teal);
+  --md-accent-fg-color: #d08a5f;
+}
+
+/* Copper trim under the header, as under the wordmark. */
+.md-header {
+  border-bottom: 2px solid var(--laplace-copper);
+}
+
+.md-header__button.md-logo img {
+  height: 2rem;
+}

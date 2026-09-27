@@ -19,20 +19,23 @@ watch:
 
 theme:
   name: material
+  custom_dir: tools/site_overrides
+  logo: assets/laplace-icon.webp
+  favicon: assets/favicon.png
   icon:
     repo: fontawesome/brands/github
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: indigo
-      accent: indigo
+      primary: custom
+      accent: custom
       toggle:
         icon: material/weather-night
         name: Dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: indigo
-      accent: indigo
+      primary: custom
+      accent: custom
       toggle:
         icon: material/weather-sunny
         name: Light mode
@@ -80,6 +83,9 @@ markdown_extensions:
           format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.arithmatex:
       generic: true
+
+extra_css:
+  - stylesheets/brand.css
 
 extra_javascript:
   - javascripts/mathjax.js

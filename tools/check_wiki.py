@@ -26,6 +26,7 @@ SKIP_DIRS = {".git", ".github", "tools", "node_modules", ".site-src", "site", ".
 
 LINK_RE = re.compile(r"(?<!!)\[[^\]]*\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)")
 IMAGE_RE = re.compile(r"!\[[^\]]*\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)")
+HTML_RE = re.compile(r"<(?:a|img|source)\b[^>]*?\s(?:href|src|srcset)=\"([^\"\s]+)", re.I)
 ENTRY_RE = re.compile(r"^- \[([^\]]+)\]\(([^)]+)\) — (.+)$")
 FENCE_RE = re.compile(r"^(```|~~~)")
 
@@ -107,7 +108,7 @@ def read_catalog(errors=None):
 def local_links(md):
     """Relative links in md: (line, href, file part, anchor, resolved target path)."""
     for n, line in enumerate(strip_code((ROOT / md).read_text(encoding="utf-8")), 1):
-        for m in list(LINK_RE.finditer(line)) + list(IMAGE_RE.finditer(line)):
+        for m in [*LINK_RE.finditer(line), *IMAGE_RE.finditer(line), *HTML_RE.finditer(line)]:
             href = m.group(1)
             if re.match(r"^[a-z][a-z0-9+.-]*:", href, re.I):
                 continue  # external: http, https, mailto, ...

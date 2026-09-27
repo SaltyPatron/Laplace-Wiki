@@ -1,5 +1,7 @@
 # Laplace-Wiki
 
+<p align="center"><img src="assets/laplace-logo.webp" alt="Laplace" width="640"></p>
+
 This repository is the Laplace documentation. It explains how everything at every level works.
 
 Read it online at <https://saltypatron.github.io/Laplace-Wiki/>.
