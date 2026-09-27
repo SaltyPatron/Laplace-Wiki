@@ -14,6 +14,15 @@ Add text only from words the inventor supplies. A missing section stays missing 
 
 A page is a Markdown file. Its first line is `# Title`. Its first paragraph is one summary sentence. The page's `README.md` entry is `- [Title](Page.md) — summary.`, with the same title and the same summary sentence.
 
+The `README.md` page list is the page tree, from the highest level down. A nested entry, indented two spaces per level, is a child of the entry above it. A page with children is the `README.md` of a folder, and its children live in that folder:
+
+```markdown
+- [Section](Section/README.md) — summary.
+  - [Child](Section/Child.md) — summary.
+```
+
+On the site the tree becomes the navigation: top-level pages are tabs, every page shows its path, and a section page lists its children.
+
 Links between pages are relative Markdown links, such as `[Spitball](Spitball.md)` or `[Spitball](Spitball.md#heading)`.
 
 ## Writing

@@ -3,7 +3,10 @@
 
 Rules enforced:
   1. Every page is listed in the README.md "## Pages" section, and every
-     listed page exists.
+     listed page exists. The list is the page tree: a nested entry is a child
+     of the entry above it, indented two spaces per level. A page with
+     children is the README.md of a folder, and its children live in that
+     folder.
   2. Every README entry's summary matches the page's summary line (the first
      paragraph after the page's title), ignoring the case of the first letter.
   3. Every page has exactly one H1, on its first line.
@@ -16,6 +19,7 @@ Exits non-zero and prints each problem when a rule is broken.
 
 import re
 import sys
+from collections import namedtuple
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -27,7 +31,10 @@ SKIP_DIRS = {".git", ".github", "tools", "node_modules", ".site-src", "site", ".
 LINK_RE = re.compile(r"(?<!!)\[[^\]]*\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)")
 IMAGE_RE = re.compile(r"!\[[^\]]*\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)")
 HTML_RE = re.compile(r"<(?:a|img|source)\b[^>]*?\s(?:href|src|srcset)=\"([^\"\s]+)", re.I)
-ENTRY_RE = re.compile(r"^- \[([^\]]+)\]\(([^)]+)\) — (.+)$")
+ENTRY_RE = re.compile(r"^( *)- \[([^\]]+)\]\(([^)]+)\) — (.+)$")
+
+# One README.md catalog entry. parent is the parent page's Path, or None at the top.
+Entry = namedtuple("Entry", "line title summary parent depth")
 FENCE_RE = re.compile(r"^(```|~~~)")
 
 
@@ -88,21 +95,46 @@ def same_summary(a, b):
 
 
 def read_catalog(errors=None):
-    """The README.md "## Pages" entries: {Path: (line, title, summary)}, in order."""
+    """The README.md "## Pages" tree: {Path: Entry}, in reading order."""
+    def error(msg):
+        if errors is not None:
+            errors.append(msg)
+
     readme = (ROOT / "README.md").read_text(encoding="utf-8").splitlines()
-    in_pages, catalog = False, {}
+    in_pages, catalog, stack = False, {}, []  # stack: Paths of the open ancestors
     for n, line in enumerate(readme, 1):
         if line.startswith("## "):
             in_pages = line.strip() == "## Pages"
             continue
-        if in_pages and line.startswith("- "):
-            m = ENTRY_RE.match(line)
-            if not m:
-                if errors is not None:
-                    errors.append(f"README.md:{n}: entry is not '- [Title](Page.md) — summary.'")
-                continue
-            catalog[Path(m.group(2))] = (n, m.group(1), m.group(3))
+        if not (in_pages and line.lstrip().startswith("- ")):
+            continue
+        m = ENTRY_RE.match(line)
+        if not m:
+            error(f"README.md:{n}: entry is not '- [Title](Page.md) — summary.'")
+            continue
+        indent, title, target, summary = m.groups()
+        depth = len(indent) // 2
+        if len(indent) % 2 or depth > len(stack):
+            error(f"README.md:{n}: indent entries two spaces per level, one level below their parent")
+            continue
+        del stack[depth:]
+        path = Path(target)
+        parent = stack[-1] if stack else None
+        if parent is not None:
+            if parent.name != "README.md":
+                error(f"README.md:{n}: {parent} has child pages, so it must be a folder's README.md")
+            elif parent.parent not in path.parents:
+                error(f"README.md:{n}: {path} must live in {parent.parent}/, the folder of its parent page")
+        if path in catalog:
+            error(f"README.md:{n}: {path} is already listed on line {catalog[path].line}")
+            continue
+        catalog[path] = Entry(n, title, summary, parent, depth)
+        stack.append(path)
     return catalog
+
+
+def children(catalog, parent):
+    return [path for path, e in catalog.items() if e.parent == parent]
 
 
 def local_links(md):
@@ -128,7 +160,7 @@ def main():
         if page not in catalog:
             errors.append(f"{page}: page is not listed in README.md ## Pages")
 
-    for target, (n, title, summary) in catalog.items():
+    for target, (n, title, summary, *_) in catalog.items():
         path = ROOT / target
         if not path.is_file():
             errors.append(f"README.md:{n}: listed page {target} does not exist")

@@ -1,6 +1,6 @@
 # The Laplace-Wiki site. Build: python3 tools/site.py build   Preview: python3 tools/site.py serve
 # The pages are the Markdown files at the repository root. tools/site_hooks.py copies
-# them into .site-src/ and builds the navigation from the README.md page catalog.
+# them into .site-src/ and builds the navigation from the README.md page tree.
 site_name: Laplace
 site_description: The Laplace documentation.
 site_url: https://saltypatron.github.io/Laplace-Wiki/
@@ -42,6 +42,9 @@ theme:
         name: Light mode
   features:
     - navigation.instant
+    - navigation.tabs
+    - navigation.path
+    - navigation.prune
     - navigation.instant.progress
     - navigation.tracking
     - navigation.top
