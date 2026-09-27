@@ -24,7 +24,13 @@ Codepoints are tier 0. Graphemes are tier 1, words tier 2, and so on. Tiers are 
 
 The tier of a composition is always at least one more than the tier of its highest constituent.
 
+A word can go straight from tier 0 constituents to tier 2.
+
 A node can fill a higher tier, but never a lower one. `[H,e,l,l,o]` is always a tier 2 word. Because the same content has the same hash, "Hello" on its own is never really a separate tier 3 sentence: the word fills that tier. "Hello!" is a tier 3 sentence. A tier 2 node can be a tier 3; a tier 3 node cannot be a tier 2.
+
+## Types
+
+Roles are agnostic across modalities. `[2,5,5]` can be a pixel channel intensity, a raw byte value, an IP segment, and more. It only gets a type when it is put into a Merkle DAG composition.
 
 ## Segmentation
 

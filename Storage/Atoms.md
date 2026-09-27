@@ -10,7 +10,7 @@ Every codepoint in the Unicode codespace has a point: all 1,114,112 of them in U
 
 Codepoints are placed across the S³ with Marc Alexa's Super-Fibonacci spirals and the Hopf fibration, sequenced by DUCET, with reverse-ordinal ordering. Only about 150,000 of the 1,114,112 codepoints are in use, and this placement still distributes them evenly, giving a perfect distribution across the S³.
 
-Every codepoint also has a Hilbert curve value, partitioned to the S³, not the S4.
+Every codepoint also has a Hilbert curve value: the actual Hilbert value from the S4, filtered to the S³. It is for locality, partitioning, and ordering, to optimize performance and reduce random thrashing.
 
 ## Unicode data
 
