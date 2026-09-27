@@ -427,3 +427,9 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Laplace-Wiki site build
+.site-src/
+site/
+.venv/
+.lycheecache

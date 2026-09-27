@@ -1,0 +1,86 @@
+# The Laplace-Wiki site. Build: python3 tools/site.py build   Preview: python3 tools/site.py serve
+# The pages are the Markdown files at the repository root. tools/site_hooks.py copies
+# them into .site-src/ and builds the navigation from the README.md page catalog.
+site_name: Laplace
+site_description: The Laplace documentation.
+site_url: https://saltypatron.github.io/Laplace-Wiki/
+repo_url: https://github.com/SaltyPatron/Laplace-Wiki
+repo_name: SaltyPatron/Laplace-Wiki
+edit_uri: edit/main/
+docs_dir: .site-src
+site_dir: site
+strict: true
+
+hooks:
+  - tools/site_hooks.py
+
+watch:
+  - .
+
+theme:
+  name: material
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Light mode
+  features:
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.tracking
+    - navigation.top
+    - navigation.footer
+    - navigation.indexes
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.action.edit
+    - content.action.view
+    - content.code.copy
+    - content.tooltips
+
+plugins:
+  - search
+
+markdown_extensions:
+  # Match what github.com renders.
+  - toc:
+      permalink: true
+  - tables
+  - footnotes
+  - attr_list
+  - md_in_html
+  - admonition
+  - github-callouts
+  - pymdownx.details
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+  - pymdownx.magiclink
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.arithmatex:
+      generic: true
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js

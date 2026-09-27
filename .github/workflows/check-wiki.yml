@@ -6,7 +6,8 @@ on:
   pull_request:
 
 jobs:
-  check:
+  catalog:
+    name: Catalog and links
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -14,3 +15,23 @@ jobs:
         with:
           python-version: "3.x"
       - run: python3 tools/check_wiki.py
+
+  markdownlint:
+    name: Markdown style
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DavidAnson/markdownlint-cli2-action@v20
+
+  site:
+    name: Site builds
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+          cache: pip
+          cache-dependency-path: tools/requirements.txt
+      - run: pip install -r tools/requirements.txt
+      - run: python3 tools/site.py build

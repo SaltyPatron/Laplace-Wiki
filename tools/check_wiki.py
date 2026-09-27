@@ -22,7 +22,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 # Markdown files that are repository mechanics, not documentation pages.
 NOT_PAGES = {"README.md", "AGENTS.md", "CLAUDE.md"}
-SKIP_DIRS = {".git", ".github", "tools", "node_modules"}
+SKIP_DIRS = {".git", ".github", "tools", "node_modules", ".site-src", "site", ".venv"}
 
 LINK_RE = re.compile(r"(?<!!)\[[^\]]*\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)")
 IMAGE_RE = re.compile(r"!\[[^\]]*\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)")
@@ -86,11 +86,8 @@ def same_summary(a, b):
     return a[:1].lower() == b[:1].lower() and a[1:] == b[1:]
 
 
-def main():
-    errors = []
-    pages = [p for p in markdown_files() if p.name not in NOT_PAGES or p.parent != Path(".")]
-
-    # Rule 1 and 2: the README catalog.
+def read_catalog(errors=None):
+    """The README.md "## Pages" entries: {Path: (line, title, summary)}, in order."""
     readme = (ROOT / "README.md").read_text(encoding="utf-8").splitlines()
     in_pages, catalog = False, {}
     for n, line in enumerate(readme, 1):
@@ -100,9 +97,31 @@ def main():
         if in_pages and line.startswith("- "):
             m = ENTRY_RE.match(line)
             if not m:
-                errors.append(f"README.md:{n}: entry is not '- [Title](Page.md) — summary.'")
+                if errors is not None:
+                    errors.append(f"README.md:{n}: entry is not '- [Title](Page.md) — summary.'")
                 continue
             catalog[Path(m.group(2))] = (n, m.group(1), m.group(3))
+    return catalog
+
+
+def local_links(md):
+    """Relative links in md: (line, href, file part, anchor, resolved target path)."""
+    for n, line in enumerate(strip_code((ROOT / md).read_text(encoding="utf-8")), 1):
+        for m in list(LINK_RE.finditer(line)) + list(IMAGE_RE.finditer(line)):
+            href = m.group(1)
+            if re.match(r"^[a-z][a-z0-9+.-]*:", href, re.I):
+                continue  # external: http, https, mailto, ...
+            file_part, _, anchor = href.partition("#")
+            target = (ROOT / md.parent / file_part).resolve() if file_part else ROOT / md
+            yield n, href, file_part, anchor, target
+
+
+def main():
+    errors = []
+    pages = [p for p in markdown_files() if p.name not in NOT_PAGES or p.parent != Path(".")]
+
+    # Rule 1 and 2: the README catalog.
+    catalog = read_catalog(errors)
 
     for page in pages:
         if page not in catalog:
@@ -136,21 +155,15 @@ def main():
     # Rule 4: links resolve.
     anchor_cache = {}
     for md in markdown_files():
-        for n, line in enumerate(strip_code((ROOT / md).read_text(encoding="utf-8")), 1):
-            for m in list(LINK_RE.finditer(line)) + list(IMAGE_RE.finditer(line)):
-                href = m.group(1)
-                if re.match(r"^[a-z][a-z0-9+.-]*:", href, re.I):
-                    continue  # external: http, https, mailto, ...
-                file_part, _, anchor = href.partition("#")
-                target = (ROOT / md.parent / file_part).resolve() if file_part else ROOT / md
-                if not target.exists():
-                    errors.append(f"{md}:{n}: broken link {href}")
-                    continue
-                if anchor and target.suffix == ".md":
-                    if target not in anchor_cache:
-                        anchor_cache[target] = anchors(target)
-                    if anchor.lower() not in anchor_cache[target]:
-                        errors.append(f"{md}:{n}: no heading for anchor #{anchor} in {file_part or md}")
+        for n, href, file_part, anchor, target in local_links(md):
+            if not target.exists():
+                errors.append(f"{md}:{n}: broken link {href}")
+                continue
+            if anchor and target.suffix == ".md":
+                if target not in anchor_cache:
+                    anchor_cache[target] = anchors(target)
+                if anchor.lower() not in anchor_cache[target]:
+                    errors.append(f"{md}:{n}: no heading for anchor #{anchor} in {file_part or md}")
 
     for e in errors:
         print(e)

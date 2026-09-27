@@ -1,0 +1,29 @@
+name: External links
+
+# Relative links are checked on every push by tools/check_wiki.py.
+# This checks links to other sites once a week and opens an issue when one breaks.
+on:
+  schedule:
+    - cron: "0 9 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  lychee:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: lychee
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --no-progress --exclude-path .site-src --exclude-path site "./**/*.md"
+          fail: false
+      - if: steps.lychee.outputs.exit_code != 0
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: Broken external links
+          content-filepath: ./lychee/out.md
+          labels: links
