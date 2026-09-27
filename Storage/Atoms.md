@@ -8,9 +8,11 @@ Every codepoint in the Unicode codespace has a point: all 1,114,112 of them in U
 
 ## Placement
 
-Codepoints are placed across the S³ with Marc Alexa's Super-Fibonacci spirals and the Hopf fibration, sequenced by DUCET, with reverse-ordinal ordering. Only about 150,000 of the 1,114,112 codepoints are in use, and this placement still distributes them evenly, giving a perfect distribution across the S³.
+Codepoints are placed across the S³ at Marc Alexa's Super-Fibonacci points, which relate to the Hopf fibration and distribute evenly across the S³. The points are taken in the order of their Hilbert value: the actual Hilbert value from the S4, filtered to the S³. The codepoints are sequenced by DUCET, and DUCET rank *r* takes the *r*-th point.
 
-Every codepoint also has a Hilbert curve value: the actual Hilbert value from the S4, filtered to the S³. It is for locality, partitioning, and ordering, to optimize performance and reduce random thrashing.
+Collation neighbors are therefore spatial neighbors: `King` falls by `king`, by `ding`, by `dong`, by `kong`. The placement is not exact, but it is predictable and recordable.
+
+The Hilbert value is also for locality, partitioning, and ordering, to optimize performance and reduce random thrashing.
 
 ## Unicode data
 
@@ -26,6 +28,8 @@ Tier 0 is built from the Unicode data, in full:
 Tier 0 is generated native C that is marshalled into PostgreSQL. It is memory-mapped as a perf-cache, so the client can look up any codepoint in O(1), in microseconds.
 
 Tier 0 is still recorded to the database, but function calls never need to read it from there. That eliminates at least half of the database calls and round trips.
+
+Every build has a checksum, a fingerprint, so an install knows which tier 0 it has. Two installs with the same fingerprint produce the same coordinates for the same content, so they sync perfectly.
 
 ## Unicode versions
 
