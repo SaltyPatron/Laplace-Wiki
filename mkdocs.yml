@@ -7,6 +7,7 @@ site_url: https://saltypatron.github.io/Laplace-Wiki/
 repo_url: https://github.com/SaltyPatron/Laplace-Wiki
 repo_name: SaltyPatron/Laplace-Wiki
 edit_uri: edit/main/
+copyright: Copyright &copy; 2026 Anthony Hart. All rights reserved.
 docs_dir: .site-src
 site_dir: site
 strict: true
@@ -83,6 +84,19 @@ markdown_extensions:
           format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.arithmatex:
       generic: true
+
+extra:
+  generator: false
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/SaltyPatron/Laplace-Wiki
+      name: Laplace-Wiki on GitHub
+    - icon: fontawesome/solid/comments
+      link: https://github.com/SaltyPatron/Laplace-Wiki/discussions
+      name: Discussions
+    - icon: fontawesome/brands/patreon
+      link: https://patreon.com/SaltyPatron
+      name: Support Laplace on Patreon
 
 extra_css:
   - stylesheets/brand.css

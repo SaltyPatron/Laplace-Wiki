@@ -1,0 +1,31 @@
+name: Problem with a page
+description: An error, a broken link, a page that does not render, or something unclear.
+labels: [docs]
+body:
+  - type: input
+    id: page
+    attributes:
+      label: Page
+      description: The page's name or link.
+      placeholder: https://saltypatron.github.io/Laplace-Wiki/Spitball/
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind of problem
+      options:
+        - Error or contradiction
+        - Unclear
+        - Broken link
+        - Does not render
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: What is wrong, and where on the page.
+    validations:
+      required: true

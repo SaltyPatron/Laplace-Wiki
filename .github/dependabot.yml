@@ -1,0 +1,19 @@
+# Keeps the pinned GitHub Actions and site tools current. Each update arrives as a
+# pull request that CI checks and builds before it can be merged.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns: ["*"]
+
+  - package-ecosystem: pip
+    directory: /tools
+    schedule:
+      interval: monthly
+    groups:
+      site:
+        patterns: ["*"]
