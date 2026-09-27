@@ -14,7 +14,7 @@ A trunk node's ID stands for the whole tree under it. Referencing the trunk node
 
 ## The ID point
 
-Every node's 128-bit BLAKE3 hash is bit-packed into the mantissas of the X, Y, and Z coordinates of a geometry ZM point. The hash does not need more than three of the four mantissas, which leaves M for metadata: run-length encoding and other values packed in to help indexing, filtering, and search.
+Every node's 128-bit BLAKE3 hash is bit-packed into the mantissas of the X, Y, and Z coordinates of a geometry ZM point. The hash does not need more than three of the four mantissas: a 128-bit hash leaves 28 of the three mantissas' bits spare, to use as needed, and leaves M for metadata: run-length encoding and other values packed in to help indexing, filtering, and search.
 
 Bit-packing the mantissas is what makes the database searchable by ID. It also enables a 3D visualization of the 4D representation.
 

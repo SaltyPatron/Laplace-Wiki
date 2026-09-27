@@ -4,7 +4,11 @@ Every composition has a full, real 4D coordinate, and its content is stored as a
 
 ## Real coordinates
 
-Separately from its [ID point](Identity.md#the-id-point), every composition has a full, real 4D coordinate: the centroid of its geometry ZM. Real coordinates are what give Laplace its GiST and GIN index lookups.
+Separately from its [ID point](Identity.md#the-id-point), every composition has a full, real 4D coordinate: the centroid of its geometry ZM.
+
+## Indexes
+
+GiST indexes the geometry: real coordinates and ID points. GIN indexes each trajectory's constituents, to find every container of any node, such as every sentence that contains a word.
 
 ## Centroids
 
