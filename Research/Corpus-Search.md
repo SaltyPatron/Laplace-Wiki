@@ -70,6 +70,8 @@ This is the counting scheme of the grammar indexes: each grid point that marks a
 
 In Laplace, every container of a node is found with the GIN index over each [trajectory's](../Storage/Physicality.md#trajectories) constituents, and the trajectory records their order. A phrase is a contiguous run of constituents in a container's trajectory. The containers that match are distinct nodes, so a sentence repeated 61,036 times (see [below](#duplication-in-large-corpora)) is found once and weighted by its `occ`.
 
+Matching the run is a comparison of trajectories: a window of the container's path equal to the phrase's path, at Fréchet distance 0. On the prototype, finding every continuation of "the capital of" in 3,846 containers took 30 ms with the comparison done on raw vertex bytes in C; see [Prototype](Prototype.md#continuation-as-geometry).
+
 ### Published structures
 
 The structures below are how other systems answer phrase and substring queries. They are literature, listed for their costs.

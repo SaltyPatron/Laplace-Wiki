@@ -13,6 +13,20 @@ Numbers marked measured come from a local script; everything else is from the so
   - Order matters, and recent results weigh most: ten games against a 1500-rated opponent end at 1452 in the order WWWWWLLLLL and at 1548 in the order LLLLLWWWWW.
   - Deviation falls from 350 to 248 after one win, 138 after ten, and 76 after a hundred.
 
+## Matchups as learning updates
+
+Each matchup changes one rating by an amount set by how uncertain it is, the way a training step changes a weight by an amount set by a learning rate:
+
+| Machine learning | One matchup |
+| --- | --- |
+| One example gives one update | One attestation gives one matchup |
+| A per-parameter adaptive learning rate, such as [Adam](https://arxiv.org/abs/1412.6980)'s | The rating deviation: large while a standing is uncertain, small once it is established |
+| A per-example weight | The witness's trust, played as the opponent's deviation |
+| A reward from a verifier, as in [execution feedback](#execution-feedback) | A win, draw, or loss from a compiler, a test, or a tablebase |
+| A Bayesian filter's update of a state estimate | Glicko's update: Glickman derives it as an approximate Bayesian update of a normal prior on the rating |
+
+The differences are in what is updated: one named record rather than a distributed weight, readable and replayable in order, and removable by replaying without it.
+
 ## Retrieval instead of weights
 
 | System | Finding |
@@ -45,5 +59,7 @@ A [review of mechanistic interpretability](https://arxiv.org/abs/2404.14082) and
 ## Sources
 
 - Mark E. Glickman. [The Glicko system](http://www.glicko.net/glicko/glicko.pdf) and [Example of the Glicko-2 system](http://www.glicko.net/glicko/glicko2.pdf).
+- Mark E. Glickman. [Parameter estimation in large dynamic paired comparison experiments](http://www.glicko.net/research/glicko.pdf). Applied Statistics 48, 1999.
+- Diederik P. Kingma and Jimmy Ba. [Adam: A Method for Stochastic Optimization](https://arxiv.org/abs/1412.6980). ICLR 2015.
 - Lichess: [Glicko.scala](https://github.com/lichess-org/lila/blob/master/modules/rating/src/main/Glicko.scala), [PerfsUpdater.scala](https://github.com/lichess-org/lila/blob/master/modules/round/src/main/PerfsUpdater.scala), [liglicko2](https://github.com/niklasf/liglicko2).
 - The papers linked in each section above.
