@@ -18,6 +18,8 @@ Attestations are recorded at the highest tier possible for a given corpus. OpenS
 
 Entities are witnessed. WordNet does not own `dog`: we observe `dog` from WordNet. Every witness observes the same entity.
 
+A witness derived from another witness records that lineage, so copies do not count as independent consensus.
+
 The witnessing is mechanistic interpretability, auditability, and provenance.
 
 ## Outcomes
