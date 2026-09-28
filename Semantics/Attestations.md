@@ -12,6 +12,8 @@ Curated corpora give attestations, observations, witnessing, usage, examples, an
 
 Entities get the attestations, because an entity is the complete structure being attested to. Codepoints get attestations, such as a stroke count; words get attestations; sentences get attestations; and so on at every tier. A sentence from OpenSubtitles, for example, is attested to be English, or whichever language it is.
 
+Attestations are recorded at the highest tier possible for a given corpus. OpenSubtitles gives the language of sentences, not of words.
+
 ## Witnesses
 
 Entities are witnessed. WordNet does not own `dog`: we observe `dog` from WordNet. Every witness observes the same entity.
