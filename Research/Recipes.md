@@ -40,6 +40,30 @@ A prototype PNG recipe decomposed each file into a metadata tree (every chunk, t
 
 Most images needed 8 to 200 bytes of reconstruction data; one large RGBA image needed 78,637 bytes, 21% of its compressed size. Plain zlib re-compression reproduced only 5 of the 26 files exactly.
 
+## Storage, measured
+
+The same 26 PNGs, stored as Laplace records instead of files, counting only unique compositions (pixel values come from the perf-cache and are never stored):
+
+| Representation | Bytes | Relative to the PNG files |
+| --- | --- | --- |
+| The PNG files | 461,961 | 1× |
+| Rows of pixel references, 32 bytes per path vertex | 45,512,320 | 98.5× |
+| 2D quadtree (quadrants down to 8×8 patches) with pixel values packed 8 per vertex | 5,187,536 | 11.2× |
+
+Deduplicating two-dimensional structure at the highest tier, and storing perf-cache values in place of their 128-bit references, cut storage by 8.8 times. What remains is these images' unique content: gradients and noise that do not repeat, which deflate compresses statistically.
+
+For natural photographs, the quantized DCT coefficients a byte-exact JPEG recipe stores were deduplicated across COCO 2017's validation set, as a per-component quadtree over 8×8 blocks:
+
+| Measure | 200 photos | 5,000 photos |
+| --- | --- | --- |
+| JPEG bytes | 32 MB | 815 MB |
+| 8×8 blocks that are new | 84.8% | 78.8% |
+| 16-pixel regions that are new | 95.1% | 94.9% |
+| 1024-pixel regions that are new | 99.2% | 98.7% |
+| Stored as records, relative to the JPEG files | 12.2× | 11.7× |
+
+The unique leaf coefficients for the 5,000 photos are 3,125 MB raw and 1,314 MB with LZ4. Sharing grows with the collection at the block level, where flat and simple blocks repeat after quantization; regions of 16 pixels and larger stay 95–99% unique. No exact duplicate files were found in the set.
+
 ## Code, measured
 
 The PostgreSQL and CPython source trees were parsed with tree-sitter's C and Python grammars. Every syntax subtree became a content-addressed node: its ID is the hash of its children's IDs, with the gaps between children as text constituents, and the node's kind is not hashed.
