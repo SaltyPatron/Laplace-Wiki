@@ -2,4 +2,54 @@
 
 Text that has not been properly considered for the documentation as a whole.
 
-Laplace is native C with SQL and C# as orchestration. Unless it is a client-side operation that would be faster in native C# instead of marshalled to native C, every operation goes into native C with SQL and C# as orchestration. In all cases.
+## Entity and physicality
+
+The visualization separates the record of a composition from its physical structure: Atom, Composition, Relation, or Entity and Physicality.
+
+## Embeddings
+
+An embedding is a high-dimensional address book: this token at this address. Cosine similarity and dot products send a pointer into empty space to ask what is near it, and return a list of probabilities for the next token. That is generation.
+
+Tokens in high-dimensional space are like fireflies. The tokens are the entity, but where is the physical representation of that entity? Where can its shape be compared against anything else?
+
+## Shapes across sources
+
+Ingest the bug logs from one app, and their Fréchet shape is very close to 50,000 other logs from 1,000 different repositories. Find one bug, fix 50,000.
+
+## A periodic table of knowledge
+
+I've created a periodic table of knowledge.
+
+What I'm doing is giving a finite computer proof that the infinite complexity of knowledge fits within a finite geometric volume.
+
+## Colloids
+
+A text is essentially a colloid, like Alice in Wonderland.
+
+## Conventional AI
+
+Physicality trajectories and attestations, witnessing, consensus, observation, usage, and so on give me everything conventional AI has, while storing it in readable form.
+
+To understand Laplace's semantics, consider the fixed scope of AI/ML mathematics: embed, norms, gates, up, down, Q, K, V, O. Think of how all of those fetch information, and then of those concepts reinvented in Laplace.
+
+## A universal translator
+
+I want to create a universal translator that uses ISO, ILI, synsets, frames, and more to link concepts and languages. We will change the world.
+
+## The Gödel Engine
+
+A Gödel Engine, with feedback loops, acts as the orchestrator for the forward pass.
+
+The Gödel Engine and feedback loops might eventually create their own, low-trust records and attestations, with their own Glicko-2 scores, and might even adjust live values: self-reasoning, self-learning, self-modifying.
+
+Since a prompt gets ingested and then applied to the forward pass, theoretically any portion of the database, of any size, can be treated as a prompt against itself.
+
+## Instruction sets
+
+Convert all of the AI/ML operations into instruction sets.
+
+## Personality as firmware
+
+Treat personality as firmware, separate from the knowledge. The control sits separate from the knowledge, and the personality firmware controls how the pull hops and fans out, which options it picks, its temperature, and so on. Guns exist and violence exists; humans know about them, but it is their personality that determines whether they are violent with them.
+
+The engine does not modify the personality firmware, unless it is wired up to the GitHub repository and allowed to deploy to itself. Software can update itself without shutting itself off only partially: patches, maybe.

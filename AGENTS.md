@@ -8,7 +8,9 @@ Every documentation page in this repository is listed in `README.md`. Add a page
 
 `Spitball.md` holds text that has not been properly considered for the documentation as a whole. Settled documentation is every other page.
 
-Add text only from words the inventor supplies. A missing section stays missing until those words exist. Pages are not imported from any other tree. Status updates and reports are not pages.
+Pages under `Research/` hold sourced research and measured results that support the specification. They cite their sources, mark what was measured, and are not specification.
+
+Add specification text only from words the inventor supplies. A missing section stays missing until those words exist. Pages are not imported from any other tree. Status updates and reports are not pages.
 
 ## Page format
 
