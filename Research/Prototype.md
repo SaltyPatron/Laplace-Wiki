@@ -2,7 +2,7 @@
 
 A working prototype of the storage layer was built from the specification and tested against 195 Project Gutenberg texts, and every number on this page was measured on it.
 
-The prototype is a test bench, not Laplace-Engine. It runs on one core of an Intel Core i7-6850K, with no tuning beyond indexes.
+The prototype is a test bench, not Laplace-Engine; its code is at [Laplace-Prototype](https://github.com/SaltyPatron/Laplace-Prototype). It runs on one core of an Intel Core i7-6850K, with no tuning beyond indexes.
 
 ## What was built
 
