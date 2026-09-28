@@ -33,7 +33,8 @@ word segment = [grapheme | codepoint ...] ; grapheme = [codepoint ...] when it h
 - Sentence and word boundaries are UAX #29's, from ICU. Plain UAX #29 treats every line break as a paragraph separator, and Gutenberg hard-wraps lines at about 70 characters, so 38% of Alice in Wonderland's "sentences" ended mid-sentence at a line wrap. The prototype gives ICU a copy of the text in which single line breaks inside a paragraph are spaces, and applies the boundaries to the original bytes, so every byte stays in the content. A blank line ends a paragraph.
 - A composition's ID is BLAKE3 over its children's 16-byte IDs, repeats included, truncated to 16 bytes. A composition with one child is that child.
 - A composition's coordinate is the exact integer average of its children's coordinates, truncated toward zero.
-- The physicality path stores each child's ID bit-packed into a vertex's X, Y, and Z mantissas (43 + 43 + 42 bits), and a run of identical children as one vertex with the run length in M.
+- The physicality path stores each child's ID bit-packed into a vertex's X, Y, and Z mantissas (43 + 43 + 42 bits, exponent −2, so the coordinates lie between 0.25 and 0.5, inside the 4-ball), and a run of identical children as one vertex with the run length in M. An atom's physicality is a POINT ZM holding its own ID.
+- Each source records its normalization form (NFC, NFD, both, or mixed) as a filter; content is stored exactly as it arrived. Of the 195 texts, 123 are NFC, 70 are both (plain ASCII and the like), and 2, `galileo.txt` and `odyssey.txt`, are mixed.
 
 ## Ingestion
 
@@ -108,12 +109,4 @@ The nearest-neighbor result shows what a centroid carries: with 765,412 distinct
 
 ## Choices the prototype made
 
-The specification does not yet settle these; the prototype picked one option each, and each is open:
-
-- Leaf hash input: UTF-8 bytes of the codepoint.
-- ID-point coordinates in [1, 2), outside the S³.
-- A `tier` column on the entity, for convenience.
-- An atom's physicality: its own ID point, with M = 0.
-- The real coordinate as a PostGIS POINT ZM, with M carrying the fourth coordinate.
-- Text stored in the normalization form it arrived in.
-- The plain-text decomposition above, including its line-break tailoring.
+The prototype keeps a `tier` column on each entity as a query aid; tier is an observation, never part of an ID. Its plain-text decomposition above, including the line-break tailoring, is the prototype's own; recipes will define decomposition.

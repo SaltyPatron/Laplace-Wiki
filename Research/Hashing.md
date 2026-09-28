@@ -145,7 +145,7 @@ ID bits  41..0  (42) -> Z fraction bits 51..10  (bits 9..0 spare)
 each double: sign 0 | exponent 0x3FF | fraction   => X, Y, Z in [1, 2)
 ```
 
-The spare bits total 28, as in [Identity](../Storage/Identity.md#the-id-point). Unpacking can check the sign, the exponent, and the spare bits as a cheap corruption test.
+The spare bits total 28, as in [Identity](../Storage/Identity.md#the-id-in-geometry). Unpacking can check the sign, the exponent, and the spare bits as a cheap corruption test.
 
 **Measured:** 1,000,008 IDs (0, 2¹²⁸ − 1, `0x55…`, `0xAA…`, every single-bit ID, and 10⁶ random IDs) round-tripped exactly. Every value was finite and normal, in [1, 1.9999999999998863].
 

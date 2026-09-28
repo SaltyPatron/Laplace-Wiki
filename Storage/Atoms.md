@@ -36,3 +36,5 @@ Every build has a checksum, a fingerprint, so an install knows which tier 0 it h
 ## Unicode versions
 
 The codespace will not change for a very long time. A new Unicode version changes only the points.
+
+Tier 0 and segmentation always use the same Unicode version. A new version is adopted only when its data and its segmentation tooling are both final.

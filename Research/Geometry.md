@@ -30,7 +30,7 @@ The geometry `=` operator and the default btree operator class (`btree_geometry_
 
 **Measured:** printing random S³ coordinates at 15 decimal places and parsing them back changed the double in 93.5% of cases. Printing 17 significant digits (Python `repr`) round-tripped exactly.
 
-[ID points](../Storage/Identity.md#the-id-point) carry BLAKE3 bits in their mantissas, so they move through EWKB and binary COPY, not through WKT, EWKT, or GeoJSON, KML, and GML at default precision. [Hashing](Hashing.md#text-round-trips) has the same test on packed IDs.
+[ID points](../Storage/Identity.md#the-id-in-geometry) carry BLAKE3 bits in their mantissas, so they move through EWKB and binary COPY, not through WKT, EWKT, or GeoJSON, KML, and GML at default precision. [Hashing](Hashing.md#text-round-trips) has the same test on packed IDs.
 
 ## Dimensionality
 

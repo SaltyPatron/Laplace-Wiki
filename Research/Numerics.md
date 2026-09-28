@@ -94,7 +94,7 @@ a's own point has 1 − ‖p‖² = 2.5 × 10⁻¹⁶, and across all points the
 
 ## ID point exponent ranges
 
-The [ID point](../Storage/Identity.md#the-id-point) fixes the exponent of X, Y, and Z. Two exponent choices were tested:
+The [ID point](../Storage/Identity.md#the-id-in-geometry) fixes the exponent of X, Y, and Z. Two exponent choices were tested:
 
 | Scheme | Sign | Biased exponent | Payload per axis | Total bits | ‖(X, Y, Z)‖ |
 | --- | --- | --- | --- | --- | --- |
@@ -108,7 +108,7 @@ The [ID point](../Storage/Identity.md#the-id-point) fixes the exponent of X, Y, 
 - No scheme produced NaN, infinity, a subnormal, zero, or −0. With the sign as payload and a zero mantissa, the value is −0.25, not −0.
 - Scheme A places every ID point outside the unit ball, disjoint from every real coordinate. Scheme B places ID points in the 0.433–0.866 shell, which real centroids also occupy.
 
-Scheme A is the layout in [Identity](../Storage/Identity.md#the-id-point), with 28 bits spare.
+Scheme A is the layout in [Identity](../Storage/Identity.md#the-id-in-geometry), with 28 bits spare.
 
 **Measured** over 60,000 ID coordinates, arithmetic destroys the payload:
 

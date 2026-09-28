@@ -14,13 +14,15 @@ The same entity ID is placed into every path that uses it. That is what lets `[2
 
 ## Real coordinates
 
-Every composition has a full, real 4D coordinate, recorded on its entity. Tier 0 coordinates are generated; every other coordinate is computed up from the codepoint leaves.
+Every composition has a full, real 4D coordinate, recorded on its entity as a normal POINT ZM, with M as the fourth coordinate. Tier 0 coordinates are generated; every other coordinate is computed up from the codepoint leaves.
 
 Compositions have a Hilbert value too. The Hilbert value maps to coordinates deterministically and mathematically, so it can be used for indexing, filtering, and querying; it is part of the deterministic content.
 
 ## Indexes
 
-GiST indexes the geometry: real coordinates and ID points. GIN indexes each trajectory's constituents, to find every container of any node, such as every sentence that contains a word.
+Laplace exploits GiST and GIN indexing for novel mechanisms. GiST indexes the geometry. GIN indexes each trajectory's constituents, read from the IDs in its geometry, to find every container of any node, such as every sentence that contains a word.
+
+The coordinates of the bit-packed IDs in a physicality have no meaning as positions; they are an artist's rendition, a visualization of the 4D representation. Their bits are what record which constituents, in which order.
 
 ## Centroids
 
