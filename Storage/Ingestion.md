@@ -8,6 +8,8 @@ The client breaks content down and computes its IDs and coordinates itself, usin
 
 ## Recipes
 
+Literally any standardized or fixed-format file is a modality to Laplace, and Laplace treats them all exactly the same: a generic decomposer uses a recipe to tell it how to extract the content.
+
 The decomposer and the ingestion pipeline are optimized to the limit and powered by recipes that denote how to decompose content into Laplace records: how content is recorded, what content is recorded, what gets reproducibility, and what does not matter.
 
 ## Deduplication
