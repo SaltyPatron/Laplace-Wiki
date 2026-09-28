@@ -42,6 +42,8 @@ A Gödel Engine, with feedback loops, acts as the orchestrator for the forward p
 
 The Gödel Engine and feedback loops might eventually create their own, low-trust records and attestations, with their own Glicko-2 scores, and might even adjust live values: self-reasoning, self-learning, self-modifying.
 
+Since a prompt gets ingested and then applied to the forward pass, theoretically any portion of the database, of any size, can be treated as a prompt against itself.
+
 ## Instruction sets
 
 Convert all of the AI/ML operations into instruction sets.
