@@ -26,4 +26,8 @@ Containers can be searched with gaps: every "Captain ␣ Name" in Moby Dick, rea
 
 ## Shape
 
-Fréchet distance finds matching shapes, and the content that has that shape. See [Physicality](Storage/Physicality.md).
+Shape measures find matching shapes, and the content that has that shape: Fréchet distance, Fréchet distance tolerant of *k* outliers, EDR, and DTW, each for its purpose. See [Physicality](Storage/Physicality.md) and [Research: Numerics](Research/Numerics.md).
+
+## Functions in queries
+
+The perf-cache is also available inside the database as native functions, so queries can compute IDs and coordinates in place instead of scanning tables. Such a function is evaluated once when the query is planned, and the query becomes an index lookup on the result.

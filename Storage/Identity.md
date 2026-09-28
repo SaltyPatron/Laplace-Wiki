@@ -6,6 +6,8 @@ Every node's ID is the BLAKE3 hash of its constituents, so the same content alwa
 
 BLAKE3 is simply a unique identifier. It gives enough bits to avoid collisions.
 
+A codepoint's ID is the BLAKE3 hash of its UTF-8 bytes. UTF-8 handles every Unicode scalar value; surrogates are a UTF-16 mechanism and never appear alone in valid text, so they take UTF-8's generalized 3-byte form, which no valid character uses.
+
 ## Pure content
 
 The hash is purely content. Type, source, position within the source, index, and so on are not the content; they are the observation and position of that content, and they are never part of the ID. Hashes are never faked: if a hash could be made from a made-up string, that string should instead be a decomposed entity with a trunk node.
