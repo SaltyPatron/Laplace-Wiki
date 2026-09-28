@@ -16,7 +16,7 @@ This page records the measurements behind the placement described in [Atoms](../
 ## The placement
 
 1. Generate the 1,114,112 Super-Fibonacci points.
-2. Compute each point's Hilbert value: the Hilbert curve fills the 4D box $[-1, 1]^4$, and the points on the S³ are that curve filtered to the S³. The measured runs quantize each axis to 16 bits and use Skilling's transpose algorithm.
+2. Compute each point's Hilbert value: the Hilbert curve fills the 4-cube $[-1, 1]^4$, and the points on the S³ are that curve filtered to the S³. The measured runs quantize each axis to 16 bits and use Skilling's transpose algorithm.
 3. Sort the points by Hilbert value. The sorted list is a walk over the S³ along the Hilbert curve.
 4. Give DUCET rank *r* the *r*-th point of that walk.
 

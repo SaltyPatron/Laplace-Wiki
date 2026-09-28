@@ -1,6 +1,12 @@
 # Space
 
-Laplace places everything in an S³ "ball in a box", with Unicode projected across its surface and compositions forming inside it.
+Laplace places everything in a 4-ball inside a 4-cube, with Unicode projected across the 4-ball's surface, the S³, and compositions forming inside it.
+
+## Terms
+
+- The **4-ball**, B⁴, is the solid ball in four dimensions: every point within distance 1 of the origin.
+- Its surface is the **3-sphere**, S³, also called the glome: every point at distance exactly 1.
+- The **4-cube**, [−1, 1]⁴, is the box around the 4-ball.
 
 ## The surface
 
@@ -16,7 +22,7 @@ How deep a composition sits measures how concentrated its constituents are, in t
 
 ## The wall
 
-The 4D box outside the S³ is forbidden space. The codepoints are projected to the surface of the S³ as perfectly as possible, and that Unicode perimeter acts as a barrier, a cosmic wall: the math proves that nothing can ever fall outside it, and that only repeats of a single codepoint, such as `[n,n,n,n,n]`, sit exactly on the surface.
+The part of the 4-cube outside the 4-ball is forbidden space. The codepoints are projected to the surface of the S³ as perfectly as possible, and that Unicode perimeter acts as a barrier, a cosmic wall: the math proves that nothing can ever fall outside it, and that only repeats of a single codepoint, such as `[n,n,n,n,n]`, sit exactly on the surface.
 
 The computer proof has known computer limitations, and they do not invalidate the math. See [Research: Numerics](../Research/Numerics.md).
 
