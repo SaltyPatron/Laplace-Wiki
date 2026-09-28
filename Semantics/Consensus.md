@@ -8,11 +8,15 @@ Same content means the same hash, and the deduplication applies to the attestati
 
 ## Glicko-2
 
-Glicko-2 is what tells how hard a strand tugs back, and it replaces a lot of conventional AI mechanisms.
+Glicko-2 is what tells how hard a strand tugs back, and it replaces a lot of conventional AI mechanisms. See [Research: Learning](../Research/Learning.md#rating-one-matchup-at-a-time) and [Research: Chess](../Research/Chess.md).
 
 ## Matchups
 
 There are no rating periods. As content is observed, first in, first out, the matchups are played.
+
+## Entry
+
+A witness or claim entering for the first time starts from a stock default for its level of attestation: whether synonyms matter more or less than meronyms, nouns than verbs, proper nouns than stopwords, and the source's trust, stability, and uncertainty.
 
 ## No ETL
 

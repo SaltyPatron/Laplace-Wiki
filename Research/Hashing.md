@@ -145,6 +145,9 @@ ID bits  41..0  (42) -> Z fraction bits 51..10  (bits 9..0 spare)
 each double: sign 0 | exponent 0x3FF | fraction   => X, Y, Z in [1, 2)
 ```
 
+> [!NOTE]
+> Laplace uses biased exponent `0x3FD` instead, so X, Y, and Z lie between 0.25 and 0.5, inside the 4-ball. That region is equally safe: every fraction pattern is a normal, finite, nonzero number. The prototype places the 43, 43, and 42 ID bits in the low fraction bits. See [Identity](../Storage/Identity.md#the-id-in-geometry).
+
 The spare bits total 28, as in [Identity](../Storage/Identity.md#the-id-in-geometry). Unpacking can check the sign, the exponent, and the spare bits as a cheap corruption test.
 
 **Measured:** 1,000,008 IDs (0, 2¹²⁸ − 1, `0x55…`, `0xAA…`, every single-bit ID, and 10⁶ random IDs) round-tripped exactly. Every value was finite and normal, in [1, 1.9999999999998863].
@@ -162,7 +165,7 @@ The spare bits total 28, as in [Identity](../Storage/Identity.md#the-id-in-geome
 
 PostGIS `ST_AsText` defaults to 15 decimal digits, and its documentation warns that WKT may not keep full floating-point precision. `ST_AsBinary` and binary COPY carry the doubles bit for bit. [Geometry](Geometry.md#text-output) has the PostGIS details.
 
-Arithmetic destroys the payload: averaging, snapping, reprojection, simplification, and `ST_SnapToGrid` or `ST_Transform` all change the bits. [Numerics](Numerics.md#id-point-exponent-ranges) measures how often.
+Arithmetic destroys the payload: averaging, snapping, reprojection, simplification, and `ST_SnapToGrid` or `ST_Transform` all change the bits. [Numerics](Numerics.md#exponent-ranges-for-ids-in-geometry) measures how often.
 
 ## Sources
 

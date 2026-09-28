@@ -8,7 +8,7 @@ Every operation goes into native C, with SQL and C# as orchestration, in all cas
 
 SIMD, AVX, VNNI, and the like are heavily preferred. Native C is preferred over SQL or C#, with marshalling of shared, reusable code: code centralization, deduplication, generics, abstractions, base classes.
 
-Bit-perfect determinism across hardware and operating systems requires a specific build configuration. Every build has a fingerprint.
+Bit-perfect determinism across hardware and operating systems requires a specific build configuration. Every build has a fingerprint. See [Research: Numerics](Research/Numerics.md).
 
 ## SQL
 

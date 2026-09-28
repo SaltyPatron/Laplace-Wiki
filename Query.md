@@ -22,7 +22,7 @@ File metadata trees are searchable the same way as content: "Show me all ISO 100
 
 ## Gaps
 
-Containers can be searched with gaps: every "Captain ␣ Name" in Moby Dick, reading what fills the gap.
+Containers can be searched with gaps: every "Captain ␣ Name" in Moby Dick, reading what fills the gap. See [Research: Corpus Search](Research/Corpus-Search.md) and [Research: Prototype](Research/Prototype.md#queries).
 
 ## Shape
 

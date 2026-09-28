@@ -1,6 +1,6 @@
 # Physicality
 
-Every composition has a full, real 4D coordinate, and its content is stored as a trajectory.
+Every entity has a full, real 4D coordinate, and every composition's content is stored as a trajectory.
 
 ## Entity and physicality
 
@@ -8,7 +8,7 @@ Every entity is its own record, with its [ID](Identity.md) and its real coordina
 
 ## Physicality
 
-The physicality is the path recorded with geometry ZM, which can be a point, a line, a polygon, a multi-line, and more. Each vertex is the ID of a constituent entity, in order; M carries metadata for that vertex, such as run-length encoding.
+The physicality is the path recorded with geometry ZM, which can be a point, a line, a polygon, a multi-line, and more. Each vertex is the ID of a constituent entity, in order; M carries that vertex's metadata, a bitmask for filtering, indexing, and querying, such as run-length encoding. An atom's physicality is a POINT ZM holding its own ID.
 
 The same entity ID is placed into every path that uses it. That is what lets `[2,5,5]` be text, a number, an IP segment, and more: the entity never changes, and each path records one use of it.
 
@@ -16,7 +16,7 @@ The same entity ID is placed into every path that uses it. That is what lets `[2
 
 Every composition has a full, real 4D coordinate, recorded on its entity as a normal POINT ZM, with M as the fourth coordinate. Tier 0 coordinates are generated; every other coordinate is computed up from the codepoint leaves.
 
-Compositions have a Hilbert value too. The Hilbert value maps to coordinates deterministically and mathematically, so it can be used for indexing, filtering, and querying; it is part of the deterministic content.
+Compositions have a Hilbert value too. The Hilbert value maps to coordinates deterministically and mathematically, so it can be used for indexing, filtering, and querying; it is part of the deterministic content, derived from the coordinate and never part of an ID.
 
 ## Indexes
 
@@ -28,7 +28,7 @@ The coordinates of the bit-packed IDs in a physicality have no meaning as positi
 
 A centroid is generated and recorded for both the real coordinates and the bit-packed visualization, so it is never recomputed. The real centroid comes from the constituents' real coordinates; the visualization centroid comes from the bit-packed geometry of the path.
 
-Centroids collide in the S³: `[c,a,t]` and `[a,c,t]` have the same centroid. Their Fréchet distances are, mostly, different.
+Centroids collide in the 4-ball: `[c,a,t]` and `[a,c,t]` have the same centroid. Their Fréchet distances are, mostly, different.
 
 ## Trajectories
 

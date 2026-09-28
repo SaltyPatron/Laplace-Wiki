@@ -10,7 +10,7 @@ This page records the measurements behind the placement described in [Atoms](../
 ## Inputs
 
 - **The codespace.** All 1,114,112 codepoints, U+0000 to U+10FFFF, are placed, including unassigned, private-use, surrogate, and noncharacter codepoints. The scope is never reduced to the assigned repertoire.
-- **The order.** The deterministic DUCET total order of all 1,114,112 codepoints, built from the Unicode 17.0.0 `allkeys.txt`: explicit entries, Hangul syllables through their jamo, `@implicitweights`, and the catch-all implicit weights; the sort key is L1, L2, L3 with non-ignorable variable weighting, and ties are broken by codepoint. See [Unicode](Unicode.md#the-deterministic-total-order).
+- **The order.** The deterministic DUCET total order of all 1,114,112 codepoints, built from the Unicode 17.0.0 `allkeys.txt`: explicit entries, Hangul syllables through their jamo, `@implicitweights`, and the catch-all implicit weights; the sort key is L1, L2, L3 with non-ignorable variable weighting, and ties are broken first by the identical level (NFD) and then by codepoint. The measurements on this page were taken on that order. See [Unicode](Unicode.md#the-deterministic-total-order).
 - **The points.** One Super-Fibonacci set with n = 1,114,112, fixed once. See [Sampling](Sampling.md#super-fibonacci-spirals).
 
 ## The placement

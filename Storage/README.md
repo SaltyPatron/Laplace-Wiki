@@ -6,7 +6,7 @@ The storage exploits spatial datatypes and old technologies. Like Git and IPFS, 
 
 All digital content boils down to Unicode codepoints. Content is broken down into its smallest constituent components, the Merkle DAG of those components is persisted, and the content is stored as trajectories in the [space](Space.md).
 
-- [Space](Space.md) is the S³ that everything is placed in.
+- [Space](Space.md) is the 4-ball that everything is placed in.
 - [Atoms](Atoms.md) are the codepoints, the floor of everything.
 - [Compositions](Compositions.md) are built from atoms and from other compositions.
 - [Identity](Identity.md) is the BLAKE3 hash that names every node.

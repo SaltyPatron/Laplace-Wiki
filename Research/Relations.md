@@ -1,9 +1,15 @@
 # Relations Research
 
-Research into rating models, evidence counts, search over rated relations, truth discovery, and provenance is groundwork for the future Relations layer, which is not yet specified.
+Research into rating models, evidence counts, search over rated relations, truth discovery, and provenance is background for Laplace's semantics layer.
 
 > [!NOTE]
-> The Relations layer is not yet specified. What exists is the inventor's direction in [Spitball](../Spitball.md#relations): relations come with semantics, with type, tier, attestations, observations, witnessing, and consensus as their context, and Glicko-2 ratings in place of weights, so that lookups are A*-indexed. This page collects research toward that layer. Anything described here as an option or mapping is a research suggestion, not a Laplace decision.
+> This page was written before the inventor specified [Semantics](../Semantics/README.md), and it is kept as background. Where it differs from the specification, the specification holds:
+>
+> - Consensus is updated inline, one matchup at a time, as content is observed first in, first out. There are no rating periods, ingest epochs, or batch folds of evidence counts.
+> - A new witness or claim enters at a stock default for its level of attestation, not at a fixed 1500 ± 350 or a fixed anchor.
+> - Normal content gives observations only; curated corpora give attestations.
+>
+> Anything described here as an option or mapping is a research suggestion, not a Laplace decision.
 
 ## Conventions
 
@@ -215,7 +221,7 @@ In [CATD](https://www.vldb.org/pvldb/vol8/p425-li.pdf), most sources make only o
 
 ## Observations, attestations, witnesses, and consensus
 
-The inventor's vocabulary for relations includes observations, attestations, witnessing, and consensus ([Spitball](../Spitball.md#relations)). The research separates four quantities along those lines; the mapping is a suggestion:
+The inventor's vocabulary for relations includes observations, attestations, witnessing, and consensus ([Semantics](../Semantics/README.md)). The research separates four quantities along those lines; the mapping is a suggestion:
 
 | Quantity | Meaning in the research | For 1,000 verbatim copies of one sentence |
 | --- | --- | --- |

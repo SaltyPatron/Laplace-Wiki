@@ -14,7 +14,7 @@ Unicode is projected across the surface of the S³. The surface projection of Un
 
 ## The interior
 
-[Compositions](Compositions.md) form within the S³, inside the Unicode perimeter.
+[Compositions](Compositions.md) form within the 4-ball, inside the Unicode perimeter.
 
 Tiers layer and form bands. The more complex the tier, the deeper toward the center it sits on average, and the math requires that: a composition's real coordinate is the average of its constituents' coordinates, so by the triangle inequality every composition is at least as deep as the average depth of its own constituents. The two are equal only when every constituent is the same point.
 

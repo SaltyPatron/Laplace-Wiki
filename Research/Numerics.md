@@ -1,6 +1,6 @@
 # Numerics
 
-Research on the floating-point limits of Laplace's coordinates and ID points, the cost of colliding its IDs, and how trajectory distance measures treat noise and repetition.
+Research on the floating-point limits of Laplace's coordinates and of IDs written into geometry, the cost of colliding its IDs, and how trajectory distance measures treat noise and repetition.
 
 > [!NOTE]
 > Numbers marked **measured** were produced by the local research scripts `exp1_norm_guarantee.py`, `exp2_id_packing.py`, `exp3_collision_economics.py`, and `exp4_trajectory_metrics.py`. Every other number comes from the cited sources or follows from the stated formula.
@@ -92,9 +92,9 @@ For a composition `[a]*(k−1) + [b]`, where b is a's nearest neighbour (chord 0
 
 a's own point has 1 − ‖p‖² = 2.5 × 10⁻¹⁶, and across all points the value ranges from 0 to 4.4 × 10⁻¹⁶. From about k = 10¹² on, the norms of near-repeats overlap those of pure-repeat points. Whether a node sits on the wall is therefore a structural fact: a single distinct constituent, or a centroid equal bit for bit to the codepoint's point. P2 makes that bit equality exact for every true repeat.
 
-## ID point exponent ranges
+## Exponent ranges for IDs in geometry
 
-The [ID point](../Storage/Identity.md#the-id-in-geometry) fixes the exponent of X, Y, and Z. Two exponent choices were tested:
+Writing an ID into [geometry](../Storage/Identity.md#the-id-in-geometry) fixes the exponent of X, Y, and Z. Two exponent choices were tested:
 
 | Scheme | Sign | Biased exponent | Payload per axis | Total bits | ‖(X, Y, Z)‖ |
 | --- | --- | --- | --- | --- | --- |
@@ -106,9 +106,9 @@ The [ID point](../Storage/Identity.md#the-id-in-geometry) fixes the exponent of 
 
 - Every scheme round-trips bit for bit through `struct`, numpy `float64` arrays, and `repr()` → `float()` text.
 - No scheme produced NaN, infinity, a subnormal, zero, or −0. With the sign as payload and a zero mantissa, the value is −0.25, not −0.
-- Scheme A places every ID point outside the unit ball, disjoint from every real coordinate. Scheme B places ID points in the 0.433–0.866 shell, which real centroids also occupy.
+- Scheme A places every ID written into geometry outside the unit ball, disjoint from every real coordinate. Scheme B places them in the 0.433–0.866 shell, which real centroids also occupy.
 
-Scheme A is the layout in [Identity](../Storage/Identity.md#the-id-in-geometry), with 28 bits spare.
+Laplace uses Scheme B's exponent with Scheme A's 43 / 43 / 42 payload, keeping 28 bits spare: IDs written into geometry lie inside the 4-ball, where their positions carry no meaning. See [Identity](../Storage/Identity.md#the-id-in-geometry).
 
 **Measured** over 60,000 ID coordinates, arithmetic destroys the payload:
 

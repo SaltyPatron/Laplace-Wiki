@@ -18,4 +18,4 @@ There is no context window. A prompt is ingested as text, broken down, given a t
 
 ## Hop and fanout
 
-From any entity, Laplace can hop and fan out to anything else with integrity. Attestations identify which words are fluff and which are important, and give words trust levels and stability. From `Butler`, Laplace can pull a great deal of information and link it to `butler`.
+From any entity, Laplace can hop and fan out to anything else with integrity. Attestations identify which words are fluff and which are important, and give words trust levels and stability. From `Butler`, Laplace can pull a great deal of information and link it to `butler`. See [Research: Semantics Experiments](../Research/Semantics-Experiments.md).

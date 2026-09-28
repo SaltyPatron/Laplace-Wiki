@@ -1,6 +1,6 @@
 # Claims
 
-A claim is a tuple of entities with referential integrity, and its ID is computed from its components the same way a physicality's is.
+A claim is a tuple of entities with referential integrity, and its ID is computed from its components the same way a composition's is.
 
 ## Tuples
 
@@ -20,7 +20,7 @@ Relations are tied together by types and tiers. An ILI synset is a type, just li
 
 ## IDs
 
-Deterministic content determines a claim's ID. A claim is a limited path trajectory, so its hash is computed the same way as a physicality's.
+Deterministic content determines a claim's ID. A claim is a limited path trajectory, so its hash is computed the same way as a composition's: from the IDs along its path.
 
 Witnessing and consensus are two different beasts:
 
@@ -33,4 +33,4 @@ Separate columns hold bitmasks, such as 256-bit masks, that denote which part of
 
 ## The Linguistic Super Highway
 
-The mappings between curated resources, such as SemLink, PredicateMatrix, MapNet, WordFrameNet, and CILI, which link PropBank, VerbNet, FrameNet, WordNet, and ILIs to one another, are part of the Linguistic Super Highway. The highway is part of the foundation behind the part-of-speech, sense, and dependency-relation masks.
+The mappings between curated resources, such as SemLink, PredicateMatrix, MapNet, WordFrameNet, and CILI, which link PropBank, VerbNet, FrameNet, WordNet, and ILIs to one another, are part of the Linguistic Super Highway. The highway is part of the foundation behind the part-of-speech, sense, and dependency-relation masks. See [Research: Semantics Experiments](../Research/Semantics-Experiments.md#the-identifier-highway).

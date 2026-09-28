@@ -10,7 +10,7 @@ Every codepoint in the Unicode codespace has a point: all 1,114,112 of them in U
 
 Codepoints are placed across the S³ at Marc Alexa's Super-Fibonacci points, which relate to the Hopf fibration and distribute evenly across the S³. The points are taken in the order of their Hilbert value: the actual Hilbert value from the 4-cube [−1, 1]⁴, filtered to the S³. The codepoints are sequenced by DUCET, and DUCET rank *r* takes the *r*-th point.
 
-Collation neighbors are therefore spatial neighbors: `King` falls by `king`, by `ding`, by `dong`, by `kong`. The placement is not exact, but it is predictable and recordable.
+Collation neighbors are therefore spatial neighbors: `King` falls by `king`, by `ding`, by `dong`, by `kong`. The placement is not exact, but it is predictable and recordable. See [Research: Placement](../Research/Placement.md) and [Research: Unicode](../Research/Unicode.md#the-deterministic-total-order).
 
 The Hilbert value is also for locality, partitioning, and ordering, to optimize performance and reduce random thrashing.
 

@@ -80,7 +80,7 @@ What matches: Laplace's [identity](../Storage/Identity.md), the BLAKE3 hash of t
 
 What differs:
 
-- **Cycles.** Unison hashes cycles because code can be mutually recursive. A Laplace composition is always at least one tier above its constituents, so the DAG is acyclic by construction and needs no cycle hashing. Mutual reference, such as two documents that cite each other, is then not containment; it would belong to a relations layer (see [Relations Research](Relations.md)).
+- **Cycles.** Unison hashes cycles because code can be mutually recursive. A Laplace composition is always at least one tier above its constituents, so the DAG is acyclic by construction and needs no cycle hashing. Mutual reference, such as two documents that cite each other, is then not containment; it is recorded as a claim (see [Claims](../Semantics/Claims.md)).
 - **Geometry.** Unison, git, IPFS, and hash-consing attach no coordinate to a hash. Laplace attaches a derived 4D coordinate to every hash-identified node.
 - **Segmentation.** IPFS chunks bytes by size or content; Sequitur learns phrases from repetition. Laplace uses one Unicode-standard segmentation hierarchy per modality, down to codepoints. The research found hierarchical text chunking, but not a single canonical decomposition for all content.
 
