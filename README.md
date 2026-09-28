@@ -24,6 +24,11 @@ Every page in this repository is listed below. Read every listed page in full.
   - [Consensus](Semantics/Consensus.md) — everything attested about a claim, as a whole, provides its overall score: a Glicko-2 standing that tells how hard a strand tugs back.
   - [Pull](Semantics/Pull.md) — Laplace's forward pass is native C recursive operations with A* and indexed lookups, pulling on an interwoven web of entities and attestations.
 - [Query](Query.md) — Laplace finds content by computing its ID and coordinates on the client and looking them up with spatial indexes.
+- [Operations](Operations/README.md) — Operations covers what Laplace runs on and how it is built, configured, deployed, and tuned, from bare hardware to loaded, indexed, and measured content.
+  - [Setup](Operations/Setup.md) — Laplace runs on x86-64 CPUs, uses every SIMD level the CPU has, never requires a GPU, and wants its database heap, write-ahead log, and temporary files on separate fast drives.
+  - [Builds](Operations/Builds.md) — PostgreSQL, Laplace-Native, and Laplace-postgres are built from source with Intel's compilers, with floating-point settings that give the same bits on every CPU.
+  - [Database](Operations/Database.md) — PostgreSQL's defaults suit small general-purpose servers; Laplace tunes memory, I/O, and planning to its hardware and to the way it uses geometry and indexes.
+  - [Deployment](Operations/Deployment.md) — A Laplace database goes from empty to benchmarked in five steps: extensions, schema, ingestion, indexes, and measurement.
 - [Research](Research/README.md) — research collects the sourced findings and measured results that support the Laplace specification.
   - [Prototype](Research/Prototype.md) — a working prototype of the storage layer was built from the specification and tested against 195 Project Gutenberg texts, and every number on this page was measured on it.
   - [Placement](Research/Placement.md) — Codepoints are placed on the S³ by taking Marc Alexa's Super-Fibonacci points for n = 1,114,112 in the order of their 4D Hilbert value and giving DUCET rank *r* the *r*-th point, which puts collation neighbors next to each other in space.
@@ -39,5 +44,6 @@ Every page in this repository is listed below. Read every listed page in full.
   - [Corpus Search](Research/Corpus-Search.md) — Laplace's Merkle DAG is a grammar-compressed corpus, so exact occurrence counts, distinct-document counts, and phrase search inside containers all have direct precedent in the literature on grammar-compressed and suffix-based text indexes.
   - [Prior Art](Research/Prior-Art.md) — Each mechanism in Laplace's storage layer has published precedent, and the research found no prior system that combines them.
   - [Trust](Research/Trust.md) — Research and measurements on how much a witness's attestation should count and how hard each kind of word or relation should pull, measured on the local witnesses, on 88 languages of Universal Dependencies, and on word sense disambiguation.
+  - [Engine Measurements](Research/Engine.md) — The first shared components of the real implementation, Laplace-Native and Laplace-postgres, were measured on a tuned PostgreSQL server with the Gutenberg corpus, and every number on this page comes from their benchmarks.
   - [Relations Research](Research/Relations.md) — Research into rating models, evidence counts, search over rated relations, truth discovery, and provenance is background for Laplace's semantics layer.
 - [Spitball](Spitball.md) — text that has not been properly considered for the documentation as a whole.

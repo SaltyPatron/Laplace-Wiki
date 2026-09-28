@@ -24,6 +24,10 @@ Laplace exploits GiST and GIN indexing for novel mechanisms. GiST indexes the ge
 
 The coordinates of the bit-packed IDs in a physicality have no meaning as positions; they are an artist's rendition, a visualization of the 4D representation. Their bits are what record which constituents, in which order.
 
+## Partitions
+
+Partitions go by the ID hash, not by Hilbert value: remember the 4-ball against the 4-box. See [Research: Engine Measurements](../Research/Engine.md#partitions).
+
 ## Centroids
 
 A centroid is generated and recorded for both the real coordinates and the bit-packed visualization, so it is never recomputed. The real centroid comes from the constituents' real coordinates; the visualization centroid comes from the bit-packed geometry of the path.

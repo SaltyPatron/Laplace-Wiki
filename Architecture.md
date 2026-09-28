@@ -10,6 +10,12 @@ SIMD, AVX, VNNI, and the like are heavily preferred. Native C is preferred over 
 
 The 4D math runs in extension functions, optimized with libraries such as Intel's, Eigen, and Spectra.
 
+Laplace does not require a GPU. Third-party tools that produce input for Laplace, or work alongside it, may use one.
+
+PostgreSQL has defaults that are tuned to the hardware.
+
+Development favors observability and benchmarks over a heavy focus on tests and gates: the invention should speak for itself.
+
 Bit-perfect determinism across hardware and operating systems requires a specific build configuration. Every build has a fingerprint. See [Research: Numerics](Research/Numerics.md).
 
 ## SQL
