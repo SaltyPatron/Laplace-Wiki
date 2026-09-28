@@ -40,6 +40,8 @@ I want to create a universal translator that uses ISO, ILI, synsets, frames, and
 
 A Gödel Engine, with feedback loops, acts as the orchestrator for the forward pass.
 
+The Gödel Engine and feedback loops might eventually create their own, low-trust records and attestations, with their own Glicko-2 scores, and might even adjust live values: self-reasoning, self-learning, self-modifying.
+
 ## Instruction sets
 
 Convert all of the AI/ML operations into instruction sets.
