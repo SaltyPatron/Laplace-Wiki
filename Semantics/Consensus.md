@@ -14,6 +14,8 @@ Glicko-2 is what tells how hard a strand tugs back, and it replaces a lot of con
 
 There are no rating periods. As content is observed, first in, first out, the matchups are played.
 
+Incoming records play existing records, for attestation and Glicko-2 scores. Querying picks the records with higher scores, but does not change scores.
+
 ## Entry
 
 A witness or claim entering for the first time starts from a stock default for its level of attestation: whether synonyms matter more or less than meronyms, nouns than verbs, proper nouns than stopwords, and the source's trust, stability, and uncertainty.
