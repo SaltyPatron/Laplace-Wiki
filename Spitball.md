@@ -21,3 +21,13 @@ Ingest the bug logs from one app, and their Fréchet shape is very close to 50,0
 Relations come with semantics. Context for them: type, tier, attestations, observations, witnessing, consensus.
 
 Replace weights and similar values with Glicko-2 ratings, so lookups are A*-indexed instead of brute force against a database of random floats in a static file.
+
+## A periodic table of knowledge
+
+I've created a periodic table of knowledge.
+
+What I'm doing is giving a finite computer proof that the infinite complexity of knowledge fits within a finite geometric volume. The computer proof will have known computer limitations, but that doesn't invalidate the math.
+
+## Colloids
+
+A text is essentially a colloid, like Alice in Wonderland.

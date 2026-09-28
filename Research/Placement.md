@@ -32,7 +32,7 @@ Measured over the full set, the median distance between consecutive Super-Fibona
 
 A Hilbert curve is a space-filling curve: points that are close along the curve are close in space. Sorting the Super-Fibonacci points by Hilbert value replaces the spiral's visiting order with the curve's, so consecutive positions in the sorted list are spatial neighbors, while the points themselves remain the evenly spread Super-Fibonacci set.
 
-DUCET rank then maps onto that list. Ranks that are adjacent in collation are adjacent along the curve, and so adjacent on the S³. Measured, the median distance between consecutive DUCET ranks is 0.027 under H1, against 1.686 under the plain spiral index. For scale, the measured mean nearest-neighbor distance of the full 1,114,112-point set is 0.0199 (see [Sampling](Sampling.md#numeric-checks)).
+DUCET rank then maps onto that list. Ranks that are adjacent in collation are adjacent along the curve, and so adjacent on the S³. Measured, the median distance between consecutive DUCET ranks is 0.026 under H1, against 1.686 under the plain spiral index. For scale, the measured mean nearest-neighbor distance of the full 1,114,112-point set is 0.0199 (see [Sampling](Sampling.md#numeric-checks)).
 
 ## DUCET neighbors of `a`
 
@@ -60,7 +60,7 @@ All five variants place the same 1,114,112 Super-Fibonacci points in the same DU
 | Rank → spiral index, bit-reversed | 1.686 | 1.366 | 1.956 | 0.489 | 0.337 |
 | Rank → spiral index, no reversal | 1.764 | 1.152 | 0.518 | 0.130 | 0.372 |
 | DUCET primary-weight groups, clustered | – | 0.004 | 0.003 | 0.001 | 0.432 |
-| **H1: points in 4D Hilbert order, rank *r* → *r*-th point** | **0.027** | **0.086** | **0.093** | **0.023** | **0.049** |
+| **H1: points in 4D Hilbert order, rank *r* → *r*-th point** | **0.026** | **0.086** | **0.093** | **0.023** | **0.049** |
 | H2: as H1, first 159,866 ranks spread along the whole curve | 0.059 | 0.236 | 0.099 | 0.025 | 0.074 |
 
 - **A-family** is the mean pairwise distance within `A a ä á à â å ã ā`. Under H1 its maximum is 0.142.

@@ -94,6 +94,8 @@ Every codepoint not listed in the table gets two collation elements, `[.AAAA.002
 | --- | --- | --- |
 | Tangut | FB00 | (CP − 17000) \| 8000 |
 | Tangut Components | FB01 | (CP − 18800) \| 8000 |
+| Tangut Supplement | FB00 | (CP − 17000) \| 8000 |
+| Tangut Components Supplement | FB01 | (CP − 18800) \| 8000 |
 | Nushu | FB02 | (CP − 1B170) \| 8000 |
 | Khitan Small Script | FB03 | (CP − 18B00) \| 8000 |
 | Core Han | FB40 + (CP >> 15) | (CP & 7FFF) \| 8000 |
@@ -104,6 +106,7 @@ Every codepoint not listed in the table gets two collation elements, `[.AAAA.002
 - Hangul syllables have no entries. Step 1 of the algorithm (NFD) decomposes them to conjoining jamo, which do (§10.1.5).
 - For surrogates, an implementation may give them implicit weights "as if it were an unassigned code point"; they must never be ignorable or variable (§10.1.1).
 - The Unicode 17 text gives the other-Han lead range as "FB80, FB84..FB85". Extensions at U+30000 and above need FB86; revision 55 (Unicode 18) corrects this. The formula, not the parenthetical range, is authoritative.
+- A supplement block shares its base AAAA with the main block and counts BBBB from the main block's start, so Tangut Supplement (U+18D00–18D7F) sorts after all of Tangut. Counting from the supplement's own start instead would place U+18D00 among the first Tangut ideographs; the prototype had exactly that bug until the collation conformance test below exposed it.
 - Within each class the order is codepoint order, so implicit-weighted codepoints never tie.
 
 ### How every codepoint gets weights
@@ -128,13 +131,27 @@ One deterministic order of all 1,114,112 codepoints is derived in three steps:
 
 1. **Collation elements.** Take the explicit entry, the Hangul jamo through NFD, or the implicit pair, with non-ignorable variable weighting: `*` weights are used as-is. Under the default "shifted" setting, the 8,496 variable characters would collapse at levels 1–3.
 2. **Sort key.** Form the UCA sort key L1 | L2 | L3 from the non-zero weights.
-3. **Ties.** Break ties by codepoint, the deterministic comparison of UTS #10 Appendix A. The NFD identical level alone is not enough for single codepoints, because canonical singletons such as U+212B and U+00C5 still tie.
+3. **Ties.** Break ties first by the identical level, the codepoint's canonical decomposition (NFD, computed from the Unicode 17 `UnicodeData.txt`), then by codepoint, the deterministic comparison of UTS #10 Appendix A. The identical level alone is not enough for single codepoints, because canonical singletons such as U+212B and U+00C5 still tie. Skipping it misorders pairs such as U+2001 EM QUAD, whose NFD is U+2003, against U+2002 EN SPACE.
 
 Measured results:
 
 - Before step 3 there are 1,419 tie groups covering 6,324 codepoints, and 1,109,207 distinct sort keys. The largest group is the 962 completely ignorable codepoints. In total 1,640 codepoints are primary-ignorable and sort first.
 - Ranks: U+0000 is rank 0; the first non-ignorable codepoint is at rank 1,640; U+0020 at 1,648; `a` at 12,142; `A` at 12,159; U+AC00 at 25,261; U+4E00 at 56,415; U+D800 at 161,100; U+E000 at 163,148; U+FFFE at 169,681; U+10FFFF at 1,114,110. The last codepoint is U+FFFD, whose fixed primary FFFD sorts above all implicit weights.
-- The SHA-256 of the order, written as 3-byte big-endian codepoints, is `85474f71c8efd4442d58b91d5bb0d756f00f45e0bb83a383ef582399d69fbf3e`.
+- The SHA-256 of the order, written as 3-byte big-endian codepoints, is `31548536a65d75e4f4e3f866d4bb5315ddbfe803edb7d0a018eebfb5c89257e0`. An earlier order without the identical level and with the Tangut supplement bug hashed to `85474f71…` and is superseded.
+
+### Conformance
+
+Measured against the official test files in the local Unicode 17.0.0 data:
+
+| Test | ICU 70.1 (Unicode 14 rules) | ICU 78.3 (Unicode 17 rules) |
+| --- | --- | --- |
+| `GraphemeBreakTest.txt` | 756 of 766 | 766 of 766 |
+| `WordBreakTest.txt` | 1,940 of 1,944 | 1,944 of 1,944 |
+| `SentenceBreakTest.txt` | 512 of 512 | 512 of 512 |
+
+The ICU 70 failures are all rules added after Unicode 14, such as Indic conjunct clusters (grapheme rule GB9c, Unicode 15.1), emoji ZWJ sequences, and Arabic and Syriac word breaks. Segmentation has to use the same Unicode version as tier 0.
+
+`CollationTest_NON_IGNORABLE.txt` lists strings in the order the UCA must produce. Each test line is a codepoint followed by a probe character, so the order of the codepoints within each probe group was compared with the total order above: 197,767 lines, 286 disagreeing adjacent pairs. 285 of them are explained by expansions whose key is a strict prefix of another's (for example U+2A74 `⩴`, which collates as `: : =`): alone, the shorter key sorts first; with a probe appended, the longer one can. The remaining pair involves the combining probe U+0334, which canonical ordering moves inside U+01FE `Ǿ`. None is an error in the order of single codepoints.
 
 Contractions do not change the order of single codepoints. They matter for strings: sorting strings needs the full algorithm with maximal-match contraction lookup (§3.5). Most contractions are Thai, Lao, and Tai Viet prevowel + consonant pairs; others include Cyrillic U+0438 U+0306 and Tibetan U+0FB2 U+0F71 U+0F80. The conformance data is `CollationTest.zip` (§12.2). CLDR's root collation is a tailored DUCET, so ICU's default order is not raw DUCET.
 

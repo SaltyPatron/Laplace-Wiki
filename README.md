@@ -20,6 +20,7 @@ Every page in this repository is listed below. Read every listed page in full.
   - [Ingestion](Storage/Ingestion.md) — ingestion computes content's IDs on the client and deduplicates it trunk to leaf against what is already recorded.
 - [Query](Query.md) — Laplace finds content by computing its ID and coordinates on the client and looking them up with spatial indexes.
 - [Research](Research/README.md) — research collects the sourced findings and measured results that support the Laplace specification.
+  - [Prototype](Research/Prototype.md) — a working prototype of the storage layer was built from the specification and tested against 195 Project Gutenberg texts, and every number on this page was measured on it.
   - [Placement](Research/Placement.md) — Codepoints are placed on the S³ by taking Marc Alexa's Super-Fibonacci points for n = 1,114,112 in the order of their 4D Hilbert value and giving DUCET rank *r* the *r*-th point, which puts collation neighbors next to each other in space.
   - [Sampling](Research/Sampling.md) — Super-Fibonacci spirals give a fixed-size, evenly spread set of points on the S³, and this page records their construction, their relation to the Hopf fibration and to incremental grids, radical-inverse ordering, and local numeric checks.
   - [Unicode](Research/Unicode.md) — Laplace's tier 0 and its segmentation rest on the Unicode data, and this page records what that data defines, what it covers, and which parts of it are stable across versions.

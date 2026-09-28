@@ -6,6 +6,10 @@ Ingestion computes content's IDs on the client and deduplicates it trunk to leaf
 
 The client breaks content down and computes its IDs and coordinates itself, using the memory-mapped [tier 0](Atoms.md#generation).
 
+## Recipes
+
+The decomposer and the ingestion pipeline are optimized to the limit and powered by recipes that denote how to decompose content into Laplace records: how content is recorded, what content is recorded, what gets reproducibility, and what does not matter.
+
 ## Deduplication
 
 Deduplication is an O(tier) check from trunk to leaf. Everything it finds already recorded is eliminated, so the check reduces its own total count as it goes.

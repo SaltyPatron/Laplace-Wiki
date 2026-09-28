@@ -14,7 +14,15 @@ That trunk has one deterministic [ID](Storage/Identity.md) for all of it.
 
 ## Containers and occurrences
 
-The GiST and GIN indexes find every container and every occurrence of that ID. Lookups by ID exploit the spatial datatypes.
+GIN finds every container of that ID, such as every sentence that contains a word, and GiST indexes the geometry. Lookups by ID exploit the spatial datatypes.
+
+## Files
+
+File metadata trees are searchable the same way as content: "Show me all ISO 100 images."
+
+## Gaps
+
+Containers can be searched with gaps: every "Captain ␣ Name" in Moby Dick, reading what fills the gap.
 
 ## Shape
 

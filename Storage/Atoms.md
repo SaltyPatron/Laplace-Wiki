@@ -29,6 +29,8 @@ Tier 0 is generated native C that is marshalled into PostgreSQL. It is memory-ma
 
 Tier 0 is still recorded to the database, but function calls never need to read it from there. That eliminates at least half of the database calls and round trips.
 
+The perf-cache is modular: ASCII, UTF, CJK, emoji, and so on. The same applies to other modalities, such as 8-bit, 16-bit, and 32-bit color for images. That enables deployment to lesser hardware; the full tier 0 is small enough for a Raspberry Pi.
+
 Every build has a checksum, a fingerprint, so an install knows which tier 0 it has. Two installs with the same fingerprint produce the same coordinates for the same content, so they sync perfectly.
 
 ## Unicode versions
