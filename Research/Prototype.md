@@ -10,7 +10,7 @@ The prototype is a test bench, not Laplace-Engine; its code is at [Laplace-Proto
 | --- | --- |
 | Tier 0 generator | Python and NumPy, from the local Unicode 17.0.0 `allkeys.txt` and UCD |
 | Decomposer and ingestion | C, with ICU 78.3 (Unicode 17 segmentation) and BLAKE3 1.8.3 with every SIMD variant and runtime dispatch |
-| Store | PostgreSQL 18.6, PostGIS 3.6.4, and a small C extension that decodes entity IDs from geometry ZM vertices |
+| Store | PostgreSQL 18.6, PostGIS 3.6.4, and a small C extension that decodes entity IDs from geometry ZM vertices and finds continuations |
 | Checks and queries | Python, computing IDs and coordinates client-side from tier 0 alone |
 
 ## Tier 0
@@ -101,9 +101,22 @@ IDs and coordinates were computed client-side from tier 0; the database was aske
 | Every container of "Holmes", through GIN | 527 records | 6.1 ms |
 | The run `[Sherlock, ' ', Holmes]` inside containers | 92 sentences | 23 ms |
 | Every `[Captain, ' ', ?]` in Moby Dick | Ahab 55, Peleg 27, Bildad 14, Sleet 5, Pollard 3, Mayhew 3, Scoresby 2, Boomer 2, Butler 1, and ordinary words such as "in" and "of" | 206 ms |
-| What follows "the capital of" | the 456, a 82, an 15, his 12, one 7, Italy 6, Armenia 3, … | 3.8 s |
+| What follows "the capital of" | the 456, a 82, an 15, his 12, one 7, Italy 6, Armenia 3, … | 30 ms, [as geometry](#continuation-as-geometry) |
 | The most frequent word segments | the 2,332,304; of 1,648,858; and 950,111; … | 3.9 s |
 | The 4D nearest word segments to "king", through GiST | gin, nig, ing, ign, slighting, lights, … | 25 ms |
+
+### Continuation as geometry
+
+A phrase is a trajectory, like every stored path: "the capital of " is the path `[the, ' ', capital, ' ', of, ' ']`. Its continuations are the vertices that follow each window of a container's path matching it, which is a window at Fréchet distance 0. One GIN lookup finds the 3,846 containers holding every constituent (36 ms); they hold 289,623 vertices. Each method found the same 792 continuations, 174 distinct:
+
+| Method | Time |
+| --- | --- |
+| Decode every candidate sentence into its children in Python and scan for the run | 4,558 ms |
+| In SQL, a window at every vertex, each compared to the phrase with `ST_FrechetDistance` | 2,397 ms |
+| The same, with windows only where the phrase's rarest constituent sits | 293 ms |
+| `laplace_follows`, a C function in the extension: the phrase is encoded once into vertex bytes and compared with the raw stored vertices, 16 bytes per SSE compare, and only continuations are decoded | 30 ms |
+
+With the native function, the index lookup and fetching the containers' rows account for nearly all of the time. `ST_Covers` of the phrase by each path took 6.4 s and matched 3,710 containers, because it compares point sets in 2D rather than ordered windows.
 
 The nearest-neighbor result shows what a centroid carries: with 765,412 distinct word segments in the Latin region, the nearest centroids are words with the same letters in any order. Order is carried by the path, not the centroid.
 
