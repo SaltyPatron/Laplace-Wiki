@@ -35,3 +35,15 @@ To understand Laplace's semantics, consider the fixed scope of AI/ML mathematics
 ## A universal translator
 
 I want to create a universal translator that uses ISO, ILI, synsets, frames, and more to link concepts and languages. We will change the world.
+
+## The Gödel Engine
+
+A Gödel Engine, with feedback loops, acts as the orchestrator for the forward pass.
+
+## Instruction sets
+
+Convert all of the AI/ML operations into instruction sets.
+
+## Personality as firmware
+
+Treat personality as firmware, separate from the knowledge. Guns exist and violence exists; humans know about them, but it is their personality that determines whether they are violent with them.
