@@ -31,3 +31,13 @@ What I'm doing is giving a finite computer proof that the infinite complexity of
 ## Colloids
 
 A text is essentially a colloid, like Alice in Wonderland.
+
+## Conventional AI
+
+Physicality trajectories and attestations, witnessing, consensus, observation, usage, and so on give me everything conventional AI has, while storing it in readable form.
+
+To understand Laplace's semantics, consider the fixed scope of AI/ML mathematics: embed, norms, gates, up, down, Q, K, V, O. Think of how all of those fetch information, and then of those concepts reinvented in Laplace.
+
+## A universal translator
+
+I want to create a universal translator that uses ISO, ILI, synsets, frames, and more to link concepts and languages. We will change the world.

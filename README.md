@@ -18,6 +18,11 @@ Every page in this repository is listed below. Read every listed page in full.
   - [Identity](Storage/Identity.md) — every node's ID is the BLAKE3 hash of its constituents, so the same content always has the same ID.
   - [Physicality](Storage/Physicality.md) — every composition has a full, real 4D coordinate, and its content is stored as a trajectory.
   - [Ingestion](Storage/Ingestion.md) — ingestion computes content's IDs on the client and deduplicates it trunk to leaf against what is already recorded.
+- [Semantics](Semantics/README.md) — semantics are the relations Laplace records about entities, so that it can link concepts and languages and hop and fan out from anything to anything with integrity.
+  - [Attestations](Semantics/Attestations.md) — curated corpora attest to entities, ordinary digital content is observed, and every attestation is a win, draw, or loss and/or a score from a witness.
+  - [Claims](Semantics/Claims.md) — a claim is a tuple of entities with referential integrity, and its ID is computed from its components the same way a physicality's is.
+  - [Consensus](Semantics/Consensus.md) — everything attested about a claim, as a whole, provides its overall score: a Glicko-2 standing that tells how hard a strand tugs back.
+  - [Pull](Semantics/Pull.md) — Laplace's forward pass is native C recursive operations with A* and indexed lookups, pulling on an interwoven web of entities and attestations.
 - [Query](Query.md) — Laplace finds content by computing its ID and coordinates on the client and looking them up with spatial indexes.
 - [Research](Research/README.md) — research collects the sourced findings and measured results that support the Laplace specification.
   - [Prototype](Research/Prototype.md) — a working prototype of the storage layer was built from the specification and tested against 195 Project Gutenberg texts, and every number on this page was measured on it.
