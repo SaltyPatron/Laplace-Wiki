@@ -26,7 +26,7 @@ A trunk node's ID stands for the whole tree under it. Referencing the trunk node
 
 Every entity is its own record, and its ID is that record's key. The only other place the ID is written is inside geometry: the 128-bit BLAKE3 hash is bit-packed into the mantissa bits of the X, Y, and Z coordinates of a geometry ZM point, and that is how the entity's ID is placed into every [physicality](Physicality.md#physicality) that uses it. Nothing else is derived from it or hashed from it.
 
-The hash does not need more than three of the four mantissas: a 128-bit hash leaves 28 of the three mantissas' bits spare, to use as needed. The mantissas are written with a fixed exponent that keeps these coordinates between 0.25 and 0.5, inside the 4-ball. M is metadata for the physicality: a bitmask for filtering, indexing, and querying, such as run-length encoding. Type or tier belong in it only if they genuinely speed up queries.
+The hash does not need more than three of the four mantissas: a 128-bit hash leaves 28 of the three mantissas' bits spare. The spare bits are dynamic, not hard-coded to one purpose. The entity's type tells how to parse them, and before that they help with indexing and filtering, holding values from known lists; a small tag says which layout they are in. The mantissas are written with a fixed exponent that keeps these coordinates between 0.25 and 0.5, inside the 4-ball. M is metadata for the physicality: a bitmask for filtering, indexing, and querying, such as run-length encoding. Type or tier belong in it only if they genuinely speed up queries.
 
 Bit-packing the mantissas is what makes the database searchable by ID. It also enables a 3D visualization of the 4D representation.
 
