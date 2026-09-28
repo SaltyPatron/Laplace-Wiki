@@ -123,11 +123,11 @@ Three earlier runs scored lower, each for a measured reason:
 
 | Run | Instances | Prior only | Prior + pull |
 | --- | --- | --- | --- |
-| Sense frequency played as matchups between a lemma's senses, folded into the standing; no part-of-speech filter | 6,210 | 54.2 | 55.2 |
+| Sense frequency played as matchups between a lemma's senses, merged into the standing; no part-of-speech filter | 6,210 | 54.2 | 55.2 |
 | Usages counted beside each claim; no part-of-speech filter | 6,487 | 58.5 | 58.9 |
 | Usages counted; part-of-speech filter | 6,404 | 63.5 | 63.9 |
 
-- Folding frequency into a standing loses it: a standing measures whether a claim holds, it saturates as its deviation shrinks, and a lemma's true senses end up close together whatever their frequency.
+- Merging frequency into a standing loses it: a standing measures whether a claim holds, it saturates as its deviation shrinks, and a lemma's true senses end up close together whatever their frequency.
 - Without the part-of-speech filter, a verb instance of *run* is scored against the noun senses too.
 - WordNet's frequency file writes every lemma in lower case, while its data files and the claims keep `Einstein` as written; matching the counts back to the written form, and adding Open English WordNet, raised coverage from 6,404 to 6,613 instances and standing alone from 50.1 to 61.5.
 - The pull through relation claims does not yet add to the prior. The pull through WordNet's hubs above, which also used definition words and supersenses, added 0.7.

@@ -49,6 +49,17 @@ Simulated, with 4,000 claims per row, each witness attesting each claim with the
 
 With signed trust the coin-flippers change nothing, the reliably wrong witness improves the consensus, and lineage keeps copies from counting as independent agreement. A verified anchor settling 10% of the claims raised accuracy from 91.7% to 92.4%, and settling 50% raised it to 96.0%.
 
+### Order of attestations
+
+Glicko-2 is updated one matchup at a time, so the order attestations arrive in can change a standing. Measured on 11,311 claims attested by two or more lineages, each replayed from stock in its recorded order and in eight random orders:
+
+| Spread across orders | Median | 95th percentile | Largest |
+| --- | --- | --- | --- |
+| Rating | 0 | 8.1 | 21.0 |
+| Deviation | 0 | 7.0 | 15.2 |
+
+Every attestation in this set is a win. Mixed wins and losses depend on order more (see [Learning](Learning.md#rating-one-matchup-at-a-time)), so a snapshot is reproducible only if attestations are applied in a deterministic order.
+
 ### Truths cluster
 
 Measured on Open Multilingual Wordnet: for 16 languages with an expert-built wordnet, that wordnet served as the reference for its language, and every lexicalization from the Wiktionary-derived and CLDR-derived wordnets was checked against it on the concepts the reference covers.

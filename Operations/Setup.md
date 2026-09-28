@@ -52,6 +52,8 @@ All repositories, Laplace's and its dependencies' alike, live under one source r
 | PostGIS | 3.6 | |
 | liburing | 2.1 or newer | optional; see [Database](Database.md#io) |
 
+Thread counts come from the environment: `OMP_NUM_THREADS` and `MKL_NUM_THREADS` set how many cores MKL and OpenMP kernels use. Some shells and agents set them to 1, which makes every kernel single-threaded. Set them to the number of cores for ingestion and measurement.
+
 An environment file sources oneAPI and points the builds at Eigen, Spectra, BLAKE3, and the custom PostgreSQL. It is sourced for Laplace and PostgreSQL builds only, not for anything built against another PostgreSQL.
 
 Anything that needs root is written as a script that logs its output, so the result can be read afterward.

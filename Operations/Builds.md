@@ -36,6 +36,7 @@ cmake --preset gcc-release && cmake --build --preset gcc-release
   - Every summation has one fixed order in every code path, so scalar and SIMD kernels agree bit for bit.
   - IDs and coordinates are exact integers or fixed point.
 - **ISA levels:** the baseline is x86-64-v2. Kernels are compiled per ISA level in their own translation units and chosen at run time, so one binary runs everywhere and uses everything. `LAPLACE_ISA=scalar|sse2|avx2` lowers the level to compare kernels.
+- **Model tools:** `laplace-model` and the `lp_rowsig` kernel need MKL and OpenMP, and build only when `MKLROOT` is set (by the oneAPI environment). The core library and the PostgreSQL extension do not depend on them.
 - **The two compilers:** the `icx` and `gcc` builds must agree on every golden value, such as the tier-0 IDs and Hilbert values, bit for bit.
 - **BLAKE3:** its CMake recognizes gcc, clang, and MSVC but not `icx`, so Laplace-Native supplies BLAKE3's assembly sources itself, and enables C, C++, and assembly in its own project.
 
