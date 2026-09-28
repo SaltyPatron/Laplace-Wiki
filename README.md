@@ -38,5 +38,6 @@ Every page in this repository is listed below. Read every listed page in full.
   - [Recipes](Research/Recipes.md) — research and measurements on how one generic decomposer can take any standardized file format apart into content and put it back together byte for byte.
   - [Corpus Search](Research/Corpus-Search.md) — Laplace's Merkle DAG is a grammar-compressed corpus, so exact occurrence counts, distinct-document counts, and phrase search inside containers all have direct precedent in the literature on grammar-compressed and suffix-based text indexes.
   - [Prior Art](Research/Prior-Art.md) — Each mechanism in Laplace's storage layer has published precedent, and the research found no prior system that combines them.
+  - [Trust](Research/Trust.md) — Research and measurements on how much a witness's attestation should count and how hard each kind of word or relation should pull, measured on the local witnesses, on 88 languages of Universal Dependencies, and on word sense disambiguation.
   - [Relations Research](Research/Relations.md) — Research into rating models, evidence counts, search over rated relations, truth discovery, and provenance is background for Laplace's semantics layer.
 - [Spitball](Spitball.md) — text that has not been properly considered for the documentation as a whole.

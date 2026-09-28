@@ -16,6 +16,10 @@ There are no softmax issues.
 
 There is no context window. A prompt is ingested as text, broken down, given a trunk node ID, and processed through the forward pass.
 
+## The choice
+
+The single choice is what the personality firmware is for: instruction sets that take each step of each operation needed to perform the forward pass. Whether it takes the top answer every time is the firmware's.
+
 ## Hop and fanout
 
 From any entity, Laplace can hop and fan out to anything else with integrity. Attestations identify which words are fluff and which are important, and give words trust levels and stability. From `Butler`, Laplace can pull a great deal of information and link it to `butler`. See [Research: Semantics Experiments](../Research/Semantics-Experiments.md).

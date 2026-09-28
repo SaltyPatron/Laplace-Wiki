@@ -133,6 +133,8 @@ Three earlier runs scored lower, each for a measured reason:
 - The pull through relation claims does not yet add to the prior. The pull through WordNet's hubs above, which also used definition words and supersenses, added 0.7.
 - Scoring took about 1 ms per word in single-threaded Python, including the two-hop neighborhoods of every other word in the sentence; the claims were read once from the database.
 
+With the context intersected with each sense's record set and every shared record weighted by role trust, the same four sets score 66.2; see [Trust](Trust.md#role-trust-in-word-sense-disambiguation).
+
 For reference, on the full five-set ALL:
 
 | System | F1 | Source |
