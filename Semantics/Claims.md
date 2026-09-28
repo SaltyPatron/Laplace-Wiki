@@ -30,3 +30,7 @@ Witnessing and consensus are two different beasts:
 ## Masks
 
 Separate columns hold bitmasks, such as 256-bit masks, that denote which part of speech, sense, dependency relation, and so on apply. These are enums: fixed in scope, and perf-cachable.
+
+## The Linguistic Super Highway
+
+The mappings between curated resources, such as SemLink, PredicateMatrix, MapNet, WordFrameNet, and CILI, which link PropBank, VerbNet, FrameNet, WordNet, and ILIs to one another, are part of the Linguistic Super Highway. The highway is part of the foundation behind the part-of-speech, sense, and dependency-relation masks.
