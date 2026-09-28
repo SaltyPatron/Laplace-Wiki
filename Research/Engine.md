@@ -33,6 +33,8 @@ One core, from `laplace-bench`:
 
 Both compilers, `icx` and `gcc`, reproduce the prototype's tier-0 IDs and Hilbert values bit for bit.
 
+Threading matters as much as SIMD. The same kernel run over TinyLlama's vocabulary took 110.8 s on one thread and 19.9 s on twelve (37 against 213 GFLOP/s). The environment it first ran in had set `OMP_NUM_THREADS` and `MKL_NUM_THREADS` to 1.
+
 ## Ingestion
 
 `laplace-ingest` took the 195 Gutenberg texts (209 MB) into the database by binary COPY, in 60 s.
@@ -46,6 +48,14 @@ Both compilers, `icx` and `gcc`, reproduce the prototype's tier-0 IDs and Hilber
 | `physicality` COPY | 18.2 s | 215,000 rows/s, 2.9 GB |
 
 Ingesting the same files again took 0.1 s: one query over the files' BLAKE3-256 hashes found all 195 recorded, and nothing was decomposed. Where the bytes differ but the content tree is known, the trunk-to-leaf check stops at the first tier: 195 IDs checked in 11 ms, and nothing sent.
+
+### Vocabularies
+
+Every tokenizer in a farm of 33 models was ingested as content: each token decomposed like any text, each byte token written as its notation (`<0xAB>`), and each vocabulary recorded as the path of its tokens in index order.
+
+- 24 tokenizer files and 2,700,090 tokens deduplicated to 240,450 compositions in 5.1 s, and loaded in 19.5 s.
+- The 24 files held 11 distinct vocabularies. Files with the same token list became the same trunk, and vocabularies that share their tokens but add or order some differently stayed distinct, like Qwen2.5's and Qwen3's.
+- 50,149 of the tokens were already recorded, as words of the Gutenberg texts.
 
 ## Server settings
 

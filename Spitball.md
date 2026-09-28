@@ -71,3 +71,19 @@ We need far more observations, so that record sets can start to reduce.
 ## Truths cluster, lies scatter
 
 Round Earth against flat Earth; gravity. Laplace's demon is my familiar.
+
+## Model ingestion
+
+We don't store their model; we assimilate it. The export will only ever be a snapshot of Laplace.
+
+Safetensors, GGUF, ONNX, PyTorch, and the like are all structured, standardized file formats: a Merkle DAG, but special. Tokenizers are easy: they are text. We can normalize SentencePiece's and BPE's markers, like `Ġ` and “ king”, while persisting the original token list for that model. For bytes, something like `[<,0,x,A,B,>]`, rather than just the number.
+
+An AI model's embedding is the address book for the dot products, the probabilities, and so on. Everything is a set-based operation, and then it picks one, throws everything away, and does the same billions of calculations again for a slightly different result. In Laplace, I just look things up one by one, but I don't brute force: I know exactly.
+
+AI models have precedes, co-occurrences, and so on. We have that with the physicality trajectory, the path, so we don't need conventional AI mechanisms in that regard. We don't really need the fireflies either, since the semantic web and the physicality trajectories serve the same purpose: the S³ and the semantics combined give far more than conventional AI ever could.
+
+AI models are written dense, but semantically they are very sparse. Laplace can detect which ones are bullshit, low-probability responses in various conditions, and trim the fat.
+
+`king` from Qwen collides with `king` from Llama, so consensus across models makes sense. We can grade the ingestion from existing attestations. Consensus within a single model, across its heads and layers, is still recorded as witnessing, along with the normal consensus: a tier and fanout of the normal operation.
+
+MadLibs applies and helps a lot here: templates with blanks, and what fills them.
