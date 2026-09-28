@@ -73,6 +73,39 @@ PostgreSQL and PostGIS assume geometry coordinates are positions and index funct
 - **Hilbert ranges failed.** With word segments and sentences each split into 8 equal Hilbert ranges of the 4-cube, all 765,412 word segments and all 1,678,740 sentences landed in the first range. English text lies in one small region of the 4-ball, and Hilbert ranges divide the 4-cube around it.
 - **ID prefixes worked.** Split by the first hex digit of their ID, the word segments fell 47,628 to 47,964 per partition. An ID is a BLAKE3 hash, so any content divides evenly, and a lookup by ID prunes to one partition.
 
+## Storage at volume
+
+Tatoeba's 13.56 million sentences in 424 languages (605 MB of text) were ingested in four equal chunks after the Gutenberg texts:
+
+| Chunk | Input | Database growth | Ratio |
+| --- | --- | --- | --- |
+| 1 | 151 MB | 4,928 MB | 32.6× |
+| 2 | 151 MB | 4,579 MB | 30.3× |
+| 3 | 151 MB | 4,047 MB | 26.8× |
+| 4 | 151 MB | 4,534 MB | 30.0× |
+
+By the fourth chunk, 74% of word segments were already recorded, but 99% of sentences were new: Tatoeba's sentences are short and almost never repeat. Per sentence, averaging 16.6 vertices in its path, storage came to about 1,117 bytes:
+
+| Part | Bytes per sentence |
+| --- | --- |
+| Path (physicality heap) | 599 |
+| Entity row | 101 |
+| 4D GiST index | 82 |
+| GIN container index | 76 |
+| Statistics row and its indexes | 139 |
+| ID indexes (entity and physicality) | 91 |
+| Hilbert index | 29 |
+
+The same 1.68 million Gutenberg sentence paths stored as `uuid[]` with run lengths took 1,310 MB, against 1,785 MB as geometry ZM, with the same GIN size and the same query times: containers 0.28 against 0.32 ms, continuations 25.1 against 25.3 ms, and every container of the hub `the` (864,949) 309 against 376 ms.
+
+## Consensus writes
+
+Five million attestations, Zipf-distributed over a million claims so that a few hub claims receive most of them, were written in batches of 100,000:
+
+- The ledger appended at about 245,000 rows per second, taking 301 MB with its index.
+- Standings updated in place by one set-based statement per batch absorbed 740,000–780,000 attestations per second, because a batch's repeated hits on a claim collapse (100,000 attestations touched about 19,500 claims). The standing table stayed at 66 MB with dead rows levelling off near 34,000 under a fill factor of 80.
+- Reading the hottest claim's standing took 0.1 ms. Aggregating its 474,628 ledger rows instead took 115 ms.
+
 ## Queries
 
 Warm execution time, and the number of partitions each plan touched:
@@ -88,5 +121,7 @@ Warm execution time, and the number of partitions each plan touched:
 | What follows "the capital of " | the 456, a 82, an 15, his 12, … | 24.7 ms | 52 |
 | The 16 word segments nearest `king` in 4D | king, then its anagrams | 7.7 ms | 16 |
 | The 20 most frequent word segments | the, of, and, to, in, … | 0.15 ms | 16 |
+
+`laplace_text` recomposes any entity by walking its paths down to tier 0: twenty words in 13 ms, and all of Alice in Wonderland in 828 ms, byte for byte (the same MD5 as the file).
 
 The same queries on the prototype, whose database sat on a USB hard disk, took 0.2 ms, 6.1 ms, 23 ms, 206 ms, 3.8 s, and 25 ms, respectively. Queries that start from an ID prune to one partition. Queries that search for containers, or search by position, visit every partition's index.
