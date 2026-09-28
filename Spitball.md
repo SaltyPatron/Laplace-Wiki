@@ -51,3 +51,5 @@ Convert all of the AI/ML operations into instruction sets.
 ## Personality as firmware
 
 Treat personality as firmware, separate from the knowledge. Guns exist and violence exists; humans know about them, but it is their personality that determines whether they are violent with them.
+
+The engine does not modify the personality firmware, unless it is wired up to the GitHub repository and allowed to deploy to itself. Software can update itself without shutting itself off only partially: patches, maybe.
