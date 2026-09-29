@@ -11,7 +11,22 @@ Every page in this repository is listed below. Read every listed page in full.
 ## Pages
 
 - [Architecture](Architecture.md) — Laplace is native C, with SQL and C# as orchestration.
-- [Sequence](Sequence.md) — Laplace is built in one order, and each stage is impossible without the one before it: Unicode onto the S³, tier 0, the perf-cache, the store, content, attestations, consensus, the firmware, the pull, and only then a user.
+- [Sequence](Sequence/README.md) — Laplace is built in one order, and each stage is impossible without the one before it: Unicode onto the S³, tier 0, the perf-cache, the store, content, attestations, consensus, the firmware, the pull, and only then a user.
+  - [1. Unicode](Sequence/Unicode.md) — the first operations fix one Unicode version and read every file tier 0 and segmentation are built from.
+  - [2. Toolchain](Sequence/Toolchain.md) — the machine, the drives, the source root, and every dependency built from source with one compiler and the flags that give the same bits everywhere.
+  - [3. Builds](Sequence/Builds.md) — PostgreSQL, Laplace-Native, Laplace-postgres, and Laplace-Engine are built in that order, each linking the one before it, and two compilers must agree on every golden value.
+  - [4. Projection](Sequence/Projection.md) — every codepoint gets its point on the S³: the DUCET order, the Super-Fibonacci points, the Hilbert order, and rank r to the r-th point.
+  - [5. Tier 0](Sequence/Tier-0.md) — every codepoint's ID, fixed-point coordinate, Hilbert value, and flags are written once into a fingerprinted file that the client and the database map.
+  - [6. Database](Sequence/Database.md) — the server is tuned, the extensions are created, the database is told its tier 0, and the partitioned content and semantics schema is made.
+  - [7. Recipes](Sequence/Recipes.md) — before a format can be ingested, its recipe says how the generic decomposer takes a file apart into content and puts it back byte for byte.
+  - [8. Content](Sequence/Content.md) — content is broken to codepoints and built back up into a Merkle DAG on the client, deduplicated trunk to leaf, and recorded as entities and trajectories.
+  - [9. Attestations](Sequence/Attestations.md) — curated corpora are recorded as witnesses and claims, in an order fixed by referential integrity and by the first-in-first-out matchups that follow.
+  - [10. Consensus](Sequence/Consensus.md) — each attestation is played as one Glicko-2 matchup at the witness's trust, as it arrives, with no rating periods and no folds.
+  - [11. Indexes](Sequence/Indexes.md) — after a bulk load the indexes are built, the planner is told what the columns really are, and the install is measured and checked against itself.
+  - [12. Web](Sequence/Web.md) — with standings on every claim, a pull reads a standing as a confidence and a cost, and hops and fans out over the web at O(log N) + O(K) a step.
+  - [13. Firmware](Sequence/Firmware.md) — the decisions a pull makes are written as instruction sets, one firmware per human being, kept out of the records.
+  - [14. Pull](Sequence/Pull.md) — a lookup computes the ID on the client and hits the indexes, and the forward pass pulls segments and strands under the firmware.
+  - [15. Users](Sequence/Users.md) — a user's prompt is content, ingested at user-prompt trust and pulled under that user's firmware, and only now does Laplace answer anyone.
 - [Storage](Storage/README.md) — Laplace stores all digital content as a self-deduplicating Merkle DAG with deterministic, lossless storage, laid out as geometry in four dimensions.
   - [Space](Storage/Space.md) — Laplace places everything in a 4-ball inside a 4-cube, with Unicode projected across the 4-ball's surface, the S³, and compositions forming inside it.
   - [Atoms](Storage/Atoms.md) — codepoints are tier 0, the absolute floor: every Unicode codepoint has a deterministic ID and a deterministic coordinate on the S³.
