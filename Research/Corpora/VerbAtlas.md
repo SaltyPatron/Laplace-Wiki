@@ -4,11 +4,9 @@ VerbAtlas attests a clustering of WordNet synsets into frames.
 
 ## Files
 
-The directory is `/vault/Data/.refresh-20260903/VerbAtlas-1.1/extracted/VerbAtlas-1.1.0/`. Data files sit in the inner `VerbAtlas-1.1.0/` directory. The README's package list says that inner directory "contains the files for VerbAtlas 1.0.3". The title of the same README is VerbAtlas 1.1.0.
-
 | Path | Bytes | What the file is | Proof |
 | --- | ---: | --- | --- |
-| `/vault/Data/.refresh-20260903/VerbAtlas-1.1/extracted/VerbAtlas-1.1.0/README.txt` | 9401 | README.txt. | The file |
+| `/vault/Data/.refresh-20260903/VerbAtlas-1.1/extracted/VerbAtlas-1.1.0/README.txt` | 9401 | README.txt. The title is VerbAtlas 1.1.0. The package list says the inner directory "contains the files for VerbAtlas 1.0.3". | The file |
 | `/vault/Data/.refresh-20260903/VerbAtlas-1.1/extracted/VerbAtlas-1.1.0/VerbAtlas-1.1.0/VA_frame_info.tsv` | 69736 | Name, id, and other info for each VerbAtlas frame. | `README.txt`, package contents |
 | `/vault/Data/.refresh-20260903/VerbAtlas-1.1/extracted/VerbAtlas-1.1.0/VerbAtlas-1.1.0/VA_frame_pas.tsv` | 18550 | The argument structure of each VerbAtlas frame. | `README.txt`, package contents |
 | `/vault/Data/.refresh-20260903/VerbAtlas-1.1/extracted/VerbAtlas-1.1.0/VerbAtlas-1.1.0/VA_va2sp.tsv` | 56452 | The selectional preferences of each VerbAtlas frame. | `README.txt`, package contents |
@@ -42,7 +40,7 @@ The directory is `/vault/Data/.refresh-20260903/VerbAtlas-1.1/extracted/VerbAtla
 | Preference ID | "The ID of a VerbAtlas selectional preference." The format section titles the file `VA_preference_ids.tsv`. The file in the package is `VA_preference_info.tsv`. | The preference | `va:0001p` | VerbAtlas 1.1.0 | `README.txt`, format 5 and package contents |
 | Preference reference synset | "Its reference BabelNet synset ID." | The preference ID | `bn:00000467n` on the first data line | VerbAtlas 1.1.0 | `README.txt`, format 5 |
 | Preference name | "Its name." | The preference ID | `absorbent` on the first data line | VerbAtlas 1.1.0 | `README.txt`, format 5 |
-| Fourth field of `VA_preference_info.tsv` | Not defined. The README names three fields. The file has four. | The preference ID and that field | `<https://upload.wikimedia.org/wikipedia/commons/3/3a/Sponge-viscose.jpg`> on the first data line. The URL spelling is what the file writes; the README does not say what it is. | Not defined | `VA_preference_info.tsv`; `README.txt` format 5 |
+| Fourth field of `VA_preference_info.tsv` | Not defined. The README names three fields. The file has four. | The preference ID and that field | `https://upload.wikimedia.org/wikipedia/commons/3/3a/Sponge-viscose.jpg` on the first data line. That is the field text; the README does not say what it is. | Not defined | `VA_preference_info.tsv`; `README.txt` format 5 |
 | Shadow argument | "The shadow arguments, if any, for each BabelNet synset ID. A synset may support multiple shadow arguments in different roles." | The BabelNet synset, then a role, then the argument | `bn:00082124v`, `Stimulus`, `bn:00030466n` | VerbAtlas 1.1.0 | `README.txt`, format 6 |
 | Implicit argument | "The implicit arguments, if any, for each BabelNet synset ID." A role may have multiple implicit arguments, separated by a pipe. | The BabelNet synset, then a role, then the arguments | `bn:00082162v`, `Patient`, `bn:00035378n`, `bn:00035596n`, `bn:00036686n` joined by pipes | VerbAtlas 1.1.0 | `README.txt`, format 7 |
 | PropBank to VerbAtlas | "Each line maps a PropBank predicate sense and its corresponding argument structure to a VerbAtlas frame and its argument structure" as `[PB predicate sense]>[VA frame]` then `[PB role]>[VA role]`. | A PropBank predicate sense and a VerbAtlas frame, and each PropBank role and VerbAtlas role | `abandon.01>va:0255f`, then `A0>Agent`, `A1>Theme`, `A2>Attribute` | VerbAtlas 1.1.0 | `README.txt`, format 8 |

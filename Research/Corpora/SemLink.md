@@ -4,8 +4,6 @@ SemLink attests the mapping between PropBank, VerbNet, and FrameNet, which is a 
 
 ## Files
 
-Paths are the live unpack. The refresh extract is the same 17 files; see Lineage. Bytes are of each file.
-
 | Path | Bytes | What the file is | Proof |
 | --- | ---: | --- | --- |
 | `/vault/Data/SemLink/semlink-master/README.md` | 4973 | Official repository README for the SemLink 2 resource. | The file |
