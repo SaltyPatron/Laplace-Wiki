@@ -1,0 +1,25 @@
+# ProsocialDialog
+
+ProsocialDialog attests a reply to an utterance, the rule of thumb the reply rests on, and the safety labels workers gave.
+
+## Value
+
+| Attestation | What it means | Lands on | Value | Witness | Proof |
+| --- | --- | --- | --- | --- | --- |
+| context | the potentially unsafe utterance | the utterance | string | GPT-3. The card's creation section says GPT-3 generates the potentially unsafe utterances. | [ProsocialDialog card](https://huggingface.co/datasets/allenai/prosocial-dialog/raw/main/README.md); /vault/Data/.refresh-20260903/Safety/ProsocialDialog/prosocial-dialog-d77d7ad3c624c51030f2f32c83e892b3d620b3d4/README.md |
+| response | the guiding utterance grounded on rules-of-thumb (rots) | the context | string | crowdworkers. The card's creation section says crowdworkers provide prosocial responses. | [ProsocialDialog card](https://huggingface.co/datasets/allenai/prosocial-dialog/raw/main/README.md); /vault/Data/.refresh-20260903/Safety/ProsocialDialog/prosocial-dialog-d77d7ad3c624c51030f2f32c83e892b3d620b3d4/README.md |
+| rots | the relevant rules-of-thumb for text not labeled as __casual__. The card writes text in that sentence. | the context | list of string or null | Not defined. The card does not name who wrote the rules. | [ProsocialDialog card](https://huggingface.co/datasets/allenai/prosocial-dialog/raw/main/README.md); /vault/Data/.refresh-20260903/Safety/ProsocialDialog/prosocial-dialog-d77d7ad3c624c51030f2f32c83e892b3d620b3d4/README.md |
+| safety_label | the final verdict of the context according to safety_annotations: __casual__, __possibly_needs_caution__, __probably_needs_caution__, __needs_caution__, __needs_intervention__ | the context | one of those five strings | derived from safety_annotations. Not a fourth worker. | [ProsocialDialog card](https://huggingface.co/datasets/allenai/prosocial-dialog/raw/main/README.md); /vault/Data/.refresh-20260903/Safety/ProsocialDialog/prosocial-dialog-d77d7ad3c624c51030f2f32c83e892b3d620b3d4/README.md |
+| safety_annotations | raw annotations from three workers: casual, needs caution, needs intervention | the context | list of three strings | the three workers | [ProsocialDialog card](https://huggingface.co/datasets/allenai/prosocial-dialog/raw/main/README.md); /vault/Data/.refresh-20260903/Safety/ProsocialDialog/prosocial-dialog-d77d7ad3c624c51030f2f32c83e892b3d620b3d4/README.md |
+| safety_annotation_reasons | the reasons behind the safety annotations in free-form text from each worker | the context | list of strings | the three workers | [ProsocialDialog card](https://huggingface.co/datasets/allenai/prosocial-dialog/raw/main/README.md); /vault/Data/.refresh-20260903/Safety/ProsocialDialog/prosocial-dialog-d77d7ad3c624c51030f2f32c83e892b3d620b3d4/README.md |
+| source | the source of the seed text that was used to craft the first utterance of the dialogue: socialchemistry, sbic, ethics_amt, ethics_reddit | the dialogue | one of those four strings | ProsocialDialog | [ProsocialDialog card](https://huggingface.co/datasets/allenai/prosocial-dialog/raw/main/README.md); /vault/Data/.refresh-20260903/Safety/ProsocialDialog/prosocial-dialog-d77d7ad3c624c51030f2f32c83e892b3d620b3d4/README.md |
+| etc | other information | the dialogue turn | string or null | ProsocialDialog | [ProsocialDialog card](https://huggingface.co/datasets/allenai/prosocial-dialog/raw/main/README.md); /vault/Data/.refresh-20260903/Safety/ProsocialDialog/prosocial-dialog-d77d7ad3c624c51030f2f32c83e892b3d620b3d4/README.md |
+| dialogue_id | the dialogue index | the dialogue | int | ProsocialDialog | [ProsocialDialog card](https://huggingface.co/datasets/allenai/prosocial-dialog/raw/main/README.md); /vault/Data/.refresh-20260903/Safety/ProsocialDialog/prosocial-dialog-d77d7ad3c624c51030f2f32c83e892b3d620b3d4/README.md |
+| response_id | the response index | the turn | int | ProsocialDialog | [ProsocialDialog card](https://huggingface.co/datasets/allenai/prosocial-dialog/raw/main/README.md); /vault/Data/.refresh-20260903/Safety/ProsocialDialog/prosocial-dialog-d77d7ad3c624c51030f2f32c83e892b3d620b3d4/README.md |
+| episode_done | an indicator of whether it is the end of the dialogue | the turn | bool | ProsocialDialog | [ProsocialDialog card](https://huggingface.co/datasets/allenai/prosocial-dialog/raw/main/README.md); /vault/Data/.refresh-20260903/Safety/ProsocialDialog/prosocial-dialog-d77d7ad3c624c51030f2f32c83e892b3d620b3d4/README.md |
+
+## Format
+
+| Record | Fields in order | What a record is | Proof |
+| --- | --- | --- | --- |
+| dialogue turn | context, response, rots, safety_label, safety_annotations, safety_annotation_reasons, source, etc, dialogue_id, response_id, episode_done | One turn: an utterance, the reply, the rules of thumb, and the safety labels. The card says 58K dialogues, 331K utterances, 160K unique RoTs, and 497K dialogue safety labels. Key order was read from the first line of train.json, valid.json, and test.json. | [ProsocialDialog card](https://huggingface.co/datasets/allenai/prosocial-dialog/raw/main/README.md) |

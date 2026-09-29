@@ -24,6 +24,50 @@ Every page in this repository is listed below. Read every listed page in full.
   - [Consensus](Semantics/Consensus.md) — everything attested about a claim, as a whole, provides its overall score: a Glicko-2 standing that tells how hard a strand tugs back.
   - [Pull](Semantics/Pull.md) — Laplace's forward pass is native C recursive operations with A* and indexed lookups, pulling on an interwoven web of entities and attestations.
   - [Personality firmware](Semantics/Firmware.md) — the personality firmware is a pull's decision tree: which segment of which branch to take, and how to combine them, from the observation, its attestations, and the tree across tiers, kept out of the training data.
+- [Corpora](Corpora/README.md) — Each page specifies one collection's record format and the attestation that format supplies.
+  - [Unicode Character Database](Corpora/Unicode.md) — The Unicode Character Database attests the properties of a code point, and the flat XML is that witness.
+  - [ISO 639](Corpora/ISO-639.md) — ISO 639 attests the identity of a language, which is the value other corpora use when they name a language.
+  - [Wordnets](Corpora/Wordnets.md) — The wordnets attest sense, and CILI is the hop that changes language without becoming a second witness of the Princeton gloss.
+  - [Word sense disambiguation](Corpora/Word-Sense-Disambiguation.md) — A sense-annotated corpus attests which wordnet sense a token carries, and each dataset is its own witness because its identifiers start over.
+  - [Universal Dependencies](Corpora/Universal-Dependencies.md) — A Universal Dependencies treebank attests the part of speech and the dependency role of a token, and the tools and the documentation attest the tag set rather than the sentence.
+  - [Hops](Corpora/Hops.md) — The lexicons are separate witnesses, and a hop is the curated edge that lets consensus on a claim in one of them pull on a claim in another.
+  - [FrameNet](Corpora/FrameNet.md) — FrameNet attests frames, the roles in them, and the lexical units that evoke them.
+  - [VerbNet](Corpora/VerbNet.md) — VerbNet attests class membership of a verb and the thematic roles and frames of that class.
+  - [PropBank](Corpora/PropBank.md) — PropBank attests a predicate's roleset and the roles in it.
+  - [SemLink](Corpora/SemLink.md) — SemLink attests the mapping between PropBank, VerbNet, and FrameNet, which is a hop and not a third lexicon.
+  - [Predicate Matrix](Corpora/Predicate-Matrix.md) — Predicate Matrix attests one predicate role joined across VerbNet, WordNet, FrameNet, and PropBank.
+  - [MapNet](Corpora/MapNet.md) — MapNet attests a generated mapping from FrameNet 1.3 to WordNet 1.6, with the precision its own README states and no score on a row.
+  - [VerbAtlas](Corpora/VerbAtlas.md) — VerbAtlas attests a clustering of WordNet synsets into frames.
+  - [FrameBase](Corpora/FrameBase.md) — FrameBase attests a frame schema and its links to WordNet 3.0, and it is not FrameNet.
+  - [WordFrameNet](Corpora/WordFrameNet.md) — WordFrameNet's files pair a frame with a word and a synset offset, and no witness is named because the fields are undefined.
+  - [Wiktionary](Corpora/Wiktionary.md) — Wiktextract attests a written word in one language as one part of speech, and every edition of that extract is the same witness.
+  - [ConceptNet](Corpora/ConceptNet.md) — ConceptNet attests an assertion of a relation between two concepts.
+  - [ATOMIC](Corpora/ATOMIC.md) — ATOMIC 2020 attests commonsense tuples written as a head, a relation, and a tail, and ATOMIC10X is a model-generated witness of the same shape that enters unrated.
+  - [Tatoeba](Corpora/Tatoeba.md) — Tatoeba attests properties of a whole sentence and does not attest the words inside it.
+  - [OpenSubtitles](Corpora/OpenSubtitles.md) — OpenSubtitles attests the language of a subtitle sentence and does not attest the language of a word.
+  - [Project Gutenberg](Corpora/Project-Gutenberg.md) — Project Gutenberg's texts are observed content and attest nothing.
+  - [Tokenizers](Corpora/Tokenizers.md) — A model tokenizer's vocabulary is observed content and attests nothing.
+  - [GeoNames](Corpora/GeoNames.md) — GeoNames attests a place and the names and hierarchy recorded for it.
+  - [Civil Comments](Corpora/Civil-Comments.md) — Civil Comments attests toxicity labels that Jigsaw added to reader comments.
+  - [Measuring Hate Speech](Corpora/Measuring-Hate-Speech.md) — Measuring Hate Speech attests several annotators' ratings of comments.
+  - [HateCheck](Corpora/HateCheck.md) — HateCheck attests labels on constructed hate-speech tests, and SGHateCheck is that test extended to Malay, Mandarin, Singlish, and Tamil.
+  - [ProsocialDialog](Corpora/Prosocial-Dialog.md) — ProsocialDialog attests a reply to an utterance, the rule of thumb the reply rests on, and the safety labels workers gave.
+  - [RealToxicityPrompts](Corpora/RealToxicityPrompts.md) — RealToxicityPrompts attests a prompt, a continuation, and scores that are lineage of the Perspective API.
+  - [Social Bias Frames](Corpora/Social-Bias-Frames.md) — Social Bias Frames attests what workers said a post implied, both per annotation and aggregated per post.
+  - [Social Chemistry](Corpora/Social-Chemistry.md) — Social-Chem-101 attests rules of thumb about situations and the breakdowns workers made of them.
+  - [ToxiGen](Corpora/ToxiGen.md) — ToxiGen attests labels on machine-generated statements about groups, and the Parquet and the CSV are the same rows.
+  - [XSTest](Corpora/XSTest.md) — XSTest attests prompts built for exaggerated safety behaviour and the annotations on three models' completions.
+  - [COCO](Corpora/COCO.md) — COCO is a large-scale object detection, segmentation, and captioning dataset: each caption describes the specified image, each object instance annotation contains the category id and segmentation mask of the object and an enclosing bounding box measured from the top left image corner, and the image files are the pictures those annotations name.
+  - [Code authority](Corpora/Code-Authority.md) — The four checkouts `cpython`, `docs`, `postgres`, and `runtime` are source and documentation collections.
+  - [Code corpus](Corpora/Code-Corpus.md) — `/vault/models/code-corpus` holds 397,004 files in the old project trees `archive-001-Deleted-Solutions`, `archive-002-projects`, `archive-BACKUP`, `github-canonical`, and `vault-E-Repositories`, 40,190,205,104 bytes by `du -sb` on 2026-09-29.
+  - [Games](Corpora/Games.md) — PGN collections attest a chess game by the Seven Tag Roster, Event, Site, Date, Round, White, Black, and Result, and by the movetext, and the Lichess opening tables are a separate witness of an ECO code, an English opening name, and a PGN move sequence.
+  - [NLTK](Corpora/NLTK.md) — The Brown Corpus is a standard corpus of present-day edited American English, for use with digital computers, and the only corpus in this drop is that corpus in Form C (tagged).
+  - [Natural Earth](Corpora/Natural-Earth.md) — Most lines and areas contain embedded feature names, which are ranked by relative importance, with up to eight rankings per data theme.
+  - [The Stack v2](Corpora/Stack-v2.md) — The Stack v2, published by the BigCode Project, contains over 3B files in 600+ programming and markup languages, and each row is one source file.
+  - [Tiny codes](Corpora/Tiny-Codes.md) — This synthetic dataset, published by nampdn-ai as Tiny Codes, is a collection of 1.6 millions short and clear code snippets that can help LLM models learn how to reason with both natural and programming languages.
+  - [Tree-sitter](Corpora/TreeSitter.md) — A grammar's node types are the labels of that grammar: `node-types.json` provides structured data about every possible syntax node, and each object's `type` string indicates which grammar rule the node represents.
+  - [Weights](Corpora/Weights.md) — These directories are model weights and their companion configs and tokenizers.
+
 - [Query](Query.md) — Laplace finds content by computing its ID and coordinates on the client and looking them up with spatial indexes.
 - [Operations](Operations/README.md) — Operations covers what Laplace runs on and how it is built, configured, deployed, and tuned, from bare hardware to loaded, indexed, and measured content.
   - [Setup](Operations/Setup.md) — Laplace runs on x86-64 CPUs, uses every SIMD level the CPU has, never requires a GPU, and wants its database heap, write-ahead log, and temporary files on separate fast drives.
@@ -47,49 +91,5 @@ Every page in this repository is listed below. Read every listed page in full.
   - [Trust](Research/Trust.md) — Research and measurements on how much a witness's attestation should count and how hard each kind of word or relation should pull, measured on the local witnesses, on 88 languages of Universal Dependencies, and on word sense disambiguation.
   - [Engine Measurements](Research/Engine.md) — The first shared components of the real implementation, Laplace-Native and Laplace-postgres, were measured on a tuned PostgreSQL server with the Gutenberg corpus, and every number on this page comes from their benchmarks.
   - [Model Ingestion](Research/Models.md) — First measurements of AI models as sources: a farm of 33 models surveyed from metadata alone, every tokenizer ingested as content, three models' embeddings recorded as witnessed testimony, and one model interviewed with templates taken from the corpus, all graded against the attested web.
-  - [Corpora](Research/Corpora/README.md) — The collections at `/vault/Data`, `/vault/Data/.refresh-20260903`, and `/vault/models` are the files Laplace ingests.
-    - [Corpus layout](Research/Corpora/Layout.md) — Every collection under `/vault/Data`, `/vault/Data/.refresh-20260903`, and `/vault/models` is listed with its file count, its size, and its largest files.
-    - [Unicode Character Database](Research/Corpora/Unicode.md) — The Unicode Character Database attests the properties of a code point, and the flat XML is that witness.
-    - [ISO 639](Research/Corpora/ISO-639.md) — ISO 639 attests the identity of a language, which is the value other corpora use when they name a language.
-    - [Wordnets](Research/Corpora/Wordnets.md) — The wordnets attest sense, and CILI is the hop that changes language without becoming a second witness of the Princeton gloss.
-    - [Word sense disambiguation](Research/Corpora/Word-Sense-Disambiguation.md) — A sense-annotated corpus attests which wordnet sense a token carries, and each dataset is its own witness because its identifiers start over.
-    - [Universal Dependencies](Research/Corpora/Universal-Dependencies.md) — A Universal Dependencies treebank attests the part of speech and the dependency role of a token, and the tools and the documentation attest the tag set rather than the sentence.
-    - [Hops](Research/Corpora/Hops.md) — The lexicons are separate witnesses, and a hop is the curated edge that lets consensus on a claim in one of them pull on a claim in another.
-    - [FrameNet](Research/Corpora/FrameNet.md) — FrameNet attests frames, the roles in them, and the lexical units that evoke them.
-    - [VerbNet](Research/Corpora/VerbNet.md) — VerbNet attests class membership of a verb and the thematic roles and frames of that class.
-    - [PropBank](Research/Corpora/PropBank.md) — PropBank attests a predicate's roleset and the roles in it.
-    - [SemLink](Research/Corpora/SemLink.md) — SemLink attests the mapping between PropBank, VerbNet, and FrameNet, which is a hop and not a third lexicon.
-    - [Predicate Matrix](Research/Corpora/Predicate-Matrix.md) — Predicate Matrix attests one predicate role joined across VerbNet, WordNet, FrameNet, and PropBank.
-    - [MapNet](Research/Corpora/MapNet.md) — MapNet attests a generated mapping from FrameNet 1.3 to WordNet 1.6, with the precision its own README states and no score on a row.
-    - [VerbAtlas](Research/Corpora/VerbAtlas.md) — VerbAtlas attests a clustering of WordNet synsets into frames.
-    - [FrameBase](Research/Corpora/FrameBase.md) — FrameBase attests a frame schema and its links to WordNet 3.0, and it is not FrameNet.
-    - [WordFrameNet](Research/Corpora/WordFrameNet.md) — WordFrameNet's files pair a frame with a word and a synset offset, and no witness is named because the fields are undefined.
-    - [Wiktionary](Research/Corpora/Wiktionary.md) — Wiktextract attests a written word in one language as one part of speech, and every edition of that extract is the same witness.
-    - [ConceptNet](Research/Corpora/ConceptNet.md) — ConceptNet attests an assertion of a relation between two concepts.
-    - [ATOMIC](Research/Corpora/ATOMIC.md) — ATOMIC 2020 attests commonsense tuples written as a head, a relation, and a tail, and ATOMIC10X is a model-generated witness of the same shape that enters unrated.
-    - [Tatoeba](Research/Corpora/Tatoeba.md) — Tatoeba attests properties of a whole sentence and does not attest the words inside it.
-    - [OpenSubtitles](Research/Corpora/OpenSubtitles.md) — OpenSubtitles attests the language of a subtitle sentence and does not attest the language of a word.
-    - [Project Gutenberg](Research/Corpora/Project-Gutenberg.md) — Project Gutenberg's texts are observed content and attest nothing.
-    - [Tokenizers](Research/Corpora/Tokenizers.md) — A model tokenizer's vocabulary is observed content and attests nothing.
-    - [GeoNames](Research/Corpora/GeoNames.md) — GeoNames attests a place and the names and hierarchy recorded for it.
-    - [Civil Comments](Research/Corpora/Civil-Comments.md) — Civil Comments attests toxicity labels that Jigsaw added to reader comments.
-    - [Measuring Hate Speech](Research/Corpora/Measuring-Hate-Speech.md) — Measuring Hate Speech attests several annotators' ratings of comments.
-    - [HateCheck](Research/Corpora/HateCheck.md) — HateCheck attests labels on constructed hate-speech tests, and SGHateCheck is that test extended to Malay, Mandarin, Singlish, and Tamil.
-    - [ProsocialDialog](Research/Corpora/Prosocial-Dialog.md) — ProsocialDialog attests a reply to an utterance, the rule of thumb the reply rests on, and the safety labels workers gave.
-    - [RealToxicityPrompts](Research/Corpora/RealToxicityPrompts.md) — RealToxicityPrompts attests a prompt, a continuation, and scores that are lineage of the Perspective API.
-    - [Social Bias Frames](Research/Corpora/Social-Bias-Frames.md) — Social Bias Frames attests what workers said a post implied, both per annotation and aggregated per post.
-    - [Social Chemistry](Research/Corpora/Social-Chemistry.md) — Social-Chem-101 attests rules of thumb about situations and the breakdowns workers made of them.
-    - [ToxiGen](Research/Corpora/ToxiGen.md) — ToxiGen attests labels on machine-generated statements about groups, and the Parquet and the CSV are the same rows.
-    - [XSTest](Research/Corpora/XSTest.md) — XSTest attests prompts built for exaggerated safety behaviour and the annotations on three models' completions.
-    - [COCO](Research/Corpora/COCO.md) — COCO is a large-scale object detection, segmentation, and captioning dataset: each caption describes the specified image, each object instance annotation contains the category id and segmentation mask of the object and an enclosing bounding box measured from the top left image corner, and the image files are the pictures those annotations name.
-    - [Code authority](Research/Corpora/Code-Authority.md) — The four checkouts `cpython`, `docs`, `postgres`, and `runtime` are source and documentation collections.
-    - [Code corpus](Research/Corpora/Code-Corpus.md) — `/vault/models/code-corpus` holds 397,004 files in the old project trees `archive-001-Deleted-Solutions`, `archive-002-projects`, `archive-BACKUP`, `github-canonical`, and `vault-E-Repositories`, 40,190,205,104 bytes by `du -sb` on 2026-09-29.
-    - [Games](Research/Corpora/Games.md) — PGN collections attest a chess game by the Seven Tag Roster, Event, Site, Date, Round, White, Black, and Result, and by the movetext, and the Lichess opening tables are a separate witness of an ECO code, an English opening name, and a PGN move sequence.
-    - [NLTK](Research/Corpora/NLTK.md) — The Brown Corpus is a standard corpus of present-day edited American English, for use with digital computers, and the only corpus in this drop is that corpus in Form C (tagged).
-    - [Natural Earth](Research/Corpora/Natural-Earth.md) — Most lines and areas contain embedded feature names, which are ranked by relative importance, with up to eight rankings per data theme.
-    - [The Stack v2](Research/Corpora/Stack-v2.md) — The Stack v2, published by the BigCode Project, contains over 3B files in 600+ programming and markup languages, and each row is one source file.
-    - [Tiny codes](Research/Corpora/Tiny-Codes.md) — This synthetic dataset, published by nampdn-ai as Tiny Codes, is a collection of 1.6 millions short and clear code snippets that can help LLM models learn how to reason with both natural and programming languages.
-    - [Tree-sitter](Research/Corpora/TreeSitter.md) — A grammar's node types are the labels of that grammar: `node-types.json` provides structured data about every possible syntax node, and each object's `type` string indicates which grammar rule the node represents.
-    - [Weights](Research/Corpora/Weights.md) — These directories are model weights and their companion configs and tokenizers.
   - [Relations Research](Research/Relations.md) — Research into rating models, evidence counts, search over rated relations, truth discovery, and provenance is background for Laplace's semantics layer.
 - [Spitball](Spitball.md) — text that has not been properly considered for the documentation as a whole.

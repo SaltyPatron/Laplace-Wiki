@@ -1,0 +1,20 @@
+# The Stack v2
+
+The Stack v2, published by the BigCode Project, contains over 3B files in 600+ programming and markup languages, and each row is one source file.
+
+## Value
+
+| Attestation | What it means | Lands on | Value | Witness | Proof |
+| --- | --- | --- | --- | --- | --- |
+| Source file | Each row is one source file; the published parquet stores Software Heritage file IDs and metadata, and the card says the file bytes are downloaded separately by `blob_id` | The source file identified by `blob_id`, `content_id`, and `path` | The file identifier, not a text span stored in the parquet | BigCode | [BigCode, The Stack v2 dataset card](https://huggingface.co/datasets/bigcode/the-stack-v2) |
+| `language` | Programming language of the file, detected by go-enry / linguist | That same source file | The `language` string | BigCode | [BigCode, The Stack v2 dataset card](https://huggingface.co/datasets/bigcode/the-stack-v2) |
+| `detected_licenses` | SPDX licenses detected by ScanCode | That same source file | The license list | BigCode | [BigCode, The Stack v2 dataset card](https://huggingface.co/datasets/bigcode/the-stack-v2) |
+| `license_type` | Inferred license type, `permissive` or `no_license` | That same source file | The `license_type` string | BigCode | [BigCode, The Stack v2 dataset card](https://huggingface.co/datasets/bigcode/the-stack-v2) |
+| `is_vendor` | Vendor-file indicator, detected by go-enry | That same source file | The boolean | BigCode | [BigCode, The Stack v2 dataset card](https://huggingface.co/datasets/bigcode/the-stack-v2) |
+| `is_generated` | Generated-file indicator, detected by go-enry | That same source file | The boolean | BigCode | [BigCode, The Stack v2 dataset card](https://huggingface.co/datasets/bigcode/the-stack-v2) |
+
+## Format
+
+| Record | Fields in order | What a record is | Proof |
+| --- | --- | --- | --- |
+| One source file | `blob_id` (string): Software Heritage ID of the file on AWS S3. `directory_id` (string): Software Heritage ID of the root directory of the repository. `path` (string): file path within the repository. `content_id` (string): Software Heritage content ID. `detected_licenses` (list of string): SPDX licenses detected by ScanCode. `license_type` (string): inferred license type, `permissive` or `no_license`. `repo_name` (string): repository name on GitHub. `snapshot_id` (string): Software Heritage snapshot ID. `revision_id` (string): Software Heritage revision ID. `branch_name` (string): repository branch name. `visit_date` (timestamp[ns]): Software Heritage crawl timestamp. `revision_date` (timestamp[ns]): Software Heritage revision timestamp. `committer_date` (timestamp[ns]): revision timestamp reported by the committer. `github_id` (int64): GitHub identifier for the repository. `star_events_count` (int64): stars calculated from GHArchive events. `fork_events_count` (int64): forks calculated from GHArchive events. `gha_license_id` (string): GHArchive SPDX license identifier, empty if the repo is missing. `gha_event_created_at` (timestamp[ns]): timestamp of the latest GHArchive event for this repository. `gha_created_at` (timestamp[ns]): timestamp of repository creation on GitHub, empty if the repo is missing. `gha_language` (string): repository primary language on GitHub, empty if the repo is missing. `src_encoding` (string): original encoding of the file content before conversion to UTF-8. `language` (string): programming language of the file, detected by go-enry / linguist. `is_vendor` (bool): vendor-file indicator, detected by go-enry. `is_generated` (bool): generated-file indicator, detected by go-enry. `length_bytes` (int64): length of the file content in UTF-8 bytes. `extension` (string): file extension. | A file-level row of `bigcode/the-stack-v2`. Pyarrow read the same 26 columns on all 28 local files, and there is no `content` column. The local files hold 230,786,710 rows | [BigCode, The Stack v2 dataset card](https://huggingface.co/datasets/bigcode/the-stack-v2); pyarrow schema read on 2026-09-29 |
