@@ -84,7 +84,7 @@ The part of the 4-cube outside the 4-ball is forbidden space. The codepoints are
 
 - **In:** the order of 4.3 and the sorted points of 4.6.
 - **Do:** DUCET rank *r* takes the *r*-th point of the walk. Rank and point are both fixed by the Unicode version, and IDs are not derived from either.
-- **Out:** one point on the S³ for every codepoint.
+- **Out:** one point on the S³ for every codepoint. The monorepo states the placement as the open radical-inverse law with no fixed n; that difference is [30. Conflicts](Conflicts.md) P1.
 - **Check:** collation neighbors are spatial neighbors. The median distance between consecutive DUCET ranks is 0.026, against 1.686 under the plain spiral index; the mean nearest-neighbor distance of the full set is 0.0199. Case, width, and style variants of one letter are consecutive ranks, so `a`, `ａ`, `𝐚`, `ⓐ`, and `A` are consecutive points; the mean pairwise distance within `A a ä á à â å ã ā` is 0.086, at most 0.142. Word centroids inherit it: `King` to `king` 0.023, `king` to `ding` 0.105, `ding` to `dong` 0.079, `dong` to `kong` 0.105; from `king`: `ring` 0.049, `sing` 0.049, `kong` 0.079, `cat` 0.238, `猫` 0.651. The placement is not exact, but it is predictable and recordable.
 - **From:** [Atoms: Placement](../Storage/Atoms.md#placement), [Research: Placement: Variants compared](../Research/Placement.md#variants-compared), [Research: Placement: Words under H1](../Research/Placement.md#words-under-h1).
 

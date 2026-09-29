@@ -22,7 +22,7 @@ Laplace is native C, with SQL and C# as orchestration. Bit-perfect determinism a
 
 - **In:** the machine's drives.
 - **Do:** put the PostgreSQL heap and indexes on the fastest drive, NVMe, for random reads; the write-ahead log on a separate SSD, for sequential writes that do not compete with reads; PostgreSQL temporary files on a separate SSD as a tablespace, for sorts and index builds that spill; repositories and build trees on an SSD; datasets and archives on any bulk storage, read once at ingestion.
-- **Out:** the paths the database in [6. Database](Database.md) is initialized on.
+- **Out:** the paths the database in [8. Database](Database.md) is initialized on.
 - **Check:** a database on a spinning disk works, and every time it measures is an upper bound: the prototype's database sat on a USB hard disk.
 - **From:** [Setup: Storage](../Operations/Setup.md#storage).
 
@@ -59,8 +59,8 @@ Laplace is native C, with SQL and C# as orchestration. Bit-perfect determinism a
   - **hnswlib**.
   - **GEOS, PROJ, GDAL**: PostGIS's own dependencies.
   - **PostGIS 3.6**: built against the PostgreSQL of [3. Builds](Builds.md).
-  - **tree-sitter**: the runtime and the grammars that code recipes read in [7. Recipes](Recipes.md).
-  - **liburing 2.1** or newer: optional, for the I/O method test in [6. Database](Database.md).
+  - **tree-sitter**: the runtime and the grammars that code recipes read in [10. Recipes](Recipes.md).
+  - **liburing 2.1** or newer: optional, for the I/O method test in [8. Database](Database.md).
   - **PostgreSQL 18** is built in [3. Builds](Builds.md), not here, because the extension's flags come from it.
 - **Out:** installed dependencies under `/repos/deps`, each with its build fingerprint.
 - **From:** [Setup: Repositories](../Operations/Setup.md#repositories), [Setup: Toolchain](../Operations/Setup.md#toolchain), [Builds: Laplace-Native](../Operations/Builds.md#laplace-native), [Research: Numerics: Deterministic builds](../Research/Numerics.md#deterministic-builds).

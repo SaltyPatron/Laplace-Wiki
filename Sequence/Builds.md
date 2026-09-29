@@ -48,7 +48,7 @@ PostgreSQL, Laplace-Native, Laplace-postgres, and Laplace-Engine are built in th
 ### 3.6 Build the tree-sitter grammars
 
 - **In:** the tree-sitter runtime and the grammar checkouts.
-- **Do:** compile each grammar the code recipes of [7. Recipes](Recipes.md) will read. Every node records its byte range, and whitespace is the gap between tokens, so the tokens plus the stored gaps rebuild a source file exactly. A grammar that ships without generated sources, such as LaTeX, needs `tree-sitter generate` before use.
+- **Do:** compile each grammar the code recipes of [10. Recipes](Recipes.md) will read. Every node records its byte range, and whitespace is the gap between tokens, so the tokens plus the stored gaps rebuild a source file exactly. A grammar that ships without generated sources, such as LaTeX, needs `tree-sitter generate` before use.
 - **Out:** the grammars under the build root.
 - **From:** [Research: Recipes: Grammars](../Research/Recipes.md#grammars).
 
@@ -63,7 +63,7 @@ PostgreSQL, Laplace-Native, Laplace-postgres, and Laplace-Engine are built in th
 
 - **In:** every build of this stage.
 - **Do:** every build has a fingerprint. Record it, so an install knows which build it has.
-- **Out:** the fingerprints an install is identified by, alongside the tier-0 fingerprint of [5. Tier 0](Tier-0.md).
+- **Out:** the fingerprints an install is identified by, alongside the tier-0 fingerprint of [5. Tier 0](Tier-0.md). One deployed revision: the application, the prefix native libraries, the PostgreSQL execution module, and the tier-0 perf-cache identify one build, and [29. Maintenance](Maintenance.md) operation 29.7 proves it in the serving process.
 - **From:** [Architecture: Native C](../Architecture.md#native-c).
 
 ## What this stage leaves behind

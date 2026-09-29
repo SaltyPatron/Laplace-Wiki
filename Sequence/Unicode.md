@@ -14,7 +14,7 @@ Nothing. This is the start of the chain.
 
 - **In:** the Unicode release to build from.
 - **Do:** choose one version of the Unicode data and the same version of the segmentation tooling. Tier 0 and segmentation always use the same Unicode version. A new version is adopted only when its data and its segmentation tooling are both final.
-- **Out:** one version number that every later fingerprint depends on.
+- **Out:** one version number that every later fingerprint depends on. Unicode's 1,114,112 positions are the selected standards window of this generation; the abstract tier-0 rank law is open-ended, with no terminal N, and every concrete perf-cache, database, and observation is finite. See [30. Conflicts](Conflicts.md) P1 for how rank becomes point.
 - **Check:** the segmentation library reports the same Unicode version as the data. ICU 70.1, on Unicode 14 rules, passed 756 of 766 grapheme tests, 1,940 of 1,944 word tests, and 512 of 512 sentence tests against the Unicode 17 files; ICU 78.3, on Unicode 17 rules, passed all of them. A mismatch fails the conformance tests in 1.7.
 - **From:** [Atoms: Unicode versions](../Storage/Atoms.md#unicode-versions), [Research: Unicode: Conformance](../Research/Unicode.md#conformance).
 
@@ -37,7 +37,7 @@ Nothing. This is the start of the chain.
 ### 1.4 Read the normalization data
 
 - **In:** `UnicodeData.txt`, or the `dm` and `ccc` attributes of the XML.
-- **Do:** read every canonical decomposition mapping and combining class. These are needed in [4. Projection](Projection.md) to decompose Hangul syllables to jamo and to break ties at the identical level, and in [8. Content](Content.md) to record each source's normalization form as a filter.
+- **Do:** read every canonical decomposition mapping and combining class. These are needed in [4. Projection](Projection.md) to decompose Hangul syllables to jamo and to break ties at the identical level, and in [11. Content](Content.md) to record each source's normalization form as a filter.
 - **Out:** the NFD of every codepoint.
 - **Check:** no canonically decomposable character other than the 11,172 Hangul syllables lacks an explicit `allkeys.txt` entry.
 - **From:** [Research: Unicode: How every codepoint gets weights](../Research/Unicode.md#how-every-codepoint-gets-weights).
@@ -65,6 +65,13 @@ Nothing. This is the start of the chain.
 - **Out:** proof that the segmentation tooling is at the version fixed in 1.1.
 - **Check:** 766 of 766 grapheme, 1,944 of 1,944 word, 512 of 512 sentence lines pass. For the collation order this stage feeds into, the 286 disagreeing adjacent pairs out of 197,767 lines are all explained by expansions whose key is a strict prefix of another's, or by the combining probe; none is an error in the order of single codepoints.
 - **From:** [Research: Unicode: Conformance tests](../Research/Unicode.md#conformance-tests), [Research: Unicode: Conformance](../Research/Unicode.md#conformance).
+
+### 1.8 Bind the generation as a source
+
+- **In:** the files of 1.2 to 1.7.
+- **Do:** the Unicode release is the first source generation of [9. Sources](Sources.md): authority Unicode, this release, the exact artifact graph of the files above with a disposition for each, the UAX #42 streaming reader as its provider, the UCD recipe as its semantic recipe, and the witness `[Unicode, 17.0.0]` at trust class StandardsDerived, 0.95. The same decomposer that will populate the database's tier 0 emits the tier-0 perf-cache, so the two are bit-identical.
+- **Out:** the generation every later stage is fingerprinted against.
+- **From:** `docs/plan/ASSIMILATION_ROADMAP.md` laws 1 and 8; [Atoms: Generation](../Storage/Atoms.md#generation).
 
 ## What this stage leaves behind
 
