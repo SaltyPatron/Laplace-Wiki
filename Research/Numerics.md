@@ -192,6 +192,17 @@ Observations:
 - Under jitter, Fréchet reports the noise amplitude (0.087), and EDR and LCSS with ε above the noise give 0.
 - The 1-outlier Fréchet removes a single outlier entirely (0.00).
 
+### Two stored sentences
+
+`laplace_text` walks a path in stored order. Two tier-3 observations render as "The king and queen had twenty children." and "The king and queen had no heirs." Each has fourteen constituents. Twelve are the same entities in the same places. The two that differ are `twenty` against `no`, and `children` against `heirs`. The trajectories are those constituents' `entity.coord` values in that order. The packed path is not a coordinate, and `laplace_vertex_ids` is not this order: it sorts and uniques the IDs.
+
+| B compared with the twenty sentence | dFr | 1-outlier dFr | 2-outlier dFr | DTW | EDR, ε = 0.1 |
+| --- | --- | --- | --- | --- | --- |
+| The heirs sentence | 0.2025 | 0.1073 | 0 | 0.3098 | 2 |
+| Itself, `twenty` replaced by the coordinate of `xylophone` | 0.0904 | 0 | 0 | 0.0904 | 0 |
+
+The discrete Fréchet 0.2025 is the chord from `twenty` to `no`. Skipping that vertex leaves the chord from `children` to `heirs`, 0.1073. Skipping both leaves 0. EDR at ε = 0.1 counts those two edits. It counts none for the `xylophone` substitution, because that chord is 0.0904. "become king or queen" holds both words on a different tree: against the twenty sentence the discrete Fréchet is 0.2480, and skipping two vertices leaves 0.2480. There are 393 tier-3 observations that hold both words, from 7 constituents to 2,353. The only attested claims that hold both are three unwitnessed stock tuples, `[queen, conj, king]`, `[queen, conj:and, king]`, and `[queen, nsubj, king]`, each read at 0.0175 from rating 1500 and deviation 350. They are not this shape. The two constituents that differ in the heirs sentence are content words, not a timestamp. Whether a match may skip them is the [firmware](../Semantics/Firmware.md).
+
 [Geometry](Geometry.md) covers Fréchet in 4D and in PostGIS.
 
 ## Sources

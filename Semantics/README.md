@@ -14,3 +14,4 @@ There is no record ballooning. Laplace does not record that `dog` translates to 
 - [Claims](Claims.md) are how that knowledge is recorded.
 - [Consensus](Consensus.md) is how strongly it holds, as a Glicko-2 standing.
 - [The pull](Pull.md) is how Laplace uses it: its forward pass.
+- [Personality firmware](Firmware.md) is the decision tree of that forward pass: which segment of which branch to take, and how to combine them.

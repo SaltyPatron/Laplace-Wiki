@@ -1,0 +1,76 @@
+# SemLink
+
+SemLink attests the mapping between PropBank, VerbNet, and FrameNet, which is a hop and not a third lexicon.
+
+## Files
+
+Paths are the live unpack. The refresh extract is the same 17 files; see Lineage. Bytes are of each file.
+
+| Path | Bytes | What the file is | Proof |
+| --- | ---: | --- | --- |
+| `/vault/Data/SemLink/semlink-master/README.md` | 4973 | Official repository README for the SemLink 2 resource. | The file |
+| `/vault/Data/SemLink/semlink-master/instances/pb-vn2.json` | 312656 | Mapping file between PropBank and VerbNet. | `/vault/Data/SemLink/semlink-master/README.md` |
+| `/vault/Data/SemLink/semlink-master/instances/vn-fn2.json` | 67512 | Mapping file between VerbNet and FrameNet. | `/vault/Data/SemLink/semlink-master/README.md` |
+| `/vault/Data/SemLink/semlink-master/instances/semlink-2` | 14217973 | Final annotated instances. | `/vault/Data/SemLink/semlink-master/README.md` |
+| `/vault/Data/SemLink/semlink-master/other_resources/VN-FNRoleMapping.txt` | 127920 | XML role-mapping file. Its own DTD names the elements. The SemLink 2 README does not. | The DTD inside the file |
+| `/vault/Data/SemLink/semlink-master/other_resources/vn-fn2.s` | 198731 | XML file of `vncls` elements. The README calls `other_resources` supporting files and does not define this one. | `/vault/Data/SemLink/semlink-master/README.md` |
+| `/vault/Data/SemLink/semlink-master/other_resources/external_vn2pb.json` | 95878 | JSON object. The README does not define it. | `/vault/Data/SemLink/semlink-master/README.md` |
+| `/vault/Data/SemLink/semlink-master/other_resources/common_objects` | 158116 | Supporting file. The README does not define its fields. | `/vault/Data/SemLink/semlink-master/README.md` |
+| `/vault/Data/SemLink/semlink-master/other_resources/1.2.2c.okay` | 9930927 | Supporting file. The README does not define its fields. | `/vault/Data/SemLink/semlink-master/README.md` |
+| `/vault/Data/SemLink/semlink-master/tools/annotation.py` | 8409 | Reader the README points at for annotated instances. | `/vault/Data/SemLink/semlink-master/README.md` |
+| `/vault/Data/SemLink/semlink-master/tools/SemLink.py` | 12507 | Script for handling data and creating SemLink. | `/vault/Data/SemLink/semlink-master/README.md` |
+| `/vault/Data/SemLink/semlink-master/tools/config.py` | 1875 | Script for handling data and creating SemLink. | `/vault/Data/SemLink/semlink-master/README.md` |
+| `/vault/Data/SemLink/semlink-master/tools/ontonotes.py` | 2135 | Script for handling data and creating SemLink. | `/vault/Data/SemLink/semlink-master/README.md` |
+| `/vault/Data/SemLink/semlink-master/tools/propbank.py` | 7531 | Script for handling data and creating SemLink. | `/vault/Data/SemLink/semlink-master/README.md` |
+| `/vault/Data/SemLink/semlink-master/tools/verbnet.py` | 28050 | Script for handling data and creating SemLink. | `/vault/Data/SemLink/semlink-master/README.md` |
+| `/vault/Data/SemLink/semlink-master/tools/vnfn.py` | 4367 | Script for handling data and creating SemLink. | `/vault/Data/SemLink/semlink-master/README.md` |
+| `/vault/Data/SemLink/semlink-master/.idea/vcs.xml` | 180 | IDE checkout file. Not described by the README. | The file |
+
+## Attestations
+
+| Attestation | What it means | Lands on | Value | Witness | Proof |
+| --- | --- | --- | --- | --- | --- |
+| Hop | Mapping between PropBank, VerbNet, and FrameNet, not a third lexicon. [Claims](../../Semantics/Claims.md#the-linguistic-super-highway) names SemLink. [Pull](../../Semantics/Pull.md#hop-and-fanout) is the pull across a hop. [Hops](Hops.md) lists the edge. | PropBank, VerbNet, and FrameNet | The mapping files and the instances | SemLink 2 | `/vault/Data/SemLink/semlink-master/README.md` |
+| PropBank–VerbNet mapping | "To find which VerbNet senses a roleset in PB maps to." The object is keyed by roleset, then by VerbNet class number. | A PropBank roleset and a VerbNet class | 4,177 roleset keys. `abduct.01` maps to class `10.5`. | SemLink 2 | `/vault/Data/SemLink/semlink-master/README.md`, `/vault/Data/SemLink/semlink-master/instances/pb-vn2.json` |
+| PropBank argument to VerbNet thematic role | The README says these are lists of tuples of a PropBank argument (`ARG0`, `ARG1`) and a VerbNet thematic role (`Agent`, `Patient`). The file stores an object, not a list of tuples. | The roleset and VerbNet class above | Under `abduct.01` / `10.5`, `ARG0` is `agent` and `ARG1` is `theme`. | SemLink 2 | `/vault/Data/SemLink/semlink-master/README.md`, `/vault/Data/SemLink/semlink-master/instances/pb-vn2.json` |
+| VerbNet–FrameNet mapping | "To find which FrameNet frames a particular verb sense in VN belongs to." The key is the VerbNet class, a hyphen, and the verb. | A VerbNet class member and FrameNet frames | 1,681 keys. `26.5-shake` is the list `Moving_in_place`, `Body_movement`, `Cause_to_move_in_place`. | SemLink 2 | `/vault/Data/SemLink/semlink-master/README.md`, `/vault/Data/SemLink/semlink-master/instances/vn-fn2.json` |
+| PropBank–FrameNet | "We don't include direct links from PB to FN, but they can be retrieved through VN." One README sentence names `pb-fn2.json`. That file is not in the tree. The VerbNet–FrameNet file is `vn-fn2.json`. | PropBank and FrameNet, only through VerbNet | No direct mapping file | SemLink 2 | `/vault/Data/SemLink/semlink-master/README.md` |
+| VerbNet role to FrameNet argument | "We are currently (22.03.2021) in the process of providing updated mappings from VN roles to FN arguments." | VerbNet thematic roles and FrameNet frame elements | The README does not point at a finished file for this | SemLink 2 | `/vault/Data/SemLink/semlink-master/README.md` |
+| Linked resource versions | "Designed to handle the latest versions of each of its linked resources: VerbNet 3.3, the Unified PropBank frame files, and FrameNet 1.7." | Those three releases | The version names | SemLink 2 | `/vault/Data/SemLink/semlink-master/README.md` |
+| Instance | "Predicates in the Ontonotes corpora; they contain annotation for the above three resources as well as OntoNotes sense groups and argument annotations. Not all instances contain annotation for all resources." | One predicate token in an OntoNotes file | One whitespace-separated line of `semlink-2` | SemLink 2 | `/vault/Data/SemLink/semlink-master/README.md` |
+| `source_file` | The file token. `annotation.py` keeps the basename after `/`. | The instance | `wsj_0001.parse` on the first line | `annotation.py` | `/vault/Data/SemLink/semlink-master/tools/annotation.py`, `/vault/Data/SemLink/semlink-master/instances/semlink-2` |
+| `sentence_no` | Sentence number, the second token. | The instance | `0` on the first line | `annotation.py` | `/vault/Data/SemLink/semlink-master/tools/annotation.py` |
+| `token_no` | Token number, the third token. | The instance | `8` on the first line | `annotation.py` | `/vault/Data/SemLink/semlink-master/tools/annotation.py` |
+| `verb` | The verb, the fourth token. The reader strips a trailing `-v`. | The instance | `join` on the first line | `annotation.py` | `/vault/Data/SemLink/semlink-master/tools/annotation.py` |
+| `vn_class` | VerbNet class, the fifth token. | The instance and VerbNet | `22.1-2-1` on the first line | `annotation.py` | `/vault/Data/SemLink/semlink-master/tools/annotation.py` |
+| `fn_frame` | FrameNet frame, the sixth token. | The instance and FrameNet | `Cause_to_amalgamate` on the first line | `annotation.py` | `/vault/Data/SemLink/semlink-master/tools/annotation.py` |
+| `pb_roleset` | PropBank roleset, the seventh token. | The instance and PropBank | `join.01` on the first line | `annotation.py` | `/vault/Data/SemLink/semlink-master/tools/annotation.py` |
+| `on_group` | OntoNotes sense group, the eighth token. The reader stores it as absent when the token is `null`. | The instance | `None` on the first line. The reader does not special-case the spelling `None`. | `annotation.py` and the README's "OntoNotes sense groups" | `/vault/Data/SemLink/semlink-master/tools/annotation.py`, `/vault/Data/SemLink/semlink-master/README.md` |
+| `dependencies` | The remaining tokens. The README calls these argument annotations. The reader does not name their inner syntax. | The instance | `0:2-ARG0=Agent;Agent` is the first of them on the first line | `annotation.py` | `/vault/Data/SemLink/semlink-master/tools/annotation.py` |
+| `vncls` `class` | Required attribute on `vncls` in the role-mapping DTD. | A VerbNet class in `VN-FNRoleMapping.txt` | `9.1` on the first `vncls` | The DTD in the file | `/vault/Data/SemLink/semlink-master/other_resources/VN-FNRoleMapping.txt` |
+| `vncls` `fnframe` | Required attribute on `vncls`. | A FrameNet frame in that file | `Placing` on the first `vncls` | The DTD in the file | `/vault/Data/SemLink/semlink-master/other_resources/VN-FNRoleMapping.txt` |
+| `role` `vnrole` | Required attribute on `role`. | A role element under that class | The DTD names the attribute and does not gloss it further | The DTD in the file | `/vault/Data/SemLink/semlink-master/other_resources/VN-FNRoleMapping.txt` |
+| `role` `fnrole` | Required attribute on `role`. | A role element under that class | The DTD names the attribute and does not gloss it further | The DTD in the file | `/vault/Data/SemLink/semlink-master/other_resources/VN-FNRoleMapping.txt` |
+| `vn-fn2.s` attributes | Not defined by the SemLink 2 README. The file writes `class`, `fnframe`, `versionID`, and `vnmember` on `vncls`. | The element as written | `class="10.1"`, `fnframe="Use_firearm"`, `versionID="vn3.3"`, `vnmember="discharge"` on the first element | Not defined beyond the attribute spellings in the file | `/vault/Data/SemLink/semlink-master/other_resources/vn-fn2.s` |
+| `external_vn2pb.json` | Not defined by the README. | A JSON key | 594 keys. One key is `change_bodily_state-40.8.4` and its value is the list `sicken.01`. | Not defined | `/vault/Data/SemLink/semlink-master/other_resources/external_vn2pb.json` |
+| `common_objects` | Not defined by the README. | A line | Whitespace-separated tokens. The first line begins `convergefocus87.1_`. | Not defined | `/vault/Data/SemLink/semlink-master/other_resources/common_objects` |
+| `1.2.2c.okay` | Not defined by the README. | A line | The filename is the only version mark. The first line begins `nw/wsj/00/wsj_0001.parse`. | Not defined | `/vault/Data/SemLink/semlink-master/other_resources/1.2.2c.okay` |
+
+## Records
+
+| Record | Fields in order | What a record is | Proof |
+| --- | --- | --- | --- |
+| `pb-vn2.json` | Roleset, VerbNet class number, object of PropBank argument label to a string | The PropBank–VerbNet mapping, one roleset at the top. | `/vault/Data/SemLink/semlink-master/instances/pb-vn2.json` |
+| `vn-fn2.json` | `class-verb`, list of frame names | The VerbNet–FrameNet mapping. | `/vault/Data/SemLink/semlink-master/instances/vn-fn2.json` |
+| `semlink-2` | Source file, sentence number, token number, verb, VerbNet class, FrameNet frame, PropBank roleset, OntoNotes group, remaining dependency tokens | One annotated predicate. The first line is `wsj_0001.parse 0 8 join 22.1-2-1 Cause_to_amalgamate join.01 None` and then the dependency tokens. | `/vault/Data/SemLink/semlink-master/tools/annotation.py` |
+| `VN-FNRoleMapping.txt` | `vncls` with `class` and `fnframe`, then `role` elements with `fnrole` and `vnrole` | The XML role-mapping document dated `8-28-06` in the root element. | `/vault/Data/SemLink/semlink-master/other_resources/VN-FNRoleMapping.txt` |
+| `vn-fn2.s` | `vncls` with `class`, `fnframe`, `versionID`, `vnmember` | A supporting XML file. Meanings of the attributes are not defined by the README. | `/vault/Data/SemLink/semlink-master/other_resources/vn-fn2.s` |
+| `external_vn2pb.json` | One string key, one list of strings | A supporting JSON file. The README does not define the key or the list. | `/vault/Data/SemLink/semlink-master/other_resources/external_vn2pb.json` |
+
+## Lineage
+
+| Paths | What is shared | Proof |
+| --- | --- | --- |
+| `/vault/Data/SemLink/semlink-master/` and `/vault/Data/.refresh-20260903/SemLink/extracted/semlink-current-2636bf5a4ae9c93b669a1184a8aaae9ca21552d3/` | All 17 files are byte-identical pairwise. Reading both as two witnesses would count one mapping twice. | SHA-256 of each relative path |
+| `/vault/Data/SemLink/semlink-master.tar.gz` and `/vault/Data/.refresh-20260903/SemLink/semlink-current-2636bf5a4ae9c93b669a1184a8aaae9ca21552d3.tar.gz` | Not the same archive. 4,782,096 bytes and 4,782,298 bytes. The unpacked trees match. | `stat` |
+| `/vault/Data/SemLink/PROVENANCE.md` | 479 bytes. It sits beside the unpack and is not a file of the repository snapshot. It is not the publisher README. | `stat` and `/vault/Data/SemLink/semlink-master/README.md` |

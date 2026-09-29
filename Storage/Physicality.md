@@ -32,7 +32,7 @@ Partitions go by the ID hash, not by Hilbert value: remember the 4-ball against 
 
 A centroid is generated and recorded for both the real coordinates and the bit-packed visualization, so it is never recomputed. The real centroid comes from the constituents' real coordinates; the visualization centroid comes from the bit-packed geometry of the path.
 
-Centroids collide in the 4-ball: `[c,a,t]` and `[a,c,t]` have the same centroid. Their Fréchet distances are, mostly, different.
+Centroids collide in the 4-ball: `[c,a,t]` and `[a,c,t]` have the same centroid. Their Fréchet distances are, mostly, different. The shape being compared is the tree, not the centroid of its text. A close Fréchet distance across trees is a semantic relation the ID does not record. See [Query: Shape](../Query.md#shape).
 
 ## Trajectories
 

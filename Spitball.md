@@ -12,10 +12,6 @@ An embedding is a high-dimensional address book: this token at this address. Cos
 
 Tokens in high-dimensional space are like fireflies. The tokens are the entity, but where is the physical representation of that entity? Where can its shape be compared against anything else?
 
-## Shapes across sources
-
-Ingest the bug logs from one app, and their Fréchet shape is very close to 50,000 other logs from 1,000 different repositories. Find one bug, fix 50,000.
-
 ## A periodic table of knowledge
 
 I've created a periodic table of knowledge.
@@ -43,16 +39,6 @@ A Gödel Engine, with feedback loops, acts as the orchestrator for the forward p
 The Gödel Engine and feedback loops might eventually create their own, low-trust records and attestations, with their own Glicko-2 scores, and might even adjust live values: self-reasoning, self-learning, self-modifying.
 
 Since a prompt gets ingested and then applied to the forward pass, theoretically any portion of the database, of any size, can be treated as a prompt against itself.
-
-## Instruction sets
-
-Convert all of the AI/ML operations into instruction sets.
-
-## Personality as firmware
-
-Treat personality as firmware, separate from the knowledge. The control sits separate from the knowledge, and the personality firmware controls how the pull hops and fans out, which options it picks, its temperature, and so on. Guns exist and violence exists; humans know about them, but it is their personality that determines whether they are violent with them.
-
-The engine does not modify the personality firmware, unless it is wired up to the GitHub repository and allowed to deploy to itself. Software can update itself without shutting itself off only partially: patches, maybe.
 
 ## The forward pass, in conventional terms
 

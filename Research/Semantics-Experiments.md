@@ -36,7 +36,7 @@ PredicateMatrix 1.3 (426,696 rows) ties each predicate to VerbNet, FrameNet, Pro
 
 `Butler` and `butler` are different entities, 0.045 apart on the S³ (measured on the H1 placement). In the Gutenberg corpus `Butler` occurs 314 times in 293 containers and `butler` 40 times in 40. Wiktionary attests `Butler` as a surname whose etymology leads to *butler*, and attests *butler* as a noun ("a manservant having charge of wines and liquors") and a verb. WordNet attests *butler* as ILI i88758.
 
-Filtering the fillers of the gap query `[Captain, ' ', ?]` in Moby Dick by their part-of-speech attestations from 29 English UD treebanks and Wiktionary separates the function words (`of`: ADP 17,239; `and`: CCONJ 19,568; `is`: AUX 9,441) from the names. Dropping the fillers attested as function words, verbs, pronouns, and adverbs leaves the nine captains: Ahab, Peleg, Bildad, Sleet, Pollard, Mayhew, Scoresby, Boomer, and Butler.
+Filtering the fillers of the gap query `[Captain, ' ', ?]` in Moby Dick by their part-of-speech attestations from 29 English UD treebanks and Wiktionary separates the function words (`of`: ADP 17,239; `and`: CCONJ 19,568; `is`: AUX 9,441) from the names. Dropping the fillers attested as function words, verbs, pronouns, and adverbs leaves the names the gap returned: Ahab, Peleg, Bildad, Sleet, Pollard, Mayhew, Scoresby, Boomer, Butler, Gardiner, Langsdorff, D'Wolf, Davis, Derick, Coffin, and Noah. `Peleg's`, `Boomer's`, `Scoresby's`, and `Sleet's` are those same names with the clitic still in the token. `Butler` and `butler` stay different entities, so the lowercase noun and verb do not drop the surname.
 
 ## Annotation layers as content
 
