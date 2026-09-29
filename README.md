@@ -11,6 +11,7 @@ Every page in this repository is listed below. Read every listed page in full.
 ## Pages
 
 - [Architecture](Architecture.md) — Laplace is native C, with SQL and C# as orchestration.
+- [Sequence](Sequence.md) — Laplace is built in one order, and each stage is impossible without the one before it: Unicode onto the S³, tier 0, the perf-cache, the store, content, attestations, consensus, the firmware, the pull, and only then a user.
 - [Storage](Storage/README.md) — Laplace stores all digital content as a self-deduplicating Merkle DAG with deterministic, lossless storage, laid out as geometry in four dimensions.
   - [Space](Storage/Space.md) — Laplace places everything in a 4-ball inside a 4-cube, with Unicode projected across the 4-ball's surface, the S³, and compositions forming inside it.
   - [Atoms](Storage/Atoms.md) — codepoints are tier 0, the absolute floor: every Unicode codepoint has a deterministic ID and a deterministic coordinate on the S³.
