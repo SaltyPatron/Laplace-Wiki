@@ -22,7 +22,7 @@ PostgreSQL, Laplace-Native, Laplace-postgres, and Laplace-Engine are built in th
 - **In:** PostGIS 3.6, GEOS, PROJ, GDAL, and the `pg_config` of 3.1.
 - **Do:** build and install PostGIS into that server. PostGIS stores four dimensions exactly, as GSERIALIZED with raw `double` ordinate arrays, and its binary paths round-trip Z and M bit for bit. Its metric operations compute in two or three dimensions and treat M as a measure, not a coordinate: there is no 4D distance in PostGIS, which is why Laplace-postgres exists.
 - **Out:** the `postgis` extension.
-- **Mechanism:** done by the operator; `laplace.control` requires `postgis` and `laplace deploy` creates it ([Schema: Extension control](../Reference/Schema.md#extension-control)). Status: **operator**.
+- **Mechanism:** done by the operator; `laplace.control` requires `postgis` and `laplace deploy` creates it ([Schema: Extension control](../Reference/Schema.md#versions)). Status: **operator**.
 - **From:** [Architecture: Repositories](../Architecture.md#repositories), [Research: Geometry: Dimensionality](../Research/Geometry.md#dimensionality).
 
 ### 3.3 Build Laplace-Native, twice

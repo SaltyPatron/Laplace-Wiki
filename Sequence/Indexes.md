@@ -16,7 +16,7 @@ Laplace exploits GiST and GIN indexing for novel mechanisms. Development favors 
 - **Do:** the primary keys on the ID, and the physicality → entity foreign key.
 - **Out:** a lookup by ID that prunes to one partition and hits one index.
 - **Check:** a word by computed ID and tier, 0.02 ms, 1 partition.
-- **Mechanism:** `entity_id`, `physicality_entity`, `attestation_claim` in `lookup.sql`, present from deploy ([Schema: Indexes](../Reference/Schema.md#indexes)). The built schema has no primary key on `entity` and no foreign key from `physicality`. In the monorepo: `PRIMARY KEY (id)` on entities and physicalities, `(id, type_id, subject_id)` on attestations and consensus; no foreign keys, by the leaf-before-trunk writer law. Status: **built**.
+- **Mechanism:** `entity_id`, `physicality_entity`, `attestation_claim` in `lookup.sql`, present from deploy ([Schema: Indexes](../Reference/Schema.md#the-indexes)). The built schema has no primary key on `entity` and no foreign key from `physicality`. In the monorepo: `PRIMARY KEY (id)` on entities and physicalities, `(id, type_id, subject_id)` on attestations and consensus; no foreign keys, by the leaf-before-trunk writer law. Status: **built**.
 - **From:** [Deployment](../Operations/Deployment.md), [Research: Engine Measurements: Queries](../Research/Engine.md#queries).
 
 ### 14.2 B-tree on Hilbert values
@@ -24,7 +24,7 @@ Laplace exploits GiST and GIN indexing for novel mechanisms. Development favors 
 - **In:** the entity table.
 - **Do:** index the Hilbert value. It is derived from the real coordinate deterministically, so a range of space is a set of Hilbert intervals, and loading in key order keeps pages spatially coherent.
 - **Out:** locality, partitioning, and ordering by Hilbert value.
-- **Mechanism:** `entity_hilbert` in `indexes.sql`; the stored value has its top bit flipped so `bigint` order is Hilbert order ([Schema: Indexes](../Reference/Schema.md#indexes), [Formats: The Hilbert value](../Reference/Formats.md#the-hilbert-value)). In the monorepo: `physicalities_hilbert_btree` on the 16-byte `hilbert_index`. Status: **built**.
+- **Mechanism:** `entity_hilbert` in `indexes.sql`; the stored value has its top bit flipped so `bigint` order is Hilbert order ([Schema: Indexes](../Reference/Schema.md#the-indexes), [Formats: The Hilbert value](../Reference/Formats.md#the-hilbert-value)). In the monorepo: `physicalities_hilbert_btree` on the 16-byte `hilbert_index`. Status: **built**.
 - **From:** [Atoms: Placement](../Storage/Atoms.md#placement), [Research: Geometry: Hilbert curves](../Research/Geometry.md#hilbert-curves).
 
 ### 14.3 4D GiST on real coordinates
@@ -33,7 +33,7 @@ Laplace exploits GiST and GIN indexing for novel mechanisms. Development favors 
 - **Do:** the n-dimensional GiST operator class, which stores float32 boxes that round outward so the float box is larger than the double box, and supports n-D overlap and n-D distance for KNN ordering. A float32 box keeps 24 of a double's 53 significand bits, so the index is a conservative candidate filter and an exact lookup rechecks the exact doubles.
 - **Out:** nearest neighbors in 4D, and shape searches with a candidate stage ahead of the exact recheck in C.
 - **Check:** the 16 word segments nearest `king` in 4D, 7.7 ms; on the prototype the 4D GiST was 338 MB over 3.9 million entities.
-- **Mechanism:** `entity_coord … USING gist (coord gist_geometry_ops_nd)` ([Schema: Indexes](../Reference/Schema.md#indexes)). In the monorepo: `physicalities_coord_gist`, `physicalities_direction_gist`, `physicalities_radius_btree`. Status: **built**.
+- **Mechanism:** `entity_coord … USING gist (coord gist_geometry_ops_nd)` ([Schema: Indexes](../Reference/Schema.md#the-indexes)). In the monorepo: `physicalities_coord_gist`, `physicalities_direction_gist`, `physicalities_radius_btree`. Status: **built**.
 - **From:** [Physicality: Indexes](../Storage/Physicality.md#indexes), [Research: Geometry: GiST](../Research/Geometry.md#gist), [Research: Prototype: Store](../Research/Prototype.md#store).
 
 ### 14.4 GIN on the IDs decoded from paths
@@ -58,7 +58,7 @@ Laplace exploits GiST and GIN indexing for novel mechanisms. Development favors 
 - **In:** the claim, ledger, and standing tables.
 - **Do:** the claim's consensus ID and each of its parts, so a claim can be found by any part left open; the ledger by claim; the standing by claim.
 - **Out:** `[dog, eng, ?]` in 3.3 ms and `[?, language, i46360]` for eight languages in 1.2 ms.
-- **Mechanism:** `attestation_claim`, `attestation_witness`, the `consensus` and `witness` primary keys ([Schema: Indexes](../Reference/Schema.md#indexes)); a claim by any open part is the GIN on the claim's own path, `path @> $1::blake3[]` in `claims_like` ([Reads: The claims that hold an entity](../Reference/Reads.md#the-claims-that-hold-an-entity)). In the monorepo: consensus by subject, type, object, and `eff_mu`; attestations by type, object, source, context, relation; BRIN by time ([Monorepo: The extension](../Reference/Monorepo.md#the-extension-and-its-schema)). Status: **built**.
+- **Mechanism:** `attestation_claim`, `attestation_witness`, the `consensus` and `witness` primary keys ([Schema: Indexes](../Reference/Schema.md#the-indexes)); a claim by any open part is the GIN on the claim's own path, `path @> $1::blake3[]` in `claims_like` ([Reads: The claims that hold an entity](../Reference/Reads.md#the-claims-that-hold-an-entity)). In the monorepo: consensus by subject, type, object, and `eff_mu`; attestations by type, object, source, context, relation; BRIN by time ([Monorepo: The extension](../Reference/Monorepo.md#the-extension-and-its-schema)). Status: **built**.
 - **From:** [Research: Semantics Experiments: Translation through the ILI](../Research/Semantics-Experiments.md#translation-through-the-ili), [Research: Engine Measurements: Consensus writes](../Research/Engine.md#consensus-writes).
 
 ### 14.7 `ANALYZE`
@@ -66,7 +66,7 @@ Laplace exploits GiST and GIN indexing for novel mechanisms. Development favors 
 - **In:** every table.
 - **Do:** run `ANALYZE`, with statistics on the path column at 0, because histograms of packed IDs mean nothing.
 - **Check:** 2.5 s, against 332 s with path histograms.
-- **Mechanism:** the `ANALYZE` at the end of `indexes.sql`, with statistics 0 on `path` from `schema.sql` ([Schema: Indexes](../Reference/Schema.md#indexes)). Status: **built**.
+- **Mechanism:** the `ANALYZE` at the end of `indexes.sql`, with statistics 0 on `path` from `schema.sql` ([Schema: Indexes](../Reference/Schema.md#the-indexes)). Status: **built**.
 - **From:** [Database: Planning](../Operations/Database.md#planning).
 
 ### 14.8 Measure every native operation

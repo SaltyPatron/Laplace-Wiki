@@ -14,6 +14,8 @@ Laplace is one program, `laplace`, with eighteen commands: the generators of tie
 
 ## laplace deploy
 
+`laplace highway [-o highway.bin]`. Generates the highway from the resources that list the types (UD-Tools, WordNet, CILI, VerbNet, FrameNet, PropBank, VerbAtlas, SemLink, PredicateMatrix): the lists, each type's record, the edges, the layout beside it, and prints its fingerprint.
+
 `laplace deploy [-d conninfo]`. Makes the database if the server has none of that name, asking `postgres` over the same connection parameters; then `CREATE EXTENSION IF NOT EXISTS` for `postgis`, `laplace`, `pg_stat_statements`, `pg_buffercache`; `ALTER EXTENSION laplace UPDATE`; `ALTER DATABASE … SET laplace.tier0` and `laplace.flags` to this engine's paths; `schema.sql` unless a partitioned `entity` exists; `semantics.sql`; `lookup.sql`; then `laplace status`. Each statement is timed on stdout. Idempotent.
 
 ## laplace sources
@@ -42,7 +44,7 @@ With nothing named: each source runs in a process of its own with the same optio
 
 ## laplace index
 
-`laplace index [-d conninfo]`. Runs `indexes.sql` statement by statement, each timed.
+`laplace index [-d conninfo]`. Calls `laplace_schema_indexes()`, which makes every index the schema has where one is missing, then `ANALYZE`; `laplace deploy` makes them all from the start.
 
 ## laplace status
 

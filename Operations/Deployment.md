@@ -12,7 +12,7 @@ A Laplace database goes from empty to benchmarked in five steps: extensions, sch
 
    The extension's setting `laplace.tier0` points to the tier-0 perf-cache. Each backend memory-maps it on first use.
 
-2. **Schema:** `sql/schema.sql` from Laplace-postgres.
+2. **Schema:** made by `CREATE EXTENSION laplace` itself (Laplace-postgres's install script).
    - Entities, paths, and statistics are list-partitioned by tier.
    - The largest tiers are split again into 16 partitions by the first hex digit of their ID. An ID is a hash, so the partitions stay equal, and a lookup by ID prunes to one partition.
    - The schema also applies the planning settings for paths from [Database](Database.md#planning).

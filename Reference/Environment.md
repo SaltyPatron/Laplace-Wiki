@@ -15,9 +15,9 @@ One file, `Laplace-Operations/laplace.env`, defines where everything is; every b
 | `LAPLACE_DATA` | `/vault/Data` | recipe `root` lines (`$LAPLACE_DATA`), `laplace.env` | corpora and the Unicode data |
 | `LAPLACE_MODELS` | `/vault/models` | recipe `files` lines | model checkpoints and tokenizers |
 | `LAPLACE_NATIVE` | `$LAPLACE_SRC/Laplace-Native` | the extension's and engine's `CMakeLists.txt` | where to `add_subdirectory` the library from |
-| `LAPLACE_SQL` | `$LAPLACE_SRC/Laplace-postgres/sql` | `laplace deploy`, `laplace index` | the schema, semantics, lookup, and index scripts |
 | `LAPLACE_RECIPES` | `$LAPLACE_SRC/Laplace-Engine/recipes` | `laplace ingest`, `sources`, `tree`; `firmware_path()` | the recipes directory, holding `order` and one directory per source |
 | `LAPLACE_FIRMWARE` | `$LAPLACE_SRC/Laplace-Engine/firmware/program.firmware` | `laplace pull`, `hop`, `translate`, `degrees`, `fills` | the firmware a pull runs under; `--firmware FILE` overrides it per command |
+| `LAPLACE_HIGHWAY` | `${LAPLACE_TIER0%.bin}.highway` | `lp_highway_path()` in every program and backend; `laplace highway` writes it | the highway perf-cache: the types the resources list, and the mappings between them |
 | `LAPLACE_TIER0` | `$LAPLACE_WORK/tier0/tier0.bin`; compiled default `/repos/work/tier0/tier0.bin` | `lp_tier0_path()` in every program and backend; `laplace tier0` writes it | the tier-0 perf-cache |
 | `LAPLACE_FLAGS` | tier 0's path with `.flags` in place of its ending | `lp_flags_path()` | the flags that go with tier 0; its layout is the same path plus `.layout` |
 | `LAPLACE_GRAMMARS` | `$LAPLACE_BUILD/grammars`; compiled default `/repos/build/grammars` | `grammar_load()` in the engine | `libtree-sitter-<name>.so`, written by `tools/build_grammars.sh` |
@@ -50,9 +50,9 @@ One file, `Laplace-Operations/laplace.env`, defines where everything is; every b
 | `synchronous_commit` | every connection of `load()` | `off` | the bulk session |
 | `plan_cache_mode` | `db_ask()` on its first prepared statement per connection | `force_generic_plan` | the read commands' prepared statements, planned once per connection |
 | `client_min_messages` | `db_connect()` | `warning` | every connection |
-| `enable_parallel_append` | `schema.sql` | `off` for the database | the planner |
-| `parallel_workers` | `schema.sql` | 0 on every `physicality_t*` partition | the planner |
-| statistics on `physicality.path` | `schema.sql` | 0 | `ANALYZE` |
-| `maintenance_work_mem`, `max_parallel_maintenance_workers` | `indexes.sql`, for the session | 8 GB, 6 | the index builds |
+| `enable_parallel_append` | `laplace deploy` | `off` for the database | the planner |
+| `parallel_workers` | the extension's install script | 0 on every `physicality_t*` partition | the planner |
+| statistics on `physicality.path` | the extension's install script | 0 | `ANALYZE` |
+| `maintenance_work_mem` | `laplace index` | 8 GB for the session | index builds |
 
 The server-level settings of [Operations: Database](../Operations/Database.md), memory, I/O, WAL, planning, and observability, are set with `ALTER SYSTEM` by the operator and are not set by any Laplace program.
