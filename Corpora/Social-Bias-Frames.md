@@ -1,45 +1,52 @@
 # Social Bias Frames
 
-Social Bias Frames attests what workers said a post implied, both per annotation and aggregated per post.
+Social Bias Frames attests what each MTurk worker answered of a post as that worker's own witness, what the set says of the post and of the worker, and the same aggregated per post, where the first, unnamed column attests nothing.
 
-## Value
+The source is "the data splits from v2 of Social Bias Frames / Social Bias Inference Corpus": posts, what MTurk workers said of each, and the same aggregated per post. Two recipes read it: the annotations, one line per worker per post, and the aggregation, one line per post.
 
-| Attestation | What it means | Lands on | Value | Witness | Proof |
+## Source
+
+| Source | Witness | Uncertainty | After | Files | Recipes |
 | --- | --- | --- | --- | --- | --- |
-| whoTarget | group vs. individual target | the post | the field as written on the annotation row | the MTurk worker | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md |
-| intentYN | was the intent behind the statement to offend | the post | the field as written on the annotation row | the MTurk worker | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md |
-| sexYN | is the post a sexual or lewd reference | the post | the field as written on the annotation row | the MTurk worker | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md |
-| sexReason | free text explanations of what is sexual | the post | the field as written on the annotation row | the MTurk worker | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md |
-| offensiveYN | could the post be offensive to anyone | the post | the field as written on the annotation row | the MTurk worker | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md |
-| annotatorGender | gender of the MTurk worker | the MTurk worker | the field as written on the annotation row | the MTurk worker | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md |
-| annotatorMinority | whether the MTurk worker identifies as a minority | the MTurk worker | the field as written on the annotation row | the MTurk worker | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md |
-| sexPhrase | part of the post that references something sexual | the post | the field as written on the annotation row | the MTurk worker | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md |
-| speakerMinorityYN | whether the speaker was part of the same minority group that's being targeted | the post | the field as written on the annotation row | the MTurk worker | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md |
-| WorkerId | hashed version of the MTurk workerId | the MTurk worker | the field as written on the annotation row | the MTurk worker | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md |
-| HITId | id that uniquely identifies each post | the post | the field as written on the annotation row | Social Bias Frames | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md |
-| annotatorPolitics | political leaning of the MTurk worker | the MTurk worker | the field as written on the annotation row | the MTurk worker | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md |
-| annotatorRace | race of the MTurk worker | the MTurk worker | the field as written on the annotation row | the MTurk worker | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md |
-| annotatorAge | age of the MTurk worker | the MTurk worker | the field as written on the annotation row | the MTurk worker | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md |
-| post | post that was annotated | the post | the field as written on the annotation row | the MTurk worker | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md |
-| targetMinority | demographic group targeted | the post | the field as written on the annotation row | the MTurk worker | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md |
-| targetCategory | high-level category of the demographic group(s) targeted | the post | the field as written on the annotation row | the MTurk worker | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md |
-| targetStereotype | implied statement | the post | the field as written on the annotation row | the MTurk worker | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md |
-| dataSource | source of the post (t/... means Twitter, r/... means a subreddit) | the post | the field as written on the annotation row | the MTurk worker | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md |
-| (blank) | Not defined. The aggregated files have an empty first header cell. | Not defined | empty header | Not defined | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md |
-| post (aggregated) | The post the annotations were grouped by. The README groups on post. | the post | the post text | derived from the annotation rows | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md |
-| targetMinority (aggregated) | Text field. The README aggregation takes the sorted set of non-empty values, then json.dumps. To load the list, use json.loads. | the post | a JSON list | derived from the annotation rows | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md |
-| targetCategory (aggregated) | Text field, aggregated the same way as targetMinority. | the post | a JSON list | derived from the annotation rows | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md |
-| targetStereotype (aggregated) | Text field, aggregated the same way as targetMinority. The README calls targetStereotype the implied statement. | the post | a JSON list | derived from the annotation rows | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md |
-| whoTarget (aggregated) | Class field. The README aggregation sets it to np.mean of the annotation values for that post. | the post | the mean | derived from the annotation rows | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md |
-| intentYN (aggregated) | Class field. The README aggregation sets it to np.mean of the annotation values for that post. | the post | the mean | derived from the annotation rows | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md |
-| sexYN (aggregated) | Class field. The README aggregation sets it to np.mean of the annotation values for that post. | the post | the mean | derived from the annotation rows | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md |
-| offensiveYN (aggregated) | Class field. The README aggregation sets it to np.mean of the annotation values for that post. | the post | the mean | derived from the annotation rows | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md |
-| dataSource (aggregated) | The column is in the aggregated files. The aggregation code block in the README does not define it. | Not defined | Not defined | Not defined | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md |
-| hasBiasedImplication | The README assigns gDf["hasBiasedImplication"] = (gDf["targetStereotype"].apply(len) == 0).astype(int), after targetStereotype has been reduced to a list and before json.dumps. | the post | 0 or 1 from that expression | derived from the annotation rows | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md |
+| `social-bias-frames` | `Social Bias Frames`; in the annotations, each worker is a witness of their own, `[Social Bias Frames, WorkerId, value]` | deviation 90 | `unicode`, `iso-639` | `SBIC.v2.trn.csv`, `SBIC.v2.dev.csv`, `SBIC.v2.tst.csv`; `SBIC.v2.agg.*.csv` | [`annotations.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/social-bias-frames/annotations.recipe), [`aggregated.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/social-bias-frames/aggregated.recipe) |
 
-## Format
+The uncertainty is the deviation the witness's attestations enter at, as [Consensus](../Semantics/Consensus.md#entry) describes. The source says of its 90 that it is "this recipe's choice for a curated academic resource; the specification does not give one": the number is not settled, and [Corpora](README.md#not-settled) lists it among what stays missing.
 
-| Record | Fields in order | What a record is | Proof |
+Every file is a table of comma-separated fields whose first row names the columns, and a field may stand between double quotes, where it may hold a comma or a line's end, and a quote in it is written twice. An empty field attests nothing. The quotations are the set's README's, "Each line in the file contains the following fields (in order)".
+
+## The annotations
+
+`SBIC.v2.trn.csv`, `SBIC.v2.dev.csv`, `SBIC.v2.tst.csv`. A line is one worker's reading of one post. The post is named by its `HITId` and the worker by their `WorkerId`; both are the set's own numberings, so the post is the path `[Social Bias Frames, HITId, value]` and the worker the path `[Social Bias Frames, WorkerId, value]`, "post" and "worker" below. What the worker answered of the post, the worker says, of the post: those claims are witnessed by the worker. What the line holds of the worker is said of the worker, and the post's text and source are said of the post, both by Social Bias Frames. Each claim is its own ledger row.
+
+| Piece | Laplace reads it as | Claim recorded | Specification |
 | --- | --- | --- | --- |
-| annotation | whoTarget, intentYN, sexYN, sexReason, offensiveYN, annotatorGender, annotatorMinority, sexPhrase, speakerMinorityYN, WorkerId, HITId, annotatorPolitics, annotatorRace, annotatorAge, post, targetMinority, targetCategory, targetStereotype, dataSource | One MTurk worker's annotation of one post. SBIC.v2.trn.csv, SBIC.v2.dev.csv, and SBIC.v2.tst.csv share this header. | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md. Headers read from the three files. |
-| aggregated post | (blank), post, targetMinority, targetCategory, targetStereotype, whoTarget, intentYN, sexYN, offensiveYN, dataSource, hasBiasedImplication | One post, with the means and JSON lists the README aggregation builds. The same header is on the three agg files. | /vault/Data/.refresh-20260903/Safety/SocialBiasFrames/extracted/README.md. Headers read from the three agg files. |
+| `HITId` | the subject of what is said of the post | `[Social Bias Frames, HITId, value]` | "id that uniquely identifies each post" |
+| `WorkerId` | the witness of the worker's answers, and the subject of what is said of the worker | `[Social Bias Frames, WorkerId, value]` | "hashed version of the MTurk workerId" |
+| `post` | said of the post, by Social Bias Frames | `[post, post, text]` | "post that was annotated" |
+| `dataSource` | said of the post, by Social Bias Frames | `[post, dataSource, value]` | "source of the post" |
+| `whoTarget` | said of the post, by the worker | `[post, whoTarget, value]` | "group vs. individual target" |
+| `intentYN` | said of the post, by the worker | `[post, intentYN, value]` | "was the intent behind the statement to offend" |
+| `sexYN` | said of the post, by the worker | `[post, sexYN, value]` | "is the post a sexual or lewd reference" |
+| `sexReason` | said of the post, by the worker | `[post, sexReason, text]` | "free text explanations of what is sexual" |
+| `offensiveYN` | said of the post, by the worker | `[post, offensiveYN, value]` | "could the post be offensive to anyone" |
+| `sexPhrase` | said of the post, by the worker | `[post, sexPhrase, text]` | "part of the post that references something sexual" |
+| `speakerMinorityYN` | said of the post, by the worker | `[post, speakerMinorityYN, value]` | "whether the speaker was part of the same minority group that's being targeted" |
+| `targetMinority` | said of the post, by the worker | `[post, targetMinority, value]` | "demographic group targeted" |
+| `targetCategory` | said of the post, by the worker | `[post, targetCategory, value]` | "high-level category of the demographic group(s) targeted" |
+| `targetStereotype` | said of the post, by the worker | `[post, targetStereotype, text]` | "implied statement" |
+| `annotatorGender`, `annotatorMinority`, `annotatorPolitics`, `annotatorRace`, `annotatorAge` | said of the worker, by Social Bias Frames | `[worker, annotatorGender, value]` | of the MTurk worker |
+
+## The aggregation
+
+`SBIC.v2.agg.*.csv`, the files "aggregated per post": for a post, the mean of `whoTarget`, `intentYN`, `sexYN`, and `offensiveYN` over its annotations, and the set of what was written as `targetMinority`, `targetCategory`, and `targetStereotype`, each written as a JSON list ("To load the list of implications, use json.loads"). A post has no `HITId` here: it is the text it is. Every named column is said of the post under the column's own name, together: one record per row, witnessed once by Social Bias Frames, and its claims within it.
+
+| Piece | Written as | Laplace reads it as | Claim recorded | Specification |
+| --- | --- | --- | --- | --- |
+| `post` | the text | the subject: the post, as the text it is | | |
+| `targetMinority`, `targetCategory`, `targetStereotype` | a JSON list of texts, `["a", "b"]` | each text said of the post under the column's name | `[post, targetStereotype, text]` | "To load the list of implications, use json.loads" |
+| `whoTarget`, `intentYN`, `sexYN`, `offensiveYN` | a number | said of the post under the column's name, the number as written | `[post, offensiveYN, value]` | the mean over the post's annotations |
+| `dataSource` | as in the annotations | said of the post | `[post, dataSource, value]` | |
+| `hasBiasedImplication` | `0` or `1` | said of the post | `[post, hasBiasedImplication, value]` | the README computes it: `gDf["hasBiasedImplication"] = (gDf["targetStereotype"].apply(len) == 0).astype(int)` |
+| the first column, which has no name | a number | nothing | none | |
+
+Nothing else is attested. The README is ordinary text, observed as [Attestations](../Semantics/Attestations.md#observations) says of ordinary content.

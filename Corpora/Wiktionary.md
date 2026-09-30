@@ -1,37 +1,36 @@
 # Wiktionary
 
-Wiktextract attests a written word in one language as one part of speech, and every edition of that extract is the same witness.
+Wiktextract's extract of the English Wiktionary attests, entry by entry, what Wiktionary says of a written word in one language as one part of speech, whether read from the raw extract or from kaikki.org's file for one language, and a member that is null or empty attests nothing.
 
-## Format
+The program [wiktextract](https://github.com/tatuylonen/wiktextract) writes a JSON object on every line, one for each entry. Two sources read that output: the raw file, and the per-language files [kaikki.org](https://kaikki.org/dictionary/) makes from it. Both are the same witness, `Wiktextract`, with `Wiktionary` as its lineage, and both are read by the same recipe, so that what two editions say of the same entry, they say of the same thing.
 
-| Record | Field | Order | Type | Specification |
-| --- | --- | --- | --- | --- |
-| word entry | word | JSON, unordered | string | The word form. One JSON object per line: one written word, in one language, as one part of speech. |
-| word entry | lang | JSON, unordered | string | Name of the language this word belongs to (e.g., English). |
-| word entry | pos | JSON, unordered | string | Part of speech, such as "noun", "verb", "adj", "adv", "pron", "determiner", "prep" (preposition), "postp" (postposition), and many others. The complete list of values returned by the package is wiktextract.PARTS_OF_SPEECH. This is Wiktionary's category for the headword, not a Universal Dependencies UPOS on a token, and not the part-of-speech mask in [Claims](../Semantics/Claims.md#masks). |
-| word entry | senses | JSON, unordered | list of objects | List of word senses (dictionaries) for this word/part-of-speech. |
-| sense | glosses | JSON, unordered | list of strings | List of gloss strings for the word sense (usually only one). This has been cleaned, and should be straightforward text with no tagging. |
-| word entry | forms | JSON, unordered | list of objects | List of inflected or alternative forms specified for the word. Each dictionary has a form key and a tags key. It may also contain ipa, roman, and source. The form can be "-" when the word is marked as not having that form. |
-| word entry | etymology_text | JSON, unordered | string | Etymology section as cleaned text. The contents of the whole etymology section cleaned into human-readable text. Etymological information is stored under etymology_text or etymology_texts. |
-| word entry | etymology_texts | JSON, unordered | Not defined | Named as the other place etymological information is stored. The field list does not give etymology_texts its own sentence. |
-| word entry | etymology_links | JSON, unordered | list of pairs | Links in the etymology as [display text, target] pairs, using the same format as sense links. |
-| word entry | etymology_templates | JSON, unordered | list of objects | Templates and their arguments and expansions from the etymology section. Each object has name, args, and expansion. Certain common templates that do not signify etymological relations are not included. |
-| word entry | etymology_number | JSON, unordered | string | For words with multiple numbered etymologies, the number of the etymology under which this entry appeared, as a string as of May 2026. |
-| word entry or sense | translations | JSON, unordered | list of objects | Non-disambiguated translation entries on the word, or sense-disambiguated translation entries on the sense. Each dictionary has alt, code, english, lang, note, roman, sense, tags, taxonomic, and word, and possibly others. word is the translation in the specified language and may be missing when note is present. code is Wiktionary's 2- or 3-letter language code. lang is the language name that the translation is for. sense is a free-text string and may not match any gloss exactly. |
+## Sources
 
-## Value
-
-| Field | Composition | Mask | What is recorded | Lineage or hop | Specification |
+| Source | Witness | Trust | After | Files | Recipe |
 | --- | --- | --- | --- | --- | --- |
-| word | the word entry: one written word, one language, one part of speech | not a mask | the word form | Every edition of this extract is the same witness. | The word form. |
-| lang | the word entry: one written word, one language, one part of speech | not a mask | the language name | Every edition of this extract is the same witness. | Name of the language this word belongs to. |
-| pos | the word entry: one written word, one language, one part of speech | Wiktionary's category for the headword, not a Universal Dependencies UPOS | pos | Every edition of this extract is the same witness. | Part of speech as Wiktionary categorizes the headword. Not a Universal Dependencies UPOS on a token. |
-| senses | the word entry: one written word, one language, one part of speech | not a mask | the sense dictionaries | Every edition of this extract is the same witness. | List of word senses for this word/part-of-speech. |
-| glosses | a sense of that word entry | not a sense mask | the gloss strings | Every edition of this extract is the same witness. | List of gloss strings for the word sense (usually only one), cleaned to text with no tagging. |
-| forms | the word entry: one written word, one language, one part of speech | not a mask | the inflected or alternative forms | Every edition of this extract is the same witness. | Each form object has form and tags, and may have ipa, roman, and source. The form can be "-". |
-| etymology_text | the word entry: one written word, one language, one part of speech | not a mask | the cleaned etymology section | Every edition of this extract is the same witness. | Etymology section as cleaned text. When several parts of speech are listed under the same etymology, the same data is copied to each part-of-speech entry under that etymology. |
-| etymology_texts | the word entry: one written word, one language, one part of speech | not a mask | Not defined | Every edition of this extract is the same witness. | Not defined beyond the name. The field list says etymological information is stored under etymology_text or etymology_texts. |
-| etymology_links | the word entry: one written word, one language, one part of speech | not a mask | [display text, target] pairs | Every edition of this extract is the same witness. | Links in the etymology. The field is omitted when no links are found. |
-| etymology_templates | the word entry: one written word, one language, one part of speech | not a mask | name, args, expansion | Every edition of this extract is the same witness. | Templates from the etymology section. args maps argument names to cleaned values. Positional arguments have keys that are numeric strings, starting with "1". expansion is the cleaned text the template expands to. |
-| etymology_number | the word entry: one written word, one language, one part of speech | not a mask | the etymology number | Every edition of this extract is the same witness. | The number of the etymology under which this entry appeared, as a string as of May 2026. |
-| translations | the word entry, or one sense of that entry | not a mask | the translation word in lang | Every edition of this extract is the same witness. | Stored on the word when not sense-disambiguated, and on the sense when sense-disambiguated. word may be missing when note is present. The translation sense string may not match any gloss exactly. |
+| `wiktionary` | `Wiktextract`, lineage `Wiktionary` | trust 0.67 | `unicode`, `iso-639` | `raw-wiktextract-data-*`, the newest edition held | [`wiktextract.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/wiktionary/wiktextract.recipe) |
+| `wiktionary-kaikki` | `Wiktextract`, lineage `Wiktionary` | trust 0.67 | `unicode`, `iso-639`, `universal-dependencies-documentation` | `kaikki.org-dictionary-*.jsonl` | [`kaikki.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/wiktionary-kaikki/kaikki.recipe) |
+
+The witness is the program's output, as its own documentation is titled "Wiktextract" and says it is "for extracing data from Wiktionary"; Wiktionary is what it derives from, so copies of the one lineage play one matchup per claim. Both source files say of the trust that it is "entering unrated, as a source written by its users; the specification does not give one": the number is the recipe's choice, and [Corpora](README.md#not-settled) lists it among what stays missing. The raw file read is the dated one; the undated file beside it, and the older editions, are the same witness saying the same entries earlier, and are not read.
+
+## The entry
+
+A record is one line: one JSON object, one entry. Wiktextract's README, "Format of the extracted word entries", says "Information returned for each word is a dictionary", of "a single word and part-of-speech". Every key and value is recorded as written; a claim is the path from a thing to a value, and a list says each of its values under the same key.
+
+| Piece | Written as | Laplace reads it as | Claim recorded | Specification |
+| --- | --- | --- | --- | --- |
+| `word`, `lang_code`, `pos`, `etymology_number` | `"word": "free"`, `"lang_code": "en"`, `"pos": "noun"`, `"etymology_number": 3` | name the entry together, in the order `lang_code`, `word`, `pos`, `etymology_number`: the entry is the path of those it holds. Each is also said of the entry under its key | the subject, `[en, free, noun, 3]`; `[[en, free, noun, 3], pos, noun]` | "word - the word form"; "pos - part-of-speech"; "lang_code - Wiktionary language code"; "etymology_number - the number of the etymology under which this entry appeared" |
+| `lang`, `etymology_text`, and any other member holding a text or a number | `"lang": "English"` | said of the entry under its key | `[entry, lang, English]` | "lang - name of the language this word belongs to" |
+| `senses` | a list of objects | each sense is the thing its `glosses` name; the sense's place in the entry is a claim, and what the sense holds are claims of their own, said of its being there | `[entry, senses, sense]`; `[[entry, senses, sense], tags, value]` | "senses - list of word senses (dictionaries) for this word/part-of-speech" |
+| `glosses` | a list of strings inside a sense | names the sense: one gloss is the sense, several are the path of them | the sense | "glosses - list of gloss strings for the word sense (usually only one)" |
+| `id` inside a sense | `en-dictionary-en-noun-hIt8uVcE`, in kaikki.org's files only | said of the sense like everything else it holds | `[[entry, senses, sense], id, en-dictionary-en-noun-hIt8uVcE]` | |
+| `examples` | a list of objects inside a sense | each example is the thing its `text` names; its place in the sense is the claim, and its other members are that claim's specifics: recorded with it as what is witnessed, no claim of their own | `[[entry, senses, sense], examples, text]` | "each example being a dictionary with text field containing the example text" |
+| `forms` | a list of objects with `form` and `tags` | each form is the thing its `form` names; its place in the entry is the claim, and its other members are the claim's specifics | `[entry, forms, form]`, with `[tags, value]` among its specifics | "forms - list of inflected or alternative forms specified for the word"; "Each dictionary has a form key and a tags key. It may also contain ipa, roman, and source." |
+| `translations` | a list of objects on the entry or on a sense, each holding `word` | each is the thing its `lang_code` and `word` name together, and `pos` and `etymology_number` when it holds them; its place, in the entry or in the sense, is the claim, and its other members are the claim's specifics | `[entry, translations, [fi, vapari]]`; `[[entry, senses, sense], translations, [fi, vapari]]` | "sense - optional sense indicating the meaning for which this is a translation" |
+| any other object holding `word`, such as a linked word | an object inside the entry or a sense | the thing those members name together, the same way; what it holds it says of its being there | `[entry, key, [lang_code, word]]` | |
+| `etymology_links`, and any list of pairs | `[[display text, target], ...]` | each inner list of plain values is one tuple, said under the key | `[entry, etymology_links, [display text, target]]` | "links in the etymology as [display text, target] pairs" |
+| `etymology_templates`, and any object that is no thing | objects with `name`, `args`, `expansion` | the tuple of its pairs, said under its key | `[entry, etymology_templates, [[name, value], [args, ...], [expansion, value]]]` | "Each object has name, args, and expansion." |
+| `title` | on an object that holds no `word` | names the thing: a redirect | the subject; what the object holds is said of it under its key | a redirect holds `title` and no `word` |
+| `null`, an empty text | | nothing | none | |
+
+Everything one entry says it says together: it is one record, witnessed once, and its claims within it; a claim said twice in one record is witnessed in it once. A sense, a form, a translation, or a linked word says what it holds of its being there in the entry, not of the word alone.

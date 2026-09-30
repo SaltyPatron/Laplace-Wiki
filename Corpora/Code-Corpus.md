@@ -1,19 +1,13 @@
 # Code corpus
 
-`/vault/models/code-corpus` holds 397,004 files in the old project trees `archive-001-Deleted-Solutions`, `archive-002-projects`, `archive-BACKUP`, `github-canonical`, and `vault-E-Repositories`, 40,190,205,104 bytes by `du -sb` on 2026-09-29.
+The old project trees have no recipe yet, so they are not ingested and attest nothing.
 
-## Value
+## Source
 
-| Attestation | What it means | Lands on | Value | Witness | Proof |
-| --- | --- | --- | --- | --- | --- |
-| Old project tree | A directory of project source and its companion files, not a published columnar dataset | Each file under `archive-001-Deleted-Solutions` | The file bytes | The local archive directory | `du -sb` and `find` on 2026-09-29 |
-| Old project tree | A directory of project source and its companion files, not a published columnar dataset | Each file under `archive-002-projects` | The file bytes | The local archive directory | `du -sb` and `find` on 2026-09-29 |
-| Old project tree | A directory of project source and its companion files, not a published columnar dataset | Each file under `archive-BACKUP` | The file bytes | The local archive directory | `du -sb` and `find` on 2026-09-29 |
-| Old project tree | A directory of project source and its companion files, not a published columnar dataset | Each file under `github-canonical` | The file bytes | The local archive directory | `du -sb` and `find` on 2026-09-29 |
-| Old project tree | A directory of project source and its companion files, not a published columnar dataset | Each file under `vault-E-Repositories` | The file bytes | The local archive directory | `du -sb` and `find` on 2026-09-29 |
+No directory under [`recipes/`](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes) reads this collection, and `recipes/order` does not name it. Until a recipe exists, nothing in it is decomposed, recorded, or attested; see [Attestations](../Semantics/Attestations.md#observations). The format below is the publisher's, kept so that a recipe can be written from it.
 
 ## Format
 
-| Record | Fields in order | What a record is | Proof |
+| Record | Fields in order | What a record is | Specification |
 | --- | --- | --- | --- |
-| File in an old project tree | No fixed column order; the trees are project directories, not a parquet schema | One of the 397,004 files under `/vault/models/code-corpus` | `find -type f` on 2026-09-29 |
+| File in an old project tree | No fixed column order; the trees are project directories, not a parquet schema | One file of a project tree, whatever its format. | The trees themselves; no publisher's specification exists. |

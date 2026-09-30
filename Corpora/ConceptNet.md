@@ -1,63 +1,52 @@
 # ConceptNet
 
-ConceptNet attests an assertion of a relation between two concepts.
+ConceptNet attests each edge of its assertions as the claim of its start, its relation, and its end, witnessed by every contributor the edge's sources name, and its relations page attests what each relation is described and exemplified as; the edge's URI, weight, dataset, license, and surface text are the claim's specifics and attest nothing of their own.
 
-## Format
+The source is ConceptNet 5.7's assertions, one edge on every line, with ConceptNet's own documentation of the file beside it. The documentation's pages [Downloads](https://github.com/commonsense/conceptnet5/wiki/Downloads), [Edges](https://github.com/commonsense/conceptnet5/wiki/Edges), [URI hierarchy](https://github.com/commonsense/conceptnet5/wiki/URI-hierarchy), and [Relations](https://github.com/commonsense/conceptnet5/wiki/Relations) are what the recipes quote.
 
-| Record | Field | Order | Type | Specification |
-| --- | --- | --- | --- | --- |
-| assertion | uri | 1 | URI | The URI of the whole edge. A unique URI for the assertion being expressed. Called `@id` in the Linked Data API. |
-| assertion | rel | 2 | URI | The relation expressed by the edge. The URI of the predicate of this assertion. The relation is the mask ([Claims](../Semantics/Claims.md#masks)). |
-| assertion | start | 3 | URI | The node at the start of the edge. The URI of the first argument of the assertion. |
-| assertion | end | 4 | URI | The node at the end of the edge. The URI of the second argument of the assertion. |
-| assertion | weight | 5, inside the JSON | number | The strength with which this edge expresses this assertion. A typical weight is 1, but weights can be higher or lower. All weights are positive. The fifth column is a JSON object. This file does not fix the order of keys inside it. |
-| assertion | sources | 5, inside the JSON | list | The sources that, when combined, say that this assertion should be true. |
-| assertion | license | 5, inside the JSON | URI | A Creative Commons URI for the license that governs this data. |
-| assertion | dataset | 5, inside the JSON | URI | A URI representing the dataset, or the batch of data from a particular source that created this edge. |
-| assertion | surfaceText | 5, inside the JSON | string or null | The original natural language text that expressed this statement. May be null, because not every statement was derived from natural language input. The locations of the start and end concepts are marked by surrounding them with double brackets. |
+## Sources
 
-## Value
-
-| Field | Composition | Mask | What is recorded | Lineage or hop | Specification |
+| Source | Witness | Uncertainty | After | Files | Recipe |
 | --- | --- | --- | --- | --- | --- |
-| /r/RelatedTo | assertion (start, rel, end) | /r/RelatedTo | end | ConceptNet | The most general relation. There is some positive relationship between A and B, but ConceptNet can't determine what that relationship is based on the data. This was called "ConceptuallyRelatedTo" in ConceptNet 2 through 4. Symmetric. |
-| /r/FormOf | assertion (start, rel, end) | /r/FormOf | end | ConceptNet | A is an inflected form of B; B is the root word of A. |
-| /r/IsA | assertion (start, rel, end) | /r/IsA | end | ConceptNet | A is a subtype or a specific instance of B; every A is a B. This can include specific instances; the distinction between subtypes and instances is often blurry in language. This is the hyponym relation in WordNet. |
-| /r/PartOf | assertion (start, rel, end) | /r/PartOf | end | ConceptNet | A is a part of B. This is the part meronym relation in WordNet. |
-| /r/HasA | assertion (start, rel, end) | /r/HasA | end | ConceptNet | B belongs to A, either as an inherent part or due to a social construct of possession. HasA is often the reverse of PartOf. |
-| /r/UsedFor | assertion (start, rel, end) | /r/UsedFor | end | ConceptNet | A is used for B; the purpose of A is B. |
-| /r/CapableOf | assertion (start, rel, end) | /r/CapableOf | end | ConceptNet | Something that A can typically do is B. |
-| /r/AtLocation | assertion (start, rel, end) | /r/AtLocation | end | ConceptNet | A is a typical location for B, or A is the inherent location of B. Some instances of this would be considered meronyms in WordNet. |
-| /r/Causes | assertion (start, rel, end) | /r/Causes | end | ConceptNet | A and B are events, and it is typical for A to cause B. |
-| /r/HasSubevent | assertion (start, rel, end) | /r/HasSubevent | end | ConceptNet | A and B are events, and B happens as a subevent of A. |
-| /r/HasFirstSubevent | assertion (start, rel, end) | /r/HasFirstSubevent | end | ConceptNet | A is an event that begins with subevent B. |
-| /r/HasLastSubevent | assertion (start, rel, end) | /r/HasLastSubevent | end | ConceptNet | A is an event that concludes with subevent B. |
-| /r/HasPrerequisite | assertion (start, rel, end) | /r/HasPrerequisite | end | ConceptNet | In order for A to happen, B needs to happen; B is a dependency of A. |
-| /r/HasProperty | assertion (start, rel, end) | /r/HasProperty | end | ConceptNet | A has B as a property; A can be described as B. |
-| /r/MotivatedByGoal | assertion (start, rel, end) | /r/MotivatedByGoal | end | ConceptNet | Someone does A because they want result B; A is a step toward accomplishing the goal B. |
-| /r/ObstructedBy | assertion (start, rel, end) | /r/ObstructedBy | end | ConceptNet | A is a goal that can be prevented by B; B is an obstacle in the way of A. |
-| /r/Desires | assertion (start, rel, end) | /r/Desires | end | ConceptNet | A is a conscious entity that typically wants B. Many assertions of this type use the appropriate language's word for "person" as A. |
-| /r/CreatedBy | assertion (start, rel, end) | /r/CreatedBy | end | ConceptNet | B is a process or agent that creates A. |
-| /r/Synonym | assertion (start, rel, end) | /r/Synonym | end | ConceptNet | A and B have very similar meanings. They may be translations of each other in different languages. This is the synonym relation in WordNet as well. Symmetric. |
-| /r/Antonym | assertion (start, rel, end) | /r/Antonym | end | ConceptNet | A and B are opposites in some relevant way, such as being opposite ends of a scale, or fundamentally similar things with a key difference between them. Counterintuitively, two concepts must be quite similar before people consider them antonyms. This is the antonym relation in WordNet as well. Symmetric. |
-| /r/DistinctFrom | assertion (start, rel, end) | /r/DistinctFrom | end | ConceptNet | A and B are distinct member of a set; something that is A is not B. Symmetric. |
-| /r/DerivedFrom | assertion (start, rel, end) | /r/DerivedFrom | end | ConceptNet | A is a word or phrase that appears within B and contributes to B's meaning. |
-| /r/SymbolOf | assertion (start, rel, end) | /r/SymbolOf | end | ConceptNet | A symbolically represents B. |
-| /r/DefinedAs | assertion (start, rel, end) | /r/DefinedAs | end | ConceptNet | A and B overlap considerably in meaning, and B is a more explanatory version of A. |
-| /r/MannerOf | assertion (start, rel, end) | /r/MannerOf | end | ConceptNet | A is a specific way to do B. Similar to "IsA", but for verbs. |
-| /r/LocatedNear | assertion (start, rel, end) | /r/LocatedNear | end | ConceptNet | A and B are typically found near each other. Symmetric. |
-| /r/HasContext | assertion (start, rel, end) | /r/HasContext | end | ConceptNet | A is a word used in the context of B, which could be a topic area, technical field, or regional dialect. |
-| /r/SimilarTo | assertion (start, rel, end) | /r/SimilarTo | end | ConceptNet | A is similar to B. Symmetric. |
-| /r/EtymologicallyRelatedTo | assertion (start, rel, end) | /r/EtymologicallyRelatedTo | end | ConceptNet | A and B have a common origin. Symmetric. |
-| /r/EtymologicallyDerivedFrom | assertion (start, rel, end) | /r/EtymologicallyDerivedFrom | end | ConceptNet | A is derived from B. |
-| /r/CausesDesire | assertion (start, rel, end) | /r/CausesDesire | end | ConceptNet | A makes someone want B. |
-| /r/MadeOf | assertion (start, rel, end) | /r/MadeOf | end | ConceptNet | A is made of B. |
-| /r/ReceivesAction | assertion (start, rel, end) | /r/ReceivesAction | end | ConceptNet | B can be done to A. |
-| /r/ExternalURL | assertion (start, rel, end) | /r/ExternalURL | end | ConceptNet | Instead of relating to ConceptNet nodes, this pseudo-relation points to a URL outside of ConceptNet, where further Linked Data about this term can be found. Similar to RDF's seeAlso relation. |
-| /r/dbpedia/* | assertion (start, rel, end) | /r/dbpedia/* | end | ConceptNet | Deprecated. /r/dbpedia/* relations represent abandoned attempts to expand the knowledge we get from DBPedia. |
-| /r/InstanceOf | assertion (start, rel, end) | /r/InstanceOf | end | ConceptNet | Deprecated. /r/InstanceOf expresses "A is an example of B", but because natural language rarely distinguishes this from "A is a type of B", it should be merged with /r/IsA. |
-| /r/Entails | assertion (start, rel, end) | /r/Entails | end | ConceptNet | Deprecated. /r/Entails says that "if A is happening, B is also happening". Instances of Entails should either become MannerOf or HasPrerequisite. |
-| /r/NotDesires | assertion (start, rel, end) | /r/NotDesires | end | ConceptNet | Deprecated. The negative relations that the file says it has data for are NotDesires, NotUsedFor, NotCapableOf, and NotHasProperty. These are expressed as negative versions of those relations. The same paragraph's example /r/NotIsA is not in that list. |
-| /r/NotUsedFor | assertion (start, rel, end) | /r/NotUsedFor | end | ConceptNet | Deprecated. The negative relations that the file says it has data for are NotDesires, NotUsedFor, NotCapableOf, and NotHasProperty. These are expressed as negative versions of those relations. |
-| /r/NotCapableOf | assertion (start, rel, end) | /r/NotCapableOf | end | ConceptNet | Deprecated. The negative relations that the file says it has data for are NotDesires, NotUsedFor, NotCapableOf, and NotHasProperty. These are expressed as negative versions of those relations. |
-| /r/NotHasProperty | assertion (start, rel, end) | /r/NotHasProperty | end | ConceptNet | Deprecated. The negative relations that the file says it has data for are NotDesires, NotUsedFor, NotCapableOf, and NotHasProperty. These are expressed as negative versions of those relations. |
+| `conceptnet` | `ConceptNet`, and each contributor an edge's sources name | deviation 90 | `unicode`, `iso-639`, `wiktionary` | `assertions.csv` | [`assertions.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/conceptnet/assertions.recipe) |
+| `conceptnet` | `ConceptNet` | deviation 90 | `unicode`, `iso-639`, `wiktionary` | `Relations.md` | [`relations.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/conceptnet/relations.recipe) |
+
+The deviation is "this recipe's choice for a curated academic resource; the specification does not give one": the number is not settled, and [Corpora](README.md#not-settled) lists it among what stays missing.
+
+A URI is a path. "Every object in ConceptNet has a URI that is structured like a path"; "Concept URIs contain the text of the concept, with spaces replaced by underscores"; a concept has "the initial /c", "a part that indicates its language", "a part with the concept text", and "an optional fourth component gives the part of speech" ([URI hierarchy](https://github.com/commonsense/conceptnet5/wiki/URI-hierarchy)). So a value that begins with `/` is recorded as the tuple of its parts, and a part's words, joined by `_`, as the tuple of the words: `/c/en/ice_cream/n` is `[c, en, [ice, cream], n]`, and an assertion's URI, "in a bracketed list", `/a/[/r/IsA/,/c/en/dog/,/c/en/animal/]`, is `[a, [[r, IsA], [c, en, dog], [c, en, animal]]]`.
+
+## The assertions
+
+A record is one line: five fields parted by tabs, no header row. "The five fields of each line are: The URI of the whole edge; The relation expressed by the edge; The node at the start of the edge; The node at the end of the edge; A JSON structure of additional information about the edge" ([Downloads](https://github.com/commonsense/conceptnet5/wiki/Downloads)). The recipe names the columns as [Edges](https://github.com/commonsense/conceptnet5/wiki/Edges) names them: `uri`, `rel`, `start`, `end`, and the JSON. The edge is its start, its relation, and its end; its `uri` and everything in the JSON are said of the edge itself.
+
+| Piece | Written as | Laplace reads it as | Claim recorded | Specification |
+| --- | --- | --- | --- | --- |
+| `start` | `/c/en/dog` | the subject, as the path its URI is | the first part of the claim | "The node at the start of the edge"; "The URI of the first argument of the assertion" |
+| `rel` | `/r/IsA` | the predicate, as a path | the second part | "The relation expressed by the edge"; "The URI of the predicate of this assertion" |
+| `end` | `/c/en/animal` | the object, as a path | `[[c, en, dog], [r, IsA], [c, en, animal]]` | "The node at the end of the edge"; "The URI of the second argument of the assertion" |
+| `uri` | `/a/[/r/IsA/,/c/en/dog/,/c/en/animal/]` | said of the edge itself: a specific of the claim, the pair of the column's name and the path, recorded together with the claim as what is witnessed and no claim of its own | `[uri, [a, [[r, IsA], [c, en, dog], [c, en, animal]]]]` among the claim's specifics | "The URI of the whole edge"; "A unique URI for the assertion being expressed" |
+| `sources` in the JSON, each `contributor` in it | `"sources": [{"contributor": "/s/contributor/..."}]` | who witnessed the edge: each contributor named is a witness of its own and attests the claim with its specifics. An edge that names no contributor is attested by `ConceptNet` | the witness of the ledger row, not a claim | "sources: the sources that, when combined, say that this assertion should be true" |
+| everything else in `sources` | the other members of each source object | specifics of the claim, under `sources` | among the claim's specifics | |
+| `weight` in the JSON | `"weight": 1.0` | a specific of the claim, said of the edge; not taken for a score, because the documentation gives no scale | `[weight, 1.0]` among the claim's specifics | "weight: the strength with which this edge expresses this assertion. A typical weight is 1, but weights can be higher or lower. All weights are positive." |
+| `dataset`, `license` in the JSON | URIs | specifics of the claim, each as the path its URI is | `[dataset, [d, ...]]`, `[license, value]` among the claim's specifics | "A URI representing the dataset, or the batch of data from a particular source that created this edge"; "A Creative Commons URI for the license that governs this data" |
+| `surfaceText` in the JSON | a text, or `null` | a specific of the claim; `null` says nothing | `[surfaceText, text]` among the claim's specifics | "The original natural language text that expressed this statement. May be null, because not every statement was derived from natural language input." |
+| an empty field | | nothing | none | |
+
+The ledger row is the claim and its specifics, witnessed once by each contributor the edge names, or once by ConceptNet when it names none; the claim `[start, rel, end]` is what stands and plays its matchups as [Consensus](../Semantics/Consensus.md#matchups) describes. The row takes no column for a score, so it attests the claim as a win.
+
+## The relations page
+
+`Relations.md` is ConceptNet's page "Relations in ConceptNet 5": a table with a row for each relation, under the headings `Relation URI`, `Description`, and `Examples`. What a row says of a relation is said under the heading of its column; the relation's URI is a path, as above.
+
+| Piece | Written as | Laplace reads it as | Claim recorded | Specification |
+| --- | --- | --- | --- | --- |
+| the `Relation URI` cell | `/r/IsA` | the subject, as a path | `[r, IsA]` | [Relations](https://github.com/commonsense/conceptnet5/wiki/Relations) |
+| the `Description` cell | "A is a subtype or a specific instance of B; every A is a B. ..." | said of the relation under `Description` | `[[r, IsA], Description, A is a subtype or a specific instance of B; every A is a B. ...]` | |
+| the `Examples` cell | `car → vehicle; Chicago → city` | said of the relation under `Examples`, the cell as one text | `[[r, IsA], Examples, car → vehicle; Chicago → city]` | |
+| every other line of the page | | not a row of the table: not a claim | none | |
+
+The page attests what a relation is called and described as. It does not attest that any edge carries it: that is the assertions' to say.
+
+## What is not read
+
+The other documentation pages beside `Relations.md` — Downloads, Edges, URI hierarchy — are matched by no recipe and are not read; the recipes quote them, as this page does. Every other file under the root is not read either.
