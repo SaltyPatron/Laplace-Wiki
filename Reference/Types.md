@@ -37,7 +37,7 @@ The container index carries them: its keys are the packed IDs a path holds *and*
 
 ## Repeats
 
-[Compositions](../Storage/Compositions.md#repeats): repeats are not recorded one by one. A run is a constituent repeated adjacently, at every tier (`aaa`, `no no no`). A repeated *block* is factored from the content alone, by one rule — leftmost, longest, recursive — so `banana` is `b [an]×2 a` and `mississippi` is `m [i [s×2]]×2 i [p×2] i`, and the block is an entity every other composition that holds it shares. Never against what was recorded before: the ID stays a function of content.
+[Compositions](../Storage/Compositions.md#repeats): repeats are not recorded one by one. A run is a constituent repeated adjacently, at every tier (`aaa`, `no no no`). A repeated *block* is factored from the content alone, by one rule — leftmost, the shortest period, recursive — so `banana` is `b [an]×2 a` and `mississippi` is `m [i [s×2]]×2 i [p×2] i`, and the block is an entity every other composition that holds it shares. Never against what was recorded before: the ID stays a function of content.
 
 ## The extension owns the schema
 
