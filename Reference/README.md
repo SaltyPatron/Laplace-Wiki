@@ -22,3 +22,4 @@ Conventions. A name in fixed width is exact as it appears in a source or a file:
 - [Checks](Checks.md): every check that proves the machine: the native tests, the prototype verification, the status and bench commands, the query benchmark.
 - [Glossary](Glossary.md): the terms, each defined once.
 - [Traceability](Traceability.md): every Sequence operation against the mechanism that performs it, the check that proves it, and its status.
+- [Types, masks and the highway](Types.md): types are never content: perf-caches, values in vertices, masks, layers, segmentation, repeats, the extension owning the schema.
