@@ -1,0 +1,18 @@
+# Laplace-Wiki on its runner: the site built strictly from the pages (tools/site.py), kept as the run's artifact.
+name: Laplace-Wiki
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  site:
+    runs-on: [self-hosted, laplace, Laplace-Wiki]
+    steps:
+      - uses: actions/checkout@v4
+      - name: the site
+        run: |
+          python3 -m venv .venv && .venv/bin/pip install -q -r tools/requirements.txt
+          python3 tools/site.py build
+      - uses: actions/upload-artifact@v4
+        with: { name: site, path: site }
