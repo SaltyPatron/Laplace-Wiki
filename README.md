@@ -25,11 +25,11 @@ Every page in this repository is listed below. Read every listed page in full.
   - [Pull](Semantics/Pull.md) — Laplace's forward pass is native C recursive operations with A* and indexed lookups, pulling on an interwoven web of entities and attestations.
   - [Personality firmware](Semantics/Firmware.md) — the personality firmware is a pull's decision tree: which segment of which branch to take, and how to combine them, from the observation, its attestations, and the tree across tiers, kept out of the training data.
 - [Corpora](Corpora/README.md) — Each page specifies one collection's record format and the attestation that format supplies.
-  - [Unicode Character Database](Corpora/Unicode.md) — The Unicode Character Database attests the properties of a code point, and the flat XML is that witness.
+  - [Unicode Character Database](Corpora/Unicode.md) — The Unicode Character Database attests everything the standard says of a code point, the flat XML is the record of it, and the property files add only what the XML does not carry.
   - [ISO 639](Corpora/ISO-639.md) — ISO 639 attests the identity of a language, which is the value other corpora use when they name a language.
   - [Wordnets](Corpora/Wordnets.md) — The wordnets attest sense, and CILI is the hop that changes language without becoming a second witness of the Princeton gloss.
   - [Word sense disambiguation](Corpora/Word-Sense-Disambiguation.md) — A sense-annotated corpus attests which wordnet sense a token carries, and each dataset is its own witness because its identifiers start over.
-  - [Universal Dependencies](Corpora/Universal-Dependencies.md) — A Universal Dependencies treebank attests the part of speech and the dependency role of a token, and the tools and the documentation attest the tag set rather than the sentence.
+  - [Universal Dependencies](Corpora/Universal-Dependencies.md) — A Universal Dependencies treebank attests what it says of each word within its sentence, the validator's data attests which tags, relations, and features the project permits, and the documentation attests what each of those is called.
   - [Hops](Corpora/Hops.md) — The lexicons are separate witnesses, and a hop is the curated edge that lets consensus on a claim in one of them pull on a claim in another.
   - [FrameNet](Corpora/FrameNet.md) — FrameNet attests frames, the roles in them, and the lexical units that evoke them.
   - [VerbNet](Corpora/VerbNet.md) — VerbNet attests class membership of a verb and the thematic roles and frames of that class.
