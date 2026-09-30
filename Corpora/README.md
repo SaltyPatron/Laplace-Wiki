@@ -32,6 +32,52 @@ Three things every page needs are not on any page yet, because the words for the
 - **Mask.** [Claims](../Semantics/Claims.md#masks) says separate columns hold bitmasks for part of speech, sense, dependency relation, and so on. Which bit each predicate sets is defined nowhere.
 - **Trust.** [Consensus](../Semantics/Consensus.md#trust) gives the order of trust, from MANDATE down. The number each source enters at is the recipe writer's choice, and each recipe says so.
 
+## Recipes
+
+Every source in `recipes/order`, in that order, and the page that is its glossary. A page not in this table documents a collection no recipe reads yet, and says so.
+
+| Source | Page |
+| --- | --- |
+| `unicode` | [Unicode Character Database](Unicode.md) |
+| `iso-639` | [ISO 639](ISO-639.md) |
+| `cili` | [Wordnets](Wordnets.md) |
+| `open-english-wordnet` | [Wordnets](Wordnets.md) |
+| `open-multilingual-wordnet` | [Wordnets](Wordnets.md) |
+| `princeton-wordnet` | [Wordnets](Wordnets.md) |
+| `propbank` | [PropBank](PropBank.md) |
+| `verbnet` | [VerbNet](VerbNet.md) |
+| `framenet` | [FrameNet](FrameNet.md) |
+| `semlink` | [SemLink](SemLink.md) |
+| `predicate-matrix` | [Predicate Matrix](Predicate-Matrix.md) |
+| `mapnet` | [MapNet](MapNet.md) |
+| `verbatlas` | [VerbAtlas](VerbAtlas.md) |
+| `wordframenet` | [WordFrameNet](WordFrameNet.md) |
+| `universal-dependencies-tools` | [Universal Dependencies](Universal-Dependencies.md) |
+| `universal-dependencies-documentation` | [Universal Dependencies](Universal-Dependencies.md) |
+| `universal-dependencies` | [Universal Dependencies](Universal-Dependencies.md) |
+| `wsd-evaluation-framework` | [Word sense disambiguation](Word-Sense-Disambiguation.md) |
+| `wiktionary-kaikki` | [Wiktionary](Wiktionary.md) |
+| `wiktionary` | [Wiktionary](Wiktionary.md) |
+| `conceptnet` | [ConceptNet](ConceptNet.md) |
+| `atomic-2020` | [ATOMIC](ATOMIC.md) |
+| `framebase` | [FrameBase](FrameBase.md) |
+| `atomic-10x` | [ATOMIC](ATOMIC.md) |
+| `tatoeba` | [Tatoeba](Tatoeba.md) |
+| `opensubtitles` | [OpenSubtitles](OpenSubtitles.md) |
+| `project-gutenberg` | [Project Gutenberg](Project-Gutenberg.md) |
+| `tokenizers` | [Tokenizers](Tokenizers.md) |
+| `geonames` | [GeoNames](GeoNames.md) |
+| `hatecheck` | [HateCheck](HateCheck.md) |
+| `sghatecheck` | [HateCheck](HateCheck.md) |
+| `xstest` | [XSTest](XSTest.md) |
+| `social-bias-frames` | [Social Bias Frames](Social-Bias-Frames.md) |
+| `social-chemistry-101` | [Social Chemistry](Social-Chemistry.md) |
+| `prosocial-dialog` | [ProsocialDialog](Prosocial-Dialog.md) |
+| `real-toxicity-prompts` | [RealToxicityPrompts](RealToxicityPrompts.md) |
+| `toxigen` | [ToxiGen](ToxiGen.md) |
+| `measuring-hate-speech` | [Measuring Hate Speech](Measuring-Hate-Speech.md) |
+| `civil-comments` | [Civil Comments](Civil-Comments.md) |
+
 ## Pages
 
 - [Unicode Character Database](Unicode.md)
