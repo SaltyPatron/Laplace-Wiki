@@ -10,9 +10,9 @@ All of [1. Unicode](Unicode.md) through [21. Sessions](Sessions.md).
 
 ## As built
 
-None: `laplace pull PROMPT` computes the prompt's trunk on the client and records nothing ([Reads: laplace pull](../Reference/Reads.md#laplace-pull)); no prompt is admitted as content and no user exists.
+None: `laplace pull PROMPT` computes the prompt's trunk on the client and records nothing ([Reads: laplace pull](../Reference/Reads.md#laplace-pull)); no prompt is admitted as content and no user exists. In the monorepo: `UserPromptContent.cs`, `ResponseContent.cs`, `UserArtifactContent.cs`, `/v1/content/text` and `/v1/content/code`; the trust classes `UserPromptContent` 0.30 and `ResponseContent` 0.20; `converse.chat` witnesses the prompt under UserPrompt and the response under Response, the side of [Conflicts C1](Conflicts.md) that attests; `LAPLACE_AUTH_DEV_PRINCIPAL` for a sandbox ([Monorepo: Surfaces](../Reference/Monorepo.md#surfaces-sessions-authority-and-the-envelope)).
 
-Status: **specified**. Every operation below is from the invention documents; [Reference: Traceability](../Reference/Traceability.md#22-users) indexes it.
+Status: **monorepo**. Every operation below is from the invention documents; [Reference: Traceability](../Reference/Traceability.md#22-users) indexes it.
 
 ## Operations, per user
 

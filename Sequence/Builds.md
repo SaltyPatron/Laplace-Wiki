@@ -14,7 +14,7 @@ PostgreSQL, Laplace-Native, Laplace-postgres, and Laplace-Engine are built in th
 - **Do:** configure with `--with-icu --with-ssl=openssl --with-lz4 --with-zstd --with-liburing CC=icx CXX=icpx` into its own prefix such as `/usr/local/pgsql`; build the server and contrib; install both. The contrib modules include `pg_stat_statements`, `auto_explain`, and `pg_buffercache`, which Laplace uses for observability. PostgreSQL is built with `icx` so that the server and the extensions share one compiler: extensions built with PGXS take their flags from the compiler PostgreSQL was built with, and a gcc-built server hands `icx` flags it rejects.
 - **Out:** the server, its `pg_config`, and its library and extension directories.
 - **Check:** after changing configure options, `make clean` first, or the new options never reach the binary, because the Autoconf build does not track header dependencies unless configured with `--enable-depend`.
-- **Mechanism:** done by the operator; the result is what `LAPLACE_PG_DIR` and `PG_CONFIG` point at ([Environment: Paths](../Reference/Environment.md#paths)). Status: **operator**.
+- **Mechanism:** done by the operator; the result is what `LAPLACE_PG_DIR` and `PG_CONFIG` point at ([Environment: Paths](../Reference/Environment.md#paths)). In the monorepo: `deploy/postgresql-release.json` and `scripts/postgresql-release.py` build PostgreSQL 18 into `/opt/laplace/pgsql-18`. Status: **operator**.
 - **From:** [Builds: PostgreSQL](../Operations/Builds.md#postgresql).
 
 ### 3.2 Build PostGIS against it
@@ -63,7 +63,7 @@ PostgreSQL, Laplace-Native, Laplace-postgres, and Laplace-Engine are built in th
 - **In:** the Laplace-Engine source, the library of 3.3, libpq, the grammars of 3.6.
 - **Do:** build Laplace itself against Laplace-Native, working against a database extended by Laplace-postgres. Every build has a fingerprint.
 - **Out:** the engine.
-- **Mechanism:** `build.sh`, target `laplace_engine`, one executable `laplace` ([Build: Targets](../Reference/Build.md#targets)). Status: **built**.
+- **Mechanism:** `build.sh`, target `laplace_engine`, one executable `laplace` ([Build: Targets](../Reference/Build.md#targets)). In the monorepo: `pipeline.sh build` builds `liblaplace_core`, `liblaplace_dynamics`, `liblaplace_synthesis`, `laplace_substrate.so`, `laplace_geom.so`, the .NET solution, and the web ([Monorepo: Build and install](../Reference/Monorepo.md#build-and-install)). Status: **built**.
 - **From:** [Architecture: Repositories](../Architecture.md#repositories).
 
 ### 3.8 Record the fingerprints
@@ -71,7 +71,7 @@ PostgreSQL, Laplace-Native, Laplace-postgres, and Laplace-Engine are built in th
 - **In:** every build of this stage.
 - **Do:** every build has a fingerprint. Record it, so an install knows which build it has.
 - **Out:** the fingerprints an install is identified by, alongside the tier-0 fingerprint of [5. Tier 0](Tier-0.md). One deployed revision: the application, the prefix native libraries, the PostgreSQL execution module, and the tier-0 perf-cache identify one build, and [29. Maintenance](Maintenance.md) operation 29.7 proves it in the serving process.
-- **Mechanism:** only tier 0 is fingerprinted: `lp_tier0_fingerprint` ([Native: Tier 0](../Reference/Native.md#tier-0-tier0c)), `laplace_fingerprint()` ([SQL: Tier 0 in place](../Reference/SQL.md#tier-0-in-place)), compared by `laplace status` ([CLI: laplace status](../Reference/CLI.md#laplace-status)). No build of the library, the extension, or the engine records a fingerprint. Status: **built for tier 0; the build fingerprints specified**.
+- **Mechanism:** only tier 0 is fingerprinted: `lp_tier0_fingerprint` ([Native: Tier 0](../Reference/Native.md#tier-0-tier0c)), `laplace_fingerprint()` ([SQL: Tier 0 in place](../Reference/SQL.md#tier-0-in-place)), compared by `laplace status` ([CLI: laplace status](../Reference/CLI.md#laplace-status)). No build of the library, the extension, or the engine records a fingerprint. In the monorepo: `check-deployed-revision.sh` compares the `.laplace-source-revision` receipts of the application and the native prefix, the SHA-256 of `liblaplace_core.so.0.1.0` in both, and the execution module named by `laplace_execution_module.txt` ([Monorepo: Build and install](../Reference/Monorepo.md#build-and-install)). Status: **built for tier 0; monorepo for the build revision**.
 - **From:** [Architecture: Native C](../Architecture.md#native-c).
 
 ## What this stage leaves behind

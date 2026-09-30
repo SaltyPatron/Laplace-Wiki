@@ -67,7 +67,7 @@ The part of the 4-cube outside the 4-ball is forbidden space. The codepoints are
   Every coordinate depends on t = (i + ½)/n, so n is fixed in advance: point *i* of the *n*-point set is not point *i* of any other set. The official repository retracts the paper's refinement claim: measured, no point of an *n*-point set coincides with a point of a *kn*-point set. With n fixed at the size of the codespace, every point is permanent. Each point depends only on (*i*, *n*), so points are generated independently and in parallel, with the correctly rounded `sin` and `cos` of [2. Toolchain](Toolchain.md).
 - **Out:** 1,114,112 points on the S³.
 - **Check:** all norms equal 1 to within 2.2 × 10⁻¹⁶; the centroid of the full set has norm about 10⁻⁶; minimum nearest-neighbor distance 0.012734, mean 0.019937, maximum 0.026053; that many independent random points would have a minimum about 60 times smaller.
-- **Mechanism:** `laplace tier0`: Algorithm 1 in the reference's operation order with `cr_sin` and `cr_cos` from `lp_crmath` ([CLI: laplace tier0](../Reference/CLI.md#laplace-tier0), [Build: Targets](../Reference/Build.md#targets)). Status: **built**.
+- **Mechanism:** `laplace tier0`: Algorithm 1 in the reference's operation order with `cr_sin` and `cr_cos` from `lp_crmath` ([CLI: laplace tier0](../Reference/CLI.md#laplace-tier0), [Build: Targets](../Reference/Build.md#targets)). In the monorepo: `super_fibonacci_point_open(rank)`, the radial parameter the base-2 radical inverse of the rank, so a point never moves when more are admitted: the other side of [Conflicts P1](Conflicts.md) ([Monorepo: Identity and placement](../Reference/Monorepo.md#identity-placement-and-the-carrier)). Status: **built**.
 - **From:** [Atoms: Placement](../Storage/Atoms.md#placement), [Research: Sampling: Super-Fibonacci spirals](../Research/Sampling.md#super-fibonacci-spirals), [Research: Sampling: Numeric checks](../Research/Sampling.md#numeric-checks).
 
 ### 4.5 Compute each point's Hilbert value
@@ -75,7 +75,7 @@ The part of the 4-cube outside the 4-ball is forbidden space. The codepoints are
 - **In:** the points of 4.4.
 - **Do:** the Hilbert curve fills the 4-cube [−1, 1]⁴, and the points on the S³ are that curve filtered to the S³. Quantize each axis to 16 bits and compute the value with Skilling's transpose algorithm: one Gray code over all n·p bits and a single undo pass, in O(n·p) time with no tables. Once branches became masks and the bit interleave became `pdep`, the native kernel fell from 227 ns to 83 ns per value.
 - **Out:** one Hilbert value per point.
-- **Mechanism:** `lp_hilbert4`: 16-bit grid, Skilling's transpose, `pdep` on x86-64-v3 ([Formats: The Hilbert value](../Reference/Formats.md#the-hilbert-value), [Native: Coordinates](../Reference/Native.md#coordinates-coordc)). Status: **built**.
+- **Mechanism:** `lp_hilbert4`: 16-bit grid, Skilling's transpose, `pdep` on x86-64-v3 ([Formats: The Hilbert value](../Reference/Formats.md#the-hilbert-value), [Native: Coordinates](../Reference/Native.md#coordinates-coordc)). In the monorepo: `hilbert4d_encode`: 32 bits per axis into a 128-bit value ([Monorepo: Identity and placement](../Reference/Monorepo.md#identity-placement-and-the-carrier)). Status: **built**.
 - **From:** [Atoms: Placement](../Storage/Atoms.md#placement), [Research: Placement: The placement](../Research/Placement.md#the-placement), [Research: Geometry: Hilbert curves](../Research/Geometry.md#hilbert-curves), [Research: Engine Measurements: Native operations](../Research/Engine.md#native-operations).
 
 ### 4.6 Sort the points by Hilbert value
@@ -83,7 +83,7 @@ The part of the 4-cube outside the 4-ball is forbidden space. The codepoints are
 - **In:** the points and values of 4.5.
 - **Do:** sort. The sorted list is a walk over the S³ along the Hilbert curve. A Hilbert curve is a space-filling curve: points that are close along the curve are close in space. This replaces the spiral's visiting order, which carries no locality, with the curve's, while the points themselves remain the evenly spread Super-Fibonacci set. The spiral index scatters because each step from index *i* to *i* + 1 turns α by 360°/√2 ≈ 254.6° and β by 360°/ψ ≈ 234.7°, so consecutive indices land on nearly opposite sides of both circles, a median 1.686 apart, farther than two random points at about 1.36.
 - **Out:** the points in Hilbert order.
-- **Mechanism:** `laplace tier0` walks the points in Hilbert order ([CLI: laplace tier0](../Reference/CLI.md#laplace-tier0)). Status: **built**.
+- **Mechanism:** `laplace tier0` walks the points in Hilbert order ([CLI: laplace tier0](../Reference/CLI.md#laplace-tier0)). In the monorepo: no Hilbert ordering of the points: rank *r* takes the open point of index *r* directly. Status: **built**.
 - **From:** [Research: Placement: Why the spiral index scatters](../Research/Placement.md#why-the-spiral-index-scatters), [Research: Placement: Why Hilbert order fixes it](../Research/Placement.md#why-hilbert-order-fixes-it).
 
 ### 4.7 Give rank r the r-th point
@@ -92,7 +92,7 @@ The part of the 4-cube outside the 4-ball is forbidden space. The codepoints are
 - **Do:** DUCET rank *r* takes the *r*-th point of the walk. Rank and point are both fixed by the Unicode version, and IDs are not derived from either.
 - **Out:** one point on the S³ for every codepoint. The monorepo states the placement as the open radical-inverse law with no fixed n; that difference is [30. Conflicts](Conflicts.md) P1.
 - **Check:** collation neighbors are spatial neighbors. The median distance between consecutive DUCET ranks is 0.026, against 1.686 under the plain spiral index; the mean nearest-neighbor distance of the full set is 0.0199. Case, width, and style variants of one letter are consecutive ranks, so `a`, `ａ`, `𝐚`, `ⓐ`, and `A` are consecutive points; the mean pairwise distance within `A a ä á à â å ã ā` is 0.086, at most 0.142. Word centroids inherit it: `King` to `king` 0.023, `king` to `ding` 0.105, `ding` to `dong` 0.079, `dong` to `kong` 0.105; from `king`: `ring` 0.049, `sing` 0.049, `kong` 0.079, `cat` 0.238, `猫` 0.651. The placement is not exact, but it is predictable and recordable.
-- **Mechanism:** `laplace tier0` writes rank *r*'s point into codepoint's record; `rank` and `m[4]` in the record ([Formats: The tier-0 record](../Reference/Formats.md#the-tier-0-record)). Status: **built**.
+- **Mechanism:** `laplace tier0` writes rank *r*'s point into codepoint's record; `rank` and `m[4]` in the record ([Formats: The tier-0 record](../Reference/Formats.md#the-tier-0-record)). In the monorepo: rank *r* takes `super_fibonacci_point_open(r)`; the placement the Sequence follows is H1, the monorepo's is the open law, [Conflicts P1](Conflicts.md). Status: **built**.
 - **From:** [Atoms: Placement](../Storage/Atoms.md#placement), [Research: Placement: Variants compared](../Research/Placement.md#variants-compared), [Research: Placement: Words under H1](../Research/Placement.md#words-under-h1).
 
 ## What the interior will do with these points

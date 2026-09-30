@@ -10,9 +10,9 @@ Hops and fanout are first-class work coordinates. The work of a pull is shaped b
 
 ## As built
 
-None: the only bounds are the firmware's `fan` and `hops` and the `LIMIT fan + 1` of the claims fetch ([Firmware: Defaults](../Reference/Firmware.md#defaults), [Reads: The claims that hold an entity](../Reference/Reads.md#the-claims-that-hold-an-entity)); no plan, reserve, receipt, or reconcile exists.
+None: the only bounds are the firmware's `fan` and `hops` and the `LIMIT fan + 1` of the claims fetch ([Firmware: Defaults](../Reference/Firmware.md#defaults), [Reads: The claims that hold an entity](../Reference/Reads.md#the-claims-that-hold-an-entity)); no plan, reserve, receipt, or reconcile exists. In the monorepo: `/v1/billing/preflight`, the quote endpoints, `QuoteGate.RequireQuoteAsync` before an execution, `BillingReceipt`, `/v1/billing/entitlements/consume`, `EntitlementBilling`, `ExplainabilityBilling`, `SynthesisBilling`, `ReportBilling`; `p_hops` and `p_fanout` on `generation.forward_program`; `LaplaceCognitionProgramReceipt` ([Monorepo: Surfaces](../Reference/Monorepo.md#surfaces-sessions-authority-and-the-envelope)). `docs/read-path.md` §9 and §11 name the plan-against-actual reconciliation as open, issue #1561.
 
-Status: **specified**. Every operation below is from the invention documents; [Reference: Traceability](../Reference/Traceability.md#17-envelope) indexes it.
+Status: **monorepo for quote, reserve, execute, and receipt; reconcile specified**. Every operation below is from the invention documents; [Reference: Traceability](../Reference/Traceability.md#17-envelope) indexes it.
 
 ## Operations, per request
 

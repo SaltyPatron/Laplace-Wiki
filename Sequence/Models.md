@@ -10,9 +10,9 @@ The whole chain through [23. Learning](Learning.md). [10. Recipes](Recipes.md): 
 
 ## As built
 
-`laplace model MODEL_DIR` reads a safetensors checkpoint of the Llama architecture and runs `lp_rowsig` per circuit, reporting what survives each circuit's noise floor; it records nothing yet ([CLI: laplace model](../Reference/CLI.md#laplace-model), [Native: The model kernel](../Reference/Native.md#the-model-kernel-rowsigc-laplace_model)); the `vocabulary` grammar records a tokenizer as one composition of its tokens ([Recipes: How a file is recorded](../Reference/Recipes.md#how-a-file-is-recorded)).
+`laplace model MODEL_DIR` reads a safetensors checkpoint of the Llama architecture and runs `lp_rowsig` per circuit, reporting what survives each circuit's noise floor; it records nothing yet ([CLI: laplace model](../Reference/CLI.md#laplace-model), [Native: The model kernel](../Reference/Native.md#the-model-kernel-rowsigc-laplace_model)); the `vocabulary` grammar records a tokenizer as one composition of its tokens ([Recipes: How a file is recorded](../Reference/Recipes.md#how-a-file-is-recorded)). In the monorepo: `ModelDecomposer` with `SafetensorsContainerParser`, `LlamaTokenizerParser`, `ModelConfigReader`, `ModelOperatorRecognizer` over `model_operators.toml`, `ModelCircuitEstate`, `ModelTokenEdgeETL`, `WeightTensorETL`, the corroboration ETLs; native `synthesis/` (`safetensors_parser`, `sentencepiece_parser`, `tensor_decompose`, `bf16_decoder`, `qk_pairs_threshold`, `feature_extractor`) and `dynamics/` (`bilinear_edges`, `ffn_edges`, `eigenmaps`, `procrustes`); `model.model_consensus`, `model.model_factor`, the `FACTOR` vertex class; `ingest-source.sh safetensors <dir>`; `docs/plan/MODEL_INGESTION_DESIGN.md` ([Monorepo: Models](../Reference/Monorepo.md#models-export-code-chess-and-games)). The split repositories' `laplace model` is the kernel and the report only.
 
-Status: **built for the kernel and the report; recording specified**. Every operation below is from the invention documents; [Reference: Traceability](../Reference/Traceability.md#24-models) indexes it.
+Status: **monorepo**. Every operation below is from the invention documents; [Reference: Traceability](../Reference/Traceability.md#24-models) indexes it.
 
 ## Operations, per checkpoint
 

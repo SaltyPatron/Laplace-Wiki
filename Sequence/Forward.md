@@ -10,9 +10,9 @@ Laplace uses one forward program for conversation, code, games, model-scoped que
 
 ## As built
 
-None: `pull.c` states that `laplace pull` is the lookups the forward pass is made of and not yet the forward pass ([Reads: laplace pull](../Reference/Reads.md#laplace-pull)); the operators it calls are [19. Pull](Pull.md).
+None: `pull.c` states that `laplace pull` is the lookups the forward pass is made of and not yet the forward pass ([Reads: laplace pull](../Reference/Reads.md#laplace-pull)); the operators it calls are [19. Pull](Pull.md). In the monorepo: `generation.forward_program(...)`, one C entry `pg_laplace_forward_trace`, with `p_hops` 2 and `p_fanout` 8 by default, `p_seed`, `p_prior_frontier` as discourse; `converse.respond` is COUPLE; `cognition_program.h` compiles the observation into obligations from its occurrence ordinals and mints `program_id`, `semantic_act_id`, `output_fingerprint`; `steer_candidates.c`, `prompt_intent.h`, `intent_stage`; `generation.forward_text` realizes a completed act; `converse.forward_turn` and `converse.chat`; the web `ForwardProofView`; `bench-forward-program.py` ([Monorepo: Firmware and the forward program](../Reference/Monorepo.md#firmware-and-the-forward-program)). `docs/read-path.md` §11 lists what is still open: complete typed coupling coverage, remaining row-at-a-time paths, and the centroid against Karcher reconciliation.
 
-Status: **specified**. Every operation below is from the invention documents; [Reference: Traceability](../Reference/Traceability.md#20-forward) indexes it.
+Status: **monorepo**. Every operation below is from the invention documents; [Reference: Traceability](../Reference/Traceability.md#20-forward) indexes it.
 
 ## Operations, per pass
 

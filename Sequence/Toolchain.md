@@ -16,7 +16,7 @@ Laplace is native C, with SQL and C# as orchestration. Bit-perfect determinism a
 - **Do:** require x86-64-v2 at minimum. Every Laplace kernel is compiled for each ISA level and chosen at run time: x86-64-v3 with AVX2, FMA, and BMI2; AVX-VNNI; x86-64-v4 with AVX-512; AVX-512 VNNI. A CPU without a level runs the next level down, with the same results. No GPU is required; a third-party tool that produces input for Laplace may use one. Memory: enough for PostgreSQL's shared buffers, about a quarter of RAM, on huge pages, plus the operating system's page cache.
 - **Out:** the ISA levels this machine will run.
 - **Check:** Intel's Software Development Emulator runs AVX-512 paths on a CPU that lacks them, for comparing kernels.
-- **Mechanism:** `-march=x86-64-v2` for every target, per-ISA translation units at v3 and v4 ([Build: Flags](../Reference/Build.md#flags)); `lp_cpu_active` and `LAPLACE_ISA` ([Native: Constants and dispatch](../Reference/Native.md#constants-and-dispatch)). Status: **built**.
+- **Mechanism:** `-march=x86-64-v2` for every target, per-ISA translation units at v3 and v4 ([Build: Flags](../Reference/Build.md#flags)); `lp_cpu_active` and `LAPLACE_ISA` ([Native: Constants and dispatch](../Reference/Native.md#constants-and-dispatch)). In the monorepo: one level per build, `LAPLACE_TARGET_ISA` AVX2 (`-march=haswell`) or AVX512 (`-march=sapphirerapids`), no run-time dispatch ([Monorepo: Build and install](../Reference/Monorepo.md#build-and-install)). Status: **built**.
 - **From:** [Setup: Hardware](../Operations/Setup.md#hardware).
 
 ### 2.2 Lay out the drives
@@ -50,7 +50,7 @@ Laplace is native C, with SQL and C# as orchestration. Bit-perfect determinism a
 - **Do:** every build uses strict IEEE-754 semantics, so every operation rounds exactly as specified; no fast-math, so no reassociation, reciprocal approximation, or flushing; no FP contraction, `-ffp-contract=off`, so `a*b + c` is not silently fused into one rounding; SSE2 floating point, binary64 throughout, no x87 80-bit intermediates; and a correctly rounded libm. `icx` defaults to fast floating-point math, and its `-fp-model=precise` still fuses multiplies and adds into FMAs, which round once where two operations round twice, so fusing is turned off explicitly.
 - **Out:** the flags every Laplace build and every dependency is compiled with.
 - **Check:** [3. Builds](Builds.md) operation 3.5, where `icx` and `gcc` must agree bit for bit.
-- **Mechanism:** `LaplaceFlags.cmake`: `-fp-model=precise -ffp-contract=off -fno-fast-math` for `icx`, `-ffp-contract=off -fno-fast-math` for `gcc`, C17, one summation order in every kernel ([Build: Flags](../Reference/Build.md#flags)). Status: **built**.
+- **Mechanism:** `LaplaceFlags.cmake`: `-fp-model=precise -ffp-contract=off -fno-fast-math` for `icx`, `-ffp-contract=off -fno-fast-math` for `gcc`, C17, one summation order in every kernel ([Build: Flags](../Reference/Build.md#flags)). In the monorepo: `-fp-model=precise -fimf-arch-consistency=true -no-fma` under `icx`, `-fno-fast-math -ffp-contract=off` otherwise ([Monorepo: Build and install](../Reference/Monorepo.md#build-and-install)). Status: **built**.
 - **From:** [Builds: Laplace-Native](../Operations/Builds.md#laplace-native), [Research: Numerics: Deterministic builds](../Research/Numerics.md#deterministic-builds).
 
 ### 2.6 Build the dependencies from source
@@ -76,7 +76,7 @@ Laplace is native C, with SQL and C# as orchestration. Bit-perfect determinism a
 - **In:** every path from 2.2 to 2.6.
 - **Do:** one environment file sources oneAPI and points the builds at Eigen, Spectra, BLAKE3, and the custom PostgreSQL. It is sourced for Laplace and PostgreSQL builds only, not for anything built against another PostgreSQL. It sets `OMP_NUM_THREADS` and `MKL_NUM_THREADS` to the number of cores: some shells and agents set them to 1, which makes every kernel single-threaded, and the same kernel run over one vocabulary took 110.8 s on one thread and 19.9 s on twelve.
 - **Out:** the one definition of where everything is.
-- **Mechanism:** `Laplace-Engine/laplace.env` ([Environment](../Reference/Environment.md)). Status: **built**.
+- **Mechanism:** `Laplace-Engine/laplace.env` ([Environment](../Reference/Environment.md)). In the monorepo: `scripts/laplace.env.example` and `configure-laplace-environment.py`. Status: **built**.
 - **From:** [Setup: Toolchain](../Operations/Setup.md#toolchain), [Research: Engine Measurements: Native operations](../Research/Engine.md#native-operations).
 
 ### 2.8 Script everything that needs root
@@ -84,7 +84,7 @@ Laplace is native C, with SQL and C# as orchestration. Bit-perfect determinism a
 - **In:** every step that needs root: installing to system prefixes, reserving huge pages, starting the server.
 - **Do:** write it as a script that logs its output, so the result can be read afterward.
 - **Out:** a log for every privileged step.
-- **Mechanism:** `deploy.sh` logs every step under `$LAPLACE_WORK/logs/deploy/<timestamp>/` with its exit status ([Build: deploy.sh](../Reference/Build.md#deploysh)); the steps that need root are the operator's. Status: **operator**.
+- **Mechanism:** `deploy.sh` logs every step under `$LAPLACE_WORK/logs/deploy/<timestamp>/` with its exit status ([Build: deploy.sh](../Reference/Build.md#deploysh)); the steps that need root are the operator's. In the monorepo: `scripts/setup-host.sh`, `setup-storage.sh`, and `pg-machine-tuning.sh` script the root steps ([Monorepo: Build and install](../Reference/Monorepo.md#build-and-install)). Status: **operator**.
 - **From:** [Setup: Toolchain](../Operations/Setup.md#toolchain).
 
 ## What this stage leaves behind

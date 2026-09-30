@@ -10,9 +10,9 @@ The chain through [23. Learning](Learning.md). [7. Perfcaches](Perfcaches.md): t
 
 ## As built
 
-None in the four repositories beyond the prototype's `chess/` directory ([Repositories: What each holds](../Reference/Repositories.md#what-each-holds)).
+None in the four repositories beyond the prototype's `chess/` directory ([Repositories: What each holds](../Reference/Repositories.md#what-each-holds)). In the monorepo: `Laplace.Chess`: the modality (bitboards, move generation, SAN, Zobrist, perft, tactics) and the service (PGN ingest, `ChessStockfishEvalDecomposer`, `ChessSyzygyDecomposer`, FIDE ratings, `LichessBot`, `CutechessRunner`, the lab with its jobs), `Laplace.Chess.Uci`, `Laplace.Endpoints.Lichess`, the position and transition perfcaches, the `chess` SQL family, `/chess/*` and `/v1/chess/*`; spec 11 and the chess guides ([Monorepo: Models](../Reference/Monorepo.md#models-export-code-chess-and-games)).
 
-Status: **prototype**. Every operation below is from the invention documents; [Reference: Traceability](../Reference/Traceability.md#27-chess) indexes it.
+Status: **monorepo**. Every operation below is from the invention documents; [Reference: Traceability](../Reference/Traceability.md#27-chess) indexes it.
 
 ## Operations
 

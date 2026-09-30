@@ -10,9 +10,9 @@ One knowledge world does not mean every principal has authority to use every par
 
 ## As built
 
-None: no principal, package, capability, or scope exists in the four repositories; every command runs as the database role of `LAPLACE_CONNINFO` ([Environment: Paths](../Reference/Environment.md#paths)).
+None: no principal, package, capability, or scope exists in the four repositories; every command runs as the database role of `LAPLACE_CONNINFO` ([Environment: Paths](../Reference/Environment.md#paths)). In the monorepo: tenants resolved by `TenantResolution` in header, key, or identity mode, `ApiKeys`, `BrowserIdentity`, workspaces and invitations under `/v1/account`; the database roles `laplace_admin`, `laplace_app`, `laplace_readonly`; the operation catalog allow-list `ops.api` behind `/v1/op` and the MCP `op` tool; entitlements under `/v1/billing/entitlements`; `docs/guides/knowledge-authority.md` and `shared-workspace-controls.md` ([Monorepo: Surfaces](../Reference/Monorepo.md#surfaces-sessions-authority-and-the-envelope)). Knowledge packages as grants over the world, and Red Spear, Blue Shield, White Judge, are specified.
 
-Status: **specified**. Every operation below is from the invention documents; [Reference: Traceability](../Reference/Traceability.md#16-authority) indexes it.
+Status: **monorepo for tenancy, keys, and entitlements; the rest specified**. Every operation below is from the invention documents; [Reference: Traceability](../Reference/Traceability.md#16-authority) indexes it.
 
 ## Operations
 
