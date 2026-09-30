@@ -80,4 +80,4 @@ The tenth query joins a table named `standing`; the built schema names it `conse
 
 ## What is not checked anywhere yet
 
-No test covers the engine's `load()` beyond its own recompose check and `laplace status`; the prototype's verification is the closest, against the prototype's schema. No check covers `forget` and `sweep` beyond `--dry`. No check exists for the four extension functions declared without a definition, which fail at `CREATE EXTENSION`.
+No test covers the engine's `load()` beyond its own recompose check and `laplace status`; the prototype's verification is the closest, against the prototype's schema. No check covers `forget` and `sweep` beyond `--dry`.

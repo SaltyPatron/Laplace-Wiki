@@ -2,7 +2,7 @@
 
 The extension installs one type, `blake3`, its operators and operator classes, and 46 functions, 42 of them in C calling Laplace-Native and 4 in SQL over them; every function is `IMMUTABLE STRICT PARALLEL SAFE` unless stated, so a constant argument folds at plan time and a lookup by computed ID becomes an index lookup.
 
-`laplace--1.0.sql` declares them in the order below; `laplace_pg.c` defines them. Four declared C functions have no definition in the current source, marked **missing** below: `CREATE EXTENSION laplace` fails at the first of them on a server whose `laplace.so` was built from that source. That is a defect of the current head, recorded, not resolved here.
+`laplace--1.0.sql` declares them in the order below; `laplace_pg.c` defines them. Every function the script declares is defined in `laplace_pg.c`; the build checks each declared symbol against the built library.
 
 ## The type
 
@@ -17,9 +17,9 @@ The extension installs one type, `blake3`, its operators and operator classes, a
 
 | Function | Returns | Computes | Native |
 | --- | --- | --- | --- |
-| `laplace_cp_id(integer)` | `blake3` | a codepoint's ID | `lp_id_codepoint`; **missing** in the C source |
-| `laplace_text_id(text)` | `blake3` | a text's codepoints composed directly as one word | `lp_id_codepoints_utf8`; **missing** |
-| `laplace_compose(blake3[])` | `blake3` | the composition of the given IDs in order | `lp_id_compose`; **missing** |
+| `laplace_cp_id(integer)` | `blake3` | a codepoint's ID | `lp_id_codepoint` |
+| `laplace_text_id(text)` | `blake3` | a text's codepoints composed directly as one word | `lp_id_codepoints_utf8` |
+| `laplace_compose(blake3[])` | `blake3` | the composition of the given IDs in order | `lp_id_compose` |
 | `laplace_id(text)` | `blake3` | the entity the engine records for the same text: `laplace_id('Sherlock Holmes')` is `[[S,h,e,r,l,o,c,k], ' ', [H,o,l,m,e,s]]` | `lp_text_decompose` over the mapped tier 0, composing without recording |
 | `laplace_tier(text)` | `smallint` | that entity's tier | the same |
 | `laplace_parts(text)` | `blake3[]` | its constituents in order, repeats included: the phrase to look for inside paths, `path @> laplace_parts('…')` | `lp_text_parts` |
@@ -29,7 +29,7 @@ The extension installs one type, `blake3`, its operators and operator classes, a
 
 | Function | Returns | Computes | Native |
 | --- | --- | --- | --- |
-| `laplace_path_ewkb(blake3[])` | `bytea` | the EWKB path of these children | `lp_ewkb_path`; **missing** |
+| `laplace_path_ewkb(blake3[])` | `bytea` | the EWKB path of these children | `lp_ewkb_path` |
 | `laplace_path(blake3[])` | `geometry` | SQL: `ST_GeomFromEWKB(laplace_path_ewkb($1))` | |
 | `laplace_vertex_ids(geometry)` | `blake3[]` | the distinct IDs a path holds, the GIN key; `COST 10000`, measured: at lower costs the planner scans the partition of whole books and decodes every one on every lookup, 90 ms of a 111 ms query | `lp_xyz_to_id` per vertex |
 | `laplace_path_times(geometry, blake3[]) → SETOF (id blake3, times bigint)` | rows | how many times a path holds each given ID, runs included, only the IDs it holds; `COST 1000 ROWS 4`; one pass over the path with a binary search per vertex | `lp_m_run` |
