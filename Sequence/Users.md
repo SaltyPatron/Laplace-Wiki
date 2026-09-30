@@ -8,6 +8,12 @@ Everything before this stage is what has to exist before a user can do anything.
 
 All of [1. Unicode](Unicode.md) through [21. Sessions](Sessions.md).
 
+## As built
+
+None: `laplace pull PROMPT` computes the prompt's trunk on the client and records nothing ([Reads: laplace pull](../Reference/Reads.md#laplace-pull)); no prompt is admitted as content and no user exists.
+
+Status: **specified**. Every operation below is from the invention documents; [Reference: Traceability](../Reference/Traceability.md#22-users) indexes it.
+
 ## Operations, per user
 
 ### 22.1 Compose the user's effective mind

@@ -8,6 +8,12 @@ Laplace uses one forward program for conversation, code, games, model-scoped que
 
 [19. Pull](Pull.md): the operators. [18. Firmware](Firmware.md): the image loaded once per pass. [16. Authority](Authority.md): the effective scope. [17. Envelope](Envelope.md): the ceiling.
 
+## As built
+
+None: `pull.c` states that `laplace pull` is the lookups the forward pass is made of and not yet the forward pass ([Reads: laplace pull](../Reference/Reads.md#laplace-pull)); the operators it calls are [19. Pull](Pull.md).
+
+Status: **specified**. Every operation below is from the invention documents; [Reference: Traceability](../Reference/Traceability.md#20-forward) indexes it.
+
 ## Operations, per pass
 
 ### 20.1 RESOLVE (OP0)

@@ -8,6 +8,12 @@ Games are a consumer and proving surface, not a second intelligence stack. They 
 
 The chain through [23. Learning](Learning.md). Game rules are firmware, [18. Firmware](Firmware.md).
 
+## As built
+
+None.
+
+Status: **specified**. Every operation below is from the invention documents; [Reference: Traceability](../Reference/Traceability.md#28-games) indexes it.
+
 ## Operations, per challenge
 
 ### 28.1 Name the verb

@@ -8,6 +8,12 @@ A conversation is like a chess game: each turn is its own entity and a point on 
 
 [20. Forward](Forward.md): the program a turn runs. [16. Authority](Authority.md): the tenant and principal. [11. Content](Content.md): every turn is content.
 
+## As built
+
+None: `laplace` is a command-line program with no session, turn, or surface; a prompt is `laplace pull PROMPT` ([CLI: laplace pull](../Reference/CLI.md#laplace-pull)).
+
+Status: **specified**. Every operation below is from the invention documents; [Reference: Traceability](../Reference/Traceability.md#21-sessions) indexes it.
+
 ## Operations
 
 ### 21.1 Establish the identities

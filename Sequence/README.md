@@ -2,7 +2,32 @@
 
 Laplace is built in one order, and each stage is impossible without the one before it: Unicode onto the S³, tier 0, the registries and perf-caches, the store, sources through recipes into content, attestations, consensus, indexes, the web, authority, the compute envelope, the firmware, the forward program, sessions, and only then a user, whose consequences feed the learning loop that models, export, code, chess, and games all run on.
 
-Each stage is its own page, and each page is the operations of that stage in the order they run: what each operation takes in, what it does, what it writes, and what checks it. A stage's first operation needs the last operation of the stage before it. The specification pages of this wiki and the invention documents of the monorepo (`docs/INVENTION.md`, `docs/INVENTIONS.md`, `docs/CAPABILITIES.md`, and the binding specs 05, 06, 08, 09, 11, 12, 33, 34, 36, 37, 38, 39) are the authority; these pages repeat them operation by operation so that the order itself is recorded, and link to the page each operation comes from. Where the two authorities disagree, the disagreement is recorded in [30. Conflicts](Conflicts.md) and not resolved here.
+Each stage is its own page, and each page is the operations of that stage in the order they run. An operation is one numbered heading with six lines:
+
+- **In:** what it takes, and from which earlier operation.
+- **Do:** what it does, in the words of the specification and the invention documents.
+- **Out:** what it leaves for the next operation.
+- **Check:** what proves it, with the measured value where one exists.
+- **Mechanism:** what in the four repositories performs it, by name, linked to the [Reference](../Reference/README.md) page that documents that artifact, function, statement, or file; then its status.
+- **From:** the specification page or invention document the operation comes from.
+
+A status is one of **built**, in Laplace-Native, Laplace-postgres, and Laplace-Engine; **prototype**, in Laplace-Prototype only; **specified**, in the invention documents and not yet built anywhere the wiki documents; or **operator**, done by hand following the [Operations](../Operations/README.md) pages. A qualified status, "built for tier 0; the rest specified", says which part is which. Where the built machine does something other than what **Do** says, the **Mechanism** line says so; the operation keeps the specification's words, and the difference is recorded, not resolved. [Reference: Traceability](../Reference/Traceability.md) indexes every operation's mechanism, check, and status on one page.
+
+A stage's first operation needs the last operation of the stage before it. The specification pages of this wiki and the invention documents of the monorepo (`docs/INVENTION.md`, `docs/INVENTIONS.md`, `docs/CAPABILITIES.md`, and the binding specs 05, 06, 08, 09, 11, 12, 33, 34, 36, 37, 38, 39) are the authority; these pages repeat them operation by operation so that the order itself is recorded, and link to the page each operation comes from. Where the two authorities disagree, the disagreement is recorded in [30. Conflicts](Conflicts.md) and not resolved here.
+
+## Where to start
+
+- To build an install: stages 1 to 14 in order, with [Reference: Build](../Reference/Build.md), [Environment](../Reference/Environment.md), and [CLI](../Reference/CLI.md) open beside them; `deploy.sh` runs stages 3 to 14 as one logged script.
+- To write a source: [9. Sources](Sources.md) and [10. Recipes](Recipes.md), with [Reference: Recipes](../Reference/Recipes.md) for the grammar.
+- To read what is recorded: [15. Web](Web.md), [18. Firmware](Firmware.md), [19. Pull](Pull.md), with [Reference: Reads](../Reference/Reads.md) and [Firmware](../Reference/Firmware.md).
+- To see what a byte, a row, or a function is: [Reference: Formats](../Reference/Formats.md), [Schema](../Reference/Schema.md), [SQL](../Reference/SQL.md), [Native](../Reference/Native.md).
+- To see what is built and what is not: [Reference: Traceability](../Reference/Traceability.md).
+
+## The artifacts
+
+The artifact each stage produces, and which later stage consumes it, is the graph in [Reference: Repositories](../Reference/Repositories.md#the-artifact-graph): the Unicode data to tier 0 and the flags; the dependencies to the library; the library to the extension and the engine; the grammars to the engine; the extension, tier 0, and the flags to the database; the recipes, the firmware, and the corpora to the engine; the engine to the database by COPY and back by paths and standings.
+
+## The stages
 
 ```mermaid
 flowchart TD

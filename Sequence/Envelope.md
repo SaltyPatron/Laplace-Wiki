@@ -8,6 +8,12 @@ Hops and fanout are first-class work coordinates. The work of a pull is shaped b
 
 [16. Authority](Authority.md): the entitled world the envelope is spent over. [14. Indexes](Indexes.md): the lookup costs a plan is estimated from.
 
+## As built
+
+None: the only bounds are the firmware's `fan` and `hops` and the `LIMIT fan + 1` of the claims fetch ([Firmware: Defaults](../Reference/Firmware.md#defaults), [Reads: The claims that hold an entity](../Reference/Reads.md#the-claims-that-hold-an-entity)); no plan, reserve, receipt, or reconcile exists.
+
+Status: **specified**. Every operation below is from the invention documents; [Reference: Traceability](../Reference/Traceability.md#17-envelope) indexes it.
+
 ## Operations, per request
 
 ### 17.1 Name the dimensions

@@ -8,6 +8,12 @@ Chess makes the common architecture falsifiable under exact rules and an unusual
 
 The chain through [23. Learning](Learning.md). [7. Perfcaches](Perfcaches.md): the position and transition ROMs. [9. Sources](Sources.md): TWIC, Lichess openings, tablebases, PGN corpora as source generations.
 
+## As built
+
+None in the four repositories beyond the prototype's `chess/` directory ([Repositories: What each holds](../Reference/Repositories.md#what-each-holds)).
+
+Status: **prototype**. Every operation below is from the invention documents; [Reference: Traceability](../Reference/Traceability.md#27-chess) indexes it.
+
 ## Operations
 
 ### 27.1 Compose the board vocabulary

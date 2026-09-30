@@ -8,6 +8,12 @@ Static models are food for Laplace. A model is not recorded as raw weights, not 
 
 The whole chain through [23. Learning](Learning.md). [10. Recipes](Recipes.md): the safetensors provider. [6. Registries](Registries.md) operation 6.8: the operator templates.
 
+## As built
+
+`laplace model MODEL_DIR` reads a safetensors checkpoint of the Llama architecture and runs `lp_rowsig` per circuit, reporting what survives each circuit's noise floor; it records nothing yet ([CLI: laplace model](../Reference/CLI.md#laplace-model), [Native: The model kernel](../Reference/Native.md#the-model-kernel-rowsigc-laplace_model)); the `vocabulary` grammar records a tokenizer as one composition of its tokens ([Recipes: How a file is recorded](../Reference/Recipes.md#how-a-file-is-recorded)).
+
+Status: **built for the kernel and the report; recording specified**. Every operation below is from the invention documents; [Reference: Traceability](../Reference/Traceability.md#24-models) indexes it.
+
 ## Operations, per checkpoint
 
 ### 24.1 Stage the checkpoint as a source generation

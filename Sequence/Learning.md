@@ -8,6 +8,12 @@ Ingestion is the learning process. A training-corpus pass is admit, decompose, w
 
 [22. Users](Users.md): the first consequences. [13. Consensus](Consensus.md): the fold. [18. Firmware](Firmware.md): the participant that is rated.
 
+## As built
+
+None: nothing in the four repositories writes a consequence, rates a firmware, or proposes a candidate; the only learning is `laplace ingest` ([Ingest](../Reference/Ingest.md)).
+
+Status: **specified**. Every operation below is from the invention documents; [Reference: Traceability](../Reference/Traceability.md#23-learning) indexes it.
+
 ## Operations
 
 ### 23.1 Run OODA over the forward program

@@ -8,6 +8,12 @@ One knowledge world does not mean every principal has authority to use every par
 
 [15. Web](Web.md): the world that authority is scoped over. [12. Attestations](Attestations.md): grants are themselves witnessed relations.
 
+## As built
+
+None: no principal, package, capability, or scope exists in the four repositories; every command runs as the database role of `LAPLACE_CONNINFO` ([Environment: Paths](../Reference/Environment.md#paths)).
+
+Status: **specified**. Every operation below is from the invention documents; [Reference: Traceability](../Reference/Traceability.md#16-authority) indexes it.
+
 ## Operations
 
 ### 16.1 Separate the three axes
