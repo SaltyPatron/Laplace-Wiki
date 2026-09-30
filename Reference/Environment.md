@@ -1,8 +1,8 @@
 # Environment
 
-One file, `Laplace-Engine/laplace.env`, defines where everything is; every build and the `laplace` program read the same variables, each with a compiled-in default for when it is unset.
+One file, `Laplace-Operations/laplace.env`, defines where everything is; every build and the `laplace` program read the same variables, each with a compiled-in default for when it is unset.
 
-`source /repos/src/Laplace-Engine/laplace.env` before building or running anything. The file exports the variables below, sources Intel oneAPI's `setvars.sh`, sets `PG_CONFIG`, and puts the engine's build directory and PostgreSQL's `bin` on the path. `cmake/LaplacePaths.cmake` in Laplace-Native reads the same names at configure time, taking the environment when a variable is set and the default when it is not; `-D` on the CMake command line overrides both.
+`source /repos/src/Laplace-Operations/laplace.env` before building or running anything. The file exports the variables below, sources Intel oneAPI's `setvars.sh`, sets `PG_CONFIG`, and puts the engine's build directory and PostgreSQL's `bin` on the path. `cmake/LaplacePaths.cmake` in Laplace-Native reads the same names at configure time, taking the environment when a variable is set and the default when it is not; `-D` on the CMake command line overrides both.
 
 ## Paths
 

@@ -35,6 +35,7 @@ All repositories, Laplace's and its dependencies' alike, live under one source r
 | Laplace-Native | the shared native library, its tools, and its benchmarks |
 | Laplace-postgres | the PostgreSQL extension, the content schema, and the query benchmark |
 | Laplace-Engine | the engine |
+| Laplace-Operations | the machine, the build, the deployment, the repair and the agents: `laplace.env`, `setup.sh`, `build.sh`, `deploy.sh`, `agents.sh` |
 | Laplace-Prototype | the test bench the implementation is checked against |
 | Laplace-Wiki | this documentation |
 | BLAKE3, PostgreSQL, PostGIS, GEOS, PROJ, GDAL, Eigen, Spectra | dependencies, built from source |

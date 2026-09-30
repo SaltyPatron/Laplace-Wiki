@@ -76,7 +76,7 @@ Laplace is native C, with SQL and C# as orchestration. Bit-perfect determinism a
 - **In:** every path from 2.2 to 2.6.
 - **Do:** one environment file sources oneAPI and points the builds at Eigen, Spectra, BLAKE3, and the custom PostgreSQL. It is sourced for Laplace and PostgreSQL builds only, not for anything built against another PostgreSQL. It sets `OMP_NUM_THREADS` and `MKL_NUM_THREADS` to the number of cores: some shells and agents set them to 1, which makes every kernel single-threaded, and the same kernel run over one vocabulary took 110.8 s on one thread and 19.9 s on twelve.
 - **Out:** the one definition of where everything is.
-- **Mechanism:** `Laplace-Engine/laplace.env` ([Environment](../Reference/Environment.md)). In the monorepo: `scripts/laplace.env.example` and `configure-laplace-environment.py`. Status: **built**.
+- **Mechanism:** `Laplace-Operations/laplace.env` ([Environment](../Reference/Environment.md)). In the monorepo: `scripts/laplace.env.example` and `configure-laplace-environment.py`. Status: **built**.
 - **From:** [Setup: Toolchain](../Operations/Setup.md#toolchain), [Research: Engine Measurements: Native operations](../Research/Engine.md#native-operations).
 
 ### 2.8 Script everything that needs root

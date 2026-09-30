@@ -41,7 +41,7 @@ Generator: Ninja. Test presets `icx-release` and `gcc-release` run `ctest` with 
 ## Commands
 
 ```sh
-source /repos/src/Laplace-Engine/laplace.env
+source /repos/src/Laplace-Operations/laplace.env
 
 # the library, both compilers, with its tests
 cd $LAPLACE_SRC/Laplace-Native
@@ -49,7 +49,7 @@ cmake --preset icx-release && cmake --build --preset icx-release && ctest --pres
 cmake --preset gcc-release && cmake --build --preset gcc-release && ctest --preset gcc-release
 
 # the extension and the engine, each with the library built as part of it
-cd $LAPLACE_SRC/Laplace-Engine
+cd $LAPLACE_SRC/Laplace-Operations
 ./build.sh            # configures and builds Laplace-postgres and Laplace-Engine under $LAPLACE_BUILD with icx
 ./build.sh install    # also installs the extension into PostgreSQL's directories
 
@@ -61,7 +61,7 @@ tools/build_grammars.sh [/vault/Data/TreeSitter] [$LAPLACE_GRAMMARS]
 
 ## deploy.sh
 
-`Laplace-Engine/deploy.sh` runs the five steps of [Operations: Deployment](../Operations/Deployment.md) in order, each as a logged step under `$LAPLACE_WORK/logs/deploy/<UTC timestamp>/<step>.log` with its exit status in `<step>.exit`, stopping at the first that does not finish:
+`Laplace-Operations/deploy.sh` runs the five steps of [Operations: Deployment](../Operations/Deployment.md) in order, each as a logged step under `$LAPLACE_WORK/logs/deploy/<UTC timestamp>/<step>.log` with its exit status in `<step>.exit`, stopping at the first that does not finish:
 
 | Step | Command | Skipped when |
 | --- | --- | --- |
