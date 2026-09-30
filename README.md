@@ -43,11 +43,11 @@ Every page in this repository is listed below. Read every listed page in full.
   - [Wiktionary](Corpora/Wiktionary.md) — Wiktextract attests a written word in one language as one part of speech, and every edition of that extract is the same witness.
   - [ConceptNet](Corpora/ConceptNet.md) — ConceptNet attests an assertion of a relation between two concepts.
   - [ATOMIC](Corpora/ATOMIC.md) — ATOMIC 2020 attests commonsense tuples written as a head, a relation, and a tail, and ATOMIC10X is a model-generated witness of the same shape that enters unrated.
-  - [Tatoeba](Corpora/Tatoeba.md) — Tatoeba attests properties of a whole sentence and does not attest the words inside it.
+  - [Tatoeba](Corpora/Tatoeba.md) — Tatoeba attests what it and its members say of a whole sentence, its language, text, owner, translations, tags, lists, audio, transcriptions, and reviews, and attests nothing of the words inside it.
   - [OpenSubtitles](Corpora/OpenSubtitles.md) — OpenSubtitles attests the language of a subtitle sentence and does not attest the language of a word.
   - [Project Gutenberg](Corpora/Project-Gutenberg.md) — Project Gutenberg's texts are observed content and attest nothing.
   - [Tokenizers](Corpora/Tokenizers.md) — A model tokenizer's vocabulary is observed content and attests nothing.
-  - [GeoNames](Corpora/GeoNames.md) — GeoNames attests a place and the names and hierarchy recorded for it.
+  - [GeoNames](Corpora/GeoNames.md) — GeoNames attests what its gazetteer's tables say of each place, alternate name, and code under the column names its readme gives, and its readme itself is observed text that attests nothing.
   - [Civil Comments](Corpora/Civil-Comments.md) — Civil Comments attests toxicity labels that Jigsaw added to reader comments.
   - [Measuring Hate Speech](Corpora/Measuring-Hate-Speech.md) — Measuring Hate Speech attests several annotators' ratings of comments.
   - [HateCheck](Corpora/HateCheck.md) — HateCheck attests labels on constructed hate-speech tests, and SGHateCheck is that test extended to Malay, Mandarin, Singlish, and Tamil.
