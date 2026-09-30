@@ -48,15 +48,15 @@ Every page in this repository is listed below. Read every listed page in full.
   - [Project Gutenberg](Corpora/Project-Gutenberg.md) — Project Gutenberg's texts are observed content and attest nothing.
   - [Tokenizers](Corpora/Tokenizers.md) — A model tokenizer's vocabulary is observed content and attests nothing.
   - [GeoNames](Corpora/GeoNames.md) — GeoNames attests what its gazetteer's tables say of each place, alternate name, and code under the column names its readme gives, and its readme itself is observed text that attests nothing.
-  - [Civil Comments](Corpora/Civil-Comments.md) — Civil Comments attests toxicity labels that Jigsaw added to reader comments.
-  - [Measuring Hate Speech](Corpora/Measuring-Hate-Speech.md) — Measuring Hate Speech attests several annotators' ratings of comments.
-  - [HateCheck](Corpora/HateCheck.md) — HateCheck attests labels on constructed hate-speech tests, and SGHateCheck is that test extended to Malay, Mandarin, Singlish, and Tamil.
-  - [ProsocialDialog](Corpora/Prosocial-Dialog.md) — ProsocialDialog attests a reply to an utterance, the rule of thumb the reply rests on, and the safety labels workers gave.
-  - [RealToxicityPrompts](Corpora/RealToxicityPrompts.md) — RealToxicityPrompts attests a prompt, a continuation, and scores that are lineage of the Perspective API.
-  - [Social Bias Frames](Corpora/Social-Bias-Frames.md) — Social Bias Frames attests what workers said a post implied, both per annotation and aggregated per post.
-  - [Social Chemistry](Corpora/Social-Chemistry.md) — Social-Chem-101 attests rules of thumb about situations and the breakdowns workers made of them.
-  - [ToxiGen](Corpora/ToxiGen.md) — ToxiGen attests labels on machine-generated statements about groups, and the Parquet and the CSV are the same rows.
-  - [XSTest](Corpora/XSTest.md) — XSTest attests prompts built for exaggerated safety behaviour and the annotations on three models' completions.
+  - [Civil Comments](Corpora/Civil-Comments.md) — Civil Comments attests the seven numbers Jigsaw gave each comment under their own names, as numbers and not as scores, and the identity columns of other releases are not in these files.
+  - [Measuring Hate Speech](Corpora/Measuring-Hate-Speech.md) — Measuring Hate Speech attests what each annotator says of a comment as that annotator's own witness, and what the set measured of the comment and holds of the annotator, and the Parquet files and the card attest nothing.
+  - [HateCheck](Corpora/HateCheck.md) — HateCheck attests what its gold standard and each of its ten annotators say of every test case, SGHateCheck attests the same of its test cases in Malay, Mandarin, Singlish, and Tamil with each annotator of each file a witness of its own, and the language models' readings of the SGHateCheck cases attest nothing.
+  - [ProsocialDialog](Corpora/Prosocial-Dialog.md) — ProsocialDialog attests everything a line says of its context, the potentially unsafe utterance, as one record of the set, and a member that is null attests nothing.
+  - [RealToxicityPrompts](Corpora/RealToxicityPrompts.md) — RealToxicityPrompts attests what each instance says of its file name and what its prompt and its continuation each say of their text, as a witness whose lineage is the Perspective API, and a score is recorded as the number written, not as an outcome.
+  - [Social Bias Frames](Corpora/Social-Bias-Frames.md) — Social Bias Frames attests what each MTurk worker answered of a post as that worker's own witness, what the set says of the post and of the worker, and the same aggregated per post, where the first, unnamed column attests nothing.
+  - [Social Chemistry](Corpora/Social-Chemistry.md) — Social-Chem-101 attests everything a breakdown row says of its rule of thumb as one record of the set, and a row whose situation, characters, rule, action, or judgment holds a double quote is not read.
+  - [ToxiGen](Corpora/ToxiGen.md) — ToxiGen attests what the set says of each generation and of its prompt, what each prompt file's name says of its texts, what the annotated set says of each text, and what each hashed worker says of a text and of themself, and the CSV and Parquet copies attest nothing.
+  - [XSTest](Corpora/XSTest.md) — XSTest attests what its prompt file says of each prompt and what each model's completion file says of the prompt as that model completed it, with the two annotation columns each a witness of its own, and the evaluation files attest nothing.
   - [COCO](Corpora/COCO.md) — COCO has no recipe yet, so its annotation JSON and images are not ingested and attest nothing.
   - [Code authority](Corpora/Code-Authority.md) — The `cpython`, `docs`, `postgres`, and `runtime` checkouts have no recipe yet, so they are not ingested and attest nothing.
   - [Code corpus](Corpora/Code-Corpus.md) — The old project trees have no recipe yet, so they are not ingested and attest nothing.

@@ -1,25 +1,34 @@
 # ProsocialDialog
 
-ProsocialDialog attests a reply to an utterance, the rule of thumb the reply rests on, and the safety labels workers gave.
+ProsocialDialog attests everything a line says of its context, the potentially unsafe utterance, as one record of the set, and a member that is null attests nothing.
 
-## Value
+The source names itself by its dataset card's title, "Dataset Card for ProsocialDialog Dataset": dialogues in which an utterance is answered by a response grounded in rules-of-thumb, with the safety labels three workers gave. One recipe reads its three splits.
 
-| Attestation | What it means | Lands on | Value | Witness | Proof |
+## Source
+
+| Source | Witness | Uncertainty | After | Files | Recipe |
 | --- | --- | --- | --- | --- | --- |
-| context | the potentially unsafe utterance | the utterance | string | GPT-3. The card's creation section says GPT-3 generates the potentially unsafe utterances. | [ProsocialDialog card](https://huggingface.co/datasets/allenai/prosocial-dialog/raw/main/README.md); /vault/Data/.refresh-20260903/Safety/ProsocialDialog/prosocial-dialog-d77d7ad3c624c51030f2f32c83e892b3d620b3d4/README.md |
-| response | the guiding utterance grounded on rules-of-thumb (rots) | the context | string | crowdworkers. The card's creation section says crowdworkers provide prosocial responses. | [ProsocialDialog card](https://huggingface.co/datasets/allenai/prosocial-dialog/raw/main/README.md); /vault/Data/.refresh-20260903/Safety/ProsocialDialog/prosocial-dialog-d77d7ad3c624c51030f2f32c83e892b3d620b3d4/README.md |
-| rots | the relevant rules-of-thumb for text not labeled as __casual__. The card writes text in that sentence. | the context | list of string or null | Not defined. The card does not name who wrote the rules. | [ProsocialDialog card](https://huggingface.co/datasets/allenai/prosocial-dialog/raw/main/README.md); /vault/Data/.refresh-20260903/Safety/ProsocialDialog/prosocial-dialog-d77d7ad3c624c51030f2f32c83e892b3d620b3d4/README.md |
-| safety_label | the final verdict of the context according to safety_annotations: __casual__, __possibly_needs_caution__, __probably_needs_caution__, __needs_caution__, __needs_intervention__ | the context | one of those five strings | derived from safety_annotations. Not a fourth worker. | [ProsocialDialog card](https://huggingface.co/datasets/allenai/prosocial-dialog/raw/main/README.md); /vault/Data/.refresh-20260903/Safety/ProsocialDialog/prosocial-dialog-d77d7ad3c624c51030f2f32c83e892b3d620b3d4/README.md |
-| safety_annotations | raw annotations from three workers: casual, needs caution, needs intervention | the context | list of three strings | the three workers | [ProsocialDialog card](https://huggingface.co/datasets/allenai/prosocial-dialog/raw/main/README.md); /vault/Data/.refresh-20260903/Safety/ProsocialDialog/prosocial-dialog-d77d7ad3c624c51030f2f32c83e892b3d620b3d4/README.md |
-| safety_annotation_reasons | the reasons behind the safety annotations in free-form text from each worker | the context | list of strings | the three workers | [ProsocialDialog card](https://huggingface.co/datasets/allenai/prosocial-dialog/raw/main/README.md); /vault/Data/.refresh-20260903/Safety/ProsocialDialog/prosocial-dialog-d77d7ad3c624c51030f2f32c83e892b3d620b3d4/README.md |
-| source | the source of the seed text that was used to craft the first utterance of the dialogue: socialchemistry, sbic, ethics_amt, ethics_reddit | the dialogue | one of those four strings | ProsocialDialog | [ProsocialDialog card](https://huggingface.co/datasets/allenai/prosocial-dialog/raw/main/README.md); /vault/Data/.refresh-20260903/Safety/ProsocialDialog/prosocial-dialog-d77d7ad3c624c51030f2f32c83e892b3d620b3d4/README.md |
-| etc | other information | the dialogue turn | string or null | ProsocialDialog | [ProsocialDialog card](https://huggingface.co/datasets/allenai/prosocial-dialog/raw/main/README.md); /vault/Data/.refresh-20260903/Safety/ProsocialDialog/prosocial-dialog-d77d7ad3c624c51030f2f32c83e892b3d620b3d4/README.md |
-| dialogue_id | the dialogue index | the dialogue | int | ProsocialDialog | [ProsocialDialog card](https://huggingface.co/datasets/allenai/prosocial-dialog/raw/main/README.md); /vault/Data/.refresh-20260903/Safety/ProsocialDialog/prosocial-dialog-d77d7ad3c624c51030f2f32c83e892b3d620b3d4/README.md |
-| response_id | the response index | the turn | int | ProsocialDialog | [ProsocialDialog card](https://huggingface.co/datasets/allenai/prosocial-dialog/raw/main/README.md); /vault/Data/.refresh-20260903/Safety/ProsocialDialog/prosocial-dialog-d77d7ad3c624c51030f2f32c83e892b3d620b3d4/README.md |
-| episode_done | an indicator of whether it is the end of the dialogue | the turn | bool | ProsocialDialog | [ProsocialDialog card](https://huggingface.co/datasets/allenai/prosocial-dialog/raw/main/README.md); /vault/Data/.refresh-20260903/Safety/ProsocialDialog/prosocial-dialog-d77d7ad3c624c51030f2f32c83e892b3d620b3d4/README.md |
+| `prosocial-dialog` | `ProsocialDialog` | deviation 90 | `unicode`, `iso-639` | `train.json`, `valid.json`, `test.json` | [`dialogues.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/prosocial-dialog/dialogues.recipe) |
 
-## Format
+The uncertainty is the deviation the witness's attestations enter at, as [Consensus](../Semantics/Consensus.md#entry) describes. The source says of its 90 that it is "this recipe's choice for a curated academic resource; the specification does not give one": the number is not settled, and [Corpora](README.md#not-settled) lists it among what stays missing.
 
-| Record | Fields in order | What a record is | Proof |
-| --- | --- | --- | --- |
-| dialogue turn | context, response, rots, safety_label, safety_annotations, safety_annotation_reasons, source, etc, dialogue_id, response_id, episode_done | One turn: an utterance, the reply, the rules of thumb, and the safety labels. The card says 58K dialogues, 331K utterances, 160K unique RoTs, and 497K dialogue safety labels. Key order was read from the first line of train.json, valid.json, and test.json. | [ProsocialDialog card](https://huggingface.co/datasets/allenai/prosocial-dialog/raw/main/README.md) |
+## The dialogues
+
+A JSON object on every line. The [dataset card](https://huggingface.co/datasets/allenai/prosocial-dialog/raw/main/README.md): `context` is "the potentially unsafe utterance", `safety_label` "the final verdict of the context", `safety_annotations` "raw annotations from three workers". So an object is the thing its `context` names, and every other member is said of it under its own key, every key and value as written. Everything one line says it says together: one record, witnessed once by ProsocialDialog, and its claims within it. The three workers are not witnesses of their own: the card does not name them, and the set says what they answered.
+
+| Piece | Written as | Laplace reads it as | Claim recorded | Specification |
+| --- | --- | --- | --- | --- |
+| `context` | a text | the subject: the utterance, as the text it is | | "the potentially unsafe utterance" |
+| `response` | a text | said of the context | `[context, response, text]` | "the guiding utterance grounded on rules-of-thumb (rots)" |
+| `rots` | a list of texts, or `null` | each text said of the context under `rots` | `[context, rots, text]` | "the relevant rules-of-thumb for text not labeled as __casual__" |
+| `safety_label` | a text | said of the context | `[context, safety_label, __needs_caution__]` | "the final verdict of the context according to safety_annotations: __casual__, __possibly_needs_caution__, __probably_needs_caution__, __needs_caution__, __needs_intervention__" |
+| `safety_annotations` | a list of three texts | each text said of the context under `safety_annotations` | `[context, safety_annotations, needs caution]` | "raw annotations from three workers: casual, needs caution, needs intervention" |
+| `safety_annotation_reasons` | a list of texts | each text said of the context under `safety_annotation_reasons` | `[context, safety_annotation_reasons, text]` | "the reasons behind the safety annotations in free-form text from each worker" |
+| `source` | a text | said of the context | `[context, source, socialchemistry]` | "the source of the seed text that was used to craft the first utterance of the dialogue: socialchemistry, sbic, ethics_amt, ethics_reddit" |
+| `etc` | a text, or `null` | said of the context | `[context, etc, text]` | "other information" |
+| `dialogue_id` | a number | said of the context, the number as written | `[context, dialogue_id, value]` | "the dialogue index" |
+| `response_id` | a number | said of the context, the number as written | `[context, response_id, value]` | "the response index" |
+| `episode_done` | `true` or `false` | said of the context, as written | `[context, episode_done, true]` | "an indicator of whether it is the end of the dialogue" |
+| `null`, an empty text | | nothing | none | |
+
+Nothing else is attested. The card is ordinary text, observed as [Attestations](../Semantics/Attestations.md#observations) says of ordinary content.
