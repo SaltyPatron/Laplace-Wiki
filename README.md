@@ -26,8 +26,8 @@ Every page in this repository is listed below. Read every listed page in full.
   - [Personality firmware](Semantics/Firmware.md) — the personality firmware is a pull's decision tree: which segment of which branch to take, and how to combine them, from the observation, its attestations, and the tree across tiers, kept out of the training data.
 - [Corpora](Corpora/README.md) — Each page specifies one collection's record format and the attestation that format supplies.
   - [Unicode Character Database](Corpora/Unicode.md) — The Unicode Character Database attests everything the standard says of a code point, the flat XML is the record of it, and the property files add only what the XML does not carry.
-  - [ISO 639](Corpora/ISO-639.md) — ISO 639 attests the identity of a language, which is the value other corpora use when they name a language.
-  - [Wordnets](Corpora/Wordnets.md) — The wordnets attest sense, and CILI is the hop that changes language without becoming a second witness of the Princeton gloss.
+  - [ISO 639](Corpora/ISO-639.md) — ISO 639 attests what each list says of a language code, under the list's own field names, and nothing renames or reconciles the codes across the lists.
+  - [Wordnets](Corpora/Wordnets.md) — The wordnets attest sense, each of its own synsets and senses under its own names, and CILI is the hop between them that carries a sense across languages without becoming a second witness of the Princeton gloss; the manual pages attest nothing.
   - [Word sense disambiguation](Corpora/Word-Sense-Disambiguation.md) — A sense-annotated corpus attests which wordnet sense a token carries, and each dataset is its own witness because its identifiers start over.
   - [Universal Dependencies](Corpora/Universal-Dependencies.md) — A Universal Dependencies treebank attests what it says of each word within its sentence, the validator's data attests which tags, relations, and features the project permits, and the documentation attests what each of those is called.
   - [Hops](Corpora/Hops.md) — The lexicons are separate witnesses, and a hop is the curated edge that lets consensus on a claim in one of them pull on a claim in another.
