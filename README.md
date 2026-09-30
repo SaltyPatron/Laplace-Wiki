@@ -57,16 +57,16 @@ Every page in this repository is listed below. Read every listed page in full.
   - [Social Chemistry](Corpora/Social-Chemistry.md) — Social-Chem-101 attests rules of thumb about situations and the breakdowns workers made of them.
   - [ToxiGen](Corpora/ToxiGen.md) — ToxiGen attests labels on machine-generated statements about groups, and the Parquet and the CSV are the same rows.
   - [XSTest](Corpora/XSTest.md) — XSTest attests prompts built for exaggerated safety behaviour and the annotations on three models' completions.
-  - [COCO](Corpora/COCO.md) — COCO is a large-scale object detection, segmentation, and captioning dataset: each caption describes the specified image, each object instance annotation contains the category id and segmentation mask of the object and an enclosing bounding box measured from the top left image corner, and the image files are the pictures those annotations name.
-  - [Code authority](Corpora/Code-Authority.md) — The four checkouts `cpython`, `docs`, `postgres`, and `runtime` are source and documentation collections.
-  - [Code corpus](Corpora/Code-Corpus.md) — `/vault/models/code-corpus` holds 397,004 files in the old project trees `archive-001-Deleted-Solutions`, `archive-002-projects`, `archive-BACKUP`, `github-canonical`, and `vault-E-Repositories`, 40,190,205,104 bytes by `du -sb` on 2026-09-29.
-  - [Games](Corpora/Games.md) — PGN collections attest a chess game by the Seven Tag Roster, Event, Site, Date, Round, White, Black, and Result, and by the movetext, and the Lichess opening tables are a separate witness of an ECO code, an English opening name, and a PGN move sequence.
-  - [NLTK](Corpora/NLTK.md) — The Brown Corpus is a standard corpus of present-day edited American English, for use with digital computers, and the only corpus in this drop is that corpus in Form C (tagged).
-  - [Natural Earth](Corpora/Natural-Earth.md) — Most lines and areas contain embedded feature names, which are ranked by relative importance, with up to eight rankings per data theme.
-  - [The Stack v2](Corpora/Stack-v2.md) — The Stack v2, published by the BigCode Project, contains over 3B files in 600+ programming and markup languages, and each row is one source file.
-  - [Tiny codes](Corpora/Tiny-Codes.md) — This synthetic dataset, published by nampdn-ai as Tiny Codes, is a collection of 1.6 millions short and clear code snippets that can help LLM models learn how to reason with both natural and programming languages.
-  - [Tree-sitter](Corpora/TreeSitter.md) — A grammar's node types are the labels of that grammar: `node-types.json` provides structured data about every possible syntax node, and each object's `type` string indicates which grammar rule the node represents.
-  - [Weights](Corpora/Weights.md) — These directories are model weights and their companion configs and tokenizers.
+  - [COCO](Corpora/COCO.md) — COCO has no recipe yet, so its annotation JSON and images are not ingested and attest nothing.
+  - [Code authority](Corpora/Code-Authority.md) — The `cpython`, `docs`, `postgres`, and `runtime` checkouts have no recipe yet, so they are not ingested and attest nothing.
+  - [Code corpus](Corpora/Code-Corpus.md) — The old project trees have no recipe yet, so they are not ingested and attest nothing.
+  - [Games](Corpora/Games.md) — The PGN collections and the Lichess opening tables have no recipe yet, so they are not ingested and attest nothing.
+  - [NLTK](Corpora/NLTK.md) — The Brown Corpus in NLTK's tagged form has no recipe yet, so it is not ingested and attests nothing.
+  - [Natural Earth](Corpora/Natural-Earth.md) — Natural Earth's shapefiles have no recipe yet, so they are not ingested and attest nothing.
+  - [The Stack v2](Corpora/Stack-v2.md) — The Stack v2 has no recipe yet, so its Parquet rows are not ingested and attest nothing.
+  - [Tiny codes](Corpora/Tiny-Codes.md) — Tiny Codes has no recipe yet, so its rows are not ingested and attest nothing.
+  - [Tree-sitter](Corpora/TreeSitter.md) — Tree-sitter grammars are what the Engine parses files with, named by a recipe's `grammar` line, and they are not a source: nothing in them is attested.
+  - [Weights](Corpora/Weights.md) — Model weights have no recipe yet, so they are not ingested and attest nothing, and Spitball holds the intent to assimilate them.
 
 - [Query](Query.md) — Laplace finds content by computing its ID and coordinates on the client and looking them up with spatial indexes.
 - [Operations](Operations/README.md) — Operations covers what Laplace runs on and how it is built, configured, deployed, and tuned, from bare hardware to loaded, indexed, and measured content.
