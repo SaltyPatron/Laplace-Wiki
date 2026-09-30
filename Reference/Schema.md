@@ -94,7 +94,7 @@ During a load the GIN keeps what it is handed in a pending list; `laplace ingest
 - `source (trunk, origin, modality, format, bytes, content_blake3)`: what was ingested and where from. In the built schema a file is no row: it is a trunk in the DAG, `[metadata, content]`, whose metadata holds its name, and whether it is recorded is answered by deduplication on its trunk.
 - `entity_stats (id, parents, occurrences)`: containers and occurrences per entity. In the built schema these are not stored; `laplace fills` computes occurrences at read time, leaf to trunk and back, from the paths.
 
-The wiki's [Storage](../Storage/README.md) pages and the Sequence pages that name a source table or a statistics table describe the prototype; the built schema is the five tables above.
+The wiki's [Storage](../Storage/README.md) pages specify the source and statistics tables and the prototype had them; the built schema follows the inventor's list of five tables, [30. Conflicts](../Sequence/Conflicts.md) T1. The two differ, and that is recorded here, not resolved.
 
 ## Storage measured
 
