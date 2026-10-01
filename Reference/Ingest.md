@@ -66,7 +66,8 @@ Every statement the ingest issues, all parameters binary, all sets:
 | atoms | `SELECT count(*) FROM entity WHERE tier = 0` |
 | dedup | the per-digit `EXISTS` chain above |
 | COPY | the two `COPY … FROM STDIN (FORMAT binary)` per leaf partition |
-| standings | the `consensus` select, `COPY consensus`, the `UPDATE … FROM unnest` |
+| standings | per partition of the claim's first hex digit: `SELECT claim, rating, deviation, volatility, matches FROM consensus_<h> WHERE claim = ANY($1::blake3[])`, `COPY consensus_<h> … FROM STDIN (FORMAT binary)`, `UPDATE consensus_<h> s SET … FROM unnest($1::blake3[], $2::float8[], $3::float8[], $4::float8[], $5::int[]) AS u(c, r, d, v, m) WHERE s.claim = u.c`; the matchups themselves are played in the engine, native, before the one update |
+| ledger | per partition: `COPY attestation_<h> (claim, witness, score, position) FROM STDIN (FORMAT binary)` |
 | lineage | the ledger and witness join above |
 | witnesses | `SELECT u.i FROM unnest($1::blake3[]) WITH ORDINALITY AS u(id, i) JOIN witness w ON w.id = u.id`; `SELECT id FROM witness WHERE id = ANY($1::blake3[])`; `COPY witness` |
 | ledger | `COPY attestation` |
