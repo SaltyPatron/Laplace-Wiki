@@ -17,7 +17,7 @@ Every page has the same parts, in this order.
 
 The rules the rows follow:
 
-- Every name and value is recorded as the source writes it. The predicate is the column's or attribute's name; nothing is renamed, reordered, or filled in.
+- A witness provides content and attestations about it; a page records those. A file's bookkeeping about its own records (dates an entry was made, colours, versions, licences, usage notes, who edited a row) is not testimony and is read by nothing (`omit`, or a column not named). Every name and value that is recorded is as the source writes it: nothing is renamed, reordered, or filled in.
 - A claim is a tuple, as [Claims](../Semantics/Claims.md#tuples) defines it, written `[subject, predicate, object]` or `[subject, object]` for a pair. Its tier is one above its highest part, as [Compositions](../Storage/Compositions.md#tiers) requires.
 - An empty field attests nothing. What the source writes for empty, such as `_`, is named on the page.
 - The specification cited is the publisher's, at its URL. A path on a local disk is not a citation.

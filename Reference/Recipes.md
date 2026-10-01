@@ -86,6 +86,7 @@ What is recorded (`records.c`): of each word, `[word, COLUMN, value]`, `[word, K
 | `identity ELEMENT >CHILD` | the thing the text of the child element names; `>CHILD.ATTRIBUTE` that element's attribute |
 | `identity ELEMENT NAME within` | the name stands only within the thing the element is inside: the path of that thing and the name |
 | `identity ELEMENT NAME kind [KIND]` | the name stands only among things of its kind: the path of the kind and the name; `.` is the element's own text |
+| `omit NAME...` | attributes and elements (JSON: members) that are the file's bookkeeping, not what the witness says of content: dates an entry was made, colours, versions, licences, usage notes, templates. Read by nothing |
 | `key ATTRIBUTE...` | attributes that are the source's keys, how it points at its things (`id` unless said): a key resolves to the thing it names, inside the file, and is content of nothing, recorded nowhere |
 | `refer [ELEMENT.]ATTRIBUTE ELEMENT [within]` | the attribute's values are keys of things of `ELEMENT`, each read as that thing (`within`: as the thing that element is inside); written for several elements, the first the key names a thing of; a key that names nothing says nothing. An identity over such an attribute is the composition of the things it refers to, in the order written (a synset, its `members`), and never the key as text |
 | `type [ELEMENT.]ATTRIBUTE LIST` | the attribute's value is the source's key of a type in the highway's `LIST`, read as that type's content, never as the key (an `ili` number, a frame element's `ID`, a roleset's `id`); several lines for one attribute, the first list that knows the key; a key none knows says nothing. An identity over such an attribute is the type |
@@ -144,7 +145,7 @@ A claim is the path from a thing to a value, every key and value as written; an 
 | `row tuple` | the row itself is the claim, the path of its fields |
 | `fields pairs CHAR` | every field is `A CHAR B`, the pair `[A, B]`, said together |
 | `where COLUMN is \| is-not \| matches VALUE` | the rows it speaks of |
-| `attest COLUMN... \| * \| NAME*` | each column a predicate by its name, its field the object |
+| `attest COLUMN... \| NAME*` | each column a predicate by its name, its field the object; a recipe names the columns that are testimony (`*`, every column, is a dump, and no recipe uses it) |
 | `query` … `end` | tree-sitter query patterns; every match attests one claim from `@subject`, `@predicate`, `@object`, each with resolvers after a dot |
 
 Resolvers: `.cp` a codepoint in hex; `.text` the node's text, quotes and surrounding spaces stripped; `.head` the text before its first colon; `.iri` an identifier without its angle brackets; `.tag` a tag after `@`; `.term` a Turtle term as what it stands for; `.cps` codepoints in hex as text; `.range` a codepoint, a sequence, or `FIRST..LAST` as the path of its ends; `.xml` with references resolved; `.node` the node itself as recorded; `.NAME` then looked up in map `NAME`, a part no map holds attesting nothing. Predicates: `#eq?`, `#not-eq?`, `#any-of?`, `#not-any-of?`, `#match?`, `#not-match?`.
