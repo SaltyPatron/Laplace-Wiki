@@ -1,29 +1,30 @@
 # MapNet
 
-MapNet attests each row of its two mapping files as the pair or the triple of the row's fields in the row's own order, under no column name because its README gives none, and the README itself attests nothing.
+MapNet's lexical-unit file attests of each FrameNet frame the lexical units it lists for it, as written; its synset column is a WordNet 1.6 offset, a key of an edition no source here has, and is recorded nowhere; its frame-to-synset file holds nothing else and is not read; and the README attests nothing.
 
-One source reads MapNet, "FrameNet 1.3 frames and lexical units mapped to WordNet 1.6 synsets". The README says "All frames and lexical units included in the resource are described in FrameNet v. 1.3." and "All synsets refer to WordNet version 1.6, compatible with MultiWordNet." MapNet is a hop between lexicons, as [Hops](Hops.md) lists it.
+MapNet is "FrameNet 1.3 frames and lexical units mapped to WordNet 1.6 synsets". The README says "All frames and lexical units included in the resource are described in FrameNet v. 1.3." and "All synsets refer to WordNet version 1.6, compatible with MultiWordNet." It is listed under [Hops](Hops.md), but its synset keys cannot be resolved: the highway's `ili` list knows WordNet 3.0 offsets and sense keys, not 1.6 offsets, so MapNet is not on the highway.
 
 ## Source
 
 | Source | Witness | Uncertainty | After | Files | Recipes |
 | --- | --- | --- | --- | --- | --- |
-| `mapnet` | `MAPNET v.0.1`, "named as the README's title names it" | deviation 90 | `unicode`, `iso-639` | `mapping_frame_synsets.txt`, `mapping_lus_synsets.txt`, `README` under `MapNet-0.1` | [`frame-synsets.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/mapnet/frame-synsets.recipe), [`lus-synsets.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/mapnet/lus-synsets.recipe), [`readme.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/mapnet/readme.recipe) |
+| `mapnet` | `MAPNET v.0.1`, "named as the README's title names it" | deviation 90 | `unicode`, `iso-639` | `mapping_lus_synsets.txt`, `README` under `MapNet-0.1` | [`lus-synsets.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/mapnet/lus-synsets.recipe), [`readme.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/mapnet/readme.recipe) |
 
 The uncertainty is the deviation the witness's attestations enter at, as [Consensus](../Semantics/Consensus.md#entry) describes. The source says of its 90 that it is "this recipe's choice for a curated academic resource; the specification does not give one", and adds: "The README says of the resource: 'The resource was automatically generated.' and 'The evaluated precision of the mapping 0.794.' It gives no score to a row." The number is not settled, and [Corpora](README.md#not-settled) lists it among what stays missing.
 
-## The mapping files
+## The lexical units
 
-Both files are tab-separated tables with no header row. The README names no column and nothing that stands between the fields, so a row is recorded in the row's own order and under no name: the names after `columns` in each recipe "only point at a position in the row and are never recorded".
+`mapping_lus_synsets.txt` is a tab-separated table with no header row: "mapping between FrameNet frames, lus and WordNet synsets (5,162 mappings)". The recipe names the columns `frames`, `lus`, `synsets` to point at them.
 
 | Piece | Written as | Laplace reads it as | Claim recorded | Specification |
 | --- | --- | --- | --- | --- |
-| a row of `mapping_frame_synsets.txt` | `Abounding_with`, then `a#00057580` | the pair of its two fields, in the row's order | `[Abounding_with, a#00057580]` | "- file 'mapping_frame_synsets.txt': mapping between FrameNet frames and WordNet synsets (5,162 mappings)." README |
-| a row of `mapping_lus_synsets.txt` | `Abounding_with`, `bejewelled.a`, then `a#00057580` | the tuple of its three fields, in the row's order | `[Abounding_with, bejewelled.a, a#00057580]` | "- file 'mapping_lus_synsets.txt': mapping between FrameNet frames, lus and WordNet synsets (5,162 mappings)." README |
-| an empty field | nothing between two tabs | what the file leaves empty: attests nothing | none | |
+| the first field | `Abounding_with` | the frame, as FrameNet names it: the same entity as the highway's frame and [FrameNet](FrameNet.md)'s | the subject | "- file 'mapping_lus_synsets.txt': mapping between FrameNet frames, lus and WordNet synsets" README |
+| the second field | `bejewelled.a` | the lexical unit as written, said of the frame under `lus` | `[Abounding_with, lus, bejewelled.a]` | |
+| the third field | `a#00057580` | a WordNet 1.6 offset: a key (`key synsets`), recorded nowhere | nothing | "All synsets refer to WordNet version 1.6" |
+| an empty field | | what the file leaves empty | nothing | |
 
-Each row is a claim of its own, witnessed once. Nothing is renamed, reordered, or filled in: which field is the frame, the lexical unit, or the synset is not said, because the README does not say it.
+Each claim stands alone, witnessed once.
 
 ## Not read
 
-`README`, which has no extension, is read as ordinary text by its own recipe (`like text`): it is observed content, as [Attestations](../Semantics/Attestations.md#observations) describes, and attests nothing.
+`mapping_frame_synsets.txt` pairs a frame with a WordNet 1.6 offset and nothing else: with the offset a key, a row would say nothing, so the file is not read. `README`, which has no extension, is read as ordinary text by its own recipe (`like text`): observed content, as [Attestations](../Semantics/Attestations.md#observations) describes, that attests nothing.

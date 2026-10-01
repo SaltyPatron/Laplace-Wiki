@@ -17,21 +17,20 @@ Every file is a table of comma-separated fields whose first row names the column
 
 ## The cases
 
-`test_suite_cases.csv` and `all_cases.csv`. A row is one test case, named by its `case_id`. The ids are HateCheck's own, so the case is the path `[HateCheck, case_id, value]` and a template the path `[HateCheck, templ_id, value]`; "case" and "template" below stand for those paths. Every other named column is said of the case under the column's own name, and what a row says it says together: one record, witnessed once by HateCheck, and its claims within it. The quotations are the [HateCheck README](https://raw.githubusercontent.com/paul-rottger/hatecheck-data/main/README.md)'s.
+`test_suite_cases.csv` and `all_cases.csv`. A row is one test case, which is its `test_case`, the sentence itself; "case" below is that sentence. `case_id` and `templ_id` are HateCheck's keys to the case and to the template it was made from, recorded nowhere (`key case_id templ_id ref_templ_id`); `ref_case_id` points at another case by its key and is read as that case's sentence (`refer ref_case_id hatecheck-cases`). Every other named column is said of the case under the column's own name, and what a row says it says together: one record, witnessed once by HateCheck, and its claims within it. The quotations are the [HateCheck README](https://raw.githubusercontent.com/paul-rottger/hatecheck-data/main/README.md)'s.
 
 | Piece | Laplace reads it as | Claim recorded | Specification |
 | --- | --- | --- | --- |
-| `case_id` | the subject: the case, within HateCheck's own numbering | `[HateCheck, case_id, value]` | "The unique ID of the test case" |
+| `case_id` | a key | nothing | "The unique ID of the test case" |
 | `functionality` | said of the case | `[case, functionality, value]` | "The shorthand for the functionality tested by the test case." |
-| `test_case` | said of the case: its text | `[case, test_case, text]` | "The text of the test case." |
+| `test_case` | the subject: the case, the sentence itself | | "The text of the test case." |
 | `label_gold` | said of the case | `[case, label_gold, hateful]` | "The gold standard label (hateful/non-hateful) of the test case" |
 | `target_ident` | said of the case | `[case, target_ident, value]` | "Where applicable, the protected group targeted or referenced by the test case." |
 | `direction` | said of the case | `[case, direction, value]` | "For hateful cases, the binary secondary label indicating whether they are directed at an individual as part of a protected group or aimed at the group in general." |
 | `focus_words` | said of the case | `[case, focus_words, value]` | "Where applicable, the key word or phrase in a given test case." |
 | `focus_lemma` | said of the case | `[case, focus_lemma, value]` | "Where applicable, the corresponding lemma." |
-| `ref_case_id` | said of the case: another case, within the same numbering | `[case, ref_case_id, case]` | "the ID of the simpler hateful case which was perturbed to generate them", or "of the hateful case which is contrasted" |
-| `ref_templ_id` | said of the case: a template | `[case, ref_templ_id, template]` | "The equivalent, but for template IDs." |
-| `templ_id` | said of the case: its template | `[case, templ_id, template]` | "The unique ID of the template from which the test case was generated" |
+| `ref_case_id` | said of the case: the case it points at, as that case's sentence | `[I have met many women and I hate every single one of them., ref_case_id, I hate women.]` | "the ID of the simpler hateful case which was perturbed to generate them", or "of the hateful case which is contrasted" |
+| `ref_templ_id`, `templ_id` | keys | nothing | "The unique ID of the template from which the test case was generated" |
 | `case_templ` | said of the case under the column's name | `[case, case_templ, value]` | the README does not name it |
 | the first column, which has no name | nothing | none | |
 
@@ -41,9 +40,9 @@ Every file is a table of comma-separated fields whose first row names the column
 
 | Piece | Laplace reads it as | Claim recorded | Specification |
 | --- | --- | --- | --- |
-| `case_id` | the subject: the case | `[HateCheck, case_id, value]` | "The unique ID of the test case" |
+| `test_case` | the subject: the case, its sentence; `case_id` and `templ_id` keys | | "The text of the test case." |
 | `label_1` to `label_10` | what annotator N says of the case: a pair, witnessed by `[HateCheck, label_N]` | `[case, hateful]` | "The label provided for the test case by a given annotator. We recruited and trained a team of ten annotators. Each test case was annotated by exactly five annotators." |
-| `functionality`, `templ_id`, `test_case`, `label_gold` | said of the case by HateCheck, as in the cases file | `[case, label_gold, hateful]` | as above |
+| `functionality`, `label_gold` | said of the case by HateCheck, as in the cases file | `[I hate women., label_gold, hateful]` | as above |
 | `count_label_h` | said of the case by HateCheck | `[case, count_label_h, value]` | "The number of annotators who labeled a given test case as hateful." |
 | `count_label_nh` | said of the case by HateCheck | `[case, count_label_nh, value]` | the same, for non-hateful |
 | `label_annot_maj` | said of the case by HateCheck | `[case, label_annot_maj, hateful]` | "The majority label." |

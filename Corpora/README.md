@@ -23,13 +23,16 @@ The rules the rows follow:
 - The specification cited is the publisher's, at its URL. A path on a local disk is not a citation.
 - Counts, sizes, and what was measured when a source was loaded belong under [Research](../Research/README.md), not here.
 - A source with no recipe says so in its summary: its files are observed content and attest nothing until a recipe exists.
+- **A source's identifiers are keys, not content.** How a resource points at its own things (a synset id, a sense key, an ILI number, a sentence id, a geonameid, a case id, a roleset id, a frame element's number, an entry's etymology number, a dialogue's numbering, `sent_id`) is plumbing: it resolves to the thing it names and is recorded nowhere ([Identity](../Storage/Identity.md): the hash is purely content). The recipe says which attributes, members or columns are keys (`key`), which point at things defined elsewhere in the same file or set (`refer`), and which are a resource's keys of types (`type`). The page names them as such and shows no claim with a key in it.
+- **A thing is its content.** A word is what the lemma writes; a synset is the composition of the words it lists; a sentence is its text or the path of its words; a place is its name, latitude and longitude; a case, a post, a comment is its text; a frame is its name, a frame element its frame and name, a roleset its predicate's lemma and the name the resource writes for it. Two witnesses that write the same content say it of the same thing.
+- **Types are the highway's.** What a curated resource enumerates (parts of speech, dependency relations, lexicographer files, ILI concepts, VerbNet classes and roles, FrameNet frames, frame elements and lexical units, PropBank rolesets, VerbAtlas frames) is a type: one record each in the highway perf-cache, its content as the resource writes it, its slot a mask bit where the list is small ([Types](../Reference/Types.md), [Claims](../Semantics/Claims.md#masks)). A key of a type (`i46360`, `va:0001f`, `abandon.01`, `leave-51.2`, an FE's `ID`) is read as the type. The mappings between the resources (CILI's maps, SemLink, PredicateMatrix, VerbAtlas's bridges, PropBank's links, VerbNet's members, FrameNet's indexes) are the highway's edges, read by its generator and by no recipe.
 
 ## Not settled
 
 Three things every page needs are not on any page yet, because the words for them do not exist. A missing section stays missing until they do.
 
 - **Tier.** [Attestations](../Semantics/Attestations.md#attestations) says attestations are recorded at the highest tier possible for a corpus. Which tier that is for each source's subject is stated nowhere.
-- **Mask.** [Claims](../Semantics/Claims.md#masks) says separate columns hold bitmasks for part of speech, sense, dependency relation, and so on. Which bit each predicate sets is defined nowhere.
+- **Mask.** [Claims](../Semantics/Claims.md#masks) says separate columns hold bitmasks for part of speech, sense, dependency relation, and so on. The highway's layout assigns the bits of the lists small enough to be fields (kind, `upos`, `deprel`, `lexfile`, `vnrole`; [Types](../Reference/Types.md#masks)); a sense mask, sense 1 to 256 of a lemma, is specified and not yet laid out.
 - **Trust.** [Consensus](../Semantics/Consensus.md#trust) gives the order of trust, from MANDATE down. The number each source enters at is the recipe writer's choice, and each recipe says so.
 
 ## Recipes
@@ -40,15 +43,15 @@ Every source in `recipes/order`, in that order, and the page that is its glossar
 | --- | --- |
 | `unicode` | [Unicode Character Database](Unicode.md) |
 | `iso-639` | [ISO 639](ISO-639.md) |
-| `cili` | [Wordnets](Wordnets.md) |
+| `cili` | [Wordnets](Wordnets.md): the highway's input, no recipe |
 | `open-english-wordnet` | [Wordnets](Wordnets.md) |
 | `open-multilingual-wordnet` | [Wordnets](Wordnets.md) |
 | `princeton-wordnet` | [Wordnets](Wordnets.md) |
 | `propbank` | [PropBank](PropBank.md) |
 | `verbnet` | [VerbNet](VerbNet.md) |
 | `framenet` | [FrameNet](FrameNet.md) |
-| `semlink` | [SemLink](SemLink.md) |
-| `predicate-matrix` | [Predicate Matrix](Predicate-Matrix.md) |
+| `semlink` | [SemLink](SemLink.md): the highway's input, no recipe |
+| `predicate-matrix` | [Predicate Matrix](Predicate-Matrix.md): the highway's input, no recipe |
 | `mapnet` | [MapNet](MapNet.md) |
 | `verbatlas` | [VerbAtlas](VerbAtlas.md) |
 | `wordframenet` | [WordFrameNet](WordFrameNet.md) |

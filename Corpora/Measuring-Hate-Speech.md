@@ -16,13 +16,13 @@ The uncertainty is the deviation the witness's attestations enter at, as [Consen
 
 The table is tab-separated, and a `\` makes the character after it itself: a tab, a line's end, or `\`. A field written `\N` alone is left as written, what the source leaves unknown. An empty field attests nothing. The [dataset card](https://huggingface.co/datasets/ucberkeley-dlab/measuring-hate-speech/raw/main/README.md), "Key dataset columns", is quoted below.
 
-A row is one annotator's reading of one comment. The comment is named by its `comment_id` and the annotator by their `annotator_id`; both are the set's own numberings, so the comment is the path `[Measuring Hate Speech, comment_id, value]` and the annotator the path `[Measuring Hate Speech, annotator_id, value]`, "comment" and "annotator" below. What the annotator answered of the comment, the ten labels and whom the comment targets, the annotator says, of the comment: those claims are witnessed by the annotator. What the set measured of the comment, and what it holds of the annotator, the set says. Each claim is its own ledger row. The card does not say which of the columns it does not list belong to the comment and which to the reading: `infitms`, `outfitms`, `std_err`, and `hypothesis` are recorded of the comment, as the columns beside `hate_speech_score`.
+A row is one annotator's reading of one comment. The comment is its `text`; its `comment_id` is the set's key to it, recorded nowhere (`key comment_id`). The annotator is named as the set names them, the path `[Measuring Hate Speech, annotator_id, value]`, "comment" and "annotator" below. What the annotator answered of the comment, the ten labels and whom the comment targets, the annotator says, of the comment: those claims are witnessed by the annotator. What the set measured of the comment, and what it holds of the annotator, the set says. Each claim is its own ledger row. The card does not say which of the columns it does not list belong to the comment and which to the reading: `infitms`, `outfitms`, `std_err`, and `hypothesis` are recorded of the comment, as the columns beside `hate_speech_score`.
 
 | Piece | Laplace reads it as | Claim recorded | Specification |
 | --- | --- | --- | --- |
-| `comment_id` | the subject of what is said of the comment | `[Measuring Hate Speech, comment_id, value]` | "unique ID for each comment" |
+| `comment_id` | the set's key to the comment: recorded nowhere | nothing | "unique ID for each comment" |
 | `annotator_id` | the witness of the annotator's answers, and the subject of what is said of the annotator | `[Measuring Hate Speech, annotator_id, value]` | "unique ID for each annotator" |
-| `text` | said of the comment, by the set | `[comment, text, text]` | "lightly processed text of a social media post" |
+| `text` | the subject: the comment, as the text it is | | "lightly processed text of a social media post" |
 | `platform` | said of the comment, by the set | `[comment, platform, value]` | the card lists it and does not define it |
 | `hate_speech_score` | said of the comment, by the set, the number as written | `[comment, hate_speech_score, value]` | "continuous hate speech measure" |
 | `infitms`, `outfitms`, `std_err`, `hypothesis` | said of the comment, by the set | `[comment, std_err, value]` | the card lists them and does not assign them |

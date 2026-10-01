@@ -16,13 +16,13 @@ Every file is a table of comma-separated fields whose first row names the column
 
 ## The annotations
 
-`SBIC.v2.trn.csv`, `SBIC.v2.dev.csv`, `SBIC.v2.tst.csv`. A line is one worker's reading of one post. The post is named by its `HITId` and the worker by their `WorkerId`; both are the set's own numberings, so the post is the path `[Social Bias Frames, HITId, value]` and the worker the path `[Social Bias Frames, WorkerId, value]`, "post" and "worker" below. What the worker answered of the post, the worker says, of the post: those claims are witnessed by the worker. What the line holds of the worker is said of the worker, and the post's text and source are said of the post, both by Social Bias Frames. Each claim is its own ledger row.
+`SBIC.v2.trn.csv`, `SBIC.v2.dev.csv`, `SBIC.v2.tst.csv`. A line is one worker's reading of one post. The post is its text; its `HITId` is the crowdsourcing task's key to it, recorded nowhere (`key HITId`). The worker is named as the set names them, the path `[Social Bias Frames, WorkerId, value]`, "post" and "worker" below. What the worker answered of the post, the worker says, of the post: those claims are witnessed by the worker. What the line holds of the worker is said of the worker, and the post's text and source are said of the post, both by Social Bias Frames. Each claim is its own ledger row.
 
 | Piece | Laplace reads it as | Claim recorded | Specification |
 | --- | --- | --- | --- |
-| `HITId` | the subject of what is said of the post | `[Social Bias Frames, HITId, value]` | "id that uniquely identifies each post" |
+| `HITId` | the crowdsourcing task's key to the post: recorded nowhere | nothing | "id that uniquely identifies each post" |
 | `WorkerId` | the witness of the worker's answers, and the subject of what is said of the worker | `[Social Bias Frames, WorkerId, value]` | "hashed version of the MTurk workerId" |
-| `post` | said of the post, by Social Bias Frames | `[post, post, text]` | "post that was annotated" |
+| `post` | the subject: the post, as the text it is | | "post that was annotated" |
 | `dataSource` | said of the post, by Social Bias Frames | `[post, dataSource, value]` | "source of the post" |
 | `whoTarget` | said of the post, by the worker | `[post, whoTarget, value]` | "group vs. individual target" |
 | `intentYN` | said of the post, by the worker | `[post, intentYN, value]` | "was the intent behind the statement to offend" |

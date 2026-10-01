@@ -26,8 +26,7 @@ A JSON object on every line. The [dataset card](https://huggingface.co/datasets/
 | `safety_annotation_reasons` | a list of texts | each text said of the context under `safety_annotation_reasons` | `[context, safety_annotation_reasons, text]` | "the reasons behind the safety annotations in free-form text from each worker" |
 | `source` | a text | said of the context | `[context, source, socialchemistry]` | "the source of the seed text that was used to craft the first utterance of the dialogue: socialchemistry, sbic, ethics_amt, ethics_reddit" |
 | `etc` | a text, or `null` | said of the context | `[context, etc, text]` | "other information" |
-| `dialogue_id` | a number | said of the context, the number as written | `[context, dialogue_id, value]` | "the dialogue index" |
-| `response_id` | a number | said of the context, the number as written | `[context, response_id, value]` | "the response index" |
+| `dialogue_id`, `response_id` | numbers | the set's numbering of its turns: keys, recorded nowhere (`key dialogue_id response_id`) | nothing | "the dialogue index"; "the response index" |
 | `episode_done` | `true` or `false` | said of the context, as written | `[context, episode_done, true]` | "an indicator of whether it is the end of the dialogue" |
 | `null`, an empty text | | nothing | none | |
 

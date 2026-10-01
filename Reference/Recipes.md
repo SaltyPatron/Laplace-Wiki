@@ -50,11 +50,14 @@ A recipe of a source takes the source's witness, lineage, and trust unless it na
 | `skip N` | the first N lines are not rows |
 | `comment CHAR` | a line beginning with it is not a row |
 | `remark CHAR` | in a row, what follows it is not the row |
-| `kind COLUMN KIND` | the column's values name things of a kind, a source's own numbers, each recorded as the path of the kind and the value; `{dir}`, `{name}` the file's |
-| `kinds own` | a kind stands within the source: `[Tatoeba, Sentence id, 77]` |
+| `kind COLUMN KIND` | the column's values name things of a kind, each recorded as the path of the kind and the value; `{dir}`, `{name}` the file's. For a witness a set names only by a number (`[Tatoeba, Username, name]`); a source's key to its rows is `key`, not a kind |
+| `kinds own` | a kind stands within the source: `[Measuring Hate Speech, annotator_id, 10873]` |
 | `voices within-file` | witnesses named by column stand within the file: `[witness, file, column]` |
 | `list COLUMN CHAR` or `list COLUMN json` | a field of the column is several values parted by the character, or a JSON list of texts; `*` for every column |
 | `empty TEXT` or `empty-matches PATTERN` | what the source writes in a field it leaves empty; an empty field attests nothing |
+| `key COLUMN...` | columns that are the source's keys, how it points at its rows (a sentence id, a geonameid): never recorded, left out of `attest *`. For the rows of the source's other files, a key names the row's subject |
+| `refer COLUMN RECIPE` | the column's values are keys that `RECIPE`'s rows define: each is read as that row's subject, and a key no row defines says nothing. The files of `RECIPE` are read before this recipe's, in a batch of their own |
+| `type COLUMN LIST` | the column's values are the source's keys of types in the highway's `LIST` (`ili`, `vnclass`, `fnframe`, `fnfe`, `fnlu`, `pbroleset`, `vaframe`), read as those types ([Types](Types.md)); written for several lists, the first that knows the key; a key no list knows says nothing |
 
 ### A table whose rows come in records
 
@@ -72,7 +75,7 @@ For a treebank: a sentence, and a row for each word.
 | `relation COLUMN to COLUMN` | the word's relation to the word the second column numbers |
 | `relations COLUMN PART IS` | the field holds `HEAD IS RELATION` parts: further relations |
 
-What is recorded (`records.c`): `[word, COLUMN, value]`, `[word, KEY, VALUE]`, `[word, relation, head word]`, `[token, [word, word…]]` for a spanning row, `[sentence, KEY, VALUE]` for a note. The rows form a tree by their heads; a word's node is the path of its dependents' nodes and its own in row order, each dependent's node after the claim that relates it, so a phrase analysed the same way is the same node wherever it occurs. The record is the path of what it is about, its notes, its spans, and its trees; it is what was witnessed, one ledger row, and every claim in it plays.
+What is recorded (`records.c`): of each word, `[word, COLUMN, value]`, `[word, KEY, VALUE]`, `[word, relation, head word]` (`[word, relation]` for a head that numbers no row, the root); of the sentence, one layer per column down its words, `[sentence, COLUMN, layer]`, the layer the composition of the words' values in order (`[The dog barked., UPOS, DET NOUN VERB PUNCT]`), a word's several values one tuple and an empty one the source's empty mark; `[token, [word, word…]]` for a spanning row; `[sentence, KEY, VALUE]` for a note whose key is not a `key`. The rows form a tree by their heads; a word's node is the path of its dependents' nodes and its own in row order, each dependent's node after the claim that relates it, so a phrase analysed the same way is the same node wherever it occurs. The record is the path of what it is about, its notes, its spans, and its trees; it is what was witnessed, one ledger row, and every claim in it plays.
 
 ### XML read as what it says
 
@@ -83,7 +86,9 @@ What is recorded (`records.c`): `[word, COLUMN, value]`, `[word, KEY, VALUE]`, `
 | `identity ELEMENT >CHILD` | the thing the text of the child element names; `>CHILD.ATTRIBUTE` that element's attribute |
 | `identity ELEMENT NAME within` | the name stands only within the thing the element is inside: the path of that thing and the name |
 | `identity ELEMENT NAME kind [KIND]` | the name stands only among things of its kind: the path of the kind and the name; `.` is the element's own text |
-| `refer [ELEMENT.]ATTRIBUTE KIND` | the attribute's value names a thing of that kind and is recorded as it |
+| `key ATTRIBUTE...` | attributes that are the source's keys, how it points at its things (`id` unless said): a key resolves to the thing it names, inside the file, and is content of nothing, recorded nowhere |
+| `refer [ELEMENT.]ATTRIBUTE ELEMENT [within]` | the attribute's values are keys of things of `ELEMENT`, each read as that thing (`within`: as the thing that element is inside); an identity over such an attribute is the composition of the things it refers to, in the order written (a synset, its `members`) |
+| `type [ELEMENT.]ATTRIBUTE LIST` | the attribute's value is the source's key of a type in the highway's `LIST`, read as that type's content, never as the key (an `ili` number, a frame element's `ID`, a roleset's `id`); several lines for one attribute, the first list that knows the key; a key none knows says nothing. An identity over such an attribute is the type |
 | `words RECORD WORD...` | the element is a record of words: each word element's text is a word, its attributes said of the word within the record; what the record is about is the path of its words |
 | `span ELEMENT START END TEXT [inclusive]` | the element speaks of a stretch of the text element between two characters |
 | `list ATTRIBUTE CHAR` | an attribute of several values |
@@ -102,6 +107,7 @@ What is recorded (`records.c`): `[word, COLUMN, value]`, `[word, KEY, VALUE]`, `
 | `specifics [claims under KEY...]` | what is held with a claim is its specifics, pairs of key and value, recorded together with the claim as what is witnessed and no claim of their own; under the named keys, claims of their own |
 | `tuples` | a list of plain values inside a list is one tuple |
 | `keys things` | the keys of an object inside nothing are things, each one's value speaking of it |
+| `key MEMBER...` | members that are the source's keys (an entry's etymology number, a sense's id, a Wikidata number, a cut's file name and offsets, a dialogue's numbering): never recorded |
 | `records` | a value on every line |
 
 A claim is the path from a thing to a value, every key and value as written; an array says each value under the same path; `null` and an empty text say nothing. Everything a top-level value says it says together: one record, witnessed once.
@@ -157,14 +163,14 @@ Format recipes that belong to no source, which any source's `reads` may name and
 
 | Recipe | Matches | Grammar |
 | --- | --- | --- |
-| `text` | `*.txt *.md` | `text`: UAX #29 codepoint, grapheme, word segment, sentence, paragraph, file |
+| `text` | `*.txt *.md` | `text`: UAX #29 codepoint, grapheme, word segment (a separator separates at the word tier, [Types](Types.md#segmentation)), sentence, paragraph, file |
 | `xml` | `*.xml` | `xml` as its syntax tree, leaves text |
 | `json` | `*.json` | `json` as its syntax tree |
 | `turtle` | | `turtle`: every statement `[subject, predicate, object]` as written; a literal with a language tag or datatype also `[text, tag]` or `[text, datatype]`; blank nodes and collections not read |
 | `vocabulary` | `tokenizer.json` | `vocabulary` |
-| `wn-lmf` | | `xml` with `records`, `identity LexicalEntry >Lemma.writtenForm`, `identity * id`, `link SenseRelation relType target`, `link SynsetRelation relType target`: a lexical entry is the word its lemma writes, everything else with an id is what that id names, and what is inside a thing is said of it |
+| `wn-lmf` | | `xml` with `records` and `key id`: a lexical entry is the word its `Lemma` writes; a synset is the composition of the words its `members` are, in the order listed, so every wordnet that lists the same words has the same synset; a sense is the word it is inside with its synset; the lexicon is its `label`; `ili` is a type of the highway's interlingual index; a relation is its type and the synset or sense its target refers to. The ids resolve to those things and are recorded nowhered names, and what is inside a thing is said of it |
 
-Source directories in the estate: `unicode` (23 recipes), `iso-639` (10), `cili`, `open-english-wordnet`, `open-multilingual-wordnet`, `princeton-wordnet`, `propbank`, `verbnet`, `framenet`, `semlink`, `predicate-matrix`, `mapnet`, `verbatlas`, `wordframenet`, `universal-dependencies-tools`, `universal-dependencies-documentation`, `universal-dependencies`, `wsd-evaluation-framework`, `wiktionary-kaikki`, `wiktionary`, `conceptnet`, `atomic-2020`, `framebase`, `atomic-10x`, `tatoeba`, `opensubtitles`, `project-gutenberg`, `tokenizers`, `geonames`, `hatecheck`, `sghatecheck`, `xstest`, `social-bias-frames`, `social-chemistry-101`, `prosocial-dialog`, `real-toxicity-prompts`, `toxigen`, `measuring-hate-speech`, `civil-comments`: the order of `order`.
+Source directories in the estate: `unicode` (23 recipes), `iso-639` (10), `cili`, `open-english-wordnet`, `open-multilingual-wordnet`, `princeton-wordnet`, `propbank`, `verbnet`, `framenet`, `semlink`, `predicate-matrix`, `mapnet`, `verbatlas`, `wordframenet`, `universal-dependencies-tools`, `universal-dependencies-documentation`, `universal-dependencies`, `wsd-evaluation-framework`, `wiktionary-kaikki`, `wiktionary`, `conceptnet`, `atomic-2020`, `framebase`, `atomic-10x`, `tatoeba`, `opensubtitles`, `project-gutenberg`, `tokenizers`, `geonames`, `hatecheck`, `sghatecheck`, `xstest`, `social-bias-frames`, `social-chemistry-101`, `prosocial-dialog`, `real-toxicity-prompts`, `toxigen`, `measuring-hate-speech`, `civil-comments`: the order of `order`. `cili`, `semlink` and `predicate-matrix` hold a `source` file and no recipe: their files are the highway's own input, read by `laplace highway` ([Types](Types.md#perf-caches)) and by nothing else.
 
 A worked example, `universal-dependencies/conllu.recipe`:
 
@@ -178,6 +184,7 @@ record blank
 empty _
 note =
 about text
+key sent_id "newdoc id" "newpar id" newdoc newpar
 word FORM
 number ID -
 attest LEMMA UPOS XPOS
@@ -187,7 +194,7 @@ relation DEPREL to HEAD
 relations DEPS | :
 ```
 
-A sentence is a record whose `# text = …` note is what it is about; every row is about its `FORM` within that sentence; `LEMMA`, `UPOS`, and `XPOS` are attested under those names; `FEATS` and `MISC` are `KEY=VALUE` parts split on `|`; `DEPREL` relates the word to the row `HEAD` numbers; `DEPS` holds further `HEAD:RELATION` parts; `_` is empty; a row `A-B` spans rows.
+A sentence is a record whose `# text = …` note is what it is about; `sent_id`, `newdoc id` and `newpar id` are how the treebank points at its sentences, documents and paragraphs, keys recorded nowhere; every row is about its `FORM` within that sentence; `LEMMA`, `UPOS`, and `XPOS` are attested under those names, and each of them is also one layer down the sentence; `FEATS` and `MISC` are `KEY=VALUE` parts split on `|`; `DEPREL` relates the word to the row `HEAD` numbers; `DEPS` holds further `HEAD:RELATION` parts; `_` is empty; a row `A-B` spans rows.
 
 ## Where recipes are checked
 

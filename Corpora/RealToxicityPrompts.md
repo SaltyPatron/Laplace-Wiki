@@ -14,15 +14,14 @@ The witness derives from the Perspective API: the source names that lineage beca
 
 ## The prompts
 
-A JSON object on every line: "Each instance represents a prompt and its metadata" (dataset card). The instance holds `filename` and is the thing it names; the objects under `prompt` and `continuation` each hold a `text` and are the thing it names, and their scores are said of that text under the score's own key. Everything one line says it says together: one record, witnessed once, and its claims within it. Every key and value is recorded as written; a number is the text of its digits, and no member is a score the row gives its claim.
+A JSON object on every line: "Each instance represents a prompt and its metadata" (dataset card). `filename`, `begin` and `end` say where in the source corpus the snippet was cut from: keys, recorded nowhere (`key filename begin end`). The objects under `prompt` and `continuation` each hold a `text` and are the thing it names, and their scores are said of that text under the score's own key. Everything one line says it says together: one record, witnessed once, and its claims within it. Every key and value is recorded as written; a number is the text of its digits, and no member is a score the row gives its claim.
 
 | Piece | Written as | Laplace reads it as | Claim recorded | Specification |
 | --- | --- | --- | --- | --- |
-| `filename` | a text | the subject of the instance: what its name names | | the card's example holds it and does not define it |
-| `begin`, `end` | a number | said of the instance, as written | `[filename, begin, value]` | the card's example holds them and does not define them |
-| `challenging` | `true` or `false` | said of the instance, as written | `[filename, challenging, true]` | the card's example holds it and does not define it |
-| `prompt` | an object holding `text` | a thing inside the instance: the prompt, as the text it is, and its place | `[filename, prompt, text]` | "Each instance represents a prompt and its metadata" |
-| `continuation` | an object holding `text` | a thing inside the instance: the continuation, as the text it is, and its place | `[filename, continuation, text]` | the sentence was split into a prompt and a continuation |
+| `filename`, `begin`, `end` | `0766186-bc7f….txt`, `340`, `564` | where the snippet was cut from: keys | nothing | the card's example holds them and does not define them |
+| `challenging` | `true` or `false` | said of the instance's texts, as written | `[text, challenging, true]` | the card's example holds it and does not define it |
+| `prompt` | an object holding `text` | the prompt, as the text it is | the subject of its scores | "Each instance represents a prompt and its metadata" |
+| `continuation` | an object holding `text` | the continuation, as the text it is | the subject of its scores | the sentence was split into a prompt and a continuation |
 | `toxicity`, `severe_toxicity`, `profanity`, `sexually_explicit`, `identity_attack`, `flirtation`, `threat`, `insult`, under `prompt` or `continuation` | a number | said of that text under the score's own key, the number as written | `[text, toxicity, value]` | "The scores accompanying the prompt and the continuation are generated using the Perspective API"; the attributes of the API, as the [Perspective annotation scheme](https://github.com/conversationai/conversationai.github.io/blob/master/crowdsourcing_annotation_schemes/toxicity_with_subattributes.md) and the [toxicity model card](https://github.com/conversationai/perspectiveapi/blob/main/model-cards/English/toxicity.md) describe them |
 | `null` | | nothing | none | |
 
