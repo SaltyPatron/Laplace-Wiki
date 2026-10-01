@@ -9,8 +9,8 @@
 | `entity` | `id blake3`, `tier smallint`, `coord geometry(PointZM)` (the real 4D coordinate), `hilbert bigint` | by tier; the large tiers again 16 ways by the first hex digit of the ID |
 | `physicality` | `entity blake3`, `tier`, `hilbert`, `path geometry` (the constituents' IDs in X/Y/Z; each vertex's M its run and what it is), `mask bit(256)` | the same |
 | `witness` | `id blake3`, `lineage blake3`, `trust double precision` | |
-| `attestation` | `claim`, `witness`, `score real`, `position integer` | |
-| `consensus` | `claim` (primary key), `rating`, `deviation`, `volatility`, `matches` | |
+| `attestation` | `claim`, `witness`, `score real`, `position integer` | 16 ways by the first hex digit of the claim's ID |
+| `consensus` | `claim` (primary key), `rating`, `deviation`, `volatility`, `matches` | 16 ways by the first hex digit of the claim's ID |
 
 An ID is the extension's type `blake3`: 16 bytes, the BLAKE3 hash. Hilbert values are stored with the top bit flipped so `bigint` order is Hilbert order. The path's statistics target is 0 and the partitions take no parallel workers, as [Operations: Database](../Operations/Database.md) says.
 
@@ -30,4 +30,4 @@ Operators: `mask ? bit`, `mask ?& bits`, `mask ?| bits` (`smallint` bit position
 
 ## Versions
 
-`laplace--1.4.sql` installs; `laplace--1.0--1.1.sql`, `laplace--1.1--1.2.sql`, `laplace--1.2--1.3.sql` (adopting tables that stood before the extension owned them), `laplace--1.3--1.4.sql` (`laplace_forward`) upgrade a database in place with `ALTER EXTENSION laplace UPDATE`. Never `DROP EXTENSION laplace CASCADE`: the tables' columns are the extension's type.
+`laplace--1.5.sql` installs; `laplace--1.0--1.1.sql`, `laplace--1.1--1.2.sql`, `laplace--1.2--1.3.sql` (adopting tables that stood before the extension owned them), `laplace--1.3--1.4.sql` (`laplace_forward`), `laplace--1.4--1.5.sql` (the ledger and the statistics partitioned, filled from the old tables as one set) upgrade a database in place with `ALTER EXTENSION laplace UPDATE`. Never `DROP EXTENSION laplace CASCADE`: the tables' columns are the extension's type.
