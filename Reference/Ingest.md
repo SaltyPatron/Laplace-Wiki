@@ -32,7 +32,7 @@ Then `file_take` keeps what each file witnessed for its content and `file_close`
 
 ### Trunk to leaf
 
-The files' trunks are probed first: a file whose trunk is recorded is recorded with everything under it and everything it attested, and nothing of it is looked for, played, or written again. Then the frontier: every file's trunk, its witness, its lineage, every claim, every record, every own witness. Each round, `recorded()` asks the database which of the frontier's IDs exist: the IDs are bucketed by their first hex digit, and for each digit one statement, built once from the partitions that hold anything, `SELECT u.i FROM unnest($1::blake3[]) WITH ORDINALITY AS u(id, i) WHERE EXISTS (SELECT 1 FROM entity_t0_a e WHERE e.id = u.id) OR EXISTS (…)` over every partition that can hold an ID with that digit, in chunks of 50,000 on every connection at once. A hit marks the node recorded (`keep = 2`) and nothing below it is checked; a miss marks it new (`keep = 1`) and its children join the next round. Rounds continue until the frontier is empty. `--whole` puts every node in the first frontier instead. Counters: rounds, IDs checked, subtrees already recorded, new nodes.
+The files' trunks are probed first: a file whose trunk is recorded is recorded with everything under it and everything it attested, and nothing of it is looked for, played, or written again. Then every node of the batch, as one set per partition: the nodes are bucketed by `part_of(id, tier)`, each bucket's IDs are copied into a staging table on its own connection (`COPY stage (id) FROM STDIN (FORMAT binary)`, a temp table the connection keeps), and one join against that partition, `SELECT s.id FROM stage s JOIN entity_t3_a e ON e.id = s.id`, says which are recorded. A recorded node has its whole subtree recorded, so a node under one is found recorded by the same join. A hit marks the node recorded (`keep = 2`); the rest are new (`keep = 1`). Every partition at once on every connection, one round, nothing shipped back but the recorded IDs. Measured: 1.08 million nodes in 0.64 s.
 
 ### COPY
 
@@ -64,9 +64,10 @@ Every statement the ingest issues, all parameters binary, all sets:
 | trunk known | `SELECT 1 FROM entity WHERE id = ANY($1::blake3[])` (a long file read in stretches) |
 | partitions | `SELECT c.relname FROM pg_class c WHERE c.relkind = 'r' AND c.relname ~ '^entity_t([0-9]+\|x)(_[0-9a-f])?$'`; `SELECT 1 FROM <partition> LIMIT 1` |
 | atoms | `SELECT count(*) FROM entity WHERE tier = 0` |
-| dedup | the per-digit `EXISTS` chain above |
+| dedup | per partition: `COPY stage (id) FROM STDIN (FORMAT binary)`, then `SELECT s.id FROM stage s JOIN <partition> e ON e.id = s.id` |
 | COPY | the two `COPY … FROM STDIN (FORMAT binary)` per leaf partition |
-| standings | the `consensus` select, `COPY consensus`, the `UPDATE … FROM unnest` |
+| standings | per partition of the claim's first hex digit: `SELECT claim, rating, deviation, volatility, matches FROM consensus_<h> WHERE claim = ANY($1::blake3[])`, `COPY consensus_<h> … FROM STDIN (FORMAT binary)`, `UPDATE consensus_<h> s SET … FROM unnest($1::blake3[], $2::float8[], $3::float8[], $4::float8[], $5::int[]) AS u(c, r, d, v, m) WHERE s.claim = u.c` |
+| ledger | per partition: `COPY attestation_<h> (claim, witness, score, position) FROM STDIN (FORMAT binary)` |
 | lineage | the ledger and witness join above |
 | witnesses | `SELECT u.i FROM unnest($1::blake3[]) WITH ORDINALITY AS u(id, i) JOIN witness w ON w.id = u.id`; `SELECT id FROM witness WHERE id = ANY($1::blake3[])`; `COPY witness` |
 | ledger | `COPY attestation` |
