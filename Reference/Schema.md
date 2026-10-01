@@ -30,4 +30,4 @@ Operators: `mask ? bit`, `mask ?& bits`, `mask ?| bits` (`smallint` bit position
 
 ## Versions
 
-`laplace--1.3.sql` installs; `laplace--1.0--1.1.sql`, `laplace--1.1--1.2.sql`, `laplace--1.2--1.3.sql` upgrade a database in place with `ALTER EXTENSION laplace UPDATE`. Never `DROP EXTENSION laplace CASCADE`: the tables' columns are the extension's type.
+`laplace--1.4.sql` installs; `laplace--1.0--1.1.sql`, `laplace--1.1--1.2.sql`, `laplace--1.2--1.3.sql` (adopting tables that stood before the extension owned them), `laplace--1.3--1.4.sql` (`laplace_forward`) upgrade a database in place with `ALTER EXTENSION laplace UPDATE`. Never `DROP EXTENSION laplace CASCADE`: the tables' columns are the extension's type.
