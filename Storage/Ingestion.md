@@ -18,6 +18,10 @@ The decomposer and the ingestion pipeline are optimized to the limit and powered
 
 Deduplication is an O(tier) check from trunk to leaf. Everything it finds already recorded is eliminated, so the check reduces its own total count as it goes.
 
+The client has decomposed the content and holds a deterministic trunk ID for every tier, with the records, their coordinates, and their physicality trajectories already made and deduplicated on the client. The check is the client saying "I have these IDs: which do you already have?" and omitting those from what it writes. It goes by the IDs: the file trunk, the trunks of the file's metadata and of its content tree, then their children, whichever tree the recipe made. It never searches the tiers.
+
+Asking first is what removes conflict handling and reduces the WAL: only new records are written. The check should take next to nothing, even for gigabytes.
+
 The checks are set-based operations, not per-row conflict handling such as `ON CONFLICT`. See [Research: Engine Measurements](../Research/Engine.md#ingestion).
 
 Same content means the same hash. If a trunk node matches, its children match as well; if they do not, the ingestion was done wrong. See [Research: Hashing](../Research/Hashing.md) and [Research: Prototype](../Research/Prototype.md#verification).

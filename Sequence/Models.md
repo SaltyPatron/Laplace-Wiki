@@ -8,12 +8,6 @@ Static models are food for Laplace. A model is not recorded as raw weights, not 
 
 The whole chain through [23. Learning](Learning.md). [10. Recipes](Recipes.md): the safetensors provider. [6. Registries](Registries.md) operation 6.8: the operator templates.
 
-## As built
-
-`laplace model MODEL_DIR` reads a safetensors checkpoint of the Llama architecture and runs `lp_rowsig` per circuit, reporting what survives each circuit's noise floor; it records nothing yet ([CLI: laplace model](../Reference/CLI.md#laplace-model), [Native: The model kernel](../Reference/Native.md#the-model-kernel-rowsigc-laplace_model)); the `vocabulary` grammar records a tokenizer as one composition of its tokens ([Recipes: How a file is recorded](../Reference/Recipes.md#how-a-file-is-recorded)). In the monorepo: `ModelDecomposer` with `SafetensorsContainerParser`, `LlamaTokenizerParser`, `ModelConfigReader`, `ModelOperatorRecognizer` over `model_operators.toml`, `ModelCircuitEstate`, `ModelTokenEdgeETL`, `WeightTensorETL`, the corroboration ETLs; native `synthesis/` (`safetensors_parser`, `sentencepiece_parser`, `tensor_decompose`, `bf16_decoder`, `qk_pairs_threshold`, `feature_extractor`) and `dynamics/` (`bilinear_edges`, `ffn_edges`, `eigenmaps`, `procrustes`); `model.model_consensus`, `model.model_factor`, the `FACTOR` vertex class; `ingest-source.sh safetensors <dir>`; `docs/plan/MODEL_INGESTION_DESIGN.md` ([Monorepo: Models](../Reference/Monorepo.md#models-export-code-chess-and-games)). The split repositories' `laplace model` is the kernel and the report only.
-
-Status: **monorepo**. Every operation below is from the invention documents; [Reference: Traceability](../Reference/Traceability.md#24-models) indexes it.
-
 ## Operations, per checkpoint
 
 ### 24.1 Stage the checkpoint as a source generation
@@ -49,7 +43,6 @@ Status: **monorepo**. Every operation below is from the invention documents; [Re
 - **In:** the descriptors of 24.2, the config of 24.4, the templates of [6. Registries](Registries.md) operation 6.8.
 - **Do:** bind the model dimension by axis frequency, the vocabulary size by the tokenizer, the layer count by path repetition, the rest from config, and a feed-forward width per instance; then match every tensor to a template: vocabulary projection, position and segment embeddings, norms, grouped-query self-attention, fused QKV in either orientation, latent attention, gated, fused-gated, and plain MLP, router, stacked experts, low-rank factor pairs. Names only break symmetries between equal shapes; undecided slots are ambiguous and unclaimed tensors are unrecognized, never guessed.
 - **Out:** every tensor's source role, or its ambiguity.
-- **Check:** TinyLlama, 201 tensors, 22 layers, d 2048, 32 query heads, 4 KV heads, head dimension 64, SwiGLU 5632, vocabulary 32,000, with dimension frequencies 2048×245, 5632×66, 256×44, 32000×2; Phi-2, MiniLM, Qwen2.5, Qwen3-MoE, and DeepSeek-V2-Lite with latent attention, experts, and shared experts, all recognize with nothing left over.
 - **From:** `docs/plan/ASSIMILATION_ROADMAP.md` law 14 and workstream E2.
 
 ### 24.6 Derive each circuit's physicality

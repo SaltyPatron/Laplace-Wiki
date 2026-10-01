@@ -6,9 +6,9 @@ One source reads PropBank: its frame files, "every predicate's rolesets, their r
 
 ## Source
 
-| Source | Witness | Uncertainty | After | Files | Recipe |
+| Source | Witness | Trust class | After | Files | Recipe |
 | --- | --- | --- | --- | --- | --- |
-| `propbank` | `PropBank` | deviation 90 | `unicode`, `iso-639` | `*.xml` under `frames` | [`frames.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/propbank/frames.recipe) |
+| `propbank` | `PropBank` | class `AcademicCurated` | `unicode`, `iso-639` | `*.xml` under `frames` | [`frames.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/propbank/frames.recipe) |
 
 ## The frame file
 

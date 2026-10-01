@@ -8,12 +8,6 @@ Ingestion is the learning process. A training-corpus pass is admit, decompose, w
 
 [22. Users](Users.md): the first consequences. [13. Consensus](Consensus.md): the fold. [18. Firmware](Firmware.md): the participant that is rated.
 
-## As built
-
-None: nothing in the four repositories writes a consequence, rates a firmware, or proposes a candidate; the only learning is `laplace ingest` ([Ingest](../Reference/Ingest.md)). In the monorepo: `FeedbackContent.cs` and `/v1/feedback`; `ops.refold_source` and `ConsensusPipelinedRefold.cs`; `AgentTraceDecomposer` with adapters for Claude Code, Codex, Cursor, Aider, Cline, Copilot, Gemini, and others admitting agent transcripts at `AgentTranscript` 0.40; spec 15, the Gödel engine and OODA loop, is archived, and the loop, the three rates, and the fray detector are specified ([Monorepo: Models, export, code, chess, and games](../Reference/Monorepo.md#models-export-code-chess-and-games)).
-
-Status: **monorepo for feedback, refold, and agent traces; the loop specified**. Every operation below is from the invention documents; [Reference: Traceability](../Reference/Traceability.md#23-learning) indexes it.
-
 ## Operations
 
 ### 23.1 Run OODA over the forward program

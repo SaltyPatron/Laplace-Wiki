@@ -32,7 +32,7 @@ The comparison adds a semantic relation the ID does not. Two records with differ
 
 Error logs from an application's telemetry are that case. One log has a shape. Across 1,000 clients and 10,000 repositories, that shape can lie very close to 50,000 other logs. Those 50,000 are the same pattern, and finding the pattern once is finding all of them.
 
-Which measure keeps that match is visible in the trajectory measurements. On sequences of 60 codepoints, one outlier vertex — the stand-in for a timestamp or an id — scores a discrete Fréchet of 1.39, against 1.72 for an unrelated sequence, so plain Fréchet treats the pair as nearly unrelated. The same pair with one outlier skipped scores 0. Jitter of the size of those fields scores 0.087. The measure that skips the variable vertices, or tolerates that jitter, is the one that holds the pattern together. Favoring it is the [firmware](Semantics/Firmware.md). The trees stay the records.
+The measure that skips the variable vertices, or tolerates that jitter, is the one that holds the pattern together. Favoring it is the [firmware](Semantics/Firmware.md). The trees stay the records.
 
 ## Functions in queries
 

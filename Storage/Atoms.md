@@ -12,7 +12,7 @@ Codepoints are placed across the S³ at Marc Alexa's Super-Fibonacci points, whi
 
 Collation neighbors are therefore spatial neighbors: `King` falls by `king`, by `ding`, by `dong`, by `kong`. The placement is not exact, but it is predictable and recordable. See [Research: Placement](../Research/Placement.md) and [Research: Unicode](../Research/Unicode.md#the-deterministic-total-order).
 
-The Hilbert value is also for locality, partitioning, and ordering, to optimize performance and reduce random thrashing.
+The Hilbert value is also for locality, ordering, and indexing, to optimize performance and reduce random thrashing. It is not what partitions go by: see [Physicality](Physicality.md#partitions).
 
 ## Unicode data
 

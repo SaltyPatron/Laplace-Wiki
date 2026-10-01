@@ -150,6 +150,32 @@ For reference, on the full five-set ALL:
 
 Post-2019 papers score ALL without SemEval-2007, as done here, which moves the most-frequent-sense baseline from 64.8 to 65.5.
 
+## What was measured on one entity
+
+`laplace hop` on `dog` in the engine database returns 612 claims. 131 of them have been matched at least once. The other 481 are untouched stock: rating 1500, deviation 250 or 350, zero matches.
+
+Across the 8,515 pairs of witnessed claims, *k* = 0 and *k* = 2 select the same order. The witnessed deviations sit in a band, about 105 to 252, median 214, and the ratings are far enough apart that two deviations do not reorder them. The first reorder of any witnessed pair is at *k* = 5.76, and it is the top two, which are already 0.003 apart.
+
+What *k* does change on this set is the untouched stock. Read at the rating, each of them tugs at 0.500. Read two deviations down, a deviation of 250 tugs at 0.053 and a deviation of 350 tugs at 0.018. The weakest witnessed claim still tugs at 0.732 with *k* = 0 and at 0.132 with *k* = 2, so the stock does not enter the head of this list either way. It does change a search that walks through them: at *k* = 0 an unattested claim is a coin flip, and at *k* = 2 it is almost a refusal to cross.
+
+At *k* = 2 the head of `dog`, always taking the top, is:
+
+| Confidence | Rating | Deviation | Matches | Claim |
+| --- | --- | --- | --- | --- |
+| 0.972 | 2385 | 134 | 310 | dog, LEMMA, dog |
+| 0.969 | 2357 | 129 | 273 | dog, UPOS, NOUN |
+| 0.966 | 2333 | 125 | 245 | dog, XPOS, NN |
+| 0.943 | 2206 | 109 | 122 | dog, SpaceAfter, No |
+| 0.928 | 2155 | 105 | 86 | dog, Number, Sing |
+| 0.912 | 2116 | 105 | 64 | a, det, dog |
+| 0.906 | 2104 | 105 | 58 | the, det, dog |
+| 0.902 | 2097 | 106 | 55 | 犬, Gloss, dog |
+| 0.891 | 2079 | 107 | 47 | ., punct, dog |
+
+The fourth strand is a typesetting observation. Determiners and a punctuation mark sit in the same tenth as the gloss. The top three are 0.003 and 0.003 apart. Always taking the top is a decision those gaps do not force. Temperature is that decision's spread: how near a tie has to be before another strand can be taken. The pull has no softmax. The set is already in hand, and the firmware says whether 0.972 against 0.969 is an answer or a tie.
+
+A restriction is the same kind of decision, applied before the sort. A firmware that does not navigate through layout and punctuation drops `SpaceAfter` and `punct` out of this list. The standings stay. Another human's firmware keeps them.
+
 ## Sources
 
 - Alessandro Raganato, Jose Camacho-Collados, and Roberto Navigli. [Word Sense Disambiguation: A Unified Evaluation Framework and Empirical Comparison](https://aclanthology.org/E17-1010.pdf). EACL 2017. Data: [WSD_Evaluation_Framework](http://lcl.uniroma1.it/wsdeval/data/WSD_Evaluation_Framework.zip).

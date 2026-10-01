@@ -6,13 +6,13 @@ Three sources read Universal Dependencies, in the order [`recipes/order`](https:
 
 ## Sources
 
-| Source | Witness | Uncertainty | After | Files | Recipe |
+| Source | Witness | Trust class | After | Files | Recipe |
 | --- | --- | --- | --- | --- | --- |
-| `universal-dependencies` | the treebank's directory name, such as `UD_English-EWT`: every treebank is its own witness | deviation 90 | `unicode`, `iso-639` | `*.conllu` under `UD-Treebanks/ud-treebanks-*` | [`conllu.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/universal-dependencies/conllu.recipe) |
-| `universal-dependencies-tools` | `UniversalDependencies tools` | deviation 90 | `unicode`, `iso-639` | `*.json` under `UD-Tools/*/data` | [`data.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/universal-dependencies-tools/data.recipe) |
-| `universal-dependencies-documentation` | `Universal Dependencies` | deviation 90 | `universal-dependencies-tools` | `*.md` under `UD-Docs/extracted/docs-pages-source` | [`pages.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/universal-dependencies-documentation/pages.recipe) |
+| `universal-dependencies` | the treebank's directory name, such as `UD_English-EWT`: every treebank is its own witness | class `AcademicCurated` | `unicode`, `iso-639` | `*.conllu` under `UD-Treebanks/ud-treebanks-*` | [`conllu.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/universal-dependencies/conllu.recipe) |
+| `universal-dependencies-tools` | `UniversalDependencies tools` | class `StandardsDerived` | `unicode`, `iso-639` | `*.json` under `UD-Tools/*/data` | [`data.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/universal-dependencies-tools/data.recipe) |
+| `universal-dependencies-documentation` | `Universal Dependencies` | class `StandardsDerived` | `universal-dependencies-tools` | `*.md` under `UD-Docs/extracted/docs-pages-source` | [`pages.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/universal-dependencies-documentation/pages.recipe) |
 
-The uncertainty is the deviation the witness's attestations enter at, as [Consensus](../Semantics/Consensus.md#entry) describes. Each recipe says of its 90 that it is "this recipe's choice for a curated academic treebank; the specification does not give one": the number is not settled, and [Corpora](README.md#not-settled) lists it among what stays missing.
+The class is the witness's trust class, one of those [6. Registries](../Sequence/Registries.md#65-declare-the-trust-classes) declares; its prior is the trust every attestation of the source plays at, and [9. Sources](../Sequence/Sources.md#the-estate-and-why-each-source-is-in-it) gives the class of each source.
 
 ## The treebank
 

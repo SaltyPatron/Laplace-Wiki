@@ -18,13 +18,13 @@ These are different operations, and the firmware is which one a pull runs. Conta
 
 The shape in that comparison is the tree, not the centroid of a short word. `cat` and `act` only show the small case: the same centroid, and a Fréchet distance of 0.132 because `c` and `a` are transposed. The use of the measure is a tree against other trees. An error log is one such tree. Across 1,000 clients and 10,000 repositories, one log's shape can lie very close to 50,000 others, and those 50,000 are the same pattern. See [Query: Shape](../Query.md#shape).
 
-Plain Fréchet will not find them when a timestamp or a request id is one vertex of the tree. Measured on 60-point trajectories, that single outlier scores 1.39, against 1.72 for an unrelated sequence, and the same pair with the outlier skipped scores 0. Jitter the size of those fields scores 0.087. Favoring the outlier-tolerant measure, or tolerating that jitter, is what keeps the pattern. Favoring the plain maximum throws it out. The logs do not change. The favor does.
+Plain Fréchet will not find them when a timestamp or a request id is one vertex of the tree. Favoring the outlier-tolerant measure, or tolerating that jitter, is what keeps the pattern. Favoring the plain maximum throws it out. The logs do not change. The favor does.
 
 The tree is Laplace's probability. A conventional step reduces a set to a scalar, by a dot product or a cosine, and samples one token. Laplace keeps the set, and a step may return any segment of any branch, or a combination of segments. The basis is the observation, the attestations on that observation, and the whole composition across tiers: a tier-0 branch under a word, a run of a tier-3 sentence, a container above that sentence. On "the cat", 599 observed paths continue most often into a space, 409 times, and the tier-3 sentence "The cat sat on the mat" holds `sat on the mat` as a later segment of the same branch. Emitting the space is one token. Taking the later segment, or taking `cat` together with an attestation of it, is the tree.
 
 The tree is the muscle memory of what this human being does with that set: which relation to follow, which shape measure to favor, which segment to lift out of which tier, where to hop, how far to fan out, what to refuse, and what to combine. That sequence of decisions is the firmware. It is not a weight stored in the records.
 
-One branch returns a single member as a fact. It fires when that member was curated by a high-trust witness, a mandate or a result of that class, rather than merely observed. The return is one fact, not a draw from the rest of the set. The confidence sort does not fire this branch. On the claims that hold `Paris`, the head at *k* = 2 is `[Paris, UPOS, PROPN]` at 0.991, from 1,180 matches, 0.002 above the lemma. A claim that starts at stock and receives one attestation at trust 1.0, played through the library's Glicko-2 update, reads as 0.138 at *k* = 2. Five such attestations read as 0.505. Usage outranks a new curated fact on the sort. Returning the fact is a decision of the tree, made because of the witness's trust, and the observations stay in the set for a firmware that asks for them.
+One branch returns a single member as a fact. It fires when that member was curated by a high-trust witness, a mandate or a result of that class, rather than merely observed. The return is one fact, not a draw from the rest of the set. The confidence sort does not fire this branch. Returning the fact is a decision of the tree, made because of the witness's trust, and the observations stay in the set for a firmware that asks for them.
 
 ## How a standing is read
 
@@ -38,8 +38,6 @@ $$
 
 The cost of crossing the claim is $-\ln p + \lambda$, with $\lambda$ a tax paid once per hop. Costs add, so the cheapest chain is the one whose confidences multiply to the most, shortened by the tax. *k* and $\lambda$ are not records. They are how this firmware reads the records.
 
-Checked against the library: a standing of 1774.3 with deviation 93.3 reads as 0.829 at *k* = 0 and as 0.624 at *k* = 2, and its cost at *k* = 2 with no tax is 0.472.
-
 *k* is a restriction on uncertainty. At *k* = 0 the rating is taken as it stands. Each step of *k* demands that the rating still hold further down inside its deviation, so a claim few witnesses have touched tugs less than its rating alone says. Two standings with the same records and different *k* are two selections:
 
 | *k* | Rating 1700, deviation 300 | Rating 1600, deviation 40 | Selected |
@@ -50,52 +48,23 @@ Checked against the library: a standing of 1774.3 with deviation 93.3 reads as 0
 
 They cross at *k* = 0.38. Nothing in the two standings changed.
 
-## What was measured on one entity
+## Temperature and restriction
 
-`laplace hop` on `dog` in the engine database returns 612 claims. 131 of them have been matched at least once. The other 481 are untouched stock: rating 1500, deviation 250 or 350, zero matches.
+Always taking the top of a set is a decision. Temperature is that decision's spread: how near a tie has to be before another strand can be taken. The pull has no softmax. The set is already in hand, and the firmware says whether two near confidences are an answer or a tie.
 
-Across the 8,515 pairs of witnessed claims, *k* = 0 and *k* = 2 select the same order. The witnessed deviations sit in a band, about 105 to 252, median 214, and the ratings are far enough apart that two deviations do not reorder them. The first reorder of any witnessed pair is at *k* = 5.76, and it is the top two, which are already 0.003 apart.
-
-What *k* does change on this set is the untouched stock. Read at the rating, each of them tugs at 0.500. Read two deviations down, a deviation of 250 tugs at 0.053 and a deviation of 350 tugs at 0.018. The weakest witnessed claim still tugs at 0.732 with *k* = 0 and at 0.132 with *k* = 2, so the stock does not enter the head of this list either way. It does change a search that walks through them: at *k* = 0 an unattested claim is a coin flip, and at *k* = 2 it is almost a refusal to cross.
-
-At *k* = 2 the head of `dog`, always taking the top, is:
-
-| Confidence | Rating | Deviation | Matches | Claim |
-| --- | --- | --- | --- | --- |
-| 0.972 | 2385 | 134 | 310 | dog, LEMMA, dog |
-| 0.969 | 2357 | 129 | 273 | dog, UPOS, NOUN |
-| 0.966 | 2333 | 125 | 245 | dog, XPOS, NN |
-| 0.943 | 2206 | 109 | 122 | dog, SpaceAfter, No |
-| 0.928 | 2155 | 105 | 86 | dog, Number, Sing |
-| 0.912 | 2116 | 105 | 64 | a, det, dog |
-| 0.906 | 2104 | 105 | 58 | the, det, dog |
-| 0.902 | 2097 | 106 | 55 | 犬, Gloss, dog |
-| 0.891 | 2079 | 107 | 47 | ., punct, dog |
-
-The fourth strand is a typesetting observation. Determiners and a punctuation mark sit in the same tenth as the gloss. The top three are 0.003 and 0.003 apart. Always taking the top is a decision those gaps do not force. Temperature is that decision's spread: how near a tie has to be before another strand can be taken. The pull has no softmax. The set is already in hand, and the firmware says whether 0.972 against 0.969 is an answer or a tie.
-
-A restriction is the same kind of decision, applied before the sort. A firmware that does not navigate through layout and punctuation drops `SpaceAfter` and `punct` out of this list. The standings stay. Another human's firmware keeps them.
+A restriction is the same kind of decision, applied before the sort. A firmware that does not navigate through layout and punctuation drops those strands out of the list. The standings stay. Another human's firmware keeps them.
 
 ## How far a search walks
 
 $\lambda$ decides whether a longer, stronger chain beats a shorter, weaker one. Two hops at confidence 0.90 cost $0.211 + 2\lambda$. One hop at 0.70 costs $0.357 + \lambda$. They cross at $\lambda = 0.146$. Below that, the search walks the two strong hops. Above it, the search takes the single weaker hop and stops. The records of the three claims are the same either way.
 
-Fanout is the other limit. A hop reads at most 4,096 claims that hold the entity, then orders that set by confidence. A degrees search reads at most 512, walks at most 8 hops, and pays $\lambda = 0.05$. An entity that holds more claims than the fan — a part of speech, a language — is reached and not crossed. The limit is applied before the ordering, so past the fan the set is whatever the index returned, not the strongest claims. On `dog` the set is complete: 612 is under 4,096.
+Fanout is the other limit. A hop reads at most 4,096 claims that hold the entity, then orders that set by confidence. A degrees search reads at most 512, walks at most 8 hops, and pays $\lambda = 0.05$. An entity that holds more claims than the fan — a part of speech, a language — is reached and not crossed. The limit is applied before the ordering, so past the fan the set is whatever the index returned, not the strongest claims.
 
 ## Weights that are not standings
 
-Role trust is a weight on which kind of word is allowed to pull. It is not a column of the claim. Measured on the word-sense sets, 6,613 instances, with the same definitions, members, relations, and co-occurrences under every row ([Research: Trust](../Research/Trust.md)):
+Role trust is a weight on which kind of word is allowed to pull. It is not a column of the claim. The measurements are in [Research: Trust](../Research/Trust.md#role-trust-in-word-sense-disambiguation).
 
-| How context words were allowed to pull | Four test sets |
-| --- | --- |
-| Prevalence only | 64.6 |
-| Definitions, members, relations | 64.7 |
-| Weights taken from information by part of speech | 65.5 |
-| Every word the same weight | 65.6 |
-| Weights drafted by hand | 66.2 |
-| Weights fitted | 66.2 |
-
-WordNet's own first sense scores 65.2 on 6,574 of those instances. The hand-drafted weights and the fitted weights select alike on the test sets and differently from prevalence alone. Function words were drafted to pull a quarter as hard as a noun, or not at all, and a word attached to the target to pull four times as hard as a word elsewhere in the sentence. Those weights are a personality. Fitting them is a different personality. Neither one is a change to the records.
+Function words were drafted to pull a quarter as hard as a noun, or not at all, and a word attached to the target to pull four times as hard as a word elsewhere in the sentence. Those weights are a personality. Fitting them is a different personality. Neither one is a change to the records.
 
 ## One set of decisions
 

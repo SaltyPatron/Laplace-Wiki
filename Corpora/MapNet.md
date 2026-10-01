@@ -6,11 +6,11 @@ MapNet is "FrameNet 1.3 frames and lexical units mapped to WordNet 1.6 synsets".
 
 ## Source
 
-| Source | Witness | Uncertainty | After | Files | Recipes |
+| Source | Witness | Trust class | After | Files | Recipes |
 | --- | --- | --- | --- | --- | --- |
-| `mapnet` | `MAPNET v.0.1`, "named as the README's title names it" | deviation 90 | `unicode`, `iso-639` | `mapping_lus_synsets.txt`, `README` under `MapNet-0.1` | [`lus-synsets.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/mapnet/lus-synsets.recipe), [`readme.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/mapnet/readme.recipe) |
+| `mapnet` | `MAPNET v.0.1`, "named as the README's title names it" | class `AcademicCurated` | `unicode`, `iso-639` | `mapping_lus_synsets.txt`, `README` under `MapNet-0.1` | [`lus-synsets.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/mapnet/lus-synsets.recipe), [`readme.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/mapnet/readme.recipe) |
 
-The uncertainty is the deviation the witness's attestations enter at, as [Consensus](../Semantics/Consensus.md#entry) describes. The source says of its 90 that it is "this recipe's choice for a curated academic resource; the specification does not give one", and adds: "The README says of the resource: 'The resource was automatically generated.' and 'The evaluated precision of the mapping 0.794.' It gives no score to a row." The number is not settled, and [Corpora](README.md#not-settled) lists it among what stays missing.
+The class is the witness's trust class, one of those [6. Registries](../Sequence/Registries.md#65-declare-the-trust-classes) declares; its prior is the trust every attestation of the source plays at, and [9. Sources](../Sequence/Sources.md#the-estate-and-why-each-source-is-in-it) gives the class of each source. The README says of the resource: "The resource was automatically generated." and "The evaluated precision of the mapping 0.794." It gives no score to a row.
 
 ## The lexical units
 

@@ -6,11 +6,11 @@ One source reads FrameNet: Release 1.7 of the Berkeley FrameNet data, in the for
 
 ## Source
 
-| Source | Witness | Uncertainty | After | Files | Recipe |
+| Source | Witness | Trust class | After | Files | Recipe |
 | --- | --- | --- | --- | --- | --- |
-| `framenet` | `FrameNet` | deviation 90 | `unicode`, `iso-639` | `*.xml` under `framenet_v17` | [`framenet.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/framenet/framenet.recipe) |
+| `framenet` | `FrameNet` | class `AcademicCurated` | `unicode`, `iso-639` | `*.xml` under `framenet_v17` | [`framenet.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/framenet/framenet.recipe) |
 
-The uncertainty is the deviation the witness's attestations enter at, as [Consensus](../Semantics/Consensus.md#entry) describes; the source says of its 90 that it is "this recipe's choice for a curated academic resource; the specification does not give one".
+The class is the witness's trust class, one of those [6. Registries](../Sequence/Registries.md#65-declare-the-trust-classes) declares; its prior is the trust every attestation of the source plays at, and [9. Sources](../Sequence/Sources.md#the-estate-and-why-each-source-is-in-it) gives the class of each source.
 
 ## The things
 

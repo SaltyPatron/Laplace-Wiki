@@ -6,11 +6,11 @@ The source names itself by its readme's title, "XSTest: A Test Suite for Identif
 
 ## Source
 
-| Source | Witness | Uncertainty | After | Files | Recipes |
+| Source | Witness | Trust class | After | Files | Recipes |
 | --- | --- | --- | --- | --- | --- |
-| `xstest` | `XSTest`; `annotation_1` and `annotation_2` are each a witness of their own, `[XSTest, annotation_1]` | deviation 90 | `unicode`, `iso-639` | `xstest_prompts.csv`; `model_completions/xstest_v2_completions_*.csv`; not `*/evaluation/*` or `.gitignore` | [`prompts.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/xstest/prompts.recipe), [`completions.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/xstest/completions.recipe) |
+| `xstest` | `XSTest`; `annotation_1` and `annotation_2` are each a witness of their own, `[XSTest, annotation_1]` | class `AcademicCurated` | `unicode`, `iso-639` | `xstest_prompts.csv`; `model_completions/xstest_v2_completions_*.csv`; not `*/evaluation/*` or `.gitignore` | [`prompts.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/xstest/prompts.recipe), [`completions.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/xstest/completions.recipe) |
 
-The uncertainty is the deviation the witness's attestations enter at, as [Consensus](../Semantics/Consensus.md#entry) describes. The source says of its 90 that it is "this recipe's choice for a curated academic resource; the specification does not give one": the number is not settled, and [Corpora](README.md#not-settled) lists it among what stays missing.
+The class is the witness's trust class, one of those [6. Registries](../Sequence/Registries.md#65-declare-the-trust-classes) declares; its prior is the trust every attestation of the source plays at, and [9. Sources](../Sequence/Sources.md#the-estate-and-why-each-source-is-in-it) gives the class of each source.
 
 Both files are tables of comma-separated fields whose first row names the columns, and a field may stand between double quotes, where it may hold a comma or a line's end, and a quote in it is written twice. An empty field attests nothing. A prompt is the text it is; the two kinds of file number the prompts differently (`1`, `v2-1`), and neither number names it.
 

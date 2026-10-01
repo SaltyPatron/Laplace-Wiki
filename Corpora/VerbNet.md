@@ -6,9 +6,9 @@ One source reads VerbNet: the class files of VerbNet 3.4, "their members, themat
 
 ## Source
 
-| Source | Witness | Uncertainty | After | Files | Recipe |
+| Source | Witness | Trust class | After | Files | Recipe |
 | --- | --- | --- | --- | --- | --- |
-| `verbnet` | `VerbNet` | deviation 90 | `unicode`, `iso-639` | `*.xml` under `verbnet3.4` | [`classes.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/verbnet/classes.recipe) |
+| `verbnet` | `VerbNet` | class `AcademicCurated` | `unicode`, `iso-639` | `*.xml` under `verbnet3.4` | [`classes.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/verbnet/classes.recipe) |
 
 ## The class file
 

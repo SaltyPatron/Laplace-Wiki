@@ -6,14 +6,14 @@ Four sources read the wordnets, in the order [`recipes/order`](https://github.co
 
 ## Sources
 
-| Source | Witness | Uncertainty | Lineage | After | Files | Recipes |
+| Source | Witness | Trust class | Lineage | After | Files | Recipes |
 | --- | --- | --- | --- | --- | --- | --- |
 | `cili` | `Collaborative Interlingual Index` | | | | `ili.ttl`, `ili-map-pwn30.tab` | none: the highway's input ([Types](../Reference/Types.md#perf-caches)) |
-| `open-english-wordnet` | what the lexicon writes as `label="..."`: "named as the lexicon names itself" | deviation 35 | `WordNet` | `cili` | `english-wordnet-*.xml` | [`oewn.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/open-english-wordnet/oewn.recipe), `like wn-lmf` |
-| `open-multilingual-wordnet` | what each lexicon writes as `label="..."` | deviation 90; `omw-en.xml` deviation 40 | none; `omw-en.xml` `WordNet` | `cili` | `omw-*.xml` | [`omw.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/open-multilingual-wordnet/omw.recipe), [`omw-en.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/open-multilingual-wordnet/omw-en.recipe), `like wn-lmf` |
-| `princeton-wordnet` | `WordNet 3.0`: "named as the README names the release" | deviation 35 | `WordNet` | `unicode` | `cntlist`, `cntlist.rev`, `*.exc`, the manual pages | [`recipes/princeton-wordnet`](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/princeton-wordnet) |
+| `open-english-wordnet` | what the lexicon writes as `label="..."`: "named as the lexicon names itself" | class `AcademicCurated` | `WordNet` | `cili` | `english-wordnet-*.xml` | [`oewn.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/open-english-wordnet/oewn.recipe), `like wn-lmf` |
+| `open-multilingual-wordnet` | what each lexicon writes as `label="..."` | class `AcademicCurated` | none; `omw-en.xml` `WordNet` | `cili` | `omw-*.xml` | [`omw.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/open-multilingual-wordnet/omw.recipe), [`omw-en.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/open-multilingual-wordnet/omw-en.recipe), `like wn-lmf` |
+| `princeton-wordnet` | `WordNet 3.0`: "named as the README names the release" | class `AcademicCurated` | `WordNet` | `unicode` | `cntlist`, `cntlist.rev`, `*.exc`, the manual pages | [`recipes/princeton-wordnet`](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/princeton-wordnet) |
 
-The uncertainty is the deviation the witness's attestations enter at, as [Consensus](../Semantics/Consensus.md#entry) describes; the numbers are the recipes' choices, and [Corpora](README.md#not-settled) lists them among what stays missing.
+The class is the witness's trust class, one of those [6. Registries](../Sequence/Registries.md#65-declare-the-trust-classes) declares; its prior is the trust every attestation of the source plays at, and [9. Sources](../Sequence/Sources.md#the-estate-and-why-each-source-is-in-it) gives the class of each source.
 
 ## WN-LMF
 

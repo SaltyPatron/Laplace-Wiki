@@ -6,7 +6,7 @@ The source describes its files as "WordFrameNet (WFN/WordFrameNet) and its exten
 
 ## Source
 
-| Source | Witness | Uncertainty | After | Files | Recipe |
+| Source | Witness | Trust class | After | Files | Recipe |
 | --- | --- | --- | --- | --- | --- |
 | `wordframenet` | none named | none | `unicode`, `iso-639` | none: `WFN/WordFrameNet` and `XWFN/eXtendedWFN` match no recipe, and `*.tar.gz` is excepted | none; [`source`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/wordframenet/source) only |
 

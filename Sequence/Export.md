@@ -8,12 +8,6 @@ Export is "I know kung fu", not `cp model.gguf`. The live substrate is the prima
 
 [20. Forward](Forward.md) reading correctly on a coherent seed. [16. Authority](Authority.md): the EXPORT capability. [24. Models](Models.md) where a source-scoped export is wanted.
 
-## As built
-
-None. In the monorepo: `FoundryExport.cs` builds the planes (consensus, trajectory next, gap, window) as sparse matrices, `FoundryCommands.cs`, `FoundryExportService.cs`, `/v1/synthesis/export` and `/v1/foundry`, `generation.foundry_crawl` and `foundry_vocab`; native `gguf_writer`, `format_writer`, `arch_template`, `recipe.cpp`; specs 09, 12, 14 ([Monorepo: Models](../Reference/Monorepo.md#models-export-code-chess-and-games)).
-
-Status: **monorepo**. Every operation below is from the invention documents; [Reference: Traceability](../Reference/Traceability.md#25-export) indexes it.
-
 ## Operations, per export
 
 ### 25.1 Resolve authority and export scope

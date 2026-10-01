@@ -6,10 +6,10 @@ The source is the unified evaluation framework of Raganato, Camacho-Collados and
 
 ## Sources
 
-| Source | Witness | Uncertainty | After | Files | Recipe |
+| Source | Witness | Trust class | After | Files | Recipe |
 | --- | --- | --- | --- | --- | --- |
-| `wsd-evaluation-framework` | the dataset's directory name, `SemCor`, `senseval2`, `ALL` | deviation 90 | `princeton-wordnet`, `cili` | `*.data.xml` | [`data.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/wsd-evaluation-framework/data.recipe) |
-| `wsd-evaluation-framework` | the directory the file is in | deviation 90 | | `schema.xsd` | [`schema.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/wsd-evaluation-framework/schema.recipe) |
+| `wsd-evaluation-framework` | the dataset's directory name, `SemCor`, `senseval2`, `ALL` | class `AcademicCurated` | `princeton-wordnet`, `cili` | `*.data.xml` | [`data.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/wsd-evaluation-framework/data.recipe) |
+| `wsd-evaluation-framework` | the directory the file is in | class `AcademicCurated` | | `schema.xsd` | [`schema.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/wsd-evaluation-framework/schema.recipe) |
 | `wsd-evaluation-framework` | none: read as text | | | `README`, `PROVENANCE.md` | [`documentation.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/wsd-evaluation-framework/documentation.recipe) |
 
 `Data_Validation/sample-dataset` repeats `semeval2015` byte for byte and is read there; `semcor+omsti.data.xml` is not read, as the source says.

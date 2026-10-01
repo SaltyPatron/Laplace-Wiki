@@ -6,11 +6,11 @@ The source is "the data splits from v2 of Social Bias Frames / Social Bias Infer
 
 ## Source
 
-| Source | Witness | Uncertainty | After | Files | Recipes |
+| Source | Witness | Trust class | After | Files | Recipes |
 | --- | --- | --- | --- | --- | --- |
-| `social-bias-frames` | `Social Bias Frames`; in the annotations, each worker is a witness of their own, `[Social Bias Frames, WorkerId, value]` | deviation 90 | `unicode`, `iso-639` | `SBIC.v2.trn.csv`, `SBIC.v2.dev.csv`, `SBIC.v2.tst.csv`; `SBIC.v2.agg.*.csv` | [`annotations.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/social-bias-frames/annotations.recipe), [`aggregated.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/social-bias-frames/aggregated.recipe) |
+| `social-bias-frames` | `Social Bias Frames`; in the annotations, each worker is a witness of their own, `[Social Bias Frames, WorkerId, value]` | class `AcademicCurated` | `unicode`, `iso-639` | `SBIC.v2.trn.csv`, `SBIC.v2.dev.csv`, `SBIC.v2.tst.csv`; `SBIC.v2.agg.*.csv` | [`annotations.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/social-bias-frames/annotations.recipe), [`aggregated.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/social-bias-frames/aggregated.recipe) |
 
-The uncertainty is the deviation the witness's attestations enter at, as [Consensus](../Semantics/Consensus.md#entry) describes. The source says of its 90 that it is "this recipe's choice for a curated academic resource; the specification does not give one": the number is not settled, and [Corpora](README.md#not-settled) lists it among what stays missing.
+The class is the witness's trust class, one of those [6. Registries](../Sequence/Registries.md#65-declare-the-trust-classes) declares; its prior is the trust every attestation of the source plays at, and [9. Sources](../Sequence/Sources.md#the-estate-and-why-each-source-is-in-it) gives the class of each source.
 
 Every file is a table of comma-separated fields whose first row names the columns, and a field may stand between double quotes, where it may hold a comma or a line's end, and a quote in it is written twice. An empty field attests nothing. The quotations are the set's README's, "Each line in the file contains the following fields (in order)".
 

@@ -8,12 +8,6 @@ Everything is an AST, and the substrate is a Merkle DAG AST; that is why the tre
 
 [10. Recipes](Recipes.md): the grammars, and code corpora such as The Stack ingested as content. [20. Forward](Forward.md): the program, bound to the code lane. [23. Learning](Learning.md): the repair trajectory is witnessed there.
 
-## As built
-
-The tree-sitter grammars are built by `tools/build_grammars.sh` and a code file is recorded as its syntax tree with the gaps as text ([Build: Commands](../Reference/Build.md#commands), [Recipes: How a file is recorded](../Reference/Recipes.md#how-a-file-is-recorded)); nothing constructs, compiles, or witnesses code. In the monorepo: `CodeDecomposer`, `RepoDecomposer`, `StackDecomposer`, `TinyCodesDecomposer`, `VerifiedGitRepository`; `grammar_decomposer` and `grammar_compose` with the grammars `c`, `c-sharp`, `cpp`, `python`, `sql`; `CodeEndpoints.cs`, `CodeToolchain.cs`, `CodePlayerService.cs`, `CodeModelChatMiddleware.cs`; `/v1/analyze/machine-cost` through `MachineCostAnalyzer.cs` and `MachineCostWitnessService.cs`; `docs/guides/software-construction.md`, `machine-cost-analysis.md` ([Monorepo: Models](../Reference/Monorepo.md#models-export-code-chess-and-games)). The split repositories build the grammars and record code as content only.
-
-Status: **monorepo**. Every operation below is from the invention documents; [Reference: Traceability](../Reference/Traceability.md#26-code) indexes it.
-
 ## Operations, per task
 
 ### 26.1 Bind the exact target

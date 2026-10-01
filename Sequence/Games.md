@@ -8,12 +8,6 @@ Games are a consumer and proving surface, not a second intelligence stack. They 
 
 The chain through [23. Learning](Learning.md). Game rules are firmware, [18. Firmware](Firmware.md).
 
-## As built
-
-None. In the monorepo: `docs/guides/knowledge-arena.md` names the verbs MATCH, CONNECT, COMBINE, EXPLORE, PLAY; `/v1/explore/matchup` and `matchup/verdict`, `ops.arena_counts`, `Contracts/Matchup.cs`, the web `explore/matchup` view; the guide names issues #1401, #1404, #1420, #1421 as the owners of the rest ([Monorepo: Models](../Reference/Monorepo.md#models-export-code-chess-and-games)).
-
-Status: **monorepo for the matchup; the challenge, receipt, and replay specified**. Every operation below is from the invention documents; [Reference: Traceability](../Reference/Traceability.md#28-games) indexes it.
-
 ## Operations, per challenge
 
 ### 28.1 Name the verb

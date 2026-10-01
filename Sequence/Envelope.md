@@ -8,12 +8,6 @@ Hops and fanout are first-class work coordinates. The work of a pull is shaped b
 
 [16. Authority](Authority.md): the entitled world the envelope is spent over. [14. Indexes](Indexes.md): the lookup costs a plan is estimated from.
 
-## As built
-
-None: the only bounds are the firmware's `fan` and `hops` and the `LIMIT fan + 1` of the claims fetch ([Firmware: Defaults](../Reference/Firmware.md#defaults), [Reads: The claims that hold an entity](../Reference/Reads.md#the-claims-that-hold-an-entity)); no plan, reserve, receipt, or reconcile exists. In the monorepo: `/v1/billing/preflight`, the quote endpoints, `QuoteGate.RequireQuoteAsync` before an execution, `BillingReceipt`, `/v1/billing/entitlements/consume`, `EntitlementBilling`, `ExplainabilityBilling`, `SynthesisBilling`, `ReportBilling`; `p_hops` and `p_fanout` on `generation.forward_program`; `LaplaceCognitionProgramReceipt` ([Monorepo: Surfaces](../Reference/Monorepo.md#surfaces-sessions-authority-and-the-envelope)). `docs/read-path.md` §9 and §11 name the plan-against-actual reconciliation as open, issue #1561.
-
-Status: **monorepo for quote, reserve, execute, and receipt; reconcile specified**. Every operation below is from the invention documents; [Reference: Traceability](../Reference/Traceability.md#17-envelope) indexes it.
-
 ## Operations, per request
 
 ### 17.1 Name the dimensions
@@ -35,7 +29,6 @@ Status: **monorepo for quote, reserve, execute, and receipt; reconcile specified
 - **In:** the estimate of 17.2 and the target machine.
 - **Do:** lower the artifact or program through the chain: source → grammar AST → compiler and linker artifacts → bytecode, object, or executable container → functions, symbols, basic blocks → decoded machine instructions → control-flow graph → data and dependency graph → execution-count variables → target ISA → microarchitecture and scheduling model → memory and initial-state assumptions → clock → resource-constrained cycles → machine time. A JAR has its own boundary through the selected JVM, its mode, and its JIT before the target processor, and no "opcode = N cycles" shortcut is invented. Unknown loop counts, cache state, branch history, I/O service time, and scheduler interference stay symbolic, conditional, or distributional: `cycles(N) = setup + N·body + branch/cache terms`. Two independently scheduled instructions do not cost the sum of their latencies; the dependency DAG and the resource model own the result. A measured run validates or calibrates the model and does not replace derivable work with "it took N ms on my box".
 - **Out:** an exact, symbolic, or conditional cycle expression and a time.
-- **Check:** the current analyzer accepts a built artifact without executing it, disassembles it, rejects undecoded instructions, schedules through a declared target model, and reports instruction count, scheduled instances, cycles, uops, IPC, throughput, resource pressure, and calculated time, labelled as a linearized schedule not control-flow weighted; the control-flow-aware counts are the open remainder.
 - **From:** `docs/guides/machine-cost-analysis.md`; `docs/CAPABILITIES.md` §Deterministic machine-cost derivation; `docs/INVENTIONS.md` #120, #121.
 
 ### 17.4 Reserve a hard ceiling

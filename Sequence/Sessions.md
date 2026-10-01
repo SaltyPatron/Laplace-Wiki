@@ -8,12 +8,6 @@ A conversation is like a chess game: each turn is its own entity and a point on 
 
 [20. Forward](Forward.md): the program a turn runs. [16. Authority](Authority.md): the tenant and principal. [11. Content](Content.md): every turn is content.
 
-## As built
-
-None: `laplace` is a command-line program with no session, turn, or surface; a prompt is `laplace pull PROMPT` ([CLI: laplace pull](../Reference/CLI.md#laplace-pull)). In the monorepo: `conversation_session.c`: a session is a Projection physicality, type 3, over its turn ids in order, rewritten on each append; `converse.session_turns`, `session_trajectory`, `session_topics`; `TurnWitness` makes the tenant the source identity and the session the context of every attestation; `/v1/chat/completions`, `/v1/completions`, the MCP server's `op` tool, the CLI's query commands, the SQL schemas `converse`, `generation`, `ops`; spec 34 ([Monorepo: Surfaces](../Reference/Monorepo.md#surfaces-sessions-authority-and-the-envelope)).
-
-Status: **monorepo**. Every operation below is from the invention documents; [Reference: Traceability](../Reference/Traceability.md#21-sessions) indexes it.
-
 ## Operations
 
 ### 21.1 Establish the identities

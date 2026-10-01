@@ -6,9 +6,9 @@ One source reads VerbAtlas 1.1.0, "WordNet synsets clustered into frames", by on
 
 ## Source
 
-| Source | Witness | Uncertainty | After | Files | Recipes |
+| Source | Witness | Trust class | After | Files | Recipes |
 | --- | --- | --- | --- | --- | --- |
-| `verbatlas` | `VerbAtlas 1.1.0`, "named as the README's title names it" | deviation 90 | `unicode`, `iso-639` | the `.tsv` files under `VerbAtlas-1.1.0` | one per file read |
+| `verbatlas` | `VerbAtlas 1.1.0`, "named as the README's title names it" | class `AcademicCurated` | `unicode`, `iso-639` | the `.tsv` files under `VerbAtlas-1.1.0` | one per file read |
 
 ## The files
 

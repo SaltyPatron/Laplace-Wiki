@@ -26,7 +26,7 @@ The coordinates of the bit-packed IDs in a physicality have no meaning as positi
 
 ## Partitions
 
-Partitions go by the ID hash, not by Hilbert value: remember the 4-ball against the 4-box. See [Research: Engine Measurements](../Research/Engine.md#partitions).
+Partitions go by tier and by the ID hash, not by Hilbert value: remember the 4-ball against the 4-box. The Hilbert value is the 4-ball; it helps with ordering and indexing, not with partitioning. See [Research: Engine Measurements](../Research/Engine.md#partitions).
 
 ## Centroids
 

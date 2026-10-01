@@ -6,11 +6,11 @@ The source names itself by its dataset card's title, "Dataset card for Measuring
 
 ## Source
 
-| Source | Witness | Uncertainty | After | Files | Recipe |
+| Source | Witness | Trust class | After | Files | Recipe |
 | --- | --- | --- | --- | --- | --- |
-| `measuring-hate-speech` | `Measuring Hate Speech`; each annotator is a witness of their own, `[Measuring Hate Speech, annotator_id, value]` | deviation 90 | `unicode`, `iso-639` | `train-*.tsv`; not `*.parquet` or `extracted/measuring-hate-speech.tsv` | [`annotations.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/measuring-hate-speech/annotations.recipe) |
+| `measuring-hate-speech` | `Measuring Hate Speech`; each annotator is a witness of their own, `[Measuring Hate Speech, annotator_id, value]` | class `AcademicCurated` | `unicode`, `iso-639` | `train-*.tsv`; not `*.parquet` or `extracted/measuring-hate-speech.tsv` | [`annotations.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/measuring-hate-speech/annotations.recipe) |
 
-The uncertainty is the deviation the witness's attestations enter at, as [Consensus](../Semantics/Consensus.md#entry) describes. The source says of its 90 that it is "this recipe's choice for a curated academic resource; the specification does not give one": the number is not settled, and [Corpora](README.md#not-settled) lists it among what stays missing.
+The class is the witness's trust class, one of those [6. Registries](../Sequence/Registries.md#65-declare-the-trust-classes) declares; its prior is the trust every attestation of the source plays at, and [9. Sources](../Sequence/Sources.md#the-estate-and-why-each-source-is-in-it) gives the class of each source.
 
 ## The annotations
 

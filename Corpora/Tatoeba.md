@@ -8,7 +8,7 @@ One source, `tatoeba`, reads Tatoeba's weekly exports: tables of tab-separated f
 
 | Source | Witness | Trust | After | Files | Recipes |
 | --- | --- | --- | --- | --- | --- |
-| `tatoeba` | `Tatoeba`; a row that names a member as its witness is witnessed by that member, `[Tatoeba, Username, name]` | trust 0.67 | `iso-639`, `wiktionary`, `conceptnet` | the nine files the recipes name below | [`recipes/tatoeba`](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/tatoeba) |
+| `tatoeba` | `Tatoeba`; a row that names a member as its witness is witnessed by that member, `[Tatoeba, Username, name]` | class `UserCuratedResource` | `iso-639`, `wiktionary`, `conceptnet` | the nine files the recipes name below | [`recipes/tatoeba`](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/tatoeba) |
 
 ## The record
 

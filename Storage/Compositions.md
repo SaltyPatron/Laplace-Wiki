@@ -22,6 +22,10 @@ A composition can reference any tier. Its constituents can be [atoms](Atoms.md),
 
 Codepoints are tier 0. Graphemes are tier 1, words tier 2, and so on. Tiers are dynamic across modalities.
 
+A tier is a floor. Only codepoints go in tier 0. Everything else sits at tier 1 or above, because it is an n-ary composition, and which tier it is recorded at does not matter as long as it is recorded properly.
+
+Every recipe has its own tiers: UAX #29 has its own, a wordnet file has its own, images have their own, chess games have their own, and PGN has its own.
+
 The tier of a composition is always at least one more than the tier of its highest constituent.
 
 A word can go straight from tier 0 constituents to tier 2.

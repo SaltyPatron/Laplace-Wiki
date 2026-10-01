@@ -8,10 +8,10 @@ The program [wiktextract](https://github.com/tatuylonen/wiktextract) writes a JS
 
 | Source | Witness | Trust | After | Files | Recipe |
 | --- | --- | --- | --- | --- | --- |
-| `wiktionary` | `Wiktextract`, lineage `Wiktionary` | trust 0.67 | `unicode`, `iso-639` | `raw-wiktextract-data-*`, the newest edition held | [`wiktextract.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/wiktionary/wiktextract.recipe) |
-| `wiktionary-kaikki` | `Wiktextract`, lineage `Wiktionary` | trust 0.67 | `unicode`, `iso-639`, `universal-dependencies-documentation` | `kaikki.org-dictionary-*.jsonl` | [`kaikki.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/wiktionary-kaikki/kaikki.recipe) |
+| `wiktionary` | `Wiktextract`, lineage `Wiktionary` | class `UserCuratedResource` | `unicode`, `iso-639` | `raw-wiktextract-data-*`, the newest edition held | [`wiktextract.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/wiktionary/wiktextract.recipe) |
+| `wiktionary-kaikki` | `Wiktextract`, lineage `Wiktionary` | class `UserCuratedResource` | `unicode`, `iso-639`, `universal-dependencies-documentation` | `kaikki.org-dictionary-*.jsonl` | [`kaikki.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/wiktionary-kaikki/kaikki.recipe) |
 
-The witness is the program's output, as its own documentation is titled "Wiktextract" and says it is "for extracing data from Wiktionary"; Wiktionary is what it derives from, so copies of the one lineage play one matchup per claim. Both source files say of the trust that it is "entering unrated, as a source written by its users; the specification does not give one": the number is the recipe's choice, and [Corpora](README.md#not-settled) lists it among what stays missing. The raw file read is the dated one; the undated file beside it, and the older editions, are the same witness saying the same entries earlier, and are not read.
+The witness is the program's output, as its own documentation is titled "Wiktextract" and says it is "for extracing data from Wiktionary"; Wiktionary is what it derives from, so copies of the one lineage play one matchup per claim. The class is the witness's trust class, one of those [6. Registries](../Sequence/Registries.md#65-declare-the-trust-classes) declares; its prior is the trust every attestation of the source plays at, and [9. Sources](../Sequence/Sources.md#the-estate-and-why-each-source-is-in-it) gives the class of each source. The raw file read is the dated one; the undated file beside it, and the older editions, are the same witness saying the same entries earlier, and are not read.
 
 ## The entry
 

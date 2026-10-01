@@ -8,7 +8,7 @@ One source, `geonames`, reads the GeoNames Gazetteer extract files: the `geoname
 
 | Source | Witness | Trust | After | Files | Recipes |
 | --- | --- | --- | --- | --- | --- |
-| `geonames` | `GeoNames Gazetteer` | trust 0.67 | `unicode`, `iso-639` | the nine files the recipes name below; every other `.txt` or `.md` as plain text | [`recipes/geonames`](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/geonames) |
+| `geonames` | `GeoNames Gazetteer` | class `UserCuratedResource` | `unicode`, `iso-639` | the nine files the recipes name below; every other `.txt` or `.md` as plain text | [`recipes/geonames`](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/geonames) |
 
 ## The record
 

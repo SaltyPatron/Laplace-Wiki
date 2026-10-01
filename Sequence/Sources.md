@@ -15,8 +15,6 @@ A logical source has many releases, files, and sidecars. Laplace does not ingest
 - **In:** the source's authority and its published releases.
 - **Do:** choose the current release, not a legacy, old, broken, or deprecated one. The main files of a standard are the source of truth; the additional files are used where they carry information the main files lack: the UCD XML first, then the UAX #29 tests, the confusables, the security data. Stage the release outside the active tree; `staged` means not yet activated into the selected world generation, and it does not mean ignore the staged release while designing semantics against the superseded active one.
 - **Out:** a staged release.
-- **Check:** the estate at 2026-09-19 had UD v2.17 active with 686 `.conllu` files and v2.18 staged with 712; OMW active as duplicated legacy trees of 1,455 files each and OMW 2.0 staged as 32 WN-LMF lexicons; recipe work targets the staged generation.
-- **Mechanism:** `root PATH` lines in the `source` file, the first that exists taken, `*` the newest ([Recipes: The source file](../Reference/Recipes.md#the-source-file)); staging a release is the operator's. In the monorepo: one `<source>.source.json` per release under `recipes/<source>/<release>/`; `docs/source-estate.tsv`; `dataset-estate-refresh.sh` with its `.sources.psv` ([Monorepo: Ingest](../Reference/Monorepo.md#ingest)). Status: **built for the root; staging operator**.
 - **From:** `docs/plan/INGEST_BOUNDARY_AND_RECIPE_LAW.md` §Source-generation dependency law and §Concrete source-estate evidence; `docs/INVENTOR_RECORD.md` §Decomposition.
 
 ### 9.2 Enumerate the artifact graph with dispositions
@@ -24,7 +22,6 @@ A logical source has many releases, files, and sidecars. Laplace does not ingest
 - **In:** the staged release.
 - **Do:** enumerate every physical artifact: file, archive member, sidecar, object. Each gets an explicit disposition: admitted, equivalent packaging, superseded, excluded with reason, or unsupported with why not. Silent non-enumeration is invalid. An artifact owns its identity, provenance, journal and resume accounting, and complete-coverage disposition; it can contain zero, one, or many source-format objects.
 - **Out:** the exact artifact graph, every member dispositioned.
-- **Mechanism:** `files` and `except` patterns ([Recipes: The source file](../Reference/Recipes.md#the-source-file)); `laplace ingest --plan` prints which recipe takes how many files and counts files with no recipe by extension ([CLI: laplace ingest](../Reference/CLI.md#laplace-ingest)). A per-artifact disposition record does not exist. In the monorepo: `ingest_file_journal.disposition`: `admitted`, `equivalent-packaging`, `superseded`, `excluded-with-reason`, `unsupported-with-why-not`, `absent`, with `disposition_reason`; `IngestInventory.cs` ([Monorepo: Ingest](../Reference/Monorepo.md#ingest)). Status: **built in part; monorepo for the dispositions**.
 - **From:** `docs/OPERATING_SEQUENCE.md` §1; `docs/plan/INGEST_BOUNDARY_AND_RECIPE_LAW.md` §Artifact boundary.
 
 ### 9.3 Recover the native schema with a qualified provider
@@ -32,7 +29,6 @@ A logical source has many releases, files, and sidecars. Laplace does not ingest
 - **In:** the artifact graph.
 - **Do:** run the format's provider, [10. Recipes](Recipes.md) operation 10.2, over the staged artifacts to recover the source's own schema: its fields, records, spans, ordinals, and the errors and ambiguities the provider reports. The provider is the irreducible parser, codec, or standards reader; it owns exact decode and container unpacking, grammar parsing, field and span extraction, the source-specific academic mapping declarations, its own identity and version, and exact inverse or declared loss. It does not own an identity rule, a Unicode ladder, a Merkle law, a scheduler, a persistence protocol, batch cardinality as identity, a search engine, or a silent fallback from unknown field meaning to content.
 - **Out:** the native schema the recipe must disposition completely.
-- **Mechanism:** the grammar named by the recipe is the provider: `text`, `vocabulary`, `table`, `lines`, `fields`, or a tree-sitter grammar ([Recipes: Identity and grammar](../Reference/Recipes.md#identity-and-grammar)); `laplace tree FILE` shows the recovered tree ([CLI: laplace tree](../Reference/CLI.md#laplace-tree)). In the monorepo: the providers `recipe_stream` (delimited, Turtle), `xml_stream`, `grammar_decomposer`, `ud_parse`, `safetensors_parser`, `media_decode`, and 31 decomposers in `Laplace.Decomposers` ([Monorepo: Ingest](../Reference/Monorepo.md#ingest)). Status: **built**.
 - **From:** `docs/plan/INGEST_BOUNDARY_AND_RECIPE_LAW.md` §Source-provider ownership.
 
 ### 9.4 Name the witness
@@ -40,7 +36,6 @@ A logical source has many releases, files, and sidecars. Laplace does not ingest
 - **In:** the source's authority and release.
 - **Do:** a source is the witness of its observations: WordNet did not invent `dog`, it observed that `dog` is a noun. The witness identity is the content composition `[authority, release]`; a curated source has one witness per lexicon, `[omw-fr, 2.0]`. Record the lineage where one witness is derived from another, so copies do not count as independent consensus. Assign the trust class from [6. Registries](Registries.md) operation 6.5: Unicode and ISO 639-3 are StandardsDerived; OEWN, OMW, CILI, and UD are AcademicCurated; Wiktionary is UserCuratedResource; OpenSubtitles is lower. A separate feed within a source, ISO 639-2 French names, CLDR, ISO 639-5, is its own witness.
 - **Out:** the witness, its lineage, and its class.
-- **Mechanism:** `witness NAME...`, `lineage NAME...`, `trust T` or `deviation D` in the `source` file ([Recipes: The source file](../Reference/Recipes.md#the-source-file)), written to `witness (id, lineage, trust)` ([Schema: Semantics](../Reference/Schema.md#the-five-tables)). A trust class registry does not exist; the number is written by hand. In the monorepo: `ISourceManifest.TrustClass` resolved through `TrustClassRegistry`; `SourceWitness.cs`; `attestations.source_id` and `context_id` ([Monorepo: Ingest](../Reference/Monorepo.md#ingest)). Status: **built; the classes monorepo**.
 - **From:** `docs/plan/ASSIMILATION_ROADMAP.md` laws 1 and 8 and workstream H; [Attestations: Witnesses](../Semantics/Attestations.md#witnesses); [12. Attestations](Attestations.md) operations 12.2 and 12.3.
 
 ### 9.5 Declare the source profile
@@ -48,7 +43,6 @@ A logical source has many releases, files, and sidecars. Laplace does not ingest
 - **In:** the schema of 9.3 and the witness of 9.4.
 - **Do:** before activation, the generation declares at least: artifact and release authority; provider, grammar, or codec identity; artifact and source-object framing; canonical composition and occurrence grain; the disposition of every field and structural role; ordering and multiplicity semantics; reference namespaces; provenance and testimony rules; normalization and canonicalization rules; inverse reconstruction or declared loss; the legal physical-plan dimensions; qualification fixtures; a physical-plan invariance receipt; and a coverage and amplification receipt. This is the semantic profile; a resource-sizing record is not it.
 - **Out:** the source profile, bound to this exact staged release.
-- **Mechanism:** the directives of the `source` file are the whole declaration ([Recipes: The source file](../Reference/Recipes.md#the-source-file)). In the monorepo: `IngestSourceProfile.cs`, `SourceLicense.cs`, `SourceManifest.cs`. Status: **built in part; monorepo for the profile**.
 - **From:** `docs/plan/INGEST_BOUNDARY_AND_RECIPE_LAW.md` §Required source-profile fields.
 
 ### 9.6 Write the recipe against the staged release
@@ -56,7 +50,6 @@ A logical source has many releases, files, and sidecars. Laplace does not ingest
 - **In:** the profile of 9.5.
 - **Do:** [10. Recipes](Recipes.md), for this source, against this release. Do not extend a bespoke decomposer against a superseded source merely because that directory is still the active path, and do not switch the active path to a release whose provider and recipe cannot yet account for its native fields.
 - **Out:** a recipe qualified against these artifacts.
-- **Mechanism:** the recipe file ([Recipes: The recipe file](../Reference/Recipes.md#the-recipe-file)). Status: **built**.
 - **From:** `docs/plan/INGEST_BOUNDARY_AND_RECIPE_LAW.md` §Source-generation dependency law.
 
 ### 9.7 Qualify: disposition, reconstruction, invariance
@@ -64,8 +57,6 @@ A logical source has many releases, files, and sidecars. Laplace does not ingest
 - **In:** the recipe and the fixtures.
 - **Do:** prove complete field and role disposition, with no field silently dropped or coerced to content; prove reconstruction or the declared loss; and prove physical-plan invariance: for the same artifact, provider, and recipe, vary the read buffer size, the parser feed chunk, the record batch, the native batch, the probe batch, the worker count and affinity, the scheduling order where source order is preserved, the COPY and apply batch, and the cache warm or cold state, and require that canonical ids, Merkle composition, trajectories with their ordinals, gaps, and multiplicity, occurrences, typed references, testimony ids and observation cardinality, provenance coordinates, deterministic calculation results, and reconstruction output are identical. Only time, CPU, RSS, I/O, WAL, cache behaviour, batch sizes, temporary staging, and worker scheduling may differ.
 - **Out:** the invariance and coverage receipts.
-- **Check:** the OpenSubtitles defect is the counterexample: an arbitrary 512-pair batch participated in durable content-object construction, so changing the physical batch changed which identities existed.
-- **Mechanism:** `laplace ingest --no-load` decomposes and checks recomposition without writing; `--claims` prints every claim ([Recipes: Where recipes are checked](../Reference/Recipes.md#where-recipes-are-checked)). No built check varies the physical plan ([Checks: What is not checked anywhere yet](../Reference/Checks.md#what-is-not-checked-anywhere-yet)). In the monorepo: `IngestBaselineGates.cs`, the `throughput_*` columns of `ingest_run_journal`, `ops.eval_ingest_fidelity`, `audit-semantic-source-fidelity.sh`, `decomposer-gates.json`; the physical-plan invariance gate is issue #1443 and was not verified built ([Monorepo: Ingest](../Reference/Monorepo.md#ingest)). Status: **built in part; monorepo for the fidelity gates; invariance specified**.
 - **From:** `docs/plan/INGEST_BOUNDARY_AND_RECIPE_LAW.md` §Physical-plan invariance and §Measured counterexample.
 
 ### 9.8 Activate release and recipe together
@@ -73,7 +64,6 @@ A logical source has many releases, files, and sidecars. Laplace does not ingest
 - **In:** the receipts of 9.7.
 - **Do:** activate the release and the recipe as one selected source generation. Runtime source selection binds the entire artifact graph to authority, release, provider configuration, semantic recipes, and exact artifact identities; a single field map is one artifact recipe and cannot stand in for a complete logical source.
 - **Out:** the active source generation.
-- **Mechanism:** a line in `recipes/order` ([Recipes](../Reference/Recipes.md)); `laplace sources` reports it ([CLI: laplace sources](../Reference/CLI.md#laplace-sources)). In the monorepo: `SourceGenerationCatalog.cs` and `InstalledSourceGeneration.cs`. Status: **built**.
 - **From:** `docs/plan/INGEST_BOUNDARY_AND_RECIPE_LAW.md` §Source-provider ownership.
 
 ### 9.9 Derive the order from what each source references
@@ -81,7 +71,6 @@ A logical source has many releases, files, and sidecars. Laplace does not ingest
 - **In:** every active generation.
 - **Do:** the order is not a list anyone supplies; it is read off the claims. Every part of a claim is an entity, so a source that names a language code, a concept identifier, a sense, a frame, a role set, a part of speech, or a dependency label cannot be admitted before the source that is the witness of that identifier. Walk the references: what each source's claims point at must already exist, and what points at this source waits for it. The result, and the reason each source is in the estate at all, is [the estate](#the-estate-and-why-each-source-is-in-it) below. First in, first out then fixes standings, so within a tier the higher trust class goes first.
 - **Out:** the admission order, derived.
-- **Mechanism:** `order` and `after SOURCE...` ([Recipes: The source file](../Reference/Recipes.md#the-source-file)); the order is written by hand from the derivation on this page, no program derives it. In the monorepo: `scripts/ingest-source.sh`: `FLOOR` (unicode, uca, iso639, operational, cili), `KNOWLEDGE`, `USAGE`; `ingest_run_journal.status` `dependency-unset` ([Monorepo: Ingest](../Reference/Monorepo.md#ingest)). Status: **built as a file; the derivation is documentation**.
 - **From:** [Claims: Tuples](../Semantics/Claims.md#tuples); [12. Attestations](Attestations.md) §The order of corpora; `docs/plan/ASSIMILATION_ROADMAP.md` workstream H.
 
 ### 9.10 Run the common admission machine
@@ -89,7 +78,6 @@ A logical source has many releases, files, and sidecars. Laplace does not ingest
 - **In:** the active generation, in its turn.
 - **Do:** [11. Content](Content.md) and [12. Attestations](Attestations.md). Source-specific code remains only the irreducible recovery kernel; the common spine owns everything after it. One ingest at a time.
 - **Out:** the source admitted.
-- **Mechanism:** `laplace ingest SOURCE` ([Ingest](../Reference/Ingest.md)). Status: **built**.
 - **From:** `docs/specs/06_Engineering_Ruleset.txt` Rule #8 and §Operational constraints.
 
 ## The estate, and why each source is in it

@@ -41,7 +41,7 @@ None of these is settled by this page. Where an operation in another Sequence pa
 
 - **Monorepo, this repository.** `docs/specs/36_Laplace_Forward_Pass.md` SELECT: "under the declared deterministic or stochastic policy"; the native pass elects by ordinal rank and then, unless spread is 0, draws with a Gumbel-max key over the first top_k ranks with a seed derived from the prompt, which is mathematically a sample from a softmax over rank positions; the default is spread 0.7 or 0.6, top_k 10.
 - **Laplace-Refactor and the inventor.** Laplace does not use softmax continuation to create an answer; selection is a deterministic, inspectable execution; firmware is a deterministic cognitive policy; typed state is never a softmax or a distribution.
-- **Wiki.** [Personality firmware: What was measured on one entity](../Semantics/Firmware.md#what-was-measured-on-one-entity): the pull has no softmax; temperature is how near a tie must be before another strand can be taken, a decision of the tree over a set already in hand.
+- **Wiki.** [Research: Semantics Experiments: What was measured on one entity](../Research/Semantics-Experiments.md#what-was-measured-on-one-entity): the pull has no softmax; temperature is how near a tie must be before another strand can be taken, a decision of the tree over a set already in hand.
 - **Open.** Whether a seeded, replayable draw over the rank order is a lawful exploration personality, or every SELECT policy must be deterministic, making spread and top_k retire or become deterministic window rules. `docs/specs/39_Personality_Firmware.md` §9 C2.
 
 ### C3. Is the Gödel engine the OODA loop?

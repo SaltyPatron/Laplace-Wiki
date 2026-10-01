@@ -11,7 +11,7 @@ The grammar of both files is the top comment of `Laplace-Engine/src/recipe.c`; t
 | `name NAME` | the source's name, the name `laplace ingest NAME` and `order` use |
 | `witness NAME...` | who testifies when this source attests, named as content: the witness's ID is the ID of that text. `{dir}` is the directory a file is in; `{name}` its own name without what follows its last dot; `{first NAME}` what the file first writes as `NAME="..."` |
 | `lineage NAME...` | the witness it derives from; copies of one lineage play one matchup per claim, each copy still a row in the ledger |
-| `trust T` or `deviation D` | how far the witness is trusted, −1 to 1, or given as the deviation it plays with, `trust = g(D / 173.7178)` |
+| `class NAME` | the witness's trust class, one that `Laplace-Native/manifest/trust_classes.toml` declares; the class's prior is the trust its claims play at. A class the manifest does not declare, or a trust written as a number (`trust`, `deviation`), stops the load with status 2 |
 | `root PATH` | where the source is kept; several may be given and the first that exists is the source |
 | `files PATTERN` | the files it is, when not everything under a root; several may be given |
 | `except PATTERN...` | files under its root that are not the source |
@@ -31,7 +31,7 @@ A recipe of a source takes the source's witness, lineage, and trust unless it na
 | `match GLOB...` | files it applies to, by file name; a glob with a directory in it, `annotated/train-*`, by the end of the path |
 | `grammar text \| vocabulary \| table \| lines \| fields \| NAME` | UAX #29 text; a tokenizer's vocabulary; a table of rows and fields; lines matched by patterns; records of `KEY IS VALUE` lines; or a tree-sitter grammar loaded as `$LAPLACE_GRAMMARS/libtree-sitter-NAME.so` |
 | `like RECIPE` | reads as that recipe does, the same grammar and statements, under its own name, witness, lineage, and trust |
-| `trust T`, `deviation D`, `witness NAME...`, `lineage NAME...`, `predicate TEXT` | as for the source, for this recipe alone |
+| `class NAME`, `witness NAME...`, `lineage NAME...`, `predicate TEXT` | as for the source, for this recipe alone |
 | `records` | the file is a flat sequence of line-terminated records: large files are split at line boundaries, parsed on every core, and joined under one root |
 | `unit BYTES` | queries run on the parts of the syntax tree no larger than this, default 65536, in reading order, so a pattern matches inside one record and the work is bounded by the record |
 | `itself CHAR` | a character the source writes, in an object, for the subject's own codepoint |
