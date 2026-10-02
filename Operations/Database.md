@@ -32,7 +32,7 @@ The stress test drops the operating system's page cache and PostgreSQL's buffers
 
 | Setting | Rule | Example |
 | --- | --- | --- |
-| `max_wal_size` / `min_wal_size` | large, so bulk loads do not force checkpoints | 64 GB / 4 GB |
+| `max_wal_size` / `min_wal_size` | large, so bulk loads do not force checkpoints, and well under the log volume's size: the log runs past it under load (at 64 GB on a 64 GB volume it filled the volume and stopped the server) | 32 GB / 4 GB |
 | `wal_buffers` | large enough that a bulk load's backends do not fill it; *restart* | 256 MB |
 | `wal_compression` | `lz4`: cheap enough to run in every writing backend | |
 | `checkpoint_timeout` | 60 min | |
