@@ -40,16 +40,16 @@ New nodes are bucketed by partition, `part_of(id, tier)`: the tier, 16 and above
 
 ### Semantics
 
-In one transaction, so that what the files attested and their trunks are recorded together or not at all:
+One transaction in parts, so that what the files attested and their trunks are recorded together or not at all: part 0, on the first connection, holds the witnesses and the trunks; each other connection's part holds the ledger and standings of the partitions it writes. A load begins by finishing what a stopped batch left prepared (only parts prepared more than two minutes ago): committed where its part 0 committed, rolled back where it did not.
 
 1. Every claim of every event enters the standings map at its stock default: rating 1500 or the recipe's `enter` rating, deviation the recipe's `enter` deviation, else the deviation the witness's trust plays with floored at 30, or 350 at trust 0; volatility 0.06.
 2. Claims already recorded get their recorded standing: `SELECT claim, rating, deviation, volatility, matches FROM consensus WHERE claim = ANY($1::blake3[])`, in chunks of 100,000 on every connection.
 3. What each lineage witnessed before is read from the ledger: `SELECT a.claim, w.id, w.lineage FROM attestation a JOIN witness w ON w.id = a.witness WHERE a.claim = ANY($1::blake3[])`, into a seen-set keyed by what was witnessed and the lineage.
-4. The matchups, first in first out, file by file and event by event: what was witnessed plays once per lineage, a copy being a row in the ledger and nothing more; a record's members play within it; a claim entering for the first time only enters; every later attestation plays `lp_attest(&standing, trust, score, enter_rating, τ = 0.5, floor = 30)` and counts a match.
+4. The matchups: which attestations play is decided first, in reading order (what was witnessed plays once per lineage, a copy being a row in the ledger and nothing more; a record's members play as their record does); then the plays run on every core in 64 sets of claims, each claim's in its reading order. A claim entering for the first time only enters; every later attestation plays `lp_attest(&standing, trust, score, enter_rating, τ = 0.5, floor = 30)` and counts a match.
 5. Witnesses not yet in `witness`: `COPY witness (id, lineage, trust)`, including own witnesses named statement by statement, each its own lineage at the source's trust.
-6. The ledger, in reading order, its order the order of play: `COPY attestation (claim, witness, score, position)`, one row per record or standalone claim, members within their record.
-7. New standings: `COPY consensus (claim, rating, deviation, volatility, matches)`; recorded ones updated set-based, 100,000 at a time: `UPDATE consensus s SET … FROM unnest($1::blake3[], $2::float8[], $3::float8[], $4::float8[], $5::int[]) AS u(c, r, d, v, m) WHERE s.claim = u.c`.
-8. The file trunks, last. `COMMIT`.
+6. The ledger, in reading order, its order the order of play: `COPY attestation_h (claim, witness, score, position)` for each of the 16 partitions, each on the connection whose part it is, one row per record or standalone claim, members within their record; a row whose witnessed thing and witness are already in the ledger is that witness's observation read again and is not written.
+7. New standings: `COPY consensus_h (claim, rating, deviation, volatility, matches)`, on the same connection as the partition's ledger; recorded ones whose matches this batch changed updated set-based, 100,000 at a time: `UPDATE consensus s SET … FROM unnest($1::blake3[], $2::float8[], $3::float8[], $4::float8[], $5::int[]) AS u(c, r, d, v, m) WHERE s.claim = u.c`.
+8. The file trunks, last, in part 0. Every part prepared (`PREPARE TRANSACTION 'laplace X j'`, X part 0's transaction), part 0 last; then part 0 committed, which decides, then the rest (`COMMIT PREPARED`).
 
 ### After the load
 
