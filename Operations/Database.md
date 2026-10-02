@@ -39,6 +39,12 @@ The stress test drops the operating system's page cache and PostgreSQL's buffers
 
 Bulk ingestion sessions set `synchronous_commit = off`.
 
+A batch's witnesses, ledger and standings are one transaction written in parts, one a connection, a partition at a time on every connection, and committed together by two-phase commit: every part is prepared, the part that holds the witnesses and the files' trunks last; that part is committed first, and its commit decides the rest. A part left prepared by a load that stopped is committed or rolled back by the next load, as its batch's first part was.
+
+| Setting | Rule | Example |
+| --- | --- | --- |
+| `max_prepared_transactions` | at least the 16 parts a batch is written in; *restart* | 32 |
+
 ## Planning
 
 PostgreSQL and PostGIS assume that a geometry's coordinates are positions and that a function in an index is cheap. A Laplace path's coordinates are packed IDs, and its index key decodes a whole trajectory, so the defaults misjudge both:
