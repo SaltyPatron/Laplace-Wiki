@@ -32,10 +32,13 @@ The stress test drops the operating system's page cache and PostgreSQL's buffers
 
 | Setting | Rule | Example |
 | --- | --- | --- |
-| `max_wal_size` / `min_wal_size` | large, so bulk loads do not force checkpoints | 32 GB / 4 GB |
-| `wal_buffers` | *restart* | 64 MB |
-| `wal_compression` | `zstd` | |
-| `checkpoint_timeout` | 30 min | |
+| `max_wal_size` / `min_wal_size` | large, so bulk loads do not force checkpoints | 64 GB / 4 GB |
+| `wal_buffers` | large enough that a bulk load's backends do not fill it; *restart* | 256 MB |
+| `wal_compression` | `lz4`: cheap enough to run in every writing backend | |
+| `checkpoint_timeout` | 60 min | |
+| `bgwriter_lru_maxpages` | high, so the background writer cleans buffers before backends must | 1000 |
+
+Every page a checkpoint has not yet seen modified goes into the log whole the first time it changes (a full-page image), and each is compressed by the backend that writes it. **Measured** over the first four hours of a full ingest at 32 GB, 30 min and `zstd`: 273 GB of log, 999,307,239 records, 47,175,989 full-page images (about 377 GB before compression), and the log's buffers full 2,616,329 times; client backends wrote 10,051,406 relation pages themselves. Fewer checkpoints mean fewer full-page images, `lz4` compresses them at a fraction of `zstd`'s cost (index pages of random IDs compress little either way), and larger buffers keep backends from writing the log themselves.
 
 Bulk ingestion sessions set `synchronous_commit = off`.
 
