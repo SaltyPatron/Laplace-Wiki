@@ -140,3 +140,28 @@ What the sources above lead to, in the order the engine's work runs:
 - **Hashing.** The public `blake3_hasher` stays the bit-exact reference. Node hashes are batched by block count: a node of n children is ⌊n/4⌋ whole blocks plus a partial block when n mod 4 ≠ 0. An own 8-lane AVX2 compress built from `blake3_avx2.c`'s round function and transpose, with block length and flags per lane, runs 8 nodes in lockstep (counter 0, `CHUNK_START` first, `CHUNK_END | ROOT` last), and the first 16 bytes of each output are the ID. The internal `blake3_hash_many` is not used: it is not public, its block length is fixed at 64, and every two-child node is a 32-byte partial block. Every lane is checked against `blake3_hasher` at every boundary length from 32 to 1,024 bytes.
 - **Loading.** Full loads go per leaf partition in parallel, one connection each, `TRUNCATE` or create plus binary `COPY FREEZE` in one transaction under `wal_level=minimal`, with indexes built afterwards under a large `maintenance_work_mem` and parallel workers (GIN in parallel; GiST by building partitions concurrently). Incremental loads run with `fastupdate` off or one `gin_clean_pending_list` per load. Consensus gets `fillfactor` 70 to 80 with no index on the columns Glicko-2 changes, so rating updates stay HOT. Bulk sessions run with `synchronous_commit=off`, a large `max_wal_size`, a long `checkpoint_timeout`, and `wal_compression` lz4 or zstd; io_uring serves the read-heavy phases.
 - **Measuring.** VTune threading with hardware waits first (lock and barrier time), then hardware hotspots with stacks, memory access for the node table, and the HPC analysis for OpenMP imbalance; Advisor's integer roofline for the hashing kernel.
+
+## Measured on the engine
+
+Every number here is **measured** with `laplace ingest --no-load` on the Laplace server (6 cores, 12 threads, Broadwell, AVX2), decomposition only, with no other ingest running unless noted. Every change was checked against what it replaced: the same compositions, the same attestations, and every file recomposed byte for byte; for the reading changes, the claims listing (`laplace ingest --claims`) identical line for line, in order, to the whole file read on one thread.
+
+VTune 2026.4 does not recognize the Broadwell processor for any collection, hardware or user-mode, so the profiles below come from Linux `perf` with last-branch-record call stacks (`perf record --call-graph lbr`).
+
+| Change | Source | Before | After |
+| --- | --- | --- | --- |
+| One lock-free node table in place of 256 locked shards | FrameNet, 854 MB | 66.4 s | 55.2 s |
+| A batch's files begun longest first | FrameNet | 55 s | 44.8 s |
+| A long file of records parsed on every core as one tree (`split`, s_grammar_split) | Open Multilingual Wordnet, 597 MB, side by side | 158 s | 56 s |
+| The same, for Unicode's database (whole file against split) | Unicode, 239 MB | 235 s | 51 s |
+| A wide part's parts read and composed on every core, in order | Unicode | 51 s | 32 s |
+| oneTBB's scalable allocator for the whole program | Unicode | 32 s | 24.9 s |
+| The same allocator, at the same load, on the build before it | FrameNet | 85.7 s | 61.6 s |
+
+What the profiles showed, and what was done about each:
+
+- **The node table was not the bottleneck.** After the lock-free table, `compose` and its table were about 2% of FrameNet's cycles.
+- **Idle threads were.** On FrameNet about 20% of cycles, and on the Open Multilingual Wordnet about 45%, were the Intel OpenMP runtime spinning for work (`__kmp_execute_tasks`, `kmp_flag_64::wait`). The cause was one long file decomposed on one core while the others waited: FrameNet's 25 MB `lemma_to_wordformR1.7.xml` was begun near the end of the batch, and the Open Multilingual Wordnet's 115 MB `omw-en.xml` was parsed and read on one core. Beginning the longest files first, and parsing a long file's records on every core, took that waiting away.
+- **A file of records parted for parsing must still be read as one tree.** The engine's `split` parsed each part as a tree of its own, and a recipe's keys resolve within the tree being read, so a key in one part (a synset's members) did not resolve in another. The parts are now parsed on every core and each record is grafted into the innermost group around it in the file, which gives the tree the whole file's parse gives.
+- **The reading after the parse was serial.** Unicode's reading took 68 s on one thread after a 28 s parse. The parts of a part holding 4,096 or more parts are now read in runs on every core, each run into a sink of its own, the sinks kept in the file's order; the things composed of the tree are shared between threads, each the same whoever composes it.
+- **tree-sitter's parse is now the largest cost**, and inside it `malloc`: a thread-local front cache, the lock-free table and oneTBB's allocator leave the grammar's own work (`ts_parser_parse`, `ts_parser__reduce`, the stack, and the XML scanner's per-token state, which `tree_sitter_xml_external_scanner_deserialize` rebuilds with one allocation per open tag) as what remains.
+- **A node's tier is the lowest it is composed at.** The same ID composed at two tiers (`[a,n]` as a repeated block inside "banana" at tier 1, and as the word "an" at tier 2) kept whichever thread inserted it first, so two runs of the same input could differ. It is now recorded at the lowest tier it is composed at in a batch. Across batches and runs the same ID can still be composed at a tier other than the one it was recorded at, and the deduplication probe looks only in the partition of the tier it is composed at.
