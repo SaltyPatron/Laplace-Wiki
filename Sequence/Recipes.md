@@ -1,6 +1,6 @@
 # 10. Recipes
 
-One generic decomposer per standardized format turns bytes into structure, and one semantic recipe per curated source says what each recovered field becomes: content, occurrence, reference, provenance, testimony, calculation, packaging, or an explicit unresolved obligation.
+One generic decomposer turns bytes into structure, and one semantic recipe per curated source says what each recovered field becomes: content, occurrence, reference, provenance, testimony, calculation, packaging, or an explicit unresolved obligation.
 
 Literally any standardized or fixed-format file is a modality to Laplace, and Laplace treats them all exactly the same: a generic decomposer uses a recipe to tell it how to extract the content. Format is generic and semantics are per source. Recipes are Laplace grammars: UAX #29 but for semantics, modality agnostic. A recipe is written before the first file of its format is ingested, and a curated source's recipe is written against the staged release it will be activated with.
 

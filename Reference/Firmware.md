@@ -21,7 +21,12 @@ The firmware is never a record. The same records pulled under another firmware g
 | `order witness` / `order standing` | `order_witness` | on a claim with a part left open, the witness's own order before the standing, or not |
 | `shape frechet` / `outliers N` / `dtw` / `edr N` | `shape`, `shape_n` | which shape of the tree to favour, and how many variable vertices a match may skip, or the EDR tolerance |
 | `for OPERATION` | | what follows holds for that operation only: `hop`, `search`, `translate`, `follows`, `pull` |
+| `emit N` | `emit` | how many constituents a turn may emit; 32 unless said |
+| `enough N` | `enough` | a turn is complete when no more than N (0 to 1) of what its obligations owed at the start, each word as hard as it pulls, is still owed; 0 unless said |
 | `take fact` / `take segment` / `take attestations N` / `take constituents N` | `take[16]` | under `for pull`, the segments a step takes, in order: the single fact when the fact branch fires; the rest of the branch the prompt is a run of, followed along what was observed; the N strongest strands of the prompt itself; the N strongest strands of each of its constituents |
+| `up RELATION...` | `up[8]` | under `for translate`, the relations from a word up to its concept, in order; translation follows them back down in another language |
+| `language HELD SAYS` | `language[2]` | under `for translate`, the language of what stands below the concept: what holds it under HELD, and what that says under SAYS |
+| `gloss RELATION` | `gloss` | under `for translate`, what is shown of a concept |
 
 Reading: `firmware_for(path, op)` starts from the defaults, then applies every line that holds everywhere and every line under `for op`, skipping other operations' sets. At most 32 names per refuse list and 16 take steps.
 
@@ -48,6 +53,9 @@ for search
 
 for translate
   fan 4096
+  up Sense synset ili
+  language Synset language
+  gloss Definition
 
 for pull
   fan 4096

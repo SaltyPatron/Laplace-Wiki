@@ -4,7 +4,7 @@ Tree-sitter grammars are what the Engine parses files with, named by a recipe's 
 
 ## Source
 
-A recipe's `grammar NAME` line loads a tree-sitter grammar from `$LAPLACE_GRAMMARS`, and the recipe's `query` patterns run over the syntax tree that grammar builds, as the reference at the top of [`src/recipe.c`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/src/recipe.c) describes. A grammar is a tool of the ingest, not a source in `recipes/order`: no witness is named for it and no claim is recorded from it. Its `node-types.json` is the format below, which is what `laplace tree file` prints the node names of.
+A recipe's `grammar NAME` line, or the `format NAME` file it names, loads a tree-sitter grammar from `$LAPLACE_GRAMMARS`; the recipe's `node` lines say what each kind of the grammar's nodes is in the file's tree, and its dispositions what each named part of that tree is ([Recipes](../Reference/Recipes.md)). A grammar is a tool of the ingest, not a source in `recipes/order`: no witness is named for it and no claim is recorded from it. Its `node-types.json` is the format below, which is what `laplace tree file` prints the node names of.
 
 ## Format
 

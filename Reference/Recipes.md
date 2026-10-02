@@ -1,8 +1,8 @@
 # Recipes
 
-A source is a directory under `recipes/` holding a `source` file and a recipe for each kind of file the source comes in; a recipe names the grammar a file decomposes by and, for a curated source, the claims it attests; the file `order` lists the sources in the order they go in.
+A source is a directory under `recipes/` holding a `source` file and a recipe for each kind of file the source comes in; a recipe is configuration, the layout or grammar that gives a file its tree and what each named part of that tree is, read by one decomposer; the file `order` lists the sources in the order they go in.
 
-The grammar of both files is the top comment of `Laplace-Engine/src/recipe.c`; this page is that grammar, directive by directive, with what each does in the engine. A line is one directive; `#` begins a comment; a name of several words is written between double quotes; `$NAME` in a path is read from the environment, with `LAPLACE_DATA` and `LAPLACE_MODELS` defaulting when unset; `*` in a root takes the newest of several.
+There is one decomposer (`Laplace-Engine/src/structure.c`) and one reading of what a file's parts are (`say.c`); no code names a format or a source. A line is one directive; `#` where a line begins or after a space begins a comment, outside a name written between double quotes; a name of several words is written between double quotes; `$NAME` in a path is read from the environment, with `LAPLACE_DATA` and `LAPLACE_MODELS` defaulting when unset; `*` in a root takes the newest of several. A recipe line the engine does not know stops the recipe's load and says which line.
 
 ## The source file
 
@@ -23,180 +23,172 @@ A recipe of a source takes the source's witness, lineage, and trust unless it na
 
 ## The recipe file
 
-### Identity and grammar
+### Which files, and what gives them a tree
 
 | Directive | Meaning |
 | --- | --- |
 | `name NAME` | |
-| `match GLOB...` | files it applies to, by file name; a glob with a directory in it, `annotated/train-*`, by the end of the path |
-| `grammar text \| vocabulary \| table \| lines \| fields \| NAME` | UAX #29 text; a tokenizer's vocabulary; a table of rows and fields; lines matched by patterns; records of `KEY IS VALUE` lines; or a tree-sitter grammar loaded as `$LAPLACE_GRAMMARS/libtree-sitter-NAME.so` |
-| `like RECIPE` | reads as that recipe does, the same grammar and statements, under its own name, witness, lineage, and trust |
-| `class NAME`, `witness NAME...`, `lineage NAME...`, `predicate TEXT` | as for the source, for this recipe alone |
-| `records` | the file is a flat sequence of line-terminated records: large files are split at line boundaries, parsed on every core, and joined under one root |
-| `unit BYTES` | queries run on the parts of the syntax tree no larger than this, default 65536, in reading order, so a pattern matches inside one record and the work is bounded by the record |
-| `itself CHAR` | a character the source writes, in an object, for the subject's own codepoint |
-| `subject-attribute A [F L]` | for `@subject.attr`: the subject is the codepoint in sibling attribute `A` of the captured node's parent, or the element itself when it carries `F` and `L`, a range attested at its element and never copied to each codepoint |
-| `paths CHAR [CHAR]` | a value beginning with the first character is a path, the tuple of its parts, `/c/en/dog` is `[c, en, dog]`; with a second, a part's words are joined by it, `ice_cream` is `[ice, cream]` |
+| `match GLOB...` | files it applies to, by file name; a glob with a directory in it, `annotated/train-*`, by the end of the path; the most specific pattern wins |
+| `grammar text \| NAME` | UAX #29 text, or a tree-sitter grammar loaded as `$LAPLACE_GRAMMARS/libtree-sitter-NAME.so` |
+| `format NAME` | the grammar and what each kind of its nodes is, kept once for every recipe of that format in `recipes/formats/NAME.format` (`xml`, `json`, `turtle`) |
+| `like RECIPE` | reads as that recipe does, its layout and dispositions, under its own name, witness, lineage, and trust |
+| `class NAME`, `witness NAME...`, `lineage NAME...` | as for the source, for this recipe alone |
 
-### A table
+A recipe that names only a grammar records each file as its syntax tree, byte for byte. A recipe that lays a file out (tiers, or a grammar's node rules) and says what its parts are is a curated source.
 
-| Directive | Meaning |
-| --- | --- |
-| `separator tab \| CHAR` | what parts a row's fields; tab unless said |
-| `header` | the first row names the columns |
-| `columns NAME...` | the columns, when no row names them |
-| `quoted` | a field may stand between double quotes, holding the separator or a line's end, a quote inside written twice |
-| `escaped CHAR` | the character after it is itself; `CHAR` and `N` alone in a field is left as written, what the source leaves unknown |
-| `skip N` | the first N lines are not rows |
-| `comment CHAR` | a line beginning with it is not a row |
-| `remark CHAR` | in a row, what follows it is not the row |
-| `kind COLUMN KIND` | the column's values name things of a kind, each recorded as the path of the kind and the value; `{dir}`, `{name}` the file's. For a witness a set names only by a number (`[Tatoeba, Username, name]`); a source's key to its rows is `key`, not a kind |
-| `kinds own` | a kind stands within the source: `[Measuring Hate Speech, annotator_id, 10873]` |
-| `voices within-file` | witnesses named by column stand within the file: `[witness, file, column]` |
-| `list COLUMN CHAR` or `list COLUMN json` | a field of the column is several values parted by the character, or a JSON list of texts; `*` for every column |
-| `empty TEXT` or `empty-matches PATTERN` | what the source writes in a field it leaves empty; an empty field attests nothing |
-| `key COLUMN...` | columns that are the source's keys, how it points at its rows (a sentence id, a geonameid): never recorded, left out of `attest *`. For the rows of the source's other files, a key names the row's subject |
-| `refer COLUMN RECIPE` | the column's values are keys that `RECIPE`'s rows define: each is read as that row's subject, and a key no row defines says nothing. The files of `RECIPE` are read before this recipe's, in a batch of their own |
-| `type COLUMN LIST` | the column's values are the source's keys of types in the highway's `LIST` (`ili`, `vnclass`, `fnframe`, `fnfe`, `fnlu`, `pbroleset`, `vaframe`), read as those types ([Types](Types.md)); written for several lists, the first that knows the key; a key no list knows says nothing |
+### The layout: tiers
 
-### A table whose rows come in records
-
-For a treebank: a sentence, and a row for each word.
+A file is laid out in tiers, outermost first, each parted from the next by what the recipe writes. What follows a `tier` line is said of that tier.
 
 | Directive | Meaning |
 | --- | --- |
-| `record blank` or `record LINE` | rows up to an empty line, or up to that line, are one record |
-| `note IS` | a comment line `KEY IS VALUE` says `VALUE` of the record under `KEY` |
-| `about KEY` | the note that holds what the record is about |
-| `word COLUMN` | each row is about the word in this column, within what the record is about |
-| `number COLUMN [SPAN]` | the column that numbers the rows; `A SPAN B` is a row spanning rows A to B |
-| `attest COLUMN...` | said of the word, under the column's name |
-| `pairs COLUMN PART IS [LIST]` | the field holds `KEY IS VALUE` parts: each value said of the word under its key |
-| `relation COLUMN to COLUMN` | the word's relation to the word the second column numbers |
-| `relations COLUMN PART IS` | the field holds `HEAD IS RELATION` parts: further relations |
+| `tier NAME by SEP` | the file, or the tier above, is NAMEs parted by SEP: `\n`, `\n\n`, `\t`, a character, a word, or `space`, `tab`, `hash` by name |
+| `names A B C ...` | the parts of the tier below have these names, by position |
+| `header` | the first part of the file names the positions of the tier below, and is no part itself |
+| `skip N` | the first N parts are not parts |
+| `note PREFIX [IS]` | a part that begins with PREFIX is a note: `KEY IS VALUE` when IS is written in it |
+| `comment PREFIX` | a part that begins with PREFIX is not read |
+| `remark CHAR` | in a part, what follows CHAR is not read |
+| `quoted` | a part of the tier below may stand between double quotes, a quote in it written twice |
+| `padded` | the parts of the tier below are written with spaces around them that are not theirs |
+| `is SEP` | each part of this tier is written `KEY SEP VALUE`: the part is named KEY |
+| `continued` | a part that begins with white space goes on with the one before it |
+| `escaped CHAR` | the character after CHAR is itself, a tier's separator included |
+| `part PATH by SEP [is IS] [pieces N] [space CHAR]` | a named part is itself parts, parted by SEP; with `is`, each is `KEY IS VALUE`; with `pieces`, at most N, the last the rest as written; with `space`, CHAR in it stands for a space. `by json`: a JSON list of texts; `by object`: a JSON value read into the tree, each member under its key. `PATH*` is every part whose name begins so |
+| `empty TEXT...` | what the file writes where it leaves a part empty; an empty part says nothing |
 
-What is recorded (`records.c`): of each word, `[word, COLUMN, value]`, `[word, KEY, VALUE]`, `[word, relation, head word]` (`[word, relation]` for a head that numbers no row, the root); of the sentence, one layer per column down its words, `[sentence, COLUMN, layer]`, the layer the composition of the words' values in order (`[The dog barked., UPOS, DET NOUN VERB PUNCT]`), a word's several values one tuple and an empty one the source's empty mark; `[token, [word, word…]]` for a spanning row; `[sentence, KEY, VALUE]` for a note whose key is not a `key`. The rows form a tree by their heads; a word's node is the path of its dependents' nodes and its own in row order, each dependent's node after the claim that relates it, so a phrase analysed the same way is the same node wherever it occurs. The record is the path of what it is about, its notes, its spans, and its trees; it is what was witnessed, one ledger row, and every claim in it plays.
+A file laid out in tiers whose outermost parts are lines or end at an empty line, and whose parts point at no other part of the file, is read a stretch at a time when it is longer than a batch.
 
-### XML read as what it says
+### The layout: a grammar's nodes
 
-| Directive | Meaning |
-| --- | --- |
-| `identity ELEMENT ATTRIBUTE` | an element is the thing its attribute names; `*` for any element carrying it; `.cp` a codepoint in hex, `.cps` several |
-| `identity ELEMENT FIRST..LAST` | a range of codepoints, the path of its first and last |
-| `identity ELEMENT >CHILD` | the thing the text of the child element names; `>CHILD.ATTRIBUTE` that element's attribute |
-| `identity ELEMENT NAME within` | the name stands only within the thing the element is inside: the path of that thing and the name |
-| `identity ELEMENT NAME kind [KIND]` | the name stands only among things of its kind: the path of the kind and the name; `.` is the element's own text |
-| `omit NAME...` | attributes and elements (JSON: members) that are the file's bookkeeping, not what the witness says of content: dates an entry was made, colours, versions, licences, usage notes, templates. Read by nothing |
-| `key ATTRIBUTE...` | attributes that are the source's keys, how it points at its things (`id` unless said): a key resolves to the thing it names, inside the file, and is content of nothing, recorded nowhere |
-| `refer [ELEMENT.]ATTRIBUTE ELEMENT [within]` | the attribute's values are keys of things of `ELEMENT`, each read as that thing (`within`: as the thing that element is inside); written for several elements, the first the key names a thing of; a key that names nothing says nothing. An identity over such an attribute is the composition of the things it refers to, in the order written (a synset, its `members`), and never the key as text |
-| `type [ELEMENT.]ATTRIBUTE LIST` | the attribute's value is the source's key of a type in the highway's `LIST`, read as that type's content, never as the key (an `ili` number, a frame element's `ID`, a roleset's `id`); several lines for one attribute, the first list that knows the key; a key none knows says nothing. An identity over such an attribute is the type |
-| `words RECORD WORD...` | the element is a record of words: each word element's text is a word, its attributes said of the word within the record; what the record is about is the path of its words |
-| `span ELEMENT START END TEXT [inclusive] [ATTRIBUTE under ELEMENT.ATTRIBUTE]` | the element speaks of a stretch of the text element between two characters; with `under`, its attribute is said under the value of the enclosing element's attribute: a label's tag under its layer's name, `[Thus, PENN, rb]` |
-| `list ATTRIBUTE CHAR` | an attribute of several values |
-| `link ELEMENT A B [KIND]` | an element is a relation of the thing it is inside: `[thing, value of A, value of B]`; `>CHILD` for B is the text of each child |
-| `codepoints ATTRIBUTE...` | attributes whose values are codepoints in hex, recorded as the text they are |
-
-`{dir}` as a kind is the file's directory: a name that stands only within its data set.
-
-### JSON read as what it says
+A grammar gives the tree; the recipe, or the format file it names, says what each kind of node is in it.
 
 | Directive | Meaning |
 | --- | --- |
-| `identity * KEY` or `identity UNDER KEY` | an object is the thing the first of these members it holds names, a text, a number, or a list of texts naming it together; `UNDER` restricts to objects under that key |
-| `named KEY by KEY...` | an object holding the key is the thing those members name together, in order: `named word by lang_code word pos` is `[en, free, noun]` |
-| `linkage` | what a thing inside another says, it says of being there: the claim `[thing, key..., thing inside]` |
-| `specifics [claims under KEY...]` | what is held with a claim is its specifics, pairs of key and value, recorded together with the claim as what is witnessed and no claim of their own; under the named keys, claims of their own |
-| `tuples` | a list of plain values inside a list is one tuple |
-| `keys things` | the keys of an object inside nothing are things, each one's value speaking of it |
-| `key MEMBER...` | members that are the source's keys (an entry's etymology number, a sense's id, a Wikidata number, a cut's file name and offsets, a dialogue's numbering): never recorded |
-| `records` | a value on every line |
+| `node TYPE group [name PATH...] [list] [kind]` | it holds nodes; its name is the text at the first PATH there is (`A/B`: the B in its A); in a `list`, its values and groups are named by it; with `kind`, it is named by its type |
+| `node TYPE value name PATH text PATH` | a name and its text |
+| `node TYPE text [raw] [join] [kind]` | a text, under the name of what holds it; with `join`, texts side by side are one text; `raw`, as written |
+| `node TYPE member name FIELD value FIELD` | it names what its other part is: that part, read as its own kind, under the name |
+| `node TYPE skip` | it and what is inside it are not of the tree |
+| `resolve xml \| json \| turtle` | how the grammar's texts write what they cannot write plainly |
+| `trim` | the white space a text begins and ends with is the file's layout, not the text's |
+| `levels NAME...` | an object's members at each depth, whose keys are what the file says (a roleset, a class number), are parts of that name, each holding its `key` and its `value` |
+| `split ELEMENT...` | a long file of records each an element on lines of its own is parted before each line that begins one, each part parsed on every core |
 
-A claim is the path from a thing to a value, every key and value as written; an array says each value under the same path; `null` and an empty text say nothing. Everything a top-level value says it says together: one record, witnessed once.
+A tree-sitter field names a child that has no name of its own; a group named by its rule keeps its own name. A group that holds nothing named holds its own text. A kind the recipe says nothing of is passed through: what is inside it stands where it stands.
 
-### Lines and fields
-
-| Grammar | Directive | Meaning |
-| --- | --- | --- |
-| `lines` | `about PATTERN` | the first matching line names what the file is about, its first part |
-| `lines` | `line PATTERN` in a claims block | a matching line says its parenthesized parts: two are said of what the file is about, three are the claim; with `pair`, two are the pair; with `predicate NAME`, `[1, NAME, 2]` |
-| `fields` | `record LINE`, `field IS`, `about KEY...` | records of `KEY IS VALUE` lines, a line beginning with a space continuing the one before; the record is about the first of the keys it holds, every other field said of it under its key |
-
-### Maps and claims
+### What each named part is
 
 | Directive | Meaning |
 | --- | --- |
-| `map NAME [from FILE GRAMMAR]` … `end` | patterns read over the whole file, or over another file by its grammar or as a `table`, before anything is attested; each match binds `@key` to `@value`, so a part written as one identifier can be recorded as what it stands for |
-| `claims` | a kind of statement the source makes; what follows applies to it |
-| `predicate TEXT` | the claims' predicate, when the source states it by position |
-| `predicate-in-name A B` | the predicate is in the file's name, between its last `A` and the `B` after; `^` for `A` |
-| `enter RATING DEVIATION` | the stock default a claim of this kind enters at; otherwise the rating of the unrated with the deviation its witness's trust plays with |
-| `ordered` | each claim's position among its kind's claims in its record is recorded |
-| `distinct` | a claim whose subject is its object is not one |
-| `pair` | the claims are pairs `[subject, object]`; with no object, of the subject and what the file's name says |
-| `together` | in a table: what a row says it says together, the row one record witnessed once and its claims within it |
-| `itself` | what the row attests is its subject itself, a review of a sentence |
-| `json COLUMN` | the field is a JSON object speaking of the row's claim; `witnesses KEY...` the path of keys to who witnessed it, each a witness of its own |
-| `witness in COLUMN` | who says the row; each is a witness of its own |
-| `score in COLUMN [from A to B]` | the score the row gives, on the source's scale, `A` a loss, `B` a win, halfway a draw; a win when it gives none |
-| `subject in COLUMN[.resolver...]`, `predicate in COLUMN`, `object in COLUMN`, `key in`, `value in` | the parts by column; several columns for the subject make it the path of them all |
-| `subject-kind KIND` | the subject's name stands only among things of its kind |
-| `rest pairs \| values` | the fields after the named columns come in predicate-object pairs, or are each an object |
-| `voices COLUMN... \| NAME*` | each column a witness named by the source and the column, its field what that witness says of the subject |
-| `row tuple` | the row itself is the claim, the path of its fields |
-| `fields pairs CHAR` | every field is `A CHAR B`, the pair `[A, B]`, said together |
-| `where COLUMN is \| is-not \| matches VALUE` | the rows it speaks of |
-| `attest COLUMN... \| NAME*` | each column a predicate by its name, its field the object; a recipe names the columns that are testimony (`*`, every column, is a dump, and no recipe uses it) |
-| `query` … `end` | tree-sitter query patterns; every match attests one claim from `@subject`, `@predicate`, `@object`, each with resolvers after a dot |
+| `content NAME...` | the part is content, the text it is, the same entity wherever that text stands |
+| `key TIER NAME` | the part is the file's key for a TIER: it resolves to the TIER's thing, and is written nowhere; the source's other files may refer to it |
+| `refer NAME TIER [within] [TIER...]` | the part's text is a key of a TIER, here or in another recipe of the source: it is read as that thing (`within`: as the thing that TIER is inside); several targets, the first that holds the key; a key nothing holds says nothing and is counted |
+| `type NAME LIST... [matching PATTERN] [as TEMPLATE]` | the part's text is a resource's key of a type in the highway's LIST, read as that type; several lists, the first that knows it; with a pattern, the key as those lists write it (`vn:51.2` read as `51.2`), and a text the pattern does not match is no key of theirs; a key no list knows is counted and said, never taken for text |
+| `metadata NAME...` | the part is said of the file itself: it goes in the file's metadata tree |
+| `omit NAME...` | the part is the file's bookkeeping, read by nothing, nor anything inside it |
+| `own NAME...` | the part's value stands only within the source: `[witness, NAME, value]` |
+| `codepoints NAME...`, `range NAME...` | code points written in hex, as the text they are; `FIRST..LAST` the path of the two |
 
-Resolvers: `.cp` a codepoint in hex; `.text` the node's text, quotes and surrounding spaces stripped; `.head` the text before its first colon; `.iri` an identifier without its angle brackets; `.tag` a tag after `@`; `.term` a Turtle term as what it stands for; `.cps` codepoints in hex as text; `.range` a codepoint, a sequence, or `FIRST..LAST` as the path of its ends; `.xml` with references resolved; `.node` the node itself as recorded; `.NAME` then looked up in map `NAME`, a part no map holds attesting nothing. Predicates: `#eq?`, `#not-eq?`, `#any-of?`, `#not-any-of?`, `#match?`, `#not-match?`.
+Names are written as the file writes them. `ELEMENT.NAME` is that part of that element only; `NAME*` is every name that begins so; `note:NAME` is a note of that name, and `note:*` every note. A named part the recipe gives no disposition is an obligation left open: it is counted and its name said, never taken for content and never dropped in silence.
+
+### Paths
+
+Wherever a line names a part, it may name it by a path from the part being read: `A/B` the B in its A; `^` what it is inside; `^NAME` the nearest part of that name it is inside; `N` its Nth part, counted from 1 (`start/3` is `ice_cream` in `/c/en/ice_cream/n`); `NAME[CHILD=VALUE]` a part of that name whose CHILD is written VALUE (`property[predicate=skos:definition]`); `.` the part itself.
+
+### What a part is the thing of
+
+| Directive | Meaning |
+| --- | --- |
+| `thing TIER NAME...` | a TIER is the thing its part NAME names; named by several parts together, it is the path of them; several `thing` lines for one TIER are tried in turn |
+| `thing TIER NAME... within` | its name stands only within the thing it is inside: the pair of that thing and it |
+| `thing TIER NAME... within-file` | its name stands only within the file: `[the file's name, it]` |
+| `thing TIER span START END TEXT [inclusive]` | the stretch of the text TEXT between the characters START and END, counted as code points |
+| `thing TIER NAME... of` | the path of the things of its parts of these names, in the file's order (a sentence of its words) |
+| `thing TIER .` | the part itself, whole |
+
+### What a file attests
+
+| Directive | Meaning |
+| --- | --- |
+| `attest TIER NAME... [of PATH] [by PATH]` | of a TIER's thing, what each part NAME says, under the part's own name: `[thing, NAME, value]`; a part of `KEY IS VALUE` parts says each VALUE under its KEY; `.` its own text; `*/` each element inside it that is a value; `of`: said of another of its parts; `by`: said by the witness each part at the path names, every one of them, and by the source where none is named |
+| `relate TIER NAME to NAME [alone] [by PATH]` | of a TIER's thing, its relation (the first part's value) to what the second part is: `[thing, relation, other]`; several parts of that name, the relation to each; `...` each part the file gives no name; `{file}` the relation the file's own name gives; with `alone`, where the second names nothing, `[thing, relation]` |
+| `pair TIER NAME... [of PATH]` | what the file writes beside the thing with nothing between: `[thing, value]`; a list, the pair with each; `{file}` what the file's name says |
+| `holds TIER NAME... [via]` | the nearest things of these names inside it: `[thing, name, inner thing]`; `via`: under the name of the element between the two |
+| `itself TIER [by PATH]` | the TIER's thing is itself the claim (a tuple that is a statement), said by the witness each part at the path names |
+| `voices TIER NAME... [within-file]` | each part is a witness of its own, saying its value of the thing: `[witness, NAME]`, or within the file `[witness, file, NAME]` |
+| `voice TIER NAME` | who says everything the part says |
+| `together TIER` | what the part and everything inside it say is one record, the thing first, witnessed once, its claims within it |
+| `score TIER NAME [from A to B]` | the score the part gives what it attests, on the scale the source writes it on: A a loss, B a win, halfway a draw |
+| `where NAME is VALUE \| is-not VALUE \| matches PATTERN` | the outermost parts the recipe speaks of; another is in the file's tree and attests nothing |
+| `when NAME is \| is-not \| matches ...`, `always` | the lines after it are said only of the parts that meet it, several met together, up to `always` |
+| `stem [FROM] TO` | what `{file}` stands for: the file's name after its last FROM, up to the TO after it |
+| `itself-mark CHAR` | what the source writes, in a value, for the code point the part is |
+| `about PATTERN` | of a page: the first line that matches names what the page is about |
+| `line PATTERN [:: pair \| claim \| predicate NAME]` | a line that matches says its parenthesized parts: two of what the page is about, the pair, the claim itself, or `[1, NAME, 2]` |
 
 Nothing is renamed: every name and value is recorded as the source writes it.
 
+### The highway
+
+A resource's recipe says which of its things are types and what it maps between them; `laplace highway` reads every source that says any, in order, by the same decomposer, so a type's ID is the very thing its recipe composes for it when the source is ingested ([Types](Types.md)).
+
+| Directive | Meaning |
+| --- | --- |
+| `types LIST "SAY" TIER` | each thing of TIER is a type of the highway's LIST, in the order the files write them (a text of a list is a type by itself) |
+| `keyed LIST TIER PATH [matching PATTERN] [as TEMPLATE]` | the value at PATH is a resource's key of that type, as those who point at it write it |
+| `alias LIST TIER PATH [matching ...] to PATH [matching ...]` | a key that names the type another key names (a sense key and its synset's offset) |
+| `maps TIER PATH LIST [matching ...] to PATH LIST [matching ...]` | an edge between the type one key names and the type another names |
+
+A pattern is POSIX extended; a template writes `\0` the whole match and `\1` to `\9` its parts; with no template, the first part, or the whole. What names no type of its list is left out and said, by lists, with an example.
+
 ## How a file is recorded
 
-With a grammar, a file is recorded as its syntax tree: each node the composition of its children with the bytes between them kept as text, so it recomposes byte for byte; leaves are text, decomposed by UAX #29. A file's trunk is `[metadata, content]` (`file.c`): the metadata vertex, marked `LP_SAID_METADATA`, is the file's name as written, its path under its source's root or its own name when given by itself, never where the source is kept on this machine; the content is the text, the syntax tree, or the vocabulary; for a curated file, what it witnessed in the order it was read, each record or claim marked `LP_SAID_RECORD` or `LP_SAID_CLAIM`, composed as one record when there are several. A curated file that witnessed nothing has nothing of it to record. A file's tier is one above its highest constituent; every composition's tier is one above its highest child's. The trunk is written last of everything the file is and attests, so a recorded trunk means all of it is recorded.
-
-A tokenizer vocabulary (`vocab.c`): each token is the text it stands for, byte-level BPE characters mapped back to bytes by GPT-2's table, SentencePiece's `▁` a space, WordPiece's `##` continuing a word, a byte token or one that is not valid UTF-8 by itself the notation `<0xAB>` of each byte; the vocabulary is the path of its tokens in index order; the token list itself is kept as the model wrote it.
+A file's trunk is `[metadata, content]`. The metadata tree is the file's name as written, its path under its source's root, with what the recipe says is said of the file itself; the content tree is the file's own tree. A file a recipe records only by its grammar is its syntax tree, each node the composition of its children with the bytes between them kept as text, so it recomposes byte for byte; leaves are text, decomposed by UAX #29. A curated file's content is the whole of each of its outermost parts as its recipe reads them, in the file's order, each the claim it is where it is one; a few thousand are one path, and more are factored into blocks from the content alone: a block ends after a part whose own ID says so, never at a count or a position, and the blocks are composed the same way, level by level, until one holds them all. A file's tier is one above its highest constituent. The trunk is written last of everything the file is and attests, so a recorded trunk means all of it is recorded.
 
 ## The stock recipes
 
 Format recipes that belong to no source, which any source's `reads` may name and which `laplace ingest FILE` uses by extension:
 
-| Recipe | Matches | Grammar |
+| Recipe | Matches | Reads |
 | --- | --- | --- |
-| `text` | `*.txt *.md` | `text`: UAX #29 codepoint, grapheme, word segment (a separator separates at the word tier, [Types](Types.md#segmentation)), sentence, paragraph, file |
-| `xml` | `*.xml` | `xml` as its syntax tree, leaves text |
-| `json` | `*.json` | `json` as its syntax tree |
-| `turtle` | | `turtle`: every statement `[subject, predicate, object]` as written; a literal with a language tag or datatype also `[text, tag]` or `[text, datatype]`; blank nodes and collections not read |
-| `vocabulary` | `tokenizer.json` | `vocabulary` |
-| `wn-lmf` | | `xml` with `records` and `key id`: a lexical entry is the word its `Lemma` writes; a synset is the composition of the words its `members` are, in the order listed, so every wordnet that lists the same words has the same synset; a sense is the word it is inside with its synset; the lexicon is its `label`; `ili` is a type of the highway's interlingual index; a relation is its type and the synset or sense its target refers to. The ids resolve to those things and are recorded nowhered names, and what is inside a thing is said of it |
-
-Source directories in the estate: `unicode` (23 recipes), `iso-639` (10), `cili`, `open-english-wordnet`, `open-multilingual-wordnet`, `princeton-wordnet`, `propbank`, `verbnet`, `framenet`, `semlink`, `predicate-matrix`, `mapnet`, `verbatlas`, `wordframenet`, `universal-dependencies-tools`, `universal-dependencies-documentation`, `universal-dependencies`, `wsd-evaluation-framework`, `wiktionary-kaikki`, `wiktionary`, `conceptnet`, `atomic-2020`, `framebase`, `atomic-10x`, `tatoeba`, `opensubtitles`, `project-gutenberg`, `tokenizers`, `geonames`, `hatecheck`, `sghatecheck`, `xstest`, `social-bias-frames`, `social-chemistry-101`, `prosocial-dialog`, `real-toxicity-prompts`, `toxigen`, `measuring-hate-speech`, `civil-comments`: the order of `order`. `cili`, `semlink` and `predicate-matrix` hold a `source` file and no recipe: their files are the highway's own input, read by `laplace highway` ([Types](Types.md#perf-caches)) and by nothing else.
+| `text` | `*.txt *.md` | UAX #29 codepoint, grapheme, word segment (a separator separates at the word tier, [Types](Types.md#segmentation)), sentence, paragraph, file |
+| `xml` | `*.xml` | its syntax tree, leaves text |
+| `json` | `*.json` | its syntax tree; a tokenizer's `tokenizer.json` is read so, its vocabulary the members that name each token and give its number |
+| `turtle` | | `format turtle`: a statement is its subject; its property is the relation to its objects; a literal says its language tag or datatype |
+| `wn-lmf` | | `format xml`: a lexical entry is the word its `Lemma` writes; a synset is the composition of the words its `members` are; a sense is the word with its synset; `ili` a type of the highway's interlingual index |
 
 A worked example, `universal-dependencies/conllu.recipe`:
 
 ```text
 name conllu
 match *.conllu
-grammar table
-columns ID FORM LEMMA UPOS XPOS FEATS HEAD DEPREL DEPS MISC
-comment #
-record blank
+tier record by \n\n
+tier row by \n
+note hash =
+names ID FORM LEMMA UPOS XPOS FEATS HEAD DEPREL DEPS MISC
+tier field by \t
 empty _
-note =
-about text
-key sent_id "newdoc id" "newpar id" newdoc newpar
-word FORM
-number ID -
-attest LEMMA UPOS XPOS
-pairs FEATS | = ,
-pairs MISC | =
-relation DEPREL to HEAD
-relations DEPS | :
+part FEATS by | is =
+part MISC by | is =
+part DEPS by | is :
+
+thing record text
+thing row FORM
+content text FORM LEMMA XPOS DEPREL DEPS FEATS MISC
+type UPOS upos
+key row ID
+refer HEAD row
+metadata "newdoc id" "newpar id" sent_id note:newdoc* note:meta::* ...
+content note:*
+
+attest row LEMMA UPOS XPOS FEATS MISC
+attest record note:*
+relate row DEPREL to HEAD alone
 ```
 
-A sentence is a record whose `# text = …` note is what it is about; `sent_id`, `newdoc id` and `newpar id` are how the treebank points at its sentences, documents and paragraphs, keys recorded nowhere; every row is about its `FORM` within that sentence; `LEMMA`, `UPOS`, and `XPOS` are attested under those names, and each of them is also one layer down the sentence; `FEATS` and `MISC` are `KEY=VALUE` parts split on `|`; `DEPREL` relates the word to the row `HEAD` numbers; `DEPS` holds further `HEAD:RELATION` parts; `_` is empty; a row `A-B` spans rows.
+A record is the sentence its `# text = ...` note writes; a row is the word its `FORM` writes; `ID` numbers the rows of one record and `HEAD` points at a row by it, keys written nowhere; `UPOS` is a type of the highway; what the file writes about its documents is its metadata tree; every other note is what the treebank says of the sentence under the note's name; `DEPREL` relates the word to the row `HEAD` numbers, and to nothing, alone, for the root.
 
 ## Where recipes are checked
 
-`laplace tree FILE` shows a file's syntax tree as its grammar reads it. `laplace ingest --plan` shows which recipe takes which file; `--claims` prints every claim as text and loads nothing; `--no-load` decomposes and checks recomposition without writing. A recipe that does not load stops its own source and no other. When a unit holds more partial matches than a query keeps, ingestion says so.
+`laplace structure LAYOUT FILE` shows a file's tree as a layout parts it. `laplace tree FILE` shows a file's syntax tree as its grammar reads it. `laplace ingest --plan` shows which recipe takes which file; `--claims` prints every claim as text and loads nothing; `--no-load` decomposes and checks recomposition without writing, and says every named part left open and every key no list of the highway holds. A recipe that does not load stops its own source and no other.

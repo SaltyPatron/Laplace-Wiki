@@ -14,7 +14,7 @@ Laplace is one program, `laplace`, with eighteen commands: the generators of tie
 
 ## laplace deploy
 
-`laplace highway [-o highway.bin]`. Generates the highway from the resources that list the types (UD-Tools, WordNet, CILI, VerbNet, FrameNet, PropBank, VerbAtlas, SemLink, PredicateMatrix): the lists, each type's record, the edges, the layout beside it, and prints its fingerprint.
+`laplace highway [-o highway.bin]`. Generates the highway from what the resources' recipes say of their types (`types`, `keyed`, `alias`, `maps`; [Recipes](Recipes.md#the-highway)), reading every source that says any in order by the one decomposer: the lists, each type's record, the edges, the keys, the layout and the types' contents as compositions beside it, what it left out by lists, and its fingerprint.
 
 `laplace deploy [-d conninfo]`. Makes the database if the server has none of that name, asking `postgres` over the same connection parameters; then `CREATE EXTENSION IF NOT EXISTS` for `postgis`, `laplace`, `pg_stat_statements`, `pg_buffercache`; `ALTER EXTENSION laplace UPDATE`; `ALTER DATABASE … SET laplace.tier0` and `laplace.flags` to this engine's paths; `schema.sql` unless a partitioned `entity` exists; `semantics.sql`; `lookup.sql`; then `laplace status`. Each statement is timed on stdout. Idempotent.
 
@@ -58,13 +58,17 @@ With nothing named: each source runs in a process of its own with the same optio
 
 `laplace tree FILE`. The file's syntax tree as its recipe's grammar reads it, for writing recipes.
 
+## laplace structure
+
+`laplace structure LAYOUT FILE [-n nodes]`. The tree of the first megabyte of a file as a recipe's layout lines part it (tiers, parts, notes, empties), each outermost part with its named parts and texts, for writing recipes ([Recipes](Recipes.md)).
+
 ## laplace hop
 
 `laplace hop [-d conninfo] [-n N] [--firmware FILE] [--k K] [--fan F] TEXT` or `SUBJECT PREDICATE OBJECT` with `?` for a part left open. Everything attested about the entity the text names, by confidence: `confidence rating dev matches given [claim]` for up to `N` claims, default 24, whether more exist than the fan reads, and for a whole entity what holds it, paths by tier. `--k` and `--fan` override the firmware to measure against it. Prints the milliseconds for claims and containers and the round trips made for text.
 
 ## laplace translate
 
-`laplace translate [-d conninfo] [-n N] [--firmware FILE] WORD FROM TO...`. Two lookups: `[word, FROM, ?]` ordered as the firmware's `order` says, then `[?, TO, concept]` for each target language, ordered by standing.
+`laplace translate [-d conninfo] [-n N] [--firmware FILE] WORD FROM TO...`. Up from the word to its concepts along the relations the firmware's `up` names for translate, each step in its witness's order then by standing, keeping what stands below a concept in the language FROM (read as the firmware's `language` says); then, for each target language, back down from the concept the same way to that language's words, with what the firmware's `gloss` names shown of each concept ([Firmware](Firmware.md)).
 
 ## laplace degrees
 
@@ -77,6 +81,10 @@ With nothing named: each source runs in a process of its own with the same optio
 ## laplace pull
 
 `laplace pull [-d conninfo] [--firmware FILE] [--seed N] PROMPT`. The prompt broken down to its trunk and constituents, then the steps the firmware's `for pull` instruction set takes: `take segment`, `take attestations N`, `take constituents N`, `take fact`; `--seed` fixes the draw when the firmware's `top within N` allows a tie to be taken. `pull.c` states that this is the lookups the forward pass is made of, and not yet the forward pass.
+
+## laplace turn
+
+`laplace turn [-d conninfo] [--firmware FILE] [--as USER] [--session NAME] [--seed N] [--read] PROMPT`. A turn of a session, answered by the one forward program (`program.c`), under the firmware's `for pull` set; each stage's state is printed as the trace. RESOLVE admits the prompt as content and its constituents as occurrences, and resolves the session from the record: the session is `[USER, NAME]`, its turns the claims `[session, turn]` its user witnessed, ordered by their ledger positions, their constituents the discourse; a word is an obligation unless what is attested of it under the firmware's `role by` kind says it pulls nothing. COUPLE reads every strand of the occurrences, the prompt and the discourse at once, kept apart by route. ORIENT takes the responding entities that ground the most of what the obligations owe, each word as hard as it pulls, hubs last and the least shared first, and names the disposition: unique, ambiguous, or nothing responds. ROUTE sets the firmware's hops, fan, k, λ and emission budget; SCAN walks best-first from up to four centres; the firmware's chains are followed from each word still owed. Then, a constituent at a time: PROPOSE offers what follows the active trajectory as a run in what was observed, and a chain's answer while its word is owed (an entity the coupling merely reaches is not output); STEER elects by what a proposal grounds, then ordinal continuity, then confidence at k, then the least shared; SELECT takes the top, or a near tie as `top within` allows; REALIZE renders it; and the constituent joins the trajectory, what it grounds closes, and the next step is chosen from that state. The turn is complete when no more than the firmware's `enough` of what was owed remains, or the budget `emit` is spent. Unless `--read`, WITNESS records the prompt, the response and the turn `[prompt, response]` as content, the user's `[session, turn]` at its ordinal under `UserPromptContent`, and Laplace's `[response, prompt]` under `ResponseContent`.
 
 ## laplace bench
 

@@ -9,7 +9,7 @@ What a curated resource says in its enumerations is a type, not content. This pa
 - **keys** the file uses to point at its own things, resolved inside the reader and written nowhere;
 - **types** from a fixed list, held as a slot in a perf-cache and as bits in a mask.
 
-What is content: words, phrases, sentences, texts; definitions, glosses, examples; the set of members a synset lists; a frame's name as the resource titles it. A thing's identity is its content: a synset is the composition of its members in the order listed (so every wordnet listing the same members lands on one entity, and their attestations meet there); a sense is `[written form, synset]`; a lexical entry is its written form; a sentence is its tokens. `identity ELEMENT ATTRIBUTE` in a recipe means the attribute is the key, not that the thing is the string; things whose members arrive later in a file are composed when the file has been read through.
+What is content: words, phrases, sentences, texts; definitions, glosses, examples; the set of members a synset lists; a frame's name as the resource titles it. A thing's identity is its content: a synset is the composition of its members in the order listed (so every wordnet listing the same members lands on one entity, and their attestations meet there); a sense is `[written form, synset]`; a lexical entry is its written form; a sentence is its tokens. `key TIER NAME` in a recipe means the part is the key, not that the thing is the string, and `thing TIER NAME...` says what the thing is; things whose members arrive later in a file are composed when the file has been read through.
 
 ## Perf-caches
 
