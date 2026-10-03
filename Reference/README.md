@@ -19,6 +19,7 @@ Conventions. A name in fixed width is exact as it appears in a source or a file:
 - [Firmware](Firmware.md): the firmware file grammar, its defaults, and the program's own firmware.
 - [Ingest](Ingest.md): the ingest pipeline as the engine runs it, phase by phase, with its statements and its counters.
 - [Reads](Reads.md): the read commands as built, the statements each issues, and what is computed where.
+- [Laplace-MCP](Laplace-MCP.md): the HTTP service in the separate Laplace-MCP repository. It names entities from tier 0 and calls the installed functions. It is not part of `laplace`.
 - [Checks](Checks.md): every check that proves the machine: the native tests, the prototype verification, the status and bench commands, the query benchmark.
 - [Glossary](Glossary.md): the terms, each defined once.
 - [Types, masks and the highway](Types.md): types are never content: perf-caches, values in vertices, masks, layers, segmentation, repeats, the extension owning the schema.

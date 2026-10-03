@@ -57,15 +57,28 @@ PostgreSQL and PostGIS assume that a geometry's coordinates are positions and th
 | --- | --- | --- |
 | Cost of `laplace_vertex_ids` | 10,000 | At lower costs the planner scans the partition of whole books and decodes every one on every lookup. |
 | Statistics on `physicality.path` | 0 | Histograms of packed IDs mean nothing: `ANALYZE` took 332 s with them and 2.5 s without. |
-| `enable_parallel_append` in the Laplace database | off | Starting parallel workers takes about 15 ms; a container lookup takes 1 ms. |
-| `parallel_workers` on physicality partitions | 0 | the same |
-| `gin_pending_list_limit` on the container index (each partition) | 256 MB | A load's entries go into the pending list in order and are merged once, when the source is in. At the default 4 MB the list merged every few thousand paths into random pages of the index, each written into the log whole: **measured** 4.05 GB of full-page images per GB of paths loaded, and 1.02 GB at 256 MB. |
+| `enable_parallel_append` in the Laplace database | on | A scan of the parent is many leaves. GIN itself does not scan in parallel; Gather splits the leaves across workers. **Measured** on `laplace_containers` of Sherlock Holmes, 101 rows: 3780 ms off, 573 ms on. |
+| `parallel_workers` on physicality partitions | 0 | A statement that names one leaf does not start workers. |
+| `gin_pending_list_limit` on the container index (each partition) | 32 MB | A search reads the pending list. At the default 4 MB the list spilled every few thousand paths and the container index was 45% of a load's full-page images. At 256 MB one containment read 4,731 buffers and took 22.8 ms; emptied, 9 buffers and 0.17 ms. 32 MB spills around a batch on one partition. |
 | `jit` | off | Compiling a short lookup costs more than it saves. |
 | `max_parallel_maintenance_workers` | about half the cores | Index builds, including GIN, run in parallel. |
 | `max_worker_processes`, `max_parallel_workers`, `max_parallel_workers_per_gather` | the cores and four; the cores; half the cores | |
 | `temp_tablespaces` | `pgtemp`, on its own volume | |
 
-An analytic session can turn parallelism back on for itself.
+## Vacuum
+
+PostgreSQL's autovacuum defaults do not drain a GIN pending list during a load. The cost limit is 200, shared by every worker, and each worker sleeps 2 ms when it reaches that. Insert-triggered vacuum waits until the table has grown by 20%. A pending list then sits until something else merges it, and every containment scans it.
+
+| Setting | Value | Why |
+| --- | --- | --- |
+| `autovacuum_vacuum_cost_delay` | 0 | The heap is on NVMe. Manual `VACUUM` is already unthrottled. |
+| `autovacuum_vacuum_cost_limit` | 2000 | The default 200 is the whole budget, split across the workers. |
+| `autovacuum_max_workers` | half the cores | Same width as index builds. `autovacuum_worker_slots` is already 16, so this does not restart. |
+| `autovacuum_naptime` | 10 s | 107 partitions are not visited on a 60 s nap during a load. |
+| `autovacuum_vacuum_scale_factor` | 0.05 | The default 0.2 waits for a fifth of a large partition to die. |
+| `autovacuum_analyze_scale_factor` | 0.02 | |
+| `autovacuum_vacuum_insert_scale_factor` | 0.01 | Insert-only vacuum is what reaches a GIN pending list. The default waits for 20% growth. |
+| `autovacuum_work_mem` | 1 GB | At -1 each worker takes `maintenance_work_mem`, which is 8 GB. |
 
 ## Observability
 
