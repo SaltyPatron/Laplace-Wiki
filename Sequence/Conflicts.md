@@ -92,6 +92,38 @@ None of these is settled by this page. Where an operation in another Sequence pa
 - **Agree.** The standing is never changed by a read; a search operator needs an ordering; the conservative reading takes the rating some deviations down.
 - **Open.** Whether the −ln *p* + λ cost is the declared fold of one channel that an A* operator inside SCAN is allowed to use, or a collapse ORIENT and STEER forbid.
 
+## Strands and meaning
+
+### S1. An ILI is a key recorded nowhere, or a hub a word bubbles up to
+
+- **Wiki.** [Corpora](../Corpora/README.md): an ILI number is a source's key, resolved to the thing it names and recorded nowhere. [Semantics](../Semantics/README.md) and [Claims: Tuples](../Semantics/Claims.md#tuples): `dog` has an ILI; bubble up to it, change the language, bubble down, and there is `Hund`; `dog → ILI i46360`. [Claims: Masks](../Semantics/Claims.md#masks): an ILI is an identifier and gets no mask.
+- **Monorepo.** `docs/plan/ASSIMILATION_ROADMAP.md` workstream B: a word binds to a language-neutral key (`dog —HAS_SENSE→ i46360 @eng`), and facts about the key are language-neutral.
+- **Agree.** The concept is the hub that translation passes through, and it has no mask bit.
+- **Open.** What the hub's entity is: the identifier's text as CILI writes it, its definition, or the composition of the synsets that map to it; and so whether `i46360` is ever content.
+
+### S2. The stock default a claim enters at, when relations are content
+
+- **Wiki.** [Consensus: Entry](../Semantics/Consensus.md#entry): a claim entering for the first time starts from a stock default for its level of attestation: whether synonyms matter more or less than meronyms, nouns than verbs, proper nouns than stopwords, and the source's trust, stability, and uncertainty. [Claims: Tuples](../Semantics/Claims.md#tuples): `is a` is a sentence, not an enum name.
+- **Monorepo.** `docs/plan/ASSIMILATION_ROADMAP.md` workstream A, decided 2026-09-25: a claim's standing comes from the witness's trust alone; relation rank is salience, applied at reading.
+- **Built.** Laplace-Engine `src/db.c` `entry_deviation`: a claim enters at the rating and deviation its recipe gives that kind of statement, or else at Glicko-2's 1500 and the deviation its witness's trust plays with; every matchup then plays at the witness's trust alone.
+- **Agree.** A matchup weighs a witness by its trust, never by its relation.
+- **Open.** Whether the entry default differs by kind of statement at all, and if it does, what names the kind now that a relation is the content its source writes: a recipe line, a flagged enum of the source's relation inventory, or the firmware.
+
+### S3. Relation salience from a hard-coded rank table, or from content
+
+- **Wiki.** [Claims: Tuples](../Semantics/Claims.md#tuples): nothing is hard-coded except pregenerated relations, types, and kinds that act like a perf-cache or flagged enums. Q3 above.
+- **Monorepo.** `engine/manifest/relation_types.toml` `[ranks]`: thirteen rank tiers over 233 English canonical relation names (`HAS_POS` lexical glue 0.18, `IS_A` taxonomic 0.90), read as salience by the forward pass and by model export.
+- **Built.** Laplace-Engine has no rank table. Its firmware weighs strands by predicate content (`weigh N KIND...`) and words by what is attested of them (`role by UPOS`, `role 1 NOUN ADJ NUM`), names resolved to their entities when the firmware loads.
+- **Open.** Whether salience is a flagged enum per source relation inventory, a value the firmware supplies by naming content, or something measured, as [Research: Trust: Role trust](../Research/Trust.md#role-trust) measures the information a part of speech carries.
+
+### S4. Firmware is a file never a record, or a content-addressed program over the operation ISA
+
+- **Wiki.** [Glossary](../Reference/Glossary.md): firmware is a file, never a record. [18. Firmware](Firmware.md) operation 18.3: a firmware image has a content identity.
+- **Monorepo.** `docs/specs/39_Personality_Firmware.md` §1 and §1.1: a versioned, content-addressed, replayable program over the operation ISA of spec 37, loaded as data; policy kinds are a governed registry.
+- **Built.** Laplace-Engine `src/firmware.c` reads parameters for five fixed operations (`hop`, `search`, `translate`, `follows`, `pull`); `src/program.c` fixes the stage order RESOLVE to WITNESS and STEER's election order in C. The firmware chooses numbers and names; it does not program the stages.
+- **Agree.** Firmware never writes knowledge or standing, and the same records read under two firmwares give two behaviours over one truth.
+- **Open.** Whether a firmware is content (an ID, not attested), and how much of the stage order and election order is the firmware's program rather than the engine's code.
+
 ## What this page leaves behind
 
 The list of decisions that are the inventor's. Every other Sequence page is written to hold under either answer where it can, and says which answer it assumed where it cannot.

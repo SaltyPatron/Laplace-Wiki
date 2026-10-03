@@ -1,13 +1,17 @@
 # Types, masks and the highway
 
-What a curated resource says in its enumerations is a type, not content. This page sets out, against the specification, how types are held — in perf-caches, in vertices, in masks — and what that removes from the DAG. It is the design as it goes into the code on 2026-10-01; each point names the page it follows.
+What a curated resource writes in its enumerations is content like everything else, and a type besides: a value from a fixed list, held by its content's ID in a perf-cache and as a flag in a mask.
+
+This page sets out, against the specification, how types are held — in perf-caches, in vertices, in masks — and what that removes from the DAG. Each point names the page it follows.
 
 ## Content and plumbing
 
-[Identity](../Storage/Identity.md) says the hash is purely content and that a hash is never faked from a made-up string. [Claims](../Semantics/Claims.md) says relations are tied together by types, that an ILI synset is a type like an IP segment is, and that parts of speech, senses, dependency relations "and so on" are enums: fixed in scope, perf-cachable, held in mask columns. So a seeded corpus's identifiers — a synset id, a sense key, an ILI, `sent_id`, a token's `id`, `NOUN`, `nsubj`, a VerbNet class, a FrameNet frame, a PropBank roleset — are never entities and never parts of a claim. They are two things:
+[Identity](../Storage/Identity.md) says the hash is purely content and that a hash is never faked from a made-up string. [Claims](../Semantics/Claims.md) says relations are tied together by types, that an ILI synset is a type like an IP segment is, and that parts of speech, senses, dependency relations "and so on" are enums: fixed in scope, perf-cachable, held in mask columns. [Claims: Tuples](../Semantics/Claims.md#tuples) says Laplace speaks Unicode and renders language: `NOUN` is English, `noun` is still an entity, `is a` is a sentence and not an enum name, and only pregenerated relations, types, and kinds that act like a perf-cache or flagged enums are generated ahead. So what a seeded corpus writes falls into two kinds:
 
-- **keys** the file uses to point at its own things, resolved inside the reader and written nowhere;
-- **types** from a fixed list, held as a slot in a perf-cache and as bits in a mask.
+- **keys** the file uses to point at its own things — a synset id, a sense key, a sentence's id, `sent_id`, a token's `id` — resolved inside the reader and written nowhere;
+- **values of a fixed list** — `NOUN`, `nsubj`, a lexicographer file — which are content: the entity of the text as the source writes it, a part of a claim like any other entity, and also a slot in a perf-cache and a flag in its mask, so that a filter needs no read.
+
+Identifiers are not masked ([Claims: Masks](../Semantics/Claims.md#masks)): an ILI, a VerbNet class, a FrameNet frame, a PropBank roleset each have a slot in the highway's perf-cache, and none has a mask bit.
 
 What is content: words, phrases, sentences, texts; definitions, glosses, examples; the set of members a synset lists; a frame's name as the resource titles it. A thing's identity is its content: a synset is the composition of its members in the order listed (so every wordnet listing the same members lands on one entity, and their attestations meet there); a sense is `[written form, synset]`; a lexical entry is its written form; a sentence is its tokens. `key TIER NAME` in a recipe means the part is the key, not that the thing is the string, and `thing TIER NAME...` says what the thing is; things whose members arrive later in a file are composed when the file has been read through.
 
@@ -26,6 +30,8 @@ The **highway** is the third: `highway.bin`, with its layout beside it. One reco
 [Claims](../Semantics/Claims.md): separate columns hold bitmasks that denote which part of speech, sense, dependency relation, and so on apply. On an entity's row: its part-of-speech mask (UD's 17), its sense mask (sense 1 to 256 of that lemma, per the sense numbering), and the like — set as the layers that attest them are recorded, in the same set-based statement as the load. On a claim's row (the consensus), the masks of the types it holds, and whether it is a claim at all, which is what tells it from a sentence.
 
 The container index carries them: its keys are the packed IDs a path holds *and* the mask bits of the row, so "the claims that hold `dog` and say NOUN" is one intersection of posting lists — no scan of the sentences that hold `dog`, which is what made a hub cost seconds ([Physicality](../Storage/Physicality.md#indexes) defines the index over constituents; the mask bits are the further keys).
+
+As built, each semantic group is a bank of its own, declared in Laplace-Native's [`manifest/banks.tsv`](https://github.com/SaltyPatron/Laplace-Native/blob/main/manifest/banks.tsv): the bank, the list it flags, its group (lexical: what a word is; structural: a role inside a structure; kind: what a row is), its carrier (the entity's row, an occurrence inside a layer, or the physicality row), and the width it keeps for values still to come. A value's bit is its frozen slot in `manifest/slots/LIST.tsv`: slots are appended and retired, never moved or reused, so a bit means the same thing in every build. Today's banks are `kind` (8), `upos` (32), `lexfile` (64), `deprel` (64) and `vnrole` (64). Only the `kind` bank is written so far, on `physicality.mask`; the entity and occurrence carriers are not built, so a read that filters on a lexical or structural bank finds nothing yet.
 
 ## Layers
 

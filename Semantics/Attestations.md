@@ -14,6 +14,20 @@ Entities get the attestations, because an entity is the complete structure being
 
 Attestations are recorded at the highest tier possible for a given corpus. OpenSubtitles gives the language of sentences, not of words.
 
+## Strands
+
+The spider web connects entities, and Glicko-2 sets the tension. An attestation is a link between IDs: the strand, which is the claim, and the witness that pulls on it, with the outcome. It is not a row that copies what it links.
+
+A strand is a composition of the entities it connects, and its physicality is geometry ZM like any other: a point, a line, a polygon, a multi-line, and more. It does not have to be a line.
+
+A claim is a game series: games plus a score. Another file of the same source that attests the same thing adds to the games already played; it does not add a second record.
+
+## Seeded corpora
+
+A seeded corpus is mined for what it teaches: its semantic knowledge, observations, and attestations. Laplace does not export UD Treebanks; it records what UD Treebanks teaches. WordNet, PropBank, SemLink, and every other seed are the same: they happen to be standardized files and formats that can be parsed and decomposed. What a source observed is attested in its own terms; the index a source gives a sentence is not, because Laplace never exports the source.
+
+A source is a trunk entity above its files, each file is a trunk under it, and each record of each file sits under that. If the file's trunk node is recorded and its metadata matches, everything in that file is already recorded.
+
 ## Witnesses
 
 Entities are witnessed. WordNet does not own `dog`: we observe `dog` from WordNet. Every witness observes the same entity.
