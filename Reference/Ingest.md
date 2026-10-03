@@ -6,7 +6,7 @@ This page is `ingest.c` and `db.c` phase by phase. Everything shared with the da
 
 ## 1. Enumerate
 
-Files and directories named on the command line, walked with `nftw`; hidden directories are skipped, hidden and empty files are skipped. A source named is found under the first of its `root`s that exists, or by its `files` patterns. With nothing named, every source in `order`, each in a forked process of its own with the same options, its output in `$LAPLACE_WORK/logs/ingest/<source>.log`, after the room check: the source's files' bytes, `.gz` counted eight times, times its `room` or `LAPLACE_ROOM_FACTOR` 65, must leave the database volume at least a tenth of itself. A source that fails stops the run.
+Files and directories named on the command line, walked with `nftw`; hidden directories are skipped, hidden and empty files are skipped. A source named is found under the first of its `root`s that exists, or by its `files` patterns. With nothing named, every source in `order`; with sources named, those and every source they come `after`, in `order`; each in a forked process of its own with the same options (`LAPLACE_INGEST_ONE` set, so it takes its source alone), its output in `$LAPLACE_WORK/logs/ingest/<source>.log`, after the room check: the source's files' bytes, `.gz` counted eight times, times its `room` or `LAPLACE_ROOM_FACTOR` 65, must leave the database volume at least a tenth of itself. A source that fails stops the run; a source that comes after one that did not go in, absent or short of room, is not begun.
 
 ## 2. Bind recipes
 
@@ -24,7 +24,7 @@ Live counters go to stderr: files done, MB, MB/s, nodes.
 
 Every file of the batch that is not curated and not a vocabulary is rebuilt from the node table and tier 0 (`expand`) and compared with its bytes; a mismatch is reported and makes the run exit 1. A curated source is not kept as a file, so it is not compared; a vocabulary is the text its tokens stand for.
 
-Then `file_take` keeps what each file witnessed for its content and `file_close` composes its trunk, `[metadata, content]`.
+Then `file_take` keeps what each file witnessed for its content and `file_close` composes its trunk, `[metadata, content]`, its metadata tree the OS's record of it as its recipes dispose of it (`file_record`, [Recipes](Recipes.md#how-a-file-is-recorded)).
 
 ## 5. Load
 
@@ -53,7 +53,7 @@ One transaction in parts, so that what the files attested and their trunks are r
 
 ### After the load
 
-`gin_clean_pending_list` over every GIN index, once, so no lookup pays for the load. The summary on stdout: decomposition (files, MB, recomposed or curated, mismatched), compositions and reused, attestations; phases: decompose, recompose and compare, deduplication (IDs checked, rounds, subtrees recorded), COPY (entities, paths, rows per second), witnesses, attestations, standings (new, updated), the index merge, total.
+When every file was of one source, its trunk, `[record, its files' trunks]`, composed in an emptied node table and written by a load of its own, so it is recorded only after every file is. Then `gin_clean_pending_list` over every GIN index, once, the indexes largest first, one at a time on each of the run's connections at once, so no lookup pays for the load. The summary on stdout: decomposition (files, MB, recomposed or curated, mismatched), compositions and reused, attestations; phases: decompose, recompose and compare, deduplication (IDs checked, rounds, subtrees recorded), COPY (entities, paths, rows per second), witnesses, attestations, standings (new, updated), the index merge, total.
 
 ## The statements
 
@@ -73,7 +73,7 @@ Every statement the ingest issues, all parameters binary, all sets:
 | attestation | per partition: `COPY attestation_<h> (claim, witness, score, position) FROM STDIN (FORMAT binary)` |
 | lineage | the attestation and witness join above |
 | witnesses | `SELECT u.i FROM unnest($1::blake3[]) WITH ORDINALITY AS u(id, i) JOIN witness w ON w.id = u.id`; `SELECT id FROM witness WHERE id = ANY($1::blake3[])`; `COPY witness` |
-| end | the `gin_clean_pending_list` aggregate over `pg_index` |
+| end | the GIN indexes from `pg_index`, largest first; `SELECT gin_clean_pending_list($1::regclass)` for each, on every connection at once |
 
 No `ON CONFLICT`, no per-row statement, no cursor, no function call in a predicate.
 

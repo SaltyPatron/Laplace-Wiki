@@ -16,7 +16,8 @@ There is one decomposer (`Laplace-Engine/src/structure.c`) and one reading of wh
 | `files PATTERN` | the files it is, when not everything under a root; several may be given |
 | `except PATTERN...` | files under its root that are not the source |
 | `room N` | what it takes in the database, in times what its files hold, as measured; used by the room check |
-| `after SOURCE...` | the sources it comes after; `order` is the total order |
+| `called NAME` | the source's record, where its witness is named file by file: the first part of its trunk |
+| `after SOURCE...` | the sources it comes after; `order` is the total order. A source asked for by name is run after every source it comes after, each its own run; one whose prerequisite did not go in is not begun |
 | `reads FORMAT...` | its files are ordinary content, read as these formats, the recipes that belong to no source |
 
 A recipe of a source takes the source's witness, lineage, and trust unless it names its own.
@@ -145,7 +146,9 @@ A pattern is POSIX extended; a template writes `\0` the whole match and `\1` to 
 
 ## How a file is recorded
 
-A file's trunk is `[metadata, content]`. The metadata tree is the file's name as written, its path under its source's root, with what the recipe says is said of the file itself; the content tree is the file's own tree. A file a recipe records only by its grammar is its syntax tree, each node the composition of its children with the bytes between them kept as text, so it recomposes byte for byte; leaves are text, decomposed by UAX #29. A curated file's content is the whole of each of its outermost parts as its recipe reads them, in the file's order, each the claim it is where it is one; a few thousand are one path, and more are factored into blocks from the content alone: a block ends after a part whose own ID says so, never at a count or a position, and the blocks are composed the same way, level by level, until one holds them all. A file's tier is one above its highest constituent. The trunk is written last of everything the file is and attests, so a recorded trunk means all of it is recorded.
+A file's trunk is `[metadata, content]`. The metadata tree is the OS's record of the file, its parts as the OS names them (`pathname`, a composition of its filenames; `filename`; and what `statx` returns, `stx_mode` to `stx_mtime`), each `[name, value]` and each disposed of by the file's recipe or, where that says nothing of it, by the stock recipe `file` (`metadata` or `omit`); then what the recipe says is said of the file itself. A part neither disposes of is said once and not recorded. The content tree is the file's own tree. A file a recipe records only by its grammar is its syntax tree, each node the composition of its children with the bytes between them kept as text, so it recomposes byte for byte; leaves are text, decomposed by UAX #29. A curated file's content is the whole of each of its outermost parts as its recipe reads them, in the file's order, each the claim it is where it is one; a few thousand are one path, and more are factored into blocks from the content alone: a block ends after a part whose own ID says so, never at a count or a position, and the blocks are composed the same way, level by level, until one holds them all. A file's tier is one above its highest constituent. The trunk is written last of everything the file is and attests, so a recorded trunk means all of it is recorded.
+
+A source's trunk is `[record, content]`: the record is the witness its `source` file names, or its `called` line where the witness is named file by file; the content is its files' trunks in the order of their paths. It is written after the last of its files, in a load of its own, and found recorded like any other trunk, by its ID.
 
 ## The stock recipes
 
@@ -158,6 +161,7 @@ Format recipes that belong to no source, which any source's `reads` may name and
 | `json` | `*.json` | its syntax tree; a tokenizer's `tokenizer.json` is read so, its vocabulary the members that name each token and give its number |
 | `turtle` | | `format turtle`: a statement is its subject; its property is the relation to its objects; a literal says its language tag or datatype |
 | `wn-lmf` | | `format xml`: a lexical entry is the word its `Lemma` writes; a synset is the composition of the words its `members` are; a sense is the word with its synset; `ili` a type of the highway's interlingual index |
+| `file` | | no layout: what the OS keeps of every file, `metadata pathname filename stx_mode stx_uid stx_gid stx_nlink stx_ino stx_size stx_blocks stx_blksize stx_attributes stx_dev_major stx_dev_minor stx_rdev_major stx_rdev_minor stx_btime stx_ctime stx_mtime`, `omit stx_atime` (reading the file changes it) |
 
 A worked example, `universal-dependencies/conllu.recipe`:
 
