@@ -115,7 +115,7 @@ A session is a Projection physicality, type 3, over its turn ids in order, rewri
 | path vertex | 212 bits: id, ordinal, run, 52 flag bits with five vertex classes (P2) | 43 + 43 + 42 bits of id in X, Y, Z; run and kind in M |
 | composition coordinate | centroid; Karcher mean in managed chess and model paths (P3) | exact integer centroid |
 | partitioning | `HASH` 64 ways, by id or by subject | `LIST` by tier, the large tiers `RANGE` by first hex digit |
-| a claim | a row of `attestations` with a typed `type_id` and masks; the cell a row of `consensus` | a composition in `entity` and `physicality`; the ledger and the standing beside it (T1, T2) |
+| a claim | a row of `attestations` with a typed `type_id` and masks; the cell a row of `consensus` | a composition in `entity` and `physicality`; the attestation and the standing beside it (T1, T2) |
 | the fold | one rating period per cell over all its evidence; deviation widens with time (T3) | one matchup per attestation as it arrives; no periods |
 | trust | class prior *w* → opponent deviation `350 + (30 − 350)·w`, rating `1500 ± 320` | `trust T` → `g(φ) = abs(t)` |
 | registries | manifests generated into law and ROMs | none: names recorded as the source writes them |

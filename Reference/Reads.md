@@ -18,7 +18,7 @@ FROM physicality p JOIN consensus s ON s.claim = p.entity
 WHERE p.path @> $1::blake3[] LIMIT $2::int
 ```
 
-with `$2 = fan + 1`, so `capped` says whether more exist than the fan reads. Each path is decoded in the engine to the claim's parts, up to 12; a claim is kept when the given parts stand in their places, the first given first, the last given last, the middle between; its confidence is `lp_confidence(standing, k)`. `claims_of` is the same with one part and no place. `refused()` removes strands whose predicate or witness the firmware refuses. Then the sort: by confidence (`claim_by_conf`), or, under `order witness` on an open claim, by the position the witness gave (`positions_of` reads it from the ledger, `claim_by_position`) before confidence.
+with `$2 = fan + 1`, so `capped` says whether more exist than the fan reads. Each path is decoded in the engine to the claim's parts, up to 12; a claim is kept when the given parts stand in their places, the first given first, the last given last, the middle between; its confidence is `lp_confidence(standing, k)`. `claims_of` is the same with one part and no place. `refused()` removes strands whose predicate or witness the firmware refuses. Then the sort: by confidence (`claim_by_conf`), or, under `order witness` on an open claim, by the position the witness gave (`positions_of` reads it from `attestation`, `claim_by_position`) before confidence.
 
 ## laplace hop
 

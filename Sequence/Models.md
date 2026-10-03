@@ -56,7 +56,7 @@ The whole chain through [23. Learning](Learning.md). [10. Recipes](Recipes.md): 
 
 - **In:** each circuit's scores over the shared entities.
 - **Do:** which derived evidence carries information is decided by a declared calculation contract over the model's own statistics, the lottery ticket found rather than a constant floor or a top-k: each circuit writes its own significant pairs under a per-subject null, z against the subject's own score distribution, kept if and only if z ≥ √(2 ln N). Nothing below significance is written; nothing is refuted, because refutation cannot be inferred from a dot-product sign or from frequency. The claims are graded evidence between canonical entities under the model witness, `token APPEARS_IN coordinate` with the salience as score, and the model's learned relations as attestations, and no world-all-pairs is persisted. Recorded facts, tensor identity, dtype, shape, slice, and role, stay separate from calculated ones, and every calculated row names its analyzer and recipe.
-- **Out:** the model's testimony in the ledger of [12. Attestations](Attestations.md), folded by [13. Consensus](Consensus.md).
+- **Out:** the model's testimony in `attestation` of [12. Attestations](Attestations.md), folded by [13. Consensus](Consensus.md).
 - **From:** `docs/plan/ASSIMILATION_ROADMAP.md` laws 12, 13 and workstream E4, E5; `docs/INVENTIONS.md` #102, #106; `docs/specs/08_Record_vs_Calculate_Spec.txt`.
 
 ### 24.8 Optionally, witness an execution as a calculation

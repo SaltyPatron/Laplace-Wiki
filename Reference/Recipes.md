@@ -10,7 +10,7 @@ There is one decomposer (`Laplace-Engine/src/structure.c`) and one reading of wh
 | --- | --- |
 | `name NAME` | the source's name, the name `laplace ingest NAME` and `order` use |
 | `witness NAME...` | who testifies when this source attests, named as content: the witness's ID is the ID of that text. `{dir}` is the directory a file is in; `{name}` its own name without what follows its last dot; `{first NAME}` what the file first writes as `NAME="..."` |
-| `lineage NAME...` | the witness it derives from; copies of one lineage play one matchup per claim, each copy still a row in the ledger |
+| `lineage NAME...` | the witness it derives from; copies of one lineage play one matchup per claim, each copy still a row in `attestation` |
 | `class NAME` | the witness's trust class, one that `Laplace-Native/manifest/trust_classes.toml` declares; the class's prior is the trust its claims play at. A class the manifest does not declare, or a trust written as a number (`trust`, `deviation`), stops the load with status 2 |
 | `root PATH` | where the source is kept; several may be given and the first that exists is the source |
 | `files PATTERN` | the files it is, when not everything under a root; several may be given |

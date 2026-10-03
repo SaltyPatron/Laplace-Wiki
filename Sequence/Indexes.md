@@ -47,8 +47,8 @@ Laplace exploits GiST and GIN indexing for novel mechanisms. Development favors 
 
 ### 14.6 Indexes on the semantics tables
 
-- **In:** the claim, ledger, and standing tables.
-- **Do:** the claim's consensus ID and each of its parts, so a claim can be found by any part left open; the ledger by claim; the standing by claim.
+- **In:** the claim, attestation, and standing tables.
+- **Do:** the claim's consensus ID and each of its parts, so a claim can be found by any part left open; `attestation` by claim; the standing by claim.
 - **Out:** `[dog, eng, ?]` in 3.3 ms and `[?, language, i46360]` for eight languages in 1.2 ms.
 - **From:** [Research: Semantics Experiments: Translation through the ILI](../Research/Semantics-Experiments.md#translation-through-the-ili), [Research: Engine Measurements: Consensus writes](../Research/Engine.md#consensus-writes).
 

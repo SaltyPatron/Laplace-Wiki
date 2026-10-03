@@ -6,7 +6,7 @@ Everything attested about a claim, as a whole, provides its overall score: a Gli
 
 ## Before this stage
 
-[12. Attestations](Attestations.md): the ledger rows, in order, each with its witness's trust and outcome.
+[12. Attestations](Attestations.md): the attestations, in order, each with its witness's trust and outcome.
 
 ## Operations, per attestation
 
@@ -75,8 +75,8 @@ There are also trusts that differentiate subjects, pronouns, stopwords, and so o
 
 ## What this stage leaves behind
 
-A standing on every claim that tells how hard it tugs back, current as of the last attestation, and a ledger of every attestation that produced it.
+A standing on every claim that tells how hard it tugs back, current as of the last attestation, and every attestation that produced it.
 
 ## Without this stage
 
-Attestations are a ledger with no score, and a pull has nothing to order strands by.
+Attestations are records with no score, and a pull has nothing to order strands by.

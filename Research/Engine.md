@@ -102,9 +102,9 @@ The same 1.68 million Gutenberg sentence paths stored as `uuid[]` with run lengt
 
 Five million attestations, Zipf-distributed over a million claims so that a few hub claims receive most of them, were written in batches of 100,000:
 
-- The ledger appended at about 245,000 rows per second, taking 301 MB with its index.
+- `attestation` appended at about 245,000 rows per second, taking 301 MB with its index.
 - Standings updated in place by one set-based statement per batch absorbed 740,000–780,000 attestations per second, because a batch's repeated hits on a claim collapse (100,000 attestations touched about 19,500 claims). The standing table stayed at 66 MB with dead rows levelling off near 34,000 under a fill factor of 80.
-- Reading the hottest claim's standing took 0.1 ms. Aggregating its 474,628 ledger rows instead took 115 ms.
+- Reading the hottest claim's standing took 0.1 ms. Aggregating its 474,628 attestations instead took 115 ms.
 
 ## Queries
 

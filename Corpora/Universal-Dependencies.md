@@ -39,7 +39,7 @@ Each thing the treebank says is a claim, a tuple of entities as [Claims](../Sema
 | a row whose ID is `a-b` | a multiword token | the token, and the words of the rows it spans | `[token, [word, word, ...]]` | "Multiword tokens are indexed with integer ranges like 1-2 or 3-5" [CoNLL-U format](https://universaldependencies.org/format.html) |
 | a row whose ID is `i.1` | an empty node | a row as any other: its HEAD `_` gives no relation, its DEPS do | as the row's fields say | "Empty nodes are indexed i.1, i.2, etc." [CoNLL-U format](https://universaldependencies.org/format.html) |
 
-The record is the path of the sentence, its layers, its notes, its spans, and its words' claims; UPOS and DEPREL are the highway's `upos` and `deprel` lists, mask fields of every entity that carries one ([Types](../Reference/Types.md#masks)). The record is what is witnessed, once, as one ledger row; every claim in it plays its matchup as [Consensus](../Semantics/Consensus.md#matchups) describes. A claim said twice in one record is witnessed in it once. Nothing is renamed, reordered, or filled in.
+The record is the path of the sentence, its layers, its notes, its spans, and its words' claims; UPOS and DEPREL are the highway's `upos` and `deprel` lists, mask fields of every entity that carries one ([Types](../Reference/Types.md#masks)). The record is what is witnessed, once, as one attestation; every claim in it plays its matchup as [Consensus](../Semantics/Consensus.md#matchups) describes. A claim said twice in one record is witnessed in it once. Nothing is renamed, reordered, or filled in.
 
 Only `.conllu` files are read. The treebank's README, LICENSE, and statistics are not.
 

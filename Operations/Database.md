@@ -42,7 +42,7 @@ Every page a checkpoint has not yet seen modified goes into the log whole the fi
 
 Bulk ingestion sessions set `synchronous_commit = off`.
 
-A batch's witnesses, ledger and standings are one transaction written in parts, one a connection, a partition at a time on every connection, and committed together by two-phase commit: every part is prepared, the part that holds the witnesses and the files' trunks last; that part is committed first, and its commit decides the rest. A part left prepared by a load that stopped is committed or rolled back by the next load, as its batch's first part was.
+A batch's witnesses, attestations and standings are one transaction written in parts, one a connection, a partition at a time on every connection, and committed together by two-phase commit: every part is prepared, the part that holds the witnesses and the files' trunks last; that part is committed first, and its commit decides the rest. A part left prepared by a load that stopped is committed or rolled back by the next load, as its batch's first part was.
 
 | Setting | Rule | Example |
 | --- | --- | --- |

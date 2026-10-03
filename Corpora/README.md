@@ -12,7 +12,7 @@ Every page has the same parts, in this order.
 
 1. The summary sentence: what the source attests, and what in it attests nothing.
 2. **Sources.** One row per source directory of the Engine: witness (as content, and how it is named when every file or directory is its own witness), trust class, lineage, what it comes after in `recipes/order`, the files matched, and a link to the recipe.
-3. **The record.** What one record of the file is, what it is about, and what one ledger row witnesses.
+3. **The record.** What one record of the file is, what it is about, and what one attestation witnesses.
 4. **Pieces.** One row per field, attribute, element, pointer symbol, or comment key the format has: how it is written, what Laplace reads it as (the subject, a predicate, a pair, a relation, a note, or nothing), the claim tuple recorded, and the publisher's specification of that piece, quoted where it names the piece. A piece the recipe does not read is a row too, saying so and why.
 
 The rules the rows follow:

@@ -68,7 +68,7 @@ That is 63 times chance. The rest are not errors by default: they are associatio
 The embeddings of three independently trained models, TinyLlama (Llama), MiniLM (BERT), and Qwen3-Embedding-0.6B (Qwen), were recorded as claims `[token, near, token]`.
 
 - **Each neighbour** above z = 3, up to 64 per token, became one claim between the entities its tokens decompose to.
-- **Each claim went into the ledger** with the model as witness and the embedding as condition.
+- **Each claim went into `attestation`** with the model as witness and the embedding as condition.
 - **Standings were updated as the rows arrived**, with set-based statements:
   - a new claim entered at the model's trust;
   - a claim another lineage already held played one matchup;

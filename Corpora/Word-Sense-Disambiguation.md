@@ -25,7 +25,7 @@ A record is one sentence: the path of its words, in order (`words sentence wf in
 | `<sentence id="d000.s000">` | inside a text | the record of its words; its `id` a key | the record `[[This, document, is, …], [This, lemma, this], …]` | |
 | `<wf lemma="this" pos="DET">This</wf>`, `<instance id="…" lemma="document" pos="NOUN">document</instance>` | word elements | the word, its text; `lemma` and `pos` said of it; an instance's `id` a key | `[This, lemma, this]`, `[This, pos, DET]` | "Both types should contain two mandatory attributes ("lemma" and "pos")." |
 
-The record is witnessed once, as one ledger row, by the dataset whose directory the file is in.
+The record is witnessed once, as one attestation, by the dataset whose directory the file is in.
 
 ## Not read
 

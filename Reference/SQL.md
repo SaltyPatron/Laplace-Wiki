@@ -100,7 +100,7 @@ Read from the memory-mapped flags at `laplace.flags` by the standard's own names
 | --- | --- | --- |
 | `laplace_forward(ids blake3[], fan bigint)` | `SETOF (i, j, paths, runs, next, times)` | for every contiguous segment `[i..j]` of the prompt's constituents: the observations holding all of its parts (claims left out, at most `fan`), how many hold it as a run, and what follows the run in each, counted, one row per continuation; a segment held by nothing, one row with `next` null. Every prefix and every segment at once; `STABLE`, kept plan |
 | `laplace_containers(parts blake3[], bits smallint[])` | `SETOF (entity, path, tier, mask)` | every path holding all of the parts, above them, with the bits asked for; with no bits, the mask takes no part in the statement (any of no bits would send the mask index over every row) |
-| `laplace_attested(claims blake3[])` | `SETOF (claim, witness, position, trust)` | who attested each claim: a claim witnessed on its own is a ledger row; one witnessed within a record is found through the record's path, by the index |
+| `laplace_attested(claims blake3[])` | `SETOF (claim, witness, position, trust)` | who attested each claim: a claim witnessed on its own is an attestation; one witnessed within a record is found through the record's path, by the index |
 
 ## Observability
 

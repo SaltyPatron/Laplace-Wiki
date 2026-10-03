@@ -69,27 +69,27 @@ Semantics are the relations Laplace records about entities, so that it can link 
 ### 12.9 Record each attestation with its outcome
 
 - **In:** the claims of 12.6 and the witness of 12.2.
-- **Do:** attestations are a win, draw, or loss, and/or a score in [0, 1] with a draw at 0.5, so there are positive and negative attestations. Confirmation, draw, and refutation remain distinct; the absence of a row is unknown, never refutation. A denial is a refute outcome on the positive relation. Record each one in the ledger with its witness, its lineage, its context, its qualifier mask, and its outcome; an attestation records subject, relation, optional object, source, optional context, outcome, score, uncertainty inputs, and observation count. Observed testimony is append-only; a correction adds new testimony and never erases the earlier witness. What the corpus records beside a claim that is not an attestation, such as a witness's sense order or a tagged corpus's usage counts, is recorded as given, beside the claim, as an observation: merging a frequency into a standing loses it, because a standing measures whether a claim holds and saturates as its deviation shrinks. Ingest completion is operational state, never an attestation.
-- **Out:** the ledger rows, in the order the corpus gave them.
+- **Do:** attestations are a win, draw, or loss, and/or a score in [0, 1] with a draw at 0.5, so there are positive and negative attestations. Confirmation, draw, and refutation remain distinct; the absence of a row is unknown, never refutation. A denial is a refute outcome on the positive relation. Record each one in `attestation` with its witness, its lineage, its context, its qualifier mask, and its outcome; an attestation records subject, relation, optional object, source, optional context, outcome, score, uncertainty inputs, and observation count. Observed testimony is append-only; a correction adds new testimony and never erases the earlier witness. What the corpus records beside a claim that is not an attestation, such as a witness's sense order or a tagged corpus's usage counts, is recorded as given, beside the claim, as an observation: merging a frequency into a standing loses it, because a standing measures whether a claim holds and saturates as its deviation shrinks. Ingest completion is operational state, never an attestation.
+- **Out:** the attestations, in the order the corpus gave them.
 - **From:** [Attestations: Outcomes](../Semantics/Attestations.md#outcomes); `docs/specs/05_Substrate_Invariants.txt` Rule #5; `docs/INVENTIONS.md` #24; [Research: Engine Measurements: Consensus writes](../Research/Engine.md#consensus-writes).
 
 ### 12.10 Keep recorded and calculated apart
 
-- **In:** the ledger rows of 12.9.
+- **In:** the attestations of 12.9.
 - **Do:** a recorded row is deterministic transcription of what the source states. A calculated row, a parse, a classification, an engine evaluation, a circuit correlation, an inferred relation, names its analyzer identity and version, inputs, recipe, output relation and score domain, and execution receipt, and carries the calculation qualifier. Recorded and calculated sources may fold into a shared cell when they make the same proposition, but source trust and uncertainty remain available and they are never collapsed into one indistinguishable source. A calculated proxy never overwrites the literal outcome it estimates. Calculated testimony may be superseded or recomputed without deleting recorded evidence, and a newer analyzer competes as another witness unless a version policy scopes it out.
 - **Out:** every row marked recorded or calculated, with its analyzer where calculated.
 - **From:** `docs/specs/08_Record_vs_Calculate_Spec.txt`.
 
 ### 12.11 Keep dependence visible
 
-- **In:** the ledger rows and their witnesses.
+- **In:** the attestations and their witnesses.
 - **Do:** multiple paths and witnesses count only to the degree their evidence roots are independent. Lineage from 12.2, the shared source behind two mappings, and a calculation triggered by ten thousand games that produces one result under one generation are each one root. Provenance stays available so that duplicate dependence never masquerades as independent confirmation; a copied source pointed at by several paths is one witness.
 - **Out:** the dependence roots each attestation folds under.
 - **From:** `docs/INVENTIONS.md` #30; `docs/guides/chess-forward-pass-proof.md` §Dedup calculation, preserve occurrences.
 
 ### 12.12 Play the matchups
 
-- **In:** the ledger rows of 12.9.
+- **In:** the attestations of 12.9.
 - **Do:** [13. Consensus](Consensus.md), as the rows arrive.
 
 ## The order of corpora
@@ -105,7 +105,7 @@ See [Semantics](../Semantics/README.md), [Claims: Tuples](../Semantics/Claims.md
 
 ## What this stage leaves behind
 
-Witnesses with their lineage and trust class, claims as typed cells with their two IDs and their qualifier masks, collections for every set, and a ledger of every attestation with its outcome, its dependence root, and whether it was recorded or calculated, in order.
+Witnesses with their lineage and trust class, claims as typed cells with their two IDs and their qualifier masks, collections for every set, and every attestation with its outcome, its dependence root, and whether it was recorded or calculated, in order.
 
 ## Without this stage
 
