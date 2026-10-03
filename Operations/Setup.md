@@ -19,8 +19,8 @@ Laplace runs on x86-64 CPUs, uses every SIMD level the CPU has, never requires a
 | Data | Put it on | Why |
 | --- | --- | --- |
 | PostgreSQL heap and indexes | the fastest drive, NVMe | random reads for index lookups |
-| Write-ahead log | a separate SSD | sequential writes that do not compete with reads |
-| PostgreSQL temporary files | a separate SSD, as a tablespace | sorts and index builds that spill |
+| Write-ahead log | an SSD apart from the heap | sequential writes that do not compete with reads |
+| PostgreSQL temporary files | an SSD apart from the heap (here the log's), as the tablespace `pgtemp` | sorts and index builds that spill |
 | Repositories and build trees | an SSD | |
 | Datasets and archives | any bulk storage | read once, at ingestion |
 
@@ -35,26 +35,26 @@ All repositories, Laplace's and its dependencies' alike, live under one source r
 | Laplace-Native | the shared native library, its tools, and its benchmarks |
 | Laplace-postgres | the PostgreSQL extension, the content schema, and the query benchmark |
 | Laplace-Engine | the engine |
-| Laplace-Operations | the machine, the build, the deployment, the repair and the agents: `laplace.env`, `setup.sh`, `build.sh`, `deploy.sh`, `agents.sh` |
+| Laplace-Operations | the machine, the build, the deployment, the repair and the agents: `laplace.env`, `setup.sh`, `build.sh`, `deploy.sh`, `ingest.sh`, `agents.sh`, and the workflows `laplace.yml` and `ingest.yml` |
 | Laplace-Prototype | the test bench the implementation is checked against |
 | Laplace-Wiki | this documentation |
-| BLAKE3, PostgreSQL, PostGIS, GEOS, PROJ, GDAL, Eigen, Spectra | dependencies, built from source |
+| GEOS, PROJ, GDAL, Spectra (headers), PostgreSQL, PostGIS, BLAKE3, CORE-MATH, tree-sitter | dependencies, built from source by `setup.sh` (`deps`); Eigen is the distribution's `libeigen3-dev`, and ICU 78 is unpacked by hand into `$LAPLACE_ICU_DIR` |
 
 ## Toolchain
 
 | Tool | Requirement | Use |
 | --- | --- | --- |
-| Intel oneAPI: `icx`, `icpx`, MKL, TBB, IPP | 2025 or newer | the primary compilers and libraries |
+| Intel oneAPI: `icx`, `icpx`, MKL, TBB, IPP | 2025 or newer, installed by hand; `setup.sh` reports it missing | the primary compilers and libraries |
 | gcc | any current | a second compiler, to check that results do not depend on the compiler |
-| CMake | 3.24 or newer; 4.x for `icx` 2026 | Laplace builds |
-| Meson and Ninja | Meson 0.61 or newer | PostgreSQL's own build system |
+| CMake | 3.24 or newer; 4.x for `icx` 2026; `setup.sh` installs Kitware's release under `$LAPLACE_PREFIX` when the distribution's is older | Laplace builds |
+| Ninja | any current | Laplace's builds; PostgreSQL is built with its `configure` |
 | ICU | 78 or newer | Unicode 17 segmentation |
 | PostgreSQL | 18 | with liburing, LZ4, zstd, ICU, and OpenSSL |
-| PostGIS | 3.6 | |
-| liburing | 2.1 or newer | optional; see [Database](Database.md#io) |
+| PostGIS | its `master` branch, as `setup.sh` clones it | |
+| liburing | 2.1 or newer | PostgreSQL is always built with it; see [Database](Database.md#io) |
 
 Thread counts come from the environment: `OMP_NUM_THREADS` and `MKL_NUM_THREADS` set how many cores MKL and OpenMP kernels use. Some shells and agents set them to 1, which makes every kernel single-threaded. Set them to the number of cores for ingestion and measurement.
 
-An environment file sources oneAPI and points the builds at Eigen, Spectra, BLAKE3, and the custom PostgreSQL. It is sourced for Laplace and PostgreSQL builds only, not for anything built against another PostgreSQL.
+`laplace.env` in Laplace-Operations is the one environment: every script sources it, and it sources oneAPI once, sets `PG_CONFIG`, the paths of BLAKE3, CORE-MATH and tree-sitter, and `PATH`.
 
-Anything that needs root is written as a script that logs its output, so the result can be read afterward.
+Only `setup.sh` and `agents.sh` need root, and a person runs them; what they did is logged under `$LAPLACE_WORK/logs/root`. No runner has root or a sudo rule. `setup.sh` is parts, each comparing its declaration with the machine and making only what is missing: `volumes`, `packages`, `rights`, `kernel`, `deps`, `cluster`, `settings`, `access`, `report`; `drop`, never part of `all`, empties the cluster's directories when `LAPLACE_DROP` names the data directory and no ingest is running.

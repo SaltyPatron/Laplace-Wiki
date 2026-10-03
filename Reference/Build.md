@@ -1,6 +1,6 @@
 # Build
 
-Every Laplace build uses one compiler, one set of floating-point flags, and one set of presets; `build.sh` builds the extension and the engine, `deploy.sh` runs the whole deployment, and the native tests run after every build of the library.
+Every Laplace build uses one compiler, one set of floating-point flags, and one set of presets; `build.sh` builds the extension and the engine, `deploy.sh` makes the database, `ingest.sh` fills it, and the native tests run after every build of the library.
 
 ## Flags
 
@@ -61,20 +61,30 @@ tools/build_grammars.sh [/vault/Data/TreeSitter] [$LAPLACE_GRAMMARS]
 
 ## deploy.sh
 
-`Laplace-Operations/deploy.sh` runs the five steps of [Operations: Deployment](../Operations/Deployment.md) in order, each as a logged step under `$LAPLACE_WORK/logs/deploy/<UTC timestamp>/<step>.log` with its exit status in `<step>.exit`, stopping at the first that does not finish:
+`Laplace-Operations/deploy.sh` makes a database a Laplace database and loads no data. Each step is logged under `$LAPLACE_WORK/logs/deploy/<UTC timestamp>/<step>.log` with its exit status, and the run stops at the first step that fails.
 
 | Step | Command | Skipped when |
 | --- | --- | --- |
 | `build` | `build.sh install` | never; what is built is not rebuilt |
 | `tier0` | `laplace tier0` | `$LAPLACE_TIER0` exists and is not empty |
 | `flags` | `laplace flags` | `${LAPLACE_TIER0%.bin}.flags` exists and is not empty |
+| `highway` | `laplace highway` | never: seconds, and always current with its resources and Laplace-Native's frozen slots |
+| `grammars` | `tools/build_grammars.sh` | `$LAPLACE_GRAMMARS` is not empty |
 | `deploy` | `laplace deploy` | never; idempotent |
-| `ingest` | `laplace ingest` | never; recorded files are passed over by their trunks |
-| `index` | `laplace index` | never; `CREATE INDEX IF NOT EXISTS` |
 | `status` | `laplace status` | never |
-| `bench` | `laplace bench` | never |
 
-It needs PostgreSQL 18 with PostGIS running, a role that may create databases and extensions, and the data under `$LAPLACE_DATA`. `LAPLACE_CONNINFO="… dbname=NAME" ./deploy.sh` deploys another database, made if the server does not have it. A run that was cut off is taken up by running it again.
+It takes a lock per database in `$LAPLACE_LOCKS` and leaves with exit 3 while an ingest of that database runs. `./deploy.sh drop` first drops the database through the role, `DROP DATABASE … WITH (FORCE)`, refusing `postgres` and an empty name, then deploys it again, empty. It needs PostgreSQL 18 with PostGIS running and the role `setup.sh` made. `LAPLACE_CONNINFO="… dbname=NAME" ./deploy.sh` deploys another database, made if the server has none of that name.
+
+## ingest.sh
+
+`Laplace-Operations/ingest.sh [source...]` fills the database `laplace.env` names: the sources named, or every source in `recipes/order`. It holds a lock per database, builds and installs nothing, and needs `laplace`, tier 0 and the highway already deployed. Its steps, logged under `$LAPLACE_WORK/logs/ingest-runs/<UTC timestamp>`:
+
+| Step | What |
+| --- | --- |
+| `ingest` | `laplace ingest` |
+| `wal` | the write-ahead log the ingest made, by table, index and resource manager: full-page images and their bytes, and the records' own data, read each minute with `pg_walinspect` into `wal.tsv` |
+| `status` | `laplace status` |
+| `bench` | `laplace bench` |
 
 ## Tests after a build
 

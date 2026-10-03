@@ -2,7 +2,7 @@
 
 PostgreSQL's defaults suit small general-purpose servers; Laplace tunes memory, I/O, and planning to its hardware and to the way it uses geometry and indexes.
 
-Settings are made with `ALTER SYSTEM`; those marked *restart* take effect when the server restarts. The values in the examples are the reference machine's, with 125 GB of RAM, 12 threads, and an NVMe heap.
+`sudo ./setup.sh settings` makes every setting here with `ALTER SYSTEM`, from the declaration at the top of `setup.sh`, and restarts the server itself when one marked *restart* changed; while an ingest is running, the restart waits for the next run of `setup.sh`. The values in the examples are the reference machine's, with 125 GB of RAM, 12 threads, and an NVMe heap.
 
 ## Memory
 
@@ -14,7 +14,7 @@ Settings are made with `ALTER SYSTEM`; those marked *restart* take effect when t
 | `work_mem` | generous: Laplace runs few, heavy sessions | 256 MB |
 | `maintenance_work_mem` | large: GIN index builds use it all | 8 GB |
 
-`SHOW shared_memory_size_in_huge_pages` gives the number of huge pages the server needs.
+`SHOW shared_memory_size_in_huge_pages` gives the number of huge pages the server needs. `setup.sh` (part `kernel`) writes `vm.nr_hugepages` to `/etc/sysctl.d/60-laplace.conf`: that need, or the declared buffers' if larger, and 3% over.
 
 ## I/O
 
@@ -36,9 +36,10 @@ The stress test drops the operating system's page cache and PostgreSQL's buffers
 | `wal_buffers` | large enough that a bulk load's backends do not fill it; *restart* | 256 MB |
 | `wal_compression` | `zstd`: a load's log is mostly full-page images of random-key indexes. **Measured** on 23,450 of ConceptNet's B-tree images: 3,781 bytes a page against lz4's 4,711 (-20%), at 57 µs a page against 17, about a quarter of one core at 6,500 images a second | |
 | `checkpoint_timeout` | 60 min | |
+| `checkpoint_completion_target` | 0.9 | |
 | `bgwriter_lru_maxpages` | high, so the background writer cleans buffers before backends must | 1000 |
 
-Every page a checkpoint has not yet seen modified goes into the log whole the first time it changes (a full-page image), and each is compressed by the backend that writes it. **Measured** over the first four hours of a full ingest at 32 GB, 30 min and `zstd`: 273 GB of log, 999,307,239 records, 47,175,989 full-page images (about 377 GB before compression), and the log's buffers full 2,616,329 times; client backends wrote 10,051,406 relation pages themselves. Fewer checkpoints mean fewer full-page images, `lz4` compresses them at a fraction of `zstd`'s cost (index pages of random IDs compress little either way), and larger buffers keep backends from writing the log themselves.
+Every page a checkpoint has not yet seen modified goes into the log whole the first time it changes (a full-page image), and each is compressed by the backend that writes it. **Measured** over the first four hours of a full ingest at 32 GB, 30 min and `zstd`: 273 GB of log, 999,307,239 records, 47,175,989 full-page images (about 377 GB before compression), and the log's buffers full 2,616,329 times; client backends wrote 10,051,406 relation pages themselves. Fewer checkpoints mean fewer full-page images, and larger buffers keep backends from writing the log themselves. That run used `max_wal_size` 32 GB and a 30-minute `checkpoint_timeout`; the settings are now the table's.
 
 Bulk ingestion sessions set `synchronous_commit = off`.
 
@@ -61,6 +62,8 @@ PostgreSQL and PostGIS assume that a geometry's coordinates are positions and th
 | `gin_pending_list_limit` on the container index (each partition) | 256 MB | A load's entries go into the pending list in order and are merged once, when the source is in. At the default 4 MB the list merged every few thousand paths into random pages of the index, each written into the log whole: **measured** 4.05 GB of full-page images per GB of paths loaded, and 1.02 GB at 256 MB. |
 | `jit` | off | Compiling a short lookup costs more than it saves. |
 | `max_parallel_maintenance_workers` | about half the cores | Index builds, including GIN, run in parallel. |
+| `max_worker_processes`, `max_parallel_workers`, `max_parallel_workers_per_gather` | the cores and four; the cores; half the cores | |
+| `temp_tablespaces` | `pgtemp`, on its own volume | |
 
 An analytic session can turn parallelism back on for itself.
 
@@ -74,3 +77,17 @@ An analytic session can turn parallelism back on for itself.
 | `track_io_timing`, `track_wal_io_timing` | on |
 
 `ALTER SYSTEM SET shared_preload_libraries` takes an unquoted list. A quoted `'a,b'` is stored as one library named `a,b`, and the server then does not start. `ALTER SYSTEM` also rejects values the running binary does not know, such as `io_uring` before a server built with liburing runs.
+
+## Access
+
+`setup.sh` (part `access`) writes the whole of `pg_hba.conf`, never a line added to what is there, and listens on every address with `ssl` on, `port` 5432, and `max_connections` 100:
+
+| Who | How |
+| --- | --- |
+| `postgres` over the socket | peer |
+| `laplace` over the socket | peer, through the map `laplace`: the members of the shared group, the runners' user, the server's user |
+| `laplace` and `postgres` from this host | scram-sha-256 |
+| `laplace` and `postgres` from `$LAPLACE_LAN` | scram-sha-256 over TLS only |
+| anything else without TLS | rejected |
+
+The role `laplace` is made `LOGIN SUPERUSER`; its password is kept in `/etc/laplace/pgpass` and copied into each operator's `~/.pgpass`, and set again on a cluster made again after `drop`. The firewall allows the port from `$LAPLACE_LAN`.

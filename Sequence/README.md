@@ -13,7 +13,7 @@ A stage's first operation needs the last operation of the stage before it. The s
 
 ## Where to start
 
-- To build an install: stages 1 to 14 in order, with [Reference: Build](../Reference/Build.md), [Environment](../Reference/Environment.md), and [CLI](../Reference/CLI.md) open beside them; `deploy.sh` runs stages 3 to 14 as one logged script.
+- To build an install: stages 1 to 14 in order, with [Reference: Build](../Reference/Build.md), [Environment](../Reference/Environment.md), and [CLI](../Reference/CLI.md) open beside them; `deploy.sh` makes the database (stages 3 to 8) and `ingest.sh` fills it (stages 9 to 14), each as one logged script.
 - To write a source: [9. Sources](Sources.md) and [10. Recipes](Recipes.md), with [Reference: Recipes](../Reference/Recipes.md) for the grammar.
 - To read what is recorded: [15. Web](Web.md), [18. Firmware](Firmware.md), [19. Pull](Pull.md), with [Reference: Reads](../Reference/Reads.md) and [Firmware](../Reference/Firmware.md).
 - To see what a byte, a row, or a function is: [Reference: Formats](../Reference/Formats.md), [Schema](../Reference/Schema.md), [SQL](../Reference/SQL.md), [Native](../Reference/Native.md).
