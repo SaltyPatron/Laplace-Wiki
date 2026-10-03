@@ -1,6 +1,6 @@
 # Firmware
 
-A firmware is a text file of decisions, one line each, read by `firmware.c` for one operation at a time; `firmware/program.firmware` is the program's own and says what a firmware can decide; `$LAPLACE_FIRMWARE`, or `--firmware FILE` on `pull`, `hop`, `translate`, `degrees`, and `fills`, names another.
+A firmware is a text file of decisions, one line each, read by `firmware.c` for one operation at a time; `firmware/program.firmware` is the program's own and says what a firmware can decide; `$LAPLACE_FIRMWARE`, or `--firmware FILE` on `pull`, `turn`, `hop`, `translate` and `degrees`, names another.
 
 The firmware is never a record. The same records pulled under another firmware give another selection, and no standing changes.
 
@@ -24,11 +24,15 @@ The firmware is never a record. The same records pulled under another firmware g
 | `emit N` | `emit` | how many constituents a turn may emit; 32 unless said |
 | `enough N` | `enough` | a turn is complete when no more than N (0 to 1) of what its obligations owed at the start, each word as hard as it pulls, is still owed; 0 unless said |
 | `take fact` / `take segment` / `take attestations N` / `take constituents N` | `take[16]` | under `for pull`, the segments a step takes, in order: the single fact when the fact branch fires; the rest of the branch the prompt is a run of, followed along what was observed; the N strongest strands of the prompt itself; the N strongest strands of each of its constituents |
+| `take chain N RELATION... [\| RELATION...]` | `take`, `chain` | under `for pull` (and in `turn`), from each of the N words that pull hardest, the relations followed in order, each by its witness's order then its standing: where the chain ends is the answer; alternatives parted by `\|` are tried in turn (at most 8 steps, 4 alternatives) |
+| `weigh N KIND...` | `weigh[128]` | strands of these kinds pull N as hard (0 to 1; 1 unless said); the firmware's reading, never a change to a standing |
+| `role by KIND` | `role_by` | how hard a word pulls is read from what is attested of it under KIND |
+| `role N VALUE...` | `role[128]` | a word of that VALUE pulls N as hard (0 to 1) |
 | `up RELATION...` | `up[8]` | under `for translate`, the relations from a word up to its concept, in order; translation follows them back down in another language |
 | `language HELD SAYS` | `language[2]` | under `for translate`, the language of what stands below the concept: what holds it under HELD, and what that says under SAYS |
 | `gloss RELATION` | `gloss` | under `for translate`, what is shown of a concept |
 
-Reading: `firmware_for(path, op)` starts from the defaults, then applies every line that holds everywhere and every line under `for op`, skipping other operations' sets. At most 32 names per refuse list and 16 take steps.
+Reading: `firmware_for(path, op)` starts from the defaults, then applies every line that holds everywhere and every line under `for op`, skipping other operations' sets. At most 32 names per refuse list, 16 take steps, 128 weights and roles, 8 steps of a chain and 4 alternatives.
 
 ## Defaults
 
@@ -44,27 +48,33 @@ lambda 0.05
 hops 8
 top always
 order witness
-
+role by UPOS
+role 1 NOUN ADJ NUM
+role 0.75 PROPN
+role 0.5 VERB ADV ADP PART
+role 0.25 PRON DET CCONJ PUNCT
+role 0.05 SCONJ
+role 0 AUX
 for hop
   fan 4096
-
 for search
   fan 512
-
 for translate
   fan 4096
   up Sense synset ili
   language Synset language
   gloss Definition
-
 for pull
   fan 4096
+  refuse predicate BNC PENN GF PT NER WSL Target Other Sent Verb Noun Adj Prep Adv UPOS XPOS DEPREL FEATS MISC LEMMA type n f itype
+  take chain 1 Sense Definition | LEMMA Sense Definition
+  enough 0.5
   take segment
   take attestations 3
   take constituents 1
 ```
 
-This is the one set of decisions of [Personality firmware: One set of decisions](../Semantics/Firmware.md#one-set-of-decisions): *k* = 2, always the top, fan 4,096 on a hop and 512 on a search, 8 hops, λ = 0.05; and a pull that takes the rest of the branch, three strands of the prompt, and one of each constituent.
+This is the one set of decisions of [Personality firmware: One set of decisions](../Semantics/Firmware.md#one-set-of-decisions): *k* = 2, always the top, fan 4,096 on a hop and 512 on a search, 8 hops, λ = 0.05; and a pull that takes the rest of the branch, three strands of the prompt, and one of each constituent. Besides those, the file carries a word's pull by its part of speech (`role`, the role trust fitted on SemCor's held-out documents), the tag layers a pull refuses, a chain from a word through its sense to a definition, and `enough 0.5`; the file marks the last three as defaults to be ruled on.
 
 ## Where each decision acts
 
@@ -75,7 +85,7 @@ This is the one set of decisions of [Personality firmware: One set of decisions]
 | `fan` | the `LIMIT fan + 1` of the claims fetch; `capped` is reported when more exist |
 | `hops` | the frontier's hop bound |
 | `top within N` | `take_top` in `pull`: among strands within `N` of the one above, one is drawn with `rand_r` from `--seed` or the clock |
-| `refuse` | `refused()`: strands with those predicates or witnesses removed before the sort |
+| `refuse` | refused predicates go into every claim read the database makes (`laplace_claims`, `laplace_claims_each`, `laplace_couple`) and are taken out before the fan; `refused()` takes out refused witnesses before the sort |
 | `fact` | the fact branch of `pull` |
 | `order witness` | `positions_of` and `claim_by_position` before `claim_by_conf` on an open claim |
 | `shape` | which of `lp_frechet4`, `lp_frechet4_outliers`, `lp_dtw4`, `lp_edr4` a shape comparison calls |

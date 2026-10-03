@@ -57,7 +57,7 @@ A file is laid out in tiers, outermost first, each parted from the next by what 
 | `part PATH by SEP [is IS] [pieces N] [space CHAR]` | a named part is itself parts, parted by SEP; with `is`, each is `KEY IS VALUE`; with `pieces`, at most N, the last the rest as written; with `space`, CHAR in it stands for a space. `by json`: a JSON list of texts; `by object`: a JSON value read into the tree, each member under its key. `PATH*` is every part whose name begins so |
 | `empty TEXT...` | what the file writes where it leaves a part empty; an empty part says nothing |
 
-A file laid out in tiers whose outermost parts are lines or end at an empty line, and whose parts point at no other part of the file, is read a stretch at a time when it is longer than a batch.
+A file laid out in tiers whose outermost parts are lines or end at an empty line, and whose parts point at no other part of the file, is read a stretch at a time when it is longer than a batch, provided its recipe is curated and has no header, no quoted outermost tier and no `split`.
 
 ### The layout: a grammar's nodes
 
@@ -87,6 +87,7 @@ A tree-sitter field names a child that has no name of its own; a group named by 
 | `type NAME LIST... [matching PATTERN] [as TEMPLATE]` | the part's text is a resource's key of a type in the highway's LIST, read as that type; several lists, the first that knows it; with a pattern, the key as those lists write it (`vn:51.2` read as `51.2`), and a text the pattern does not match is no key of theirs; a key no list knows is counted and said, never taken for text |
 | `metadata NAME...` | the part is said of the file itself: it goes in the file's metadata tree |
 | `omit NAME...` | the part is the file's bookkeeping, read by nothing, nor anything inside it |
+| `perfcache` | after the layout (`format`, `tier`): a part named as a property the flags perf-cache holds (`tier0.flags`, by its name or its long name, matched loosely) is read from the flags for every codepoint and not attested again; the flags must be generated |
 | `own NAME...` | the part's value stands only within the source: `[witness, NAME, value]` |
 | `codepoints NAME...`, `range NAME...` | code points written in hex, as the text they are; `FIRST..LAST` the path of the two |
 

@@ -1,8 +1,8 @@
 # SQL
 
-The extension installs one type, `blake3`, its operators and operator classes, and 46 functions, 42 of them in C calling Laplace-Native and 4 in SQL over them; every function is `IMMUTABLE STRICT PARALLEL SAFE` unless stated, so a constant argument folds at plan time and a lookup by computed ID becomes an index lookup.
+The extension installs one type, `blake3`, its operators and operator classes, and 80 functions, 76 of them in C calling Laplace-Native, 3 in SQL over them and one in PL/pgSQL (`laplace_schema_indexes`), and one aggregate; every function is `IMMUTABLE STRICT PARALLEL SAFE` unless stated, so a constant argument folds at plan time and a lookup by computed ID becomes an index lookup.
 
-`laplace--1.0.sql` declares them in the order below; `laplace_pg.c` defines them. Every function the script declares is defined in `laplace_pg.c`; the build checks each declared symbol against the built library.
+`laplace--1.8.sql` declares them; `laplace_pg.c` defines them. The extension's CI installs it fresh into a scratch database before every update, so a script that does not install fails there.
 
 ## The type
 
@@ -34,7 +34,7 @@ The extension installs one type, `blake3`, its operators and operator classes, a
 | `laplace_vertex_ids(geometry)` | `blake3[]` | the distinct IDs a path holds, the GIN key; `COST 10000`, measured: at lower costs the planner scans the partition of whole books and decodes every one on every lookup, 90 ms of a 111 ms query | `lp_xyz_to_id` per vertex |
 | `laplace_path_times(geometry, blake3[]) → SETOF (id blake3, times bigint)` | rows | how many times a path holds each given ID, runs included, only the IDs it holds; `COST 1000 ROWS 4`; one pass over the path with a binary search per vertex | `lp_m_run` |
 | `laplace_follows(geometry, blake3[])` | `blake3[]` | the ID after every run of the phrase inside the path; `COST 1000` | `lp_follows` |
-| `laplace_text(blake3)` | `text` | the entity recomposed to its text, walking paths down to tier 0 through SPI, one prepared `SELECT st_asewkb(path) FROM physicality WHERE entity = $1 LIMIT 1` per composition, at most 64 tiers deep; `STABLE` | `lp_tier0_codepoint`, `lp_ewkb_vertices` |
+| `laplace_text(blake3)` | `text` | the entity recomposed to its text, walking paths down to tier 0 through SPI, one prepared `SELECT entity, st_asewkb(path) FROM physicality WHERE entity = ANY($1)` per level of the DAG, an error past 64 levels; `STABLE` | `lp_tier0_codepoint`, `lp_ewkb_vertices` |
 
 ### Containment and the GIN
 
@@ -98,9 +98,41 @@ Read from the memory-mapped flags at `laplace.flags` by the standard's own names
 
 | Function | Returns | Computes |
 | --- | --- | --- |
-| `laplace_forward(ids blake3[], fan bigint)` | `SETOF (i, j, paths, runs, next, times)` | for every contiguous segment `[i..j]` of the prompt's constituents: the observations holding all of its parts (claims left out, at most `fan`), how many hold it as a run, and what follows the run in each, counted, one row per continuation; a segment held by nothing, one row with `next` null. Every prefix and every segment at once; `STABLE`, kept plan |
+| `laplace_forward(ids blake3[], fan bigint)` | `SETOF (i, j, paths, runs, next, times)` | for every contiguous segment `[i..j]` of at least two of the prompt's constituents (at most 256) that holds a composition, a segment of atoms alone being a hub: the observations holding all of its parts (claims left out, at most `fan`), how many hold it as a run, and what follows the run in each, counted, one row per continuation; a segment held by nothing, one row with `next` null. Every prefix and every segment at once; `STABLE`, kept plan |
 | `laplace_containers(parts blake3[], bits smallint[])` | `SETOF (entity, path, tier, mask)` | every path holding all of the parts, above them, with the bits asked for; with no bits, the mask takes no part in the statement (any of no bits would send the mask index over every row) |
 | `laplace_attested(claims blake3[])` | `SETOF (claim, witness, position, trust)` | who attested each claim: a claim witnessed on its own is an attestation; one witnessed within a record is found through the record's path, by the index |
+
+## The web
+
+Each plans its statement once per backend and keeps the plan; each call is one executor run over a set. A claim's tier is one above its highest part, so the claims holding an entity are read above the entity's tier only, through the container index, joined to the consensus. `bits` are the mask bits a row must have (`'{}'`: any row); `refuse` the predicates a firmware refuses, taken out before the fan (`'{}'`: none).
+
+| Function | Returns | Computes |
+| --- | --- | --- |
+| `laplace_claims(parts blake3[], fan bigint, bits smallint[], refuse blake3[])` | `SETOF (entity, path, rating, deviation, volatility, matches)` | the claims holding all of the parts, at most `fan` |
+| `laplace_claims_each(ids blake3[], fan bigint, bits smallint[], refuse blake3[])` | `SETOF (i, entity, path, rating, deviation, volatility, matches)` | the same for each ID on its own, `i` its place in `ids` |
+| `laplace_fills(keys blake3[])` | `SETOF (entity, id, times, tier)` | every path above the lowest key that holds any of them, and what follows each key in it, counted |
+| `laplace_paths(ids blake3[])` | `SETOF (entity, path)` | the paths of a set of entities: one level of the DAG a call |
+| `laplace_middle_any(geometry, blake3[])` | `boolean` | whether any of the IDs is held between a path's first vertex and its last: a refused predicate |
+| `laplace_couple(occ blake3[], fan bigint, refuse blake3[], shape smallint, shape_n float8, keep integer)` | `SETOF (entity, occ, route, rating, deviation, volatility, via, rel, tier, distance, vertices)` | COUPLE as one native operator: route 0, every claim holding an occurrence (its other end); route 1, every observation holding an occurrence, at most `fan` each; route 2, the `keep` observed curves nearest the observation's own, nominated by the GIN and the GiST and measured natively (`shape` -1 none, 0 Fréchet, 1 Fréchet with `shape_n` outliers, 2 DTW, 3 EDR within `shape_n`). `occ` in a row is the occurrence it answers, 1-based, 0 for shape |
+| `laplace_schema_indexes()` | `void` | every index of [Schema](Schema.md#the-indexes), each `IF NOT EXISTS`; PL/pgSQL |
+
+## The highway and the banks
+
+| Function | Returns | Computes |
+| --- | --- | --- |
+| `laplace_type(list text, value text)` | `integer` | a type's slot in a list, from its content |
+| `laplace_type_key(list text, key text)` | `integer` | the slot a resource's key names, through the highway's `.keys` |
+| `laplace_type_id(list text, slot integer)` | `blake3` | the ID of a slot's content |
+| `laplace_type_edges(a text, slot integer, b text)` | `integer[]` | the slots of list `b` a slot of list `a` maps to |
+| `laplace_highway_fingerprint()` | `text` | the highway's fingerprint; `STABLE` |
+| `laplace_bank_bit(bank text, value text)` | `smallint` | a value's bit in a bank, its frozen slot; -1 when the bank does not hold it; an error for a bank that does not exist |
+| `laplace_bank_of(blake3)` | `(bank, grp, carrier, bit)` | the bank a type is a value of, and its bit; nulls for none |
+| `laplace_mask_has(bit, smallint)`, `laplace_mask_has_all(bit, smallint[])`, `laplace_mask_has_any(bit, smallint[])` | `boolean` | the operators `?`, `?&` and `?\|` on a mask, with `contsel` as their selectivity |
+| `laplace_mask_ops` | GIN operator class for `bit`, `STORAGE smallint` | strategies 1 `?`, 2 `?&`, 3 `?\|`: the keys are the positions of the set bits |
+
+## Settings
+
+`laplace.tier0`, `laplace.flags` and `laplace.highway` name the perf-caches (`PGC_SUSET`); `laplace deploy` sets each on the database, and each backend maps the file on first use.
 
 ## Observability
 

@@ -41,15 +41,19 @@ Laplace-Engine and Laplace-postgres call these and keep no copy of any of them. 
 | Function | Contract |
 | --- | --- |
 | `void lp_id_to_xyz(const lp_id *id, double xyz[3])` | the 128 bits into the X, Y, Z mantissas, 43 + 43 + 42, exponent −2, values in `[0.25, 0.5)` |
-| `void lp_xyz_to_id(const double xyz[3], lp_id *out)` | the inverse, exact |
+| `void lp_xyz_to_id(const double xyz[3], lp_id *out)` | the inverse, exact, read through the ID's own 43, 43 and 42 bits (`lp_xyz_id_mask[3]`): the spare bits do not change which entity a vertex is |
 | `size_t lp_ewkb_path(const lp_id *children, size_t n, uint8_t *out, size_t cap)` | EWKB for a path: POINT ZM when there is one run, else LINESTRING ZM, one vertex per run of identical children with the run length in M; returns bytes written, or bytes needed if `cap` is too small, 0 for `n == 0` |
-| `size_t lp_ewkb_runs(const lp_id *ids, const uint32_t *runs, size_t nv, uint8_t *out, size_t cap)` | the same from runs already collapsed; `runs[i]` is M as it is written, run and said bits |
+| `size_t lp_ewkb_runs(const lp_id *ids, const uint64_t *m, size_t nv, uint8_t *out, size_t cap)` | the same from runs already collapsed; `m[i]` is M as it is written, run and said bits (`lp_m_of`) |
+| `size_t lp_ewkb_runs_spare(const lp_id *ids, const uint64_t *m, const uint32_t *spare, size_t nv, uint8_t *out, size_t cap)` | the same, each vertex carrying a value in its spare bits (`spare[i]`; 0 none; NULL none at all) |
+| `LP_SPARE_BITS` 28, `LP_SPARE_TAG_BITS` 4; `lp_spare_of(tag, payload)`, `lp_spare_tag(v)`, `lp_spare_payload(v)`; `uint32_t lp_xyz_spare(const double xyz[3])`, `void lp_xyz_spare_set(double xyz[3], uint32_t v)` | a vertex's 28 spare bits: bits 0 to 3 the layout's tag, 4 to 27 its payload |
+| `size_t lp_path_ids(ewkb, len, lp_id *out, size_t cap)`, `size_t lp_path_vertices(ewkb, len, lp_vertex *out, size_t cap)` | a path's IDs in order, runs expanded; or its vertices, `lp_vertex { id; run; said; spare; }` |
+| `lp_m_bits`, `lp_m_run`, `lp_m_said`, `lp_m_of`; `LP_M_SAID_BITS` 3 | a vertex's M: its run in the low 30 bits, what it is said to be in the 3 above |
 | `size_t lp_ewkb_point4(const double xyzm[4], uint8_t *out, size_t cap)` | a POINT ZM of real coordinates, 37 bytes |
 | `size_t lp_ewkb_vertices(const uint8_t *ewkb, size_t len, const uint8_t **vertices)` | parse a POINT ZM or LINESTRING ZM, little-endian, optional SRID; the vertex count and a pointer to the first 32-byte vertex; 0 on malformed input |
 
 ## Trajectory matching: follows.c
 
-`size_t lp_follows(const uint8_t *ewkb, size_t len, const lp_id *phrase, size_t np, lp_id *out, size_t cap)`: every place the phrase occurs as a run inside the path, vertices expanded by run length, the ID of the vertex that follows it. The phrase is encoded once into vertex bytes; a SIMD scan finds candidate starts by the phrase's first vertex's 24 bytes of X, Y, Z; the rest of the window is compared byte for byte; only continuations are decoded. Returns the continuations found; at most `cap` are written. Measured at one core's memory bandwidth, 14.2 GB/s scalar and 15.0 GB/s AVX2.
+`size_t lp_follows(const uint8_t *ewkb, size_t len, const lp_id *phrase, size_t np, lp_id *out, size_t cap)`: every place the phrase occurs as a run inside the path, vertices expanded by run length, the ID of the vertex that follows it. The phrase is encoded once into vertex bytes; a SIMD scan finds candidate starts by the phrase's first vertex's 24 bytes of X, Y, Z; the rest of the window is compared through the ID's own bits (`lp_xyz_id_mask`) in the scalar, AVX2 and AVX-512 kernels alike, so spare values do not hide a match; only continuations are decoded. Returns the continuations found; at most `cap` are written. Measured at one core's memory bandwidth, 14.2 GB/s scalar and 15.0 GB/s AVX2.
 
 ## Shape measures: geom4d.c
 
@@ -139,3 +143,23 @@ The open set of a best-first search over rated claims, Dijkstra or A*: entities 
 | `const lp_reached *lp_frontier_find(f, id)`, `size_t lp_frontier_count(f)` | |
 
 `lp_reached { id, from, claim; double cost, order; uint32_t hops; bool closed; }`.
+
+## The highway: highway.c
+
+The third perf-cache: one record per type, in the form of a tier-0 record whose rank is the type's slot, the lists in order, then the edges between them ([Formats: The highway's files](Formats.md#the-highways-files)).
+
+| Function | Does |
+| --- | --- |
+| `const char *lp_highway_path(void)` | `$LAPLACE_HIGHWAY`, or tier 0's path with `.highway` |
+| `const lp_highway *lp_highway_map(const char *path)` | memory-maps the highway and reads its layout; NULL when either is missing |
+| `const lp_list *lp_highway_list(h, name)` | a list by name: its name, title, first record and count |
+| `const lp_tier0_record *lp_highway_at(h, list, slot)`, `int64_t lp_highway_slot(h, list, id)` | a slot's record; a type's slot by its content's ID, -1 when the list has none |
+| `int64_t lp_highway_key(h, list, key)` | the slot a resource's key names |
+| `size_t lp_highway_edges(h, a, slot, b, const lp_edge **out)` | the slots of list `b` a slot of list `a` maps to |
+| `void lp_highway_fingerprint(h, uint8_t out[32])` | the highway's fingerprint |
+| `const lp_bank *lp_highway_bank(h, name)`, `const lp_bank *lp_highway_bank_of(h, id, int32_t *bit)` | a bank by name; the bank a type is a value of, and its bit. `lp_bank { name, group, carrier, width, list }` |
+| `LP_KIND_CLAIM` 0, `LP_KIND_RECORD` 1, `LP_KIND_TUPLE` 2, `LP_KIND_FILE` 3, `LP_MASK_BITS` 256 | the `kind` bank's values and a mask's width |
+
+## Helpers: ids.c
+
+`lp_idmap_new`, `_free`, `_put`, `_find`, `_count`, `_key`, `_value`: an open-addressing map from IDs to their places, growing as it fills. `lp_be(p, n)`, `lp_be_f64(p)`: big-endian integers and doubles as libpq's binary results write them. `lp_factor` (compose.c) factors a repeated block out of a run of children; `lp_text_free` frees a text context.

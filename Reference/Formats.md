@@ -53,7 +53,7 @@ The layout file, the flags path plus `.layout`, is tab-separated, one field per 
 
 A path is a POINT ZM or LINESTRING ZM whose vertices are not positions. Each vertex is 32 bytes: X, Y, Z, M as doubles.
 
-- **X, Y, Z carry the constituent's ID** (`lp_id_to_xyz`): the 16 bytes read as one little-endian 128-bit integer *v*; `part0 = v & (2^43 − 1)`, `part1 = (v >> 43) & (2^43 − 1)`, `part2 = v >> 86` (42 bits); each part is placed in the low mantissa bits of a double whose exponent field is 1021 (`EXP_BITS = 1021 << 52`), sign 0, so every value lies in `[0.25, 0.5)`. `lp_xyz_to_id` reads the low 52 bits of each and reassembles *v*. Round-trip is exact for every ID; measured 104 M per second per core.
+- **X, Y, Z carry the constituent's ID** (`lp_id_to_xyz`): the 16 bytes read as one little-endian 128-bit integer *v*; `part0 = v & (2^43 − 1)`, `part1 = (v >> 43) & (2^43 − 1)`, `part2 = v >> 86` (42 bits); each part is placed in the low mantissa bits of a double whose exponent field is 1021 (`EXP_BITS = 1021 << 52`), sign 0, so every value lies in `[0.25, 0.5)`. `lp_xyz_to_id` reads only the ID's own bits of each, 43, 43 and 42 (`lp_xyz_id_mask`), and reassembles *v*. The 28 bits the ID leaves, 9, 9 and 10, are the vertex's spare bits (`lp_xyz_spare`, `lp_xyz_spare_set`): bits 0 to 3 a tag saying which layout they are in, 4 to 27 its payload, 0 for none; a value there never changes which entity the vertex is, and the scans compare through the ID's bits only. Round-trip is exact for every ID; measured 104 M per second per core.
 - **M carries the vertex's metadata** as an integer in a double: the low 30 bits (`LP_M_RUN_BITS`) are the run length, how many times the child is repeated, 1 or more; above them, what the vertex is: `LP_SAID_CLAIM` = 1, `LP_SAID_RECORD` = 2, `LP_SAID_TUPLE` = 3, `LP_SAID_METADATA` = 4; `lp_m_run(m)`, `lp_m_said(m)`. A run of identical children is one vertex.
 - **Atoms**: a POINT ZM holding the codepoint's own ID with run 1.
 
@@ -71,7 +71,7 @@ Paths move only as EWKB and binary COPY; WKT at default precision changed 93.5% 
 | Table | Fields |
 | --- | --- |
 | `entity_t*` | `id` 16 B; `tier` int16; `coord` EWKB POINT ZM 37 B; `hilbert` int64, top bit flipped |
-| `physicality_t*` | `entity` 16 B; `tier` int16; `hilbert` int64; `path` EWKB |
+| `physicality_t*` | `entity` 16 B; `tier` int16; `hilbert` int64; `path` EWKB; `mask` bit varying: its length in bits as int32 (256), then 32 bytes, bit *b* in byte *b* >> 3 under `0x80 >> (b & 7)` |
 | `witness` | `id` 16 B; `lineage` 16 B or NULL; `trust` float8 |
 | `attestation` | `claim` 16 B; `witness` 16 B; `score` float4; `position` int32 or NULL |
 | `consensus` | `claim` 16 B; `rating`, `deviation`, `volatility` float8; `matches` int32 |
@@ -80,7 +80,20 @@ Results are requested in binary (`PQexecParams` with result format 1); `float8` 
 
 ## The engine's node table
 
-In memory during an ingest (`engine.h`): 256 shards by the ID's first byte, each behind its own mutex, open-addressed by the ID's bytes. `Node { id; int64_t m[4]; uint64_t voff; uint32_t nv, len; uint8_t tier, keep; }` and the vertex array `Vtx { id; uint32_t run; }` packed, where `run` is M as it will be written, run length and said bits together. `keep` states during a load: 0 not looked for, 1 new and to be written, 2 recorded already, 3 in the frontier, 5 a file trunk held back to be written last.
+In memory during an ingest (`table.c`): one flat table of slots shared by every thread without a lock, open addressing by linear probing; a slot is empty, or the ID's tag over the node's index, claimed by compare-and-swap. `Node { id; int64_t m[4]; uint64_t voff; uint32_t nv, len; uint8_t tier, keep, kind, live; }` (`kind`: the bits of what whatever holds it says it is; `live`: a node, not an unused place) and the vertex array `Vtx { id; uint64_t m; }` packed, where `m` is M as it will be written, run length and said bits together. `keep` states during a load: 0 not looked for, 1 new and to be written, 2 recorded already, 3 in the frontier, 5 a file trunk held back to be written last.
+
+## The highway's files
+
+`laplace highway` writes the highway beside tier 0 (`$LAPLACE_HIGHWAY`):
+
+| File | What |
+| --- | --- |
+| `tier0.highway` | one record per type in the form of a tier-0 record, its rank the type's slot and its pad the content's tier; then the edges, each a pair of 32-bit slots, grouped by the pair of lists |
+| `.layout` | text, a line each: `records N`; `edges-count N`; `list NAME TITLE FIRST COUNT`, the lists in order with the record each begins at; `edges A B FIRST COUNT`; `bank NAME LIST GROUP CARRIER WIDTH`, copied from `banks.tsv` |
+| `.keys` | `LIST KEY SLOT` a line: the keys the resources point at their types with, resolved by readers and recorded nowhere |
+| `.nodes` | the content of every type as the composition it is: `N` lines (a node, its ID, its tier and its path) and `S` lines (a list's slot and its content's ID), which `laplace deploy` records |
+
+Laplace-Native's manifest keeps what must not move between builds: `manifest/banks.tsv` (`bank list group carrier width`, a line a bank) and `manifest/slots/LIST.tsv` (`slot id status key`, `status` `live` or `retired`), written back by `laplace highway` and never by hand.
 
 ## The recipe, firmware, and layout text files
 

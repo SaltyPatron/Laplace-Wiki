@@ -1,6 +1,6 @@
 # CLI
 
-Laplace is one program, `laplace`, with eighteen commands: the generators of tier 0 and its flags, the deployment of a database, ingestion and its inverses, the indexes, the read commands, and the measurements.
+Laplace is one program, `laplace`, with twenty-one commands: the generators of tier 0 and its flags, the deployment of a database, ingestion and its inverses, the indexes, the read commands, and the measurements.
 
 `laplace` with no command prints the commands and where it will look: the database, tier 0, the recipes, the grammars, the firmware. Where things are comes from the environment, [Environment](Environment.md), else from what the engine was built with. Every command that touches the database takes `-d conninfo`. A command exits 0 when it did what it says, 1 on a failure it reports, 2 on a usage error or a broken recipe or firmware.
 
@@ -12,11 +12,13 @@ Laplace is one program, `laplace`, with eighteen commands: the generators of tie
 
 `laplace flags [-u UCD_ROOT] [-o tier0.flags]`. Reads `PropertyAliases.txt` for the binary and enumerated properties in the standard's order, `PropertyValueAliases.txt` for each enumerated property's values, and `ucd.all.flat.xml` for every codepoint's values; writes the 256-bit records and the `.layout` file beside them, and prints a fingerprint.
 
+## laplace highway
+
+`laplace highway [-o highway.bin]`. Generates the highway from what the resources' recipes say of their types (`types`, `keyed`, `alias`, `maps`; [Recipes](Recipes.md#the-highway)), reading every source that says any in order by the one decomposer: the lists, each type's record, the edges, the keys, the layout and the types' contents as compositions beside it, what it left out by lists, and its fingerprint. Each list's slots are frozen by Laplace-Native's manifest (`$LAPLACE_MANIFEST`, `slots/LIST.tsv`): read, kept, new types appended and gone ones retired, never moved, and written back, with the kept, new and retired counts printed. The layout carries the `bank` lines of `banks.tsv`; a list wider than its bank, or than 256 bits, is refused. Beside `highway.bin` it writes `.layout`, `.keys` and `.nodes`.
+
 ## laplace deploy
 
-`laplace highway [-o highway.bin]`. Generates the highway from what the resources' recipes say of their types (`types`, `keyed`, `alias`, `maps`; [Recipes](Recipes.md#the-highway)), reading every source that says any in order by the one decomposer: the lists, each type's record, the edges, the keys, the layout and the types' contents as compositions beside it, what it left out by lists, and its fingerprint.
-
-`laplace deploy [-d conninfo]`. Makes the database if the server has none of that name, asking `postgres` over the same connection parameters; then `CREATE EXTENSION IF NOT EXISTS` for `postgis`, `laplace`, `pg_stat_statements`, `pg_buffercache`; `ALTER EXTENSION laplace UPDATE`; `ALTER DATABASE … SET laplace.tier0` and `laplace.flags` to this engine's paths; `schema.sql` unless a partitioned `entity` exists; `semantics.sql`; `lookup.sql`; then `laplace status`. Each statement is timed on stdout. Idempotent.
+`laplace deploy [-d conninfo]`. Makes the database if the server has none of that name, asking `postgres` over the same connection parameters; then `CREATE EXTENSION IF NOT EXISTS` for `postgis`, `laplace`, `pg_stat_statements`, `pg_buffercache`; `ALTER EXTENSION laplace UPDATE`; `ALTER DATABASE … SET laplace.tier0`, `laplace.flags` and `laplace.highway` to this engine's paths; the tables a database had before the extension owned them made the extension's (`ALTER EXTENSION laplace ADD TABLE`); `SELECT laplace_schema_indexes()`; the highway's own records, from its `.nodes` file, loaded as any content is; `enable_parallel_append` off for the database; then `laplace status`. Each statement is timed on stdout. Idempotent.
 
 ## laplace sources
 
@@ -44,11 +46,11 @@ With nothing named: each source runs in a process of its own with the same optio
 
 ## laplace index
 
-`laplace index [-d conninfo]`. Calls `laplace_schema_indexes()`, which makes every index the schema has where one is missing, then `ANALYZE`; `laplace deploy` makes them all from the start.
+`laplace index [-d conninfo]`. Sets `maintenance_work_mem` to 8 GB for the session and calls `laplace_schema_indexes()`, which makes every index the schema has where one is missing, then `ANALYZE`; `laplace deploy` makes them all from the start.
 
 ## laplace status
 
-`laplace status [-d conninfo]`. Prints the database and its size; the server version; the extension's version and `laplace_isa()`; the tier-0 path the database is set to and `laplace_fingerprint()`, and whether that fingerprint is **the same as this engine's** or **DIFFERS from this engine's tier 0: the two would give the same content different coordinates**; entities by tier with the planner's counts and sizes; the witness, attestation, and consensus counts; and how many GIN and GiST indexes exist on `entity` and `physicality`.
+`laplace status [-d conninfo]`. Prints the database and its size; the server version; the extension's version and `laplace_isa()`; the tier-0 path the database is set to and `laplace_fingerprint()`; the highway's path and `laplace_highway_fingerprint()`, against this engine's; and whether that fingerprint is **the same as this engine's** or **DIFFERS from this engine's tier 0: the two would give the same content different coordinates**; entities by tier with the planner's counts and sizes; the witness, attestation, and consensus counts; and how many GIN and GiST indexes exist on `entity` and `physicality`.
 
 ## laplace text
 
@@ -76,11 +78,11 @@ With nothing named: each source runs in a process of its own with the same optio
 
 ## laplace fills
 
-`laplace fills [-d conninfo] [--firmware FILE] PHRASE`. What follows the phrase, counted by occurrence across every source; the algorithm is [Reads](Reads.md#laplace-fills).
+`laplace fills [-d conninfo] [-n N] [-t tier0.bin] PHRASE`. What follows the phrase, counted by occurrence across every source; the algorithm is [Reads](Reads.md#laplace-fills).
 
 ## laplace pull
 
-`laplace pull [-d conninfo] [--firmware FILE] [--seed N] PROMPT`. The prompt broken down to its trunk and constituents, then the steps the firmware's `for pull` instruction set takes: `take segment`, `take attestations N`, `take constituents N`, `take fact`; `--seed` fixes the draw when the firmware's `top within N` allows a tie to be taken. `pull.c` states that this is the lookups the forward pass is made of, and not yet the forward pass.
+`laplace pull [-d conninfo] [--firmware FILE] [--seed N] PROMPT`. The prompt broken down to its trunk and constituents, then the steps the firmware's `for pull` instruction set takes: `take segment`, `take attestations N`, `take constituents N`, `take fact`, `take chain N RELATION...`; `--seed` fixes the draw when the firmware's `top within N` allows a tie to be taken. It is `cmd_pull` in `forward.c`; `pull.c` holds `hop`, `translate` and `degrees`.
 
 ## laplace turn
 
