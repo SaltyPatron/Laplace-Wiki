@@ -25,14 +25,14 @@ The rules the rows follow:
 - A source with no recipe says so in its summary: its files are observed content and attest nothing until a recipe exists.
 - **A source's identifiers are keys, not content.** How a resource points at its own things (a synset id, a sense key, an ILI number, a sentence id, a geonameid, a case id, a roleset id, a frame element's number, an entry's etymology number, a dialogue's numbering, `sent_id`) is plumbing: it resolves to the thing it names and is recorded nowhere ([Identity](../Storage/Identity.md): the hash is purely content). The recipe says which attributes, members or columns are keys (`key`), which point at things defined elsewhere in the same file or set (`refer`), and which are a resource's keys of types (`type`). The page names them as such and shows no claim with a key in it.
 - **A thing is its content.** A word is what the lemma writes; a synset is the composition of the words it lists; a sentence is its text or the path of its words; a place is its name, latitude and longitude; a case, a post, a comment is its text; a frame is its name, a frame element its frame and name, a roleset its predicate's lemma and the name the resource writes for it. Two witnesses that write the same content say it of the same thing.
-- **Types are the highway's.** What a curated resource enumerates (parts of speech, dependency relations, lexicographer files, ILI concepts, VerbNet classes and roles, FrameNet frames, frame elements and lexical units, PropBank rolesets, VerbAtlas frames) is a type: one record each in the highway perf-cache, its content as the resource writes it, its slot a mask bit where the list is small ([Types](../Reference/Types.md), [Claims](../Semantics/Claims.md#masks)). A key of a type (`i46360`, `va:0001f`, `abandon.01`, `leave-51.2`, an FE's `ID`) is read as the type. The mappings between the resources (CILI's maps, SemLink, PredicateMatrix, VerbAtlas's bridges, PropBank's links, VerbNet's members, FrameNet's indexes) are the highway's edges, read by its generator and by no recipe.
+- **Types are the highway's.** What a curated resource enumerates (parts of speech, dependency relations, lexicographer files, ILI concepts, VerbNet classes and roles, FrameNet frames, frame elements and lexical units, PropBank rolesets, VerbAtlas frames) is a type: one record each in the highway perf-cache, its content as the resource writes it, its slot a mask bit where the list is small ([Types](../Reference/Types.md), [Claims](../Semantics/Claims.md#masks)). A key of a type (`i46360`, `va:0001f`, `abandon.01`, `leave-51.2`, an FE's `ID`) is read as the type. The mappings between the resources (CILI's maps, SemLink, PredicateMatrix, VerbAtlas's bridges, PropBank's links, VerbNet's members, FrameNet's indexes) are the highway's edges: each resource's recipe says them in its `types`, `keyed`, `alias` and `maps` lines, and `laplace highway` reads those lines. The recipes of CILI, SemLink and the Predicate Matrix also attest what their rows say.
 
 ## Not settled
 
 Two things every page needs are not on any page yet, because the words for them do not exist. A missing section stays missing until they do.
 
 - **Tier.** [Attestations](../Semantics/Attestations.md#attestations) says attestations are recorded at the highest tier possible for a corpus. Which tier that is for each source's subject is stated nowhere.
-- **Mask.** [Claims](../Semantics/Claims.md#masks) says separate columns hold bitmasks for part of speech, sense, dependency relation, and so on. The highway's layout assigns the bits of the lists small enough to be fields (kind, `upos`, `deprel`, `lexfile`, `vnrole`; [Types](../Reference/Types.md#masks)); a sense mask, sense 1 to 256 of a lemma, is specified and not yet laid out.
+- **Mask.** [Claims](../Semantics/Claims.md#masks) says separate columns hold bitmasks for part of speech, sense, dependency relation, and so on. The banks are Laplace-Native's `manifest/banks.tsv`, copied into the highway's layout: `kind` (8 bits, a row's own, no list), `upos` (32), `lexfile` (64), `deprel` (64), `vnrole` (64), each width the room kept for values still to come, a value's bit its frozen slot ([Types](../Reference/Types.md#masks)). Only `kind` is written so far. A sense mask, sense 1 to 256 of a lemma, is specified and has no bank.
 
 ## Recipes
 
@@ -42,15 +42,15 @@ Every source in `recipes/order`, in that order, and the page that is its glossar
 | --- | --- |
 | `unicode` | [Unicode Character Database](Unicode.md) |
 | `iso-639` | [ISO 639](ISO-639.md) |
-| `cili` | [Wordnets](Wordnets.md): the highway's input, no recipe |
+| `cili` | [Wordnets](Wordnets.md) |
 | `open-english-wordnet` | [Wordnets](Wordnets.md) |
 | `open-multilingual-wordnet` | [Wordnets](Wordnets.md) |
 | `princeton-wordnet` | [Wordnets](Wordnets.md) |
 | `propbank` | [PropBank](PropBank.md) |
 | `verbnet` | [VerbNet](VerbNet.md) |
 | `framenet` | [FrameNet](FrameNet.md) |
-| `semlink` | [SemLink](SemLink.md): the highway's input, no recipe |
-| `predicate-matrix` | [Predicate Matrix](Predicate-Matrix.md): the highway's input, no recipe |
+| `semlink` | [SemLink](SemLink.md) |
+| `predicate-matrix` | [Predicate Matrix](Predicate-Matrix.md) |
 | `mapnet` | [MapNet](MapNet.md) |
 | `verbatlas` | [VerbAtlas](VerbAtlas.md) |
 | `wordframenet` | [WordFrameNet](WordFrameNet.md) |

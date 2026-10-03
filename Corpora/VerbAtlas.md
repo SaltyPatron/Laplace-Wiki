@@ -24,4 +24,4 @@ One source reads VerbAtlas 1.1.0, "WordNet synsets clustered into frames", by on
 | `VA_va2sp.tsv` | a frame, then roles and preference ids | names preferences only by their ids, keys of another file's rows: not read | nothing | FORMAT 3 |
 | every file | an empty field | nothing | nothing | |
 
-The first line of each `VA_*.tsv` file is a licence line, passed over. `README.txt` is read as ordinary text, observed content that attests nothing.
+The first line of each `VA_*.tsv` file is a licence line, passed over. `README.txt` is not read: the source has no `reads` line and no recipe of its own matches it.

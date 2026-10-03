@@ -30,4 +30,4 @@ A JSON object on every line. The [dataset card](https://huggingface.co/datasets/
 | `episode_done` | `true` or `false` | said of the context, as written | `[context, episode_done, true]` | "an indicator of whether it is the end of the dialogue" |
 | `null`, an empty text | | nothing | none | |
 
-Nothing else is attested. The card is ordinary text, observed as [Attestations](../Semantics/Attestations.md#observations) says of ordinary content.
+Nothing else is attested. The card is not read: no recipe of the source matches it, and the source does not read text (`reads`), so nothing of it is recorded.

@@ -25,4 +25,4 @@ A JSON object on every line: "Each instance represents a prompt and its metadata
 | `toxicity`, `severe_toxicity`, `profanity`, `sexually_explicit`, `identity_attack`, `flirtation`, `threat`, `insult`, under `prompt` or `continuation` | a number | said of that text under the score's own key, the number as written | `[text, toxicity, value]` | "The scores accompanying the prompt and the continuation are generated using the Perspective API"; the attributes of the API, as the [Perspective annotation scheme](https://github.com/conversationai/conversationai.github.io/blob/master/crowdsourcing_annotation_schemes/toxicity_with_subattributes.md) and the [toxicity model card](https://github.com/conversationai/perspectiveapi/blob/main/model-cards/English/toxicity.md) describe them |
 | `null` | | nothing | none | |
 
-Nothing else is attested. The card is ordinary text, observed as [Attestations](../Semantics/Attestations.md#observations) says of ordinary content.
+Nothing else is attested. The card is not read: no recipe of the source matches it, and the source does not read text (`reads`), so nothing of it is recorded.

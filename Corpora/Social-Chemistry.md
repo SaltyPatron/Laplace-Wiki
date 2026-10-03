@@ -48,4 +48,4 @@ The Specification cells are from `README.v1.0.md`, "Dataset Columns".
 | `n-characters` | a number | said of the rule | `[rot-id, n-characters, value]` | how many characters were identified in the story during the character-identification task |
 | `characters` | parts joined by `\|` | each part said of the rule under the column's name | `[rot-id, characters, narrator]` | '"\|" separated list' of the characters that appeared |
 
-Nothing else is attested. The README is ordinary text, observed as [Attestations](../Semantics/Attestations.md#observations) says of ordinary content.
+Nothing else is attested. The README is not read: no recipe of the source matches it, and the source does not read text (`reads`), so nothing of it is recorded.

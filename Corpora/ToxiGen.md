@@ -58,4 +58,4 @@ Every table is tab-separated, its first row names the columns, and a `\` makes t
 | `Answer.inGroup.on`; `Answer.ingroup.1` to `.3`; `Answer.intent.1` to `.5`; `Answer.lewd.1` to `.3`; `Answer.stereo.1` to `.3`; `Answer.toAI.1` to `.5`; `Answer.toPER.1` to `.5`; `Answer.writer.1`, `.2` | said of the text, by the worker: every column whose name so begins | `[text, Answer.intent.3, value]` | what the worker answered |
 | `Answer.annotatorAge`, `Answer.annotatorGender`, `Answer.annotatorMinority`, `Answer.annotatorPolitics.1` to `.5`, `Answer.annotatorRace` | said of the worker, by the worker | `[worker, Answer.annotatorRace, value]` | what the worker answered of themself |
 
-Nothing else is attested. The CSV files and the Parquet files are not the source: they are the same rows. The card is ordinary text, observed as [Attestations](../Semantics/Attestations.md#observations) says of ordinary content.
+Nothing else is attested. The CSV files and the Parquet files are not the source: they are the same rows. The card is not read: no recipe of the source matches it, and the source does not read text (`reads`), so nothing of it is recorded.

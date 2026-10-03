@@ -1,6 +1,6 @@
 # GeoNames
 
-GeoNames attests what its gazetteer's tables say of each place, which is its name, latitude and longitude together; a geonameid is GeoNames's key to the place, recorded nowhere, by which the other tables point at it; the codes' own tables say what each code is; and the readme is observed text that attests nothing.
+GeoNames attests what its gazetteer's tables say of each place, which is its name, latitude and longitude together; a geonameid is GeoNames's key to the place, recorded nowhere, by which the other tables point at it; the codes' own tables say what each code is; and the readme is not read.
 
 One source, `geonames`, reads the GeoNames Gazetteer extract files: the `geoname` table, the alternate names, the hierarchy, and the tables of the codes they are written with. "The data format is tab-delimited text in utf8 encoding." Each recipe names its columns as [readme.txt](https://download.geonames.org/export/dump/readme.txt) does.
 
@@ -28,4 +28,4 @@ A record is one row of one file: fields parted by tabs, each recorded as written
 
 ## Not read
 
-`readme.txt` and every other `.txt` or `.md` under the root that no recipe names is read as plain text through the source's `reads text`: ordinary content, observed as [Attestations](../Semantics/Attestations.md#observations) says, that attests nothing.
+`readme.txt` and every other `.txt` or `.md` under the root that no recipe names is not read: the source has no `reads` line.

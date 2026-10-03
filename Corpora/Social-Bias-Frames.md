@@ -49,4 +49,4 @@ Every file is a table of comma-separated fields whose first row names the column
 | `hasBiasedImplication` | `0` or `1` | said of the post | `[post, hasBiasedImplication, value]` | the README computes it: `gDf["hasBiasedImplication"] = (gDf["targetStereotype"].apply(len) == 0).astype(int)` |
 | the first column, which has no name | a number | nothing | none | |
 
-Nothing else is attested. The README is ordinary text, observed as [Attestations](../Semantics/Attestations.md#observations) says of ordinary content.
+Nothing else is attested. The README is not read: no recipe of the source matches it, and the source does not read text (`reads`), so nothing of it is recorded.

@@ -40,4 +40,4 @@ Both files are tables of comma-separated fields whose first row names the column
 | `agreement` | said of the completed prompt | `[completed prompt, agreement, value]` | |
 | `final_label` | said of the completed prompt | `[completed prompt, final_label, 2_full_refusal]` | the paper says disagreements were discussed among the three annotating authors to decide a final label [Röttger et al. 2024, §4.2](https://ar5iv.labs.arxiv.org/html/2308.01263) |
 
-Nothing else is attested. The `evaluation` directory, whose files add `gpt4_label` or `strmatch_label` to the completion columns, and `.gitignore` are not the source. The readme is ordinary text, observed as [Attestations](../Semantics/Attestations.md#observations) says of ordinary content.
+Nothing else is attested. The `evaluation` directory, whose files add `gpt4_label` or `strmatch_label` to the completion columns, and `.gitignore` are not the source. The readme is not read: no recipe of the source matches it, and the source does not read text (`reads`), so nothing of it is recorded.

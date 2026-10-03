@@ -1,6 +1,6 @@
 # Wordnets
 
-The wordnets attest sense: what each says of a word, of a synset that is the words it lists, and of a sense that is a word in a synset, every value as the wordnet writes it; CILI is the highway's interlingual index, every synset's `ili` read as the concept it points at; the Princeton database files that the WN-LMF editions and the highway already carry are not read; and the manual pages attest nothing.
+The wordnets attest sense: what each says of a word, of a synset that is the words it lists, and of a sense that is a word in a synset, every value as the wordnet writes it; CILI is the highway's interlingual index, every synset's `ili` read as the concept it points at; CILI's own file attests each concept's definition; the Princeton database files that the WN-LMF editions already carry are not read, except `lexnames`, the lexicographer files; and the manual pages attest nothing.
 
 Four sources read the wordnets, in the order [`recipes/order`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/order) gives: the Collaborative Interlingual Index, Open English WordNet, Open Multilingual Wordnet, then Princeton WordNet 3.0. A wordnet's identifiers (`oewn-02084071-n`, `example-en-10161911-n`, `abandon%2:40:00::`, a synset offset) are its keys: how the file points at its entries, senses and synsets. They resolve to the things they name and are recorded nowhere ([Corpora](README.md#page-shape)).
 
@@ -8,7 +8,7 @@ Four sources read the wordnets, in the order [`recipes/order`](https://github.co
 
 | Source | Witness | Trust class | Lineage | After | Files | Recipes |
 | --- | --- | --- | --- | --- | --- | --- |
-| `cili` | `Collaborative Interlingual Index` | | | | `ili.ttl`, `ili-map-pwn30.tab` | none: the highway's input ([Types](../Reference/Types.md#perf-caches)) |
+| `cili` | `Collaborative Interlingual Index` | class `AcademicCurated` | `WordNet` | `unicode`, `iso-639` | `ili.ttl` | [`ili.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/cili/ili.recipe); its `types` and `keyed` lines feed the highway |
 | `open-english-wordnet` | what the lexicon writes as `label="..."`: "named as the lexicon names itself" | class `AcademicCurated` | `WordNet` | `cili` | `english-wordnet-*.xml` | [`oewn.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/open-english-wordnet/oewn.recipe), `like wn-lmf` |
 | `open-multilingual-wordnet` | what each lexicon writes as `label="..."` | class `AcademicCurated` | none; `omw-en.xml` `WordNet` | `cili` | `omw-*.xml` | [`omw.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/open-multilingual-wordnet/omw.recipe), [`omw-en.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/open-multilingual-wordnet/omw-en.recipe), `like wn-lmf` |
 | `princeton-wordnet` | `WordNet 3.0`: "named as the README names the release" | class `AcademicCurated` | `WordNet` | `unicode` | `cntlist`, `cntlist.rev`, `*.exc`, the manual pages | [`recipes/princeton-wordnet`](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/princeton-wordnet) |
@@ -40,11 +40,11 @@ Measured on Open English WordNet 2024 ([Research](../Research/README.md)): 2.70 
 
 ## CILI
 
-The Collaborative Interlingual Index: "language-independent concept identifiers, their definitions, and their maps to the wordnets. The definitions are Princeton WordNet's." Each concept is a type of the highway's `ili` list (116,698 of them), its content the definition `ili.ttl` gives it (961 concepts share a definition with another and are one type each by content); its number is a key. `ili-map-pwn30.tab` gives the highway the WordNet 3.0 offset of each concept, and WordNet's `index.sense` the sense keys, so a wordnet's `ili`, VerbNet's `wn`, VerbAtlas's `wn:` and `bn:` spellings, PredicateMatrix's offsets and sense keys all resolve to the same slot ([Hops](Hops.md)). The source directory holds a `source` file and no recipe: the Turtle files, the sense mappings and `changes-in-wn31.csv` say nothing that is not a key.
+The Collaborative Interlingual Index: "language-independent concept identifiers, their definitions, and their maps to the wordnets. The definitions are Princeton WordNet's." Each concept is a type of the highway's `ili` list (116,698 of them), its content the definition `ili.ttl` gives it (961 concepts share a definition with another and are one type each by content); its number is a key. The WordNet 3.0 offset of each concept comes from `ili.ttl` itself (`keyed ili … dc:source`, `pwn30:…`); `ili-map-pwn30.tab` is matched by no recipe and not read; and WordNet's `index.sense` the sense keys, so a wordnet's `ili`, VerbNet's `wn`, VerbAtlas's `wn:` and `bn:` spellings, PredicateMatrix's offsets and sense keys all resolve to the same slot ([Hops](Hops.md)). `ili.recipe` reads `ili.ttl`: a concept is its `skos:definition` (`thing triple … skos:definition …`), what each statement's `a` says is related of it, and a definition's language tag is paired with it. The sense mappings, the other maps and `changes-in-wn31.csv` match no recipe and are not read.
 
 ## The Princeton database
 
-WordNet 3.0's `dict` files are the edition `omw-en.xml` carries in WN-LMF, which is read above. The database tables that say the same (`data.*`, `index.*`, `index.sense`, `sentidx.vrb`) and the one the highway lists (`lexnames`) are not read as tables.
+WordNet 3.0's `dict` files are the edition `omw-en.xml` carries in WN-LMF, which is read above. The database tables that say the same (`data.*`, `index.*`, `index.sense`, `sentidx.vrb`) are not read as tables; `lexnames` is, by `lexnames.recipe`: each lexicographer file is its name, its number a key, its syntactic category attested of it, and it is a type of the highway's `lexfile` list; `index.sense` gives the highway only its sense keys (`index-sense.recipe`, `alias` lines).
 
 | File | Laplace reads it as | Claim recorded |
 | --- | --- | --- |

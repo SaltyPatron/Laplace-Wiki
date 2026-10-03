@@ -25,4 +25,4 @@ The card, "Data Fields", names the columns: `text`, `toxicity`, `severe_toxicity
 | `severe_toxicity`, `obscene`, `threat`, `insult`, `identity_attack`, `sexual_explicit` | said of the comment, the number as written | `[comment, insult, value]` | the same, for each attribute |
 | `asian`, `female`, `male`, `white`, and the other identity columns; `rating` | not read: not columns of these files | none | TensorFlow Datasets says the identity tags exist only for a fraction of examples and are included on `CivilCommentsIdentities`, and the civility labels only in the raw data |
 
-Nothing else is attested. The Parquet files are not the source. The card is ordinary text, observed as [Attestations](../Semantics/Attestations.md#observations) says of ordinary content.
+Nothing else is attested. The Parquet files are not the source. The card is not read: no recipe of the source matches it, and the source does not read text (`reads`), so nothing of it is recorded.

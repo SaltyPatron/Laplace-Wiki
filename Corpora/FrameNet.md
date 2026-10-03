@@ -39,4 +39,4 @@ A thing's own attributes and text are one record, witnessed once, and every thin
 
 ## Not read
 
-`README.txt` is read as ordinary text, as the source's `reads text` says. The book under `docs` and the schemas under `schema` match no recipe and are not read.
+`README.txt` is not read: the source has no `reads` line and no recipe of its own matches it. The book under `docs` and the schemas under `schema` match no recipe and are not read.
