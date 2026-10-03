@@ -32,9 +32,9 @@ The stress test drops the operating system's page cache and PostgreSQL's buffers
 
 | Setting | Rule | Example |
 | --- | --- | --- |
-| `max_wal_size` / `min_wal_size` | large, so bulk loads do not force checkpoints, and well under the log volume's size: the log runs past it under load (at 64 GB on a 64 GB volume it filled the volume and stopped the server) | 32 GB / 4 GB |
+| `max_wal_size` / `min_wal_size` | three eighths of the log's volume, read from the volume (setup.sh): the log runs past it under load while a checkpoint catches up, and a checkpoint a whole cycle late still leaves a quarter free. At 64 GB on a 64 GB volume it filled the volume and stopped the server. `max_slot_wal_keep_size` is held to the same bound | 24 GB / 4 GB |
 | `wal_buffers` | large enough that a bulk load's backends do not fill it; *restart* | 256 MB |
-| `wal_compression` | `lz4`: cheap enough to run in every writing backend | |
+| `wal_compression` | `zstd`: a load's log is mostly full-page images of random-key indexes. **Measured** on 23,450 of ConceptNet's B-tree images: 3,781 bytes a page against lz4's 4,711 (-20%), at 57 µs a page against 17, about a quarter of one core at 6,500 images a second | |
 | `checkpoint_timeout` | 60 min | |
 | `bgwriter_lru_maxpages` | high, so the background writer cleans buffers before backends must | 1000 |
 
@@ -58,6 +58,7 @@ PostgreSQL and PostGIS assume that a geometry's coordinates are positions and th
 | Statistics on `physicality.path` | 0 | Histograms of packed IDs mean nothing: `ANALYZE` took 332 s with them and 2.5 s without. |
 | `enable_parallel_append` in the Laplace database | off | Starting parallel workers takes about 15 ms; a container lookup takes 1 ms. |
 | `parallel_workers` on physicality partitions | 0 | the same |
+| `gin_pending_list_limit` on the container index (each partition) | 256 MB | A load's entries go into the pending list in order and are merged once, when the source is in. At the default 4 MB the list merged every few thousand paths into random pages of the index, each written into the log whole: **measured** 4.05 GB of full-page images per GB of paths loaded, and 1.02 GB at 256 MB. |
 | `jit` | off | Compiling a short lookup costs more than it saves. |
 | `max_parallel_maintenance_workers` | about half the cores | Index builds, including GIN, run in parallel. |
 
