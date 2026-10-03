@@ -38,8 +38,8 @@ A record is one line: one JSON object. Its members `head`, `relation`, and `tail
 | `relation` | `xNeed`, `xReact`, `xEffect`, `xIntent`, `xAttr`, `xWant`, `HinderdBy` | the predicate, as written; the field list spells `HinderdBy` | the second part | "the relation for this example, one of [xNeed, xReact, xEffect, xIntent, xAttr, xWant, HinderdBy]" |
 | `tail` | a text | the object | `[head, xAttr, tail]` | "tail is the inference for this example (string)" |
 | `p_valid_model` | a number between 0 and 1 | the score the tuple is attested with, on the scale the set writes it on: 0 a loss, 1 a win, halfway a draw (`score record p_valid_model`); not said of the tuple | the row's outcome | "the score assigned by the critic model (float)" |
-| `split` | `train`, `test`, `val` | said of the tuple itself | `[[head, relation, tail], split, train]` | "the dataset split for this example, one of [train, test, val]" |
-| `rec_0.5`, `rec_0.6`, `rec_0.7`, `rec_0.8`, `rec_0.9` | `true` or `false` | each said of the tuple itself, under its own name | `[[head, relation, tail], rec_0.5, true]` | "rec_X is whether this example is cutoff by the critic at an expected recall of X. High filtration uses 0.5"; "Medium filtration uses 0.8" |
+| `split` | `train`, `test`, `val` | which part of the release a line is in: not read (`omit split`) | none | "the dataset split for this example, one of [train, test, val]" |
+| `rec_0.5`, `rec_0.6`, `rec_0.7`, `rec_0.8`, `rec_0.9` | `true` or `false` | `p_valid_model` against a threshold, each true where it is at least 0.65344, 0.83781, 0.92709, 0.95577, 0.96755 (checked on 1M lines): not read (`omit rec_*`); the tuple is scored by `p_valid_model` itself | none | "rec_X is whether this example is cutoff by the critic at an expected recall of X. High filtration uses 0.5"; "Medium filtration uses 0.8" |
 | `null`, an empty text | | nothing | none | |
 
 Everything one line says it says together: the tuple and what is said of it are one record, witnessed once by `ATOMIC10X`, and the tuple within it plays at the score `p_valid_model` gives. A tuple ATOMIC 2020 also states is the same claim, said by two witnesses of their own.
