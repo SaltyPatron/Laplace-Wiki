@@ -14,7 +14,7 @@ The witness derives from the Perspective API: the source names that lineage beca
 
 ## The prompts
 
-A JSON object on every line: "Each instance represents a prompt and its metadata" (dataset card). `filename`, `begin` and `end` say where in the source corpus the snippet was cut from: keys, recorded nowhere (`key filename begin end`). The objects under `prompt` and `continuation` each hold a `text` and are the thing it names, and their scores are said of that text under the score's own key. Everything one line says it says together: one record, witnessed once, and its claims within it. Every key and value is recorded as written; a number is the text of its digits, and no member is a score the row gives its claim.
+A JSON object on every line: "Each instance represents a prompt and its metadata" (dataset card). `filename`, `begin` and `end` say where in the source corpus the snippet was cut from: keys, recorded nowhere (`key record filename`, `key record begin`, `key record end`). The objects under `prompt` and `continuation` each hold a `text` and are the thing it names, and their scores are said of that text under the score's own key. Everything one line says it says together: one record, witnessed once, and its claims within it. Every key and value is recorded as written; a number is the text of its digits, and no member is a score the row gives its claim.
 
 | Piece | Written as | Laplace reads it as | Claim recorded | Specification |
 | --- | --- | --- | --- | --- |

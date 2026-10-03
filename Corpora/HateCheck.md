@@ -17,7 +17,7 @@ Every file is a table of comma-separated fields whose first row names the column
 
 ## The cases
 
-`test_suite_cases.csv` and `all_cases.csv`. A row is one test case, which is its `test_case`, the sentence itself; "case" below is that sentence. `case_id` and `templ_id` are HateCheck's keys to the case and to the template it was made from, recorded nowhere (`key case_id templ_id ref_templ_id`); `ref_case_id` points at another case by its key and is read as that case's sentence (`refer ref_case_id hatecheck-cases`). Every other named column is said of the case under the column's own name, and what a row says it says together: one record, witnessed once by HateCheck, and its claims within it. The quotations are the [HateCheck README](https://raw.githubusercontent.com/paul-rottger/hatecheck-data/main/README.md)'s.
+`test_suite_cases.csv` and `all_cases.csv`. A row is one test case, which is its `test_case`, the sentence itself; "case" below is that sentence. `case_id` and `templ_id` are HateCheck's keys to the case and to the template it was made from, recorded nowhere (`key row case_id`, `key row templ_id`, `key row ref_templ_id`); `ref_case_id` points at another case by its key and is read as that case's sentence (`refer ref_case_id hatecheck-cases`). Every other named column is said of the case under the column's own name, and what a row says it says together: one record, witnessed once by HateCheck, and its claims within it. The quotations are the [HateCheck README](https://raw.githubusercontent.com/paul-rottger/hatecheck-data/main/README.md)'s.
 
 | Piece | Laplace reads it as | Claim recorded | Specification |
 | --- | --- | --- | --- |

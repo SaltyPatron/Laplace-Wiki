@@ -16,7 +16,7 @@ Every file is a table of comma-separated fields whose first row names the column
 
 ## The annotations
 
-`SBIC.v2.trn.csv`, `SBIC.v2.dev.csv`, `SBIC.v2.tst.csv`. A line is one worker's reading of one post. The post is its text; its `HITId` is the crowdsourcing task's key to it, recorded nowhere (`key HITId`). The worker is named as the set names them, the path `[Social Bias Frames, WorkerId, value]`, "post" and "worker" below. What the worker answered of the post, the worker says, of the post: those claims are witnessed by the worker. What the line holds of the worker is said of the worker, and the post's text and source are said of the post, both by Social Bias Frames. Each claim is its own attestation.
+`SBIC.v2.trn.csv`, `SBIC.v2.dev.csv`, `SBIC.v2.tst.csv`. A line is one worker's reading of one post. The post is its text; its `HITId` is the crowdsourcing task's key to it, recorded nowhere (`key row HITId`). The worker is named as the set names them, the path `[Social Bias Frames, WorkerId, value]`, "post" and "worker" below. What the worker answered of the post, the worker says, of the post: those claims are witnessed by the worker. What the line holds of the worker is said of the worker, and the post's text and source are said of the post, both by Social Bias Frames. Each claim is its own attestation.
 
 | Piece | Laplace reads it as | Claim recorded | Specification |
 | --- | --- | --- | --- |
