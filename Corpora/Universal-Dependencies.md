@@ -14,6 +14,32 @@ Three sources read Universal Dependencies, in the order [`recipes/order`](https:
 
 The class is the witness's trust class, one of those [6. Registries](../Sequence/Registries.md#65-declare-the-trust-classes) declares; its prior is the trust every attestation of the source plays at, and [9. Sources](../Sequence/Sources.md#the-estate-and-why-each-source-is-in-it) gives the class of each source.
 
+## From trunk to leaves
+
+Universal Dependencies is one tree, from its source trunk down to the codepoints every other tree shares:
+
+```text
+Universal Dependencies           the source trunk, [source record, its files' trunks in path order]: the witness
+├ source record                  "Universal Dependencies" and its release, content
+├ UD_Abaza-ATB/ …                a treebank: a directory, its path the files' metadata; never a witness of its own
+└ UD_English-EWT/en_ewt-ud-train.conllu
+  │                              a file, [metadata, content]; README.md, LICENSE.txt and stats.xml are files too
+  ├ metadata                     the OS's record, and what the file says of itself (the newdoc and newpar notes)
+  └ content                      [record, record, …], one record a sentence
+    └ record                     a path over what the treebank says of this sentence
+      ├ sentence                 the `# text` sentence: UAX #29 words, graphemes, codepoints
+      ├ tokens                   UD's own segmentation (don't as do and n't), each FORM down to its codepoints
+      ├ layers                   UPOS, XPOS, LEMMA and FEATS, aligned to the tokens; identical layers are one
+      ├ dependency tree          DEPREL by HEAD, its subtrees composed and shared
+      ├ notes                    text_en and the like, said of the sentence at the sentence's tier
+      ├ speaker, annotator       content: [sentence, speaker_id, SP], [token, Annotator, Sv], which the treebank attests
+      └ strands                  [forces, NOUN], [forces, force], [forces, Number=Plur]: what it says of each word
+```
+
+The pointers, `ID`, `HEAD`, `sent_id`, `newdoc id`, `newpar id` and MISC's ids and offsets, resolve into the tree and are recorded nowhere. One walk up from `[forces, NOUN]` reaches the records, files and trunk that assert it, the attribution and its count; one walk up from `forces` reaches every trunk that holds it, the witnessing. A strand occurring in k records under the trunk is that run, read off the tree, and the treebank plays one matchup for it per ingestion with k as its certainty. English-EWT's README says its UPOS and features were mainly assigned automatically: content under the trunk a read can use, and an automatic tag repeated token by token is packaging, not the treebank saying it again.
+
+As built, the Engine differs: each treebank is a witness of its own (`witness {dir}`); claims are emitted as events outside the tree; no layer is composed; `relate row DEPREL to HEAD` makes the type-level `[word, nsubj, head word]`, with the sentence lost; MISC's `Annotator` and the `speaker_id` note are witnesses of their own (`own`); and the README, LICENSE and statistics are not read. Open Multilingual Wordnet's `witness {first label}`, a witness per lexicon, is the same mistake ([Wordnets](Wordnets.md)).
+
 ## The treebank
 
 A record is one sentence: its comment lines, then a row for every word, then a blank line. The columns are the ten CoNLL-U fields, and every value is recorded as the treebank writes it. "Word lines contain the annotation of a word, token, or node in 10 fields separated by single tab characters." "Blank lines mark sentence boundaries." "Comment lines occur at the beginning of sentences, before word lines." [CoNLL-U format](https://universaldependencies.org/format.html)
@@ -42,7 +68,7 @@ Each thing the treebank says is a claim, a tuple of entities as [Claims](../Sema
 
 The record is the path of the sentence, its layers, its notes, its spans, and its words' claims; UPOS is read as a type of the highway's `upos` list (`type UPOS upos`); DEPREL is content as written; the banks they belong to are not written on any row yet ([Types](../Reference/Types.md#masks)). The record is what is witnessed, once, as one attestation; every claim in it plays its matchup as [Consensus](../Semantics/Consensus.md#matchups) describes. A claim said twice in one record is witnessed in it once. Nothing is renamed, reordered, or filled in.
 
-Only `.conllu` files are read. The treebank's README, LICENSE, and statistics are not.
+Only `.conllu` files are read. The treebank's README, LICENSE, and statistics are not; they are files under the trunk and are to be read.
 
 ## The validator's data
 

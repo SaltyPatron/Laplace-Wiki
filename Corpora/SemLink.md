@@ -10,7 +10,7 @@ SemLink 2 is "the mappings between PropBank, VerbNet and FrameNet". The README s
 | --- | --- | --- | --- |
 | `semlink` | `SemLink`, class `AcademicCurated`, after `propbank` and `verbnet` | `instances/pb-vn2.json`, `instances/vn-fn2.json` | [`pb-vn.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/semlink/pb-vn.recipe), [`vn-fn.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/semlink/vn-fn.recipe); their `maps` lines feed `laplace highway` ([Types](../Reference/Types.md#perf-caches)) |
 
-`pb-vn.recipe` makes each roleset and each class under it a thing (`type … pbroleset`, `type … vnclass`), attests the pair `[roleset, class]` and, of it, each argument's role: `[[roleset, class], ARG0, agent]`. `vn-fn.recipe` attests `[class, frame]`, the class named by the number before its dash.
+`pb-vn.recipe` makes each roleset and each class under it a thing (`type … pbroleset`, `type … vnclass`), attests the pair `[roleset, class]` and, of it, each argument's role: `[[roleset, class], ARG0, agent]`. `vn-fn.recipe` attests `[class, frame]`, the class named by the number before its dash. Each mapping is one interchange strand, where a route changes road class, never a claim per column.
 
 ## What is read
 
