@@ -5,7 +5,7 @@ Research into rating models, evidence counts, search over rated relations, truth
 > [!NOTE]
 > This page was written before the inventor specified [Semantics](../Semantics/README.md), and it is kept as background. Where it differs from the specification, the specification holds:
 >
-> - Consensus is updated inline as content is observed, witnesses first in, first out. There are no global or delayed rating periods, ingest epochs, or batch folds of evidence counts; one witness's repeats of one claim are its run length, read off the tree and carried as the certainty of one matchup per strand per ingestion, never played as separate games.
+> - Consensus is updated inline as content is observed, witnesses first in, first out. There are no global or delayed rating periods, ingest epochs, or batch folds of evidence counts; one witness's repeats of one claim are one attestation with that many games, played as a series in the witness's rating period.
 > - A new witness or claim enters at a stock default for its level of attestation, not at a fixed 1500 ± 350 or a fixed anchor.
 > - Normal content gives observations only; curated corpora give attestations.
 >

@@ -68,7 +68,7 @@ flowchart TD
 - [10. Recipes](Recipes.md): one format decomposer per format, one semantic recipe per source.
 - [11. Content](Content.md): the ingest spine, from unpack to fold completion.
 - [12. Attestations](Attestations.md): witnesses, typed claims, qualifiers, collections, record versus calculate.
-- [13. Consensus](Consensus.md): one matchup per strand per witness per ingestion, its run length the certainty of the assertion, at the witness's trust, witnesses first in, first out.
+- [13. Consensus](Consensus.md): one attestation per strand and witness, its games played as one series in the witness's rating period, at the witness's trust, witnesses first in, first out.
 - [14. Indexes](Indexes.md): after the bulk load, then measurement.
 - [15. Web](Web.md): the spider-colony web and its typed channels.
 - [16. Authority](Authority.md): knowledge, authority, and compute as three axes; packages and capabilities.
