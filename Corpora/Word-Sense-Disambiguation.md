@@ -1,6 +1,6 @@
 # Word sense disambiguation
 
-A dataset of the WSD evaluation framework attests the words of each sentence, their lemma and part of speech, every dataset as a witness of its own; the ids the data files write (`d000.s000.t000`) number the framework's documents, sentences and tokens in order, positions in its own files and not attested, and the gold keys and the systems' answers, which name instances only by those ids, are not read; the README files, schema and candidate list attest nothing.
+A dataset of the WSD evaluation framework attests the words of each sentence, their lemma and part of speech, every dataset as a witness of its own; the ids the data files write (`d000.s000.t000`) are the framework's internal pointers, recorded nowhere, and the gold keys and the systems' answers, which name instances only by those ids, are not read; the README files, schema and candidate list attest nothing.
 
 The source is the unified evaluation framework of Raganato, Camacho-Collados and Navigli (2017) at [lcl.uniroma1.it/wsdeval](http://lcl.uniroma1.it/wsdeval/). Every dataset is its own witness, named as the framework names its directory.
 
@@ -21,12 +21,12 @@ A record is one sentence: the path of its words, in order (`words sentence wf in
 | Piece | Written as | Laplace reads it as | Claim recorded | Specification |
 | --- | --- | --- | --- | --- |
 | `<corpus lang="en" source="senseval2">` | the root | nothing: no thing is inside none | none | |
-| `<text id="d000">` | an element | not a thing; its `id` the document's number in the framework, `d` and its position, not attested (`key id`) | none | "corpus -> text -> sentence" |
-| `<sentence id="d000.s000">` | inside a text | the record of its words; its `id` its position, the document's number and its own, not attested | the record `[[This, document, is, …], [This, lemma, this], …]` | |
-| `<wf lemma="this" pos="DET">This</wf>`, `<instance id="…" lemma="document" pos="NOUN">document</instance>` | word elements | the word, its text; `lemma` and `pos` said of it as it stands in its sentence; an instance's `id` its position, not attested | `[This, lemma, this]`, `[This, pos, DET]` | "Both types should contain two mandatory attributes ("lemma" and "pos")." |
+| `<text id="d000">` | an element | not a thing; its `id` a pointer (`key id`) | none | "corpus -> text -> sentence" |
+| `<sentence id="d000.s000">` | inside a text | the record of its words; its `id` a pointer | the record `[[This, document, is, …], [This, lemma, this], …]` | |
+| `<wf lemma="this" pos="DET">This</wf>`, `<instance id="…" lemma="document" pos="NOUN">document</instance>` | word elements | the word, its text; `lemma` and `pos` said of it as it stands in its sentence; an instance's `id` a pointer | `[This, lemma, this]`, `[This, pos, DET]` | "Both types should contain two mandatory attributes ("lemma" and "pos")." |
 
 The record is witnessed once, as one attestation, by the dataset whose directory the file is in.
 
 ## Not read
 
-The gold keys (`*.gold.key.txt`), the systems' answers (`*.key`), `candidatesWN30.txt` and the `ili_mapped` tables point at instances by the framework's ids and nothing else: an id is only a position, so a row says its sense key of the word at that position, and no recipe reads them yet. The sense keys themselves are content, identifiers the highway's `ili` list holds. When an id points at a word across files of one source ([Recipes](../Reference/Recipes.md#what-each-named-part-is): `refer`), the gold keys can say of each instance's word the concept it is annotated with; that is not yet written for XML words. `schema.xsd` is recorded as its syntax tree; the READMEs and `PROVENANCE.md` are read as text: observed content that attests nothing.
+The gold keys (`*.gold.key.txt`), the systems' answers (`*.key`), `candidatesWN30.txt` and the `ili_mapped` tables point at instances by the framework's ids and nothing else: with the ids pointers, the row would say its sense key of nothing, so they are not read. The sense keys themselves resolve on the highway's `ili` list; whether a sense key is a pointer is open in [30. Conflicts](../Sequence/Conflicts.md). When a pointer points at a word across files of one source ([Recipes](../Reference/Recipes.md#what-each-named-part-is): `refer`), the gold keys can say of each instance's word the concept it is annotated with; that is not yet written for XML words. `schema.xsd` is recorded as its syntax tree; the READMEs and `PROVENANCE.md` are read as text: observed content that attests nothing.

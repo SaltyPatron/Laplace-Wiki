@@ -14,7 +14,7 @@ The source directory holds `source` and `matrix.recipe`, which matches `Predicat
 
 ## What is read
 
-A row is the thing its `3_ID_PRED` and `4_ID_ROLE` name (`thing row 3_ID_PRED 4_ID_ROLE`), and every column is attested of it under its own name (`attest row *`); `NULL` in any family (`id:NULL`, `vn:NULL`, …) is empty and attests nothing. The four lists' identifiers are content as written, each naming the type the highway's list holds a slot for.
+A row is the thing its `3_ID_PRED` and `4_ID_ROLE` name (`thing row 3_ID_PRED 4_ID_ROLE`), and every column is attested of it under its own name (`attest row *`); `NULL` in any family (`id:NULL`, `vn:NULL`, …) is empty and attests nothing. The VerbNet classes, FrameNet frames and PropBank rolesets are highway IDs, content as written, each the hub the highway's list holds a slot for; the MCR offset is a WordNet 3.0 pointer, decomposed by its notation (`mcr:ili-30-01976841-v` a prefix, a scheme, release 30, an offset, and the part of speech `v`) and resolved to its ILI; whether the sense key is a pointer is open in [30. Conflicts](../Sequence/Conflicts.md).
 
 | Column | Written as | Read as | On the highway |
 | --- | --- | --- | --- |

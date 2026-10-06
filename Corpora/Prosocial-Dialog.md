@@ -26,7 +26,7 @@ A JSON object on every line. The [dataset card](https://huggingface.co/datasets/
 | `safety_annotation_reasons` | a list of texts | each text said of the context under `safety_annotation_reasons` | `[context, safety_annotation_reasons, text]` | "the reasons behind the safety annotations in free-form text from each worker" |
 | `source` | a text | said of the context | `[context, source, socialchemistry]` | "the source of the seed text that was used to craft the first utterance of the dialogue: socialchemistry, sbic, ethics_amt, ethics_reddit" |
 | `etc` | a text, or `null` | said of the context | `[context, etc, text]` | "other information" |
-| `dialogue_id`, `response_id` | numbers | the set's numbering of its dialogues and of the turns within each: positions that place its own records in its own files, not identifiers of anything another source names, so not attested ([Attestations](../Semantics/Attestations.md#seeded-corpora)); the order of the turns is read from the trajectory (`key record dialogue_id`, `key record response_id`) | nothing | "the dialogue index"; "the response index" |
+| `dialogue_id`, `response_id` | numbers | the set's numbering of its dialogues and of the turns within each: internal pointers, recorded nowhere ([Attestations](../Semantics/Attestations.md#seeded-corpora)); the order of the turns is read from the trajectory (`key record dialogue_id`, `key record response_id`) | nothing | "the dialogue index"; "the response index" |
 | `episode_done` | `true` or `false` | said of the context, as written | `[context, episode_done, true]` | "an indicator of whether it is the end of the dialogue" |
 | `null`, an empty text | | nothing | none | |
 

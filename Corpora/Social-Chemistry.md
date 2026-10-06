@@ -1,6 +1,6 @@
 # Social Chemistry
 
-Social-Chem-101 attests what a breakdown row says of its rule of thumb, which is the rule's text, as one record of the set; the row's ids are content the set attests of what they identify, and its bookkeeping columns attest nothing.
+Social-Chem-101 attests what a breakdown row says of its rule of thumb, which is the rule's text, as one record of the set; the row's ids are internal pointers recorded nowhere, and its bookkeeping columns attest nothing.
 
 The source is the "Social-Chem-101 Dataset": rules of thumb written by workers about situations, and the breakdowns workers made of them. One recipe reads its one table.
 
@@ -14,7 +14,7 @@ The class is the witness's trust class, one of those [6. Registries](../Sequence
 
 ## The breakdowns
 
-"The dataset is tab-separated with the following columns" (README), and its first row names them. A row is one worker's breakdown of one rule of thumb. It is said of the rule of thumb, which is its `rot`, the rule's text; its `rot-id` is the set's identifier of it, content said of it. What the row says it says together: one record, witnessed once by the set, and its claims within it, so one worker's answers stay in one record. The worker is not a witness: the set is. An empty field attests nothing; the README says an empty answer means the question was unanswered.
+"The dataset is tab-separated with the following columns" (README), and its first row names them. A row is one worker's breakdown of one rule of thumb. It is said of the rule of thumb, which is its `rot`, the rule's text; its `rot-id` is the set's pointer to it, recorded nowhere. What the row says it says together: one record, witnessed once by the set, and its claims within it, so one worker's answers stay in one record. The worker is not a witness: the set is. An empty field attests nothing; the README says an empty answer means the question was unanswered.
 
 The file writes a field that holds a double quote between double quotes, with the quote doubled; the recipe reads that notation (`quoted`).
 
@@ -22,10 +22,10 @@ The Specification cells are from `README.v1.0.md`, "Dataset Columns".
 
 | Piece | Written as | Laplace reads it as | Claim recorded | Specification |
 | --- | --- | --- | --- | --- |
-| `rot-id` | an id | the set's identifier of the rule of thumb, content as written, its parts the author's worker id and the rule's number; said of the rule (`key row rot-id`, which as built records nothing of it) | `[rot, rot-id, value]` | "ID of the rule of thumb"; it includes the worker id of the RoT author and which RoT it was, from 1 to 5 |
+| `rot-id` | an id | a pointer: the set's id of the rule of thumb, recorded nowhere (`key row rot-id`) | none | "ID of the rule of thumb"; it includes the worker id of the RoT author and which RoT it was, from 1 to 5 |
 | `rot` | text | the subject: the rule of thumb, which is its text (`thing row rot`) | the first part of every claim of the row | the rule of thumb written by the worker |
-| `rot-worker-id` | an id | the set's identifier of the worker who wrote the rule, content as written, said of the rule; as built not recorded | `[rot, rot-worker-id, value]` | the worker who wrote this rule of thumb; no relation to the breakdown worker, except by coincidence |
-| `breakdown-worker-id` | an id | the set's identifier of the worker who did the breakdown, content as written, said of the rule within the row's record; as built not recorded | `[rot, breakdown-worker-id, value]` | the worker who did this RoT breakdown |
+| `rot-worker-id` | an id | a pointer, recorded nowhere | none | the worker who wrote this rule of thumb; no relation to the breakdown worker, except by coincidence |
+| `breakdown-worker-id` | an id | a pointer, recorded nowhere | none | the worker who did this RoT breakdown |
 | `area` | a name | said of the rule | `[rot, area, value]` | source of the situation: confessions, dearabby, rocstories, amitheasshole |
 | `m` | a number | content of the row, not attested | none | how many workers did the RoT breakdown for this RoT: 1, 3, 5, 50 |
 | `split` | a name | bookkeeping: `omit` | none | which split this RoT belongs to: train, dev, test, dev-extra, test-extra, analysis, none |
@@ -44,7 +44,7 @@ The Specification cells are from `README.v1.0.md`, "Dataset Columns".
 | `action-char-involved` | `char-none` or `char-N` | said of the rule | `[rot, action-char-involved, value]` | who is most likely to do the action or its opposite |
 | `action-hypothetical` | a name | said of the rule | `[rot, action-hypothetical, value]` | whether that character is explicitly doing the action, or the action might happen: explicit-no, probable-no, hypothetical, probable, explicit |
 | `situation` | text | said of the rule | `[rot, situation, text]` | text of the situation |
-| `situation-short-id` | an id | the set's identifier of the situation, content as written, said of the rule beside `situation`; as built not recorded | `[rot, situation-short-id, value]` | unique id for the situation |
+| `situation-short-id` | an id | a pointer, recorded nowhere | none | unique id for the situation |
 | `n-characters` | a number | bookkeeping: `omit` | none | how many characters were identified in the story during the character-identification task |
 | `characters` | parts joined by `\|` | each part said of the rule under the column's name | `[rot, characters, narrator]` | '"\|" separated list' of the characters that appeared |
 
