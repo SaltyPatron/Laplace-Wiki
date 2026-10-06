@@ -74,7 +74,7 @@ The selection a pull makes is this list, and each entry can differ per human bei
 - Which segment of which branch to pull, at which tier, and which of those segments to combine. A step is not required to emit one token.
 - *k*, how far below the rating a standing must still hold.
 - $\lambda$, the tax on another hop.
-- The fan, and which entities are hubs that may be reached and not crossed.
+- The fan, and which entities are fan-limited nodes, reached and not crossed.
 - How many hops a chain may run.
 - Which kinds of strand are refused before they are scored: layout, punctuation, a part of speech, a witness, a language.
 - The role weights, when a context word is doing the pulling.

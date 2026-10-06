@@ -96,11 +96,11 @@ By the fourth chunk, 74% of word segments were already recorded, but 99% of sent
 | ID indexes (entity and physicality) | 91 |
 | Hilbert index | 29 |
 
-The same 1.68 million Gutenberg sentence paths stored as `uuid[]` with run lengths took 1,310 MB, against 1,785 MB as geometry ZM, with the same GIN size and the same query times: containers 0.28 against 0.32 ms, continuations 25.1 against 25.3 ms, and every container of the hub `the` (864,949) 309 against 376 ms.
+The same 1.68 million Gutenberg sentence paths stored as `uuid[]` with run lengths took 1,310 MB, against 1,785 MB as geometry ZM, with the same GIN size and the same query times: containers 0.28 against 0.32 ms, continuations 25.1 against 25.3 ms, and every container of the fan-limited node `the` (864,949) 309 against 376 ms.
 
 ## Consensus writes
 
-Five million attestations, Zipf-distributed over a million claims so that a few hub claims receive most of them, were written in batches of 100,000:
+Five million attestations, Zipf-distributed over a million claims so that a few hot claims receive most of them, were written in batches of 100,000:
 
 - `attestation` appended at about 245,000 rows per second, taking 301 MB with its index.
 - Standings updated in place by one set-based statement per batch absorbed 740,000–780,000 attestations per second, because a batch's repeated hits on a claim collapse (100,000 attestations touched about 19,500 claims). The standing table stayed at 66 MB with dead rows levelling off near 34,000 under a fill factor of 80.

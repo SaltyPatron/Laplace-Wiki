@@ -1,6 +1,6 @@
 # 24. Models
 
-A conventional checkpoint is admitted as a source and a witness: its artifact is fingerprinted, its tokenizer and configuration are decomposed as content, its tensors are recognized by shape as source-scoped operators, its numerics are consumed transiently to derive circuit physicalities and significance-contracted claims under the model's witness, and no raw weight is retained.
+A conventional checkpoint is admitted as a source and a witness: its files are named by their trunks, its tokenizer and configuration are decomposed as content, its tensors are recognized by shape as source-scoped operators, its numerics are consumed transiently to derive circuit physicalities and significance-contracted claims under the model's witness, and no raw weight is retained.
 
 Static models are food for Laplace. A model is not recorded as raw weights, not prompted to see what falls out, and not replayed over retained tensors. Its learned relations, `king` to `queen` at some intensity, become Laplace records, attestations, and scores under the model witness, and Glicko-2 acts as the weight. The checkpoint enters as one witness among corpora, users, tools, and other models, and its knowledge aggregates with theirs in consensus. Model ingestion is not required; it only adds value.
 
@@ -13,7 +13,7 @@ The whole chain through [23. Learning](Learning.md). [10. Recipes](Recipes.md): 
 ### 24.1 Stage the checkpoint as a source generation
 
 - **In:** the model files.
-- **Do:** [9. Sources](Sources.md): enumerate the artifact graph, config, tokenizer, weight shards, sidecars, with dispositions; fingerprint the bytes; name the witness `[model, revision]` at trust class `AIModelProbe`, 0.50. Prefer safetensors: GGUF and AWQ are the MP3 of models. The checkpoint bytes establish artifact identity and provenance without the payload becoming durable storage.
+- **Do:** [9. Sources](Sources.md): enumerate the artifact graph, config, tokenizer, weight shards, sidecars, with dispositions; name each file by its trunk, as [11. Content](Content.md) operation 11.2 names any file, never by a hash of its bytes; the witness is the checkpoint's source trunk, its model name and revision content inside its source record, at trust class `AIModelProbe`, 0.50. Prefer safetensors: GGUF and AWQ are the MP3 of models. The checkpoint's trunks establish its identity and provenance without the payload becoming durable storage.
 - **Out:** the model as an active source generation with a witness.
 - **From:** `docs/plan/MODEL_INGESTION_DESIGN.md` §1; `docs/INVENTOR_RECORD.md` §Conventional models.
 
@@ -27,8 +27,8 @@ The whole chain through [23. Learning](Learning.md). [10. Recipes](Recipes.md): 
 ### 24.3 Decompose the tokenizer as one ordered composition
 
 - **In:** the tokenizer files.
-- **Do:** the vocabulary is one ordered composition whose trajectory ordinal is the model-local id. Each piece decodes through the exact tokenizer recipe and byte or string decoding to canonical underlying content where decodable; control pieces decode to their surface. A model-local piece, `str`, `Ġfoo`, a byte-fallback token, a sentencepiece boundary marker, is a source-local reference and occurrence, never promoted to a word because the tokenizer calls it a token, and never a private tier-0 alphabet. Merges are a trajectory, not `MERGES_WITH` testimony. Placing model tokens as anything other than text entities is sabotage.
-- **Out:** the vocabulary entity, with its pieces as references and its decodable content converging on shared identities.
+- **Do:** the vocabulary is one ordered composition whose trajectory ordinal is the model-local id. Each piece decodes through the exact tokenizer recipe and byte or string decoding to canonical underlying content where decodable; control pieces decode to their surface. A model-local piece, `str`, `Ġfoo`, a byte-fallback token, a sentencepiece boundary marker, is content as the file writes it, `Ġfoo` is `[Ġ,f,o,o]`, and an occurrence in the vocabulary, never promoted to a word because the tokenizer calls it a token, and never a private tier-0 alphabet. Merges are a trajectory, not `MERGES_WITH` testimony. Placing model tokens as anything other than text entities is sabotage.
+- **Out:** the vocabulary entity, with its pieces as content and occurrences and its decodable content converging on shared identities.
 - **From:** `docs/plan/MODEL_INGESTION_DESIGN.md` §3; `docs/plan/ASSIMILATION_ROADMAP.md` workstream E3.
 
 ### 24.4 Admit the configuration as facts
@@ -48,15 +48,15 @@ The whole chain through [23. Learning](Learning.md). [10. Recipes](Recipes.md): 
 ### 24.6 Derive each circuit's physicality
 
 - **In:** the recognized operators and their transient values.
-- **Do:** a circuit is the ordered composition `[model witness, plane, layer, n, head, m]`, a source-scoped entity. Its durable representation is a Projection physicality: an ordered trajectory of the salient coupled canonical entities, a coordinate and Hilbert value from placement, and the constituent count. Layer and head ordinals are source-scoped structural coordinates; two heads with the same ordinal are not the same circuit, and two differently numbered components can be functionally correlated. An order-sensitive factor trajectory preserves its order in the trajectory; a centroid cannot recover it. Native numeric, tensor, and factor kernels run over contiguous tiles.
+- **Do:** a circuit's identity is its content, the composition of the salient coupled entities its trajectory orders, hashed like any composition. The model, plane, layer, and head where it was found, `[plane, layer, n, head, m]`, are observations of it under the model's source trunk and never part of its ID, so the same circuit found in two models is one entity with two witnesses. Its durable representation is a Projection physicality: an ordered trajectory of the salient coupled canonical entities, a coordinate and Hilbert value from placement, and the constituent count. Layer and head ordinals are the source's structural coordinates; two heads with the same ordinal are not the same circuit, and two differently numbered components can be functionally correlated. An order-sensitive factor trajectory preserves its order in the trajectory; a centroid cannot recover it. Native numeric, tensor, and factor kernels run over contiguous tiles.
 - **Out:** one entity and one Projection physicality per circuit, with `raw_weight_bytes_retained = 0` in the receipt.
 - **From:** `docs/plan/MODEL_INGESTION_DESIGN.md` §1 and §9; `docs/specs/09_Substrate_LM_Synthesis.txt` §Checkpoint witnessing.
 
 ### 24.7 Write only the significant claims
 
 - **In:** each circuit's scores over the shared entities.
-- **Do:** which derived evidence carries information is decided by a declared calculation contract over the model's own statistics, the lottery ticket found rather than a constant floor or a top-k: each circuit writes its own significant pairs under a per-subject null, z against the subject's own score distribution, kept if and only if z ≥ √(2 ln N). Nothing below significance is written; nothing is refuted, because refutation cannot be inferred from a dot-product sign or from frequency. The claims are graded evidence between canonical entities under the model witness, `token APPEARS_IN coordinate` with the salience as score, and the model's learned relations as attestations, and no world-all-pairs is persisted. Recorded facts, tensor identity, dtype, shape, slice, and role, stay separate from calculated ones, and every calculated row names its analyzer and recipe.
-- **Out:** the model's testimony in `attestation` of [12. Attestations](Attestations.md), folded by [13. Consensus](Consensus.md).
+- **Do:** which derived evidence carries information is decided by a declared calculation contract over the model's own statistics, the lottery ticket found rather than a constant floor or a top-k: each circuit writes its own significant pairs under a per-subject null, z against the subject's own score distribution, kept if and only if z ≥ √(2 ln N). Nothing below significance is written; nothing is refuted, because refutation cannot be inferred from a dot-product sign or from frequency. The claims are graded evidence between entities under the model witness, each a composition of the entities a circuit couples with the salience as score, and the model's learned relations as attestations; that a token appears in a circuit is read from the circuit's trajectory and never claimed, and no world-all-pairs is persisted. Recorded facts, tensor identity, dtype, shape, slice, and role, stay separate from calculated ones, and every calculated row names its analyzer and recipe.
+- **Out:** the model's testimony as attestations under its source trunk, [12. Attestations](Attestations.md) operation 12.9, and in the target as record paths under that trunk, folded by [13. Consensus](Consensus.md).
 - **From:** `docs/plan/ASSIMILATION_ROADMAP.md` laws 12, 13 and workstream E4, E5; `docs/INVENTIONS.md` #102, #106; `docs/specs/08_Record_vs_Calculate_Spec.txt`.
 
 ### 24.8 Optionally, witness an execution as a calculation
@@ -89,7 +89,7 @@ The whole chain through [23. Learning](Learning.md). [10. Recipes](Recipes.md): 
 
 ## What this stage leaves behind
 
-A checkpoint reduced to what carries information: its structure as content and references, its circuits as source-scoped entities with trajectories and placement, its knowledge as graded, witnessed claims that compete on an even playing field with every other source, and nothing that could be copied back out as the model it came from.
+A checkpoint reduced to what carries information: its structure as content and references, its circuits as content entities with trajectories and placement, found at the model's layers and heads, its knowledge as graded, witnessed claims that compete on an even playing field with every other source, and nothing that could be copied back out as the model it came from.
 
 ## Without this stage
 

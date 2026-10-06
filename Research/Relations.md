@@ -5,7 +5,7 @@ Research into rating models, evidence counts, search over rated relations, truth
 > [!NOTE]
 > This page was written before the inventor specified [Semantics](../Semantics/README.md), and it is kept as background. Where it differs from the specification, the specification holds:
 >
-> - Consensus is updated inline, one matchup at a time, as content is observed first in, first out. There are no rating periods, ingest epochs, or batch folds of evidence counts.
+> - Consensus is updated inline as content is observed, witnesses first in, first out. There are no global or delayed rating periods, ingest epochs, or batch folds of evidence counts; one witness's repeats of one claim are one attestation with that many games, a series solved on the client as one update, the rating where the prior standing and the series' score agree, rather than by one linearised period step.
 > - A new witness or claim enters at a stock default for its level of attestation, not at a fixed 1500 ± 350 or a fixed anchor.
 > - Normal content gives observations only; curated corpora give attestations.
 >
@@ -80,7 +80,7 @@ The same 1,013 outcomes (about 92% wins against a fixed anchor), with the same p
 
 The maximum-likelihood logit of the win rate corresponds to `r = 1933.9` (measured).
 
-- Glicko-2 makes one linearised step from the prior per period. A single large batch under-moves `μ` while `RD` collapses, and after that the rating barely moves.
+- Glicko-2 makes one linearised step from the prior per period. A single large batch under-moves `μ` while `RD` collapses, and after that the rating barely moves. Far from the prior the step can also overshoot without bound: a 450 player scoring 0.15 over 1,000 games against a 3400 player, 100 wins and 100 draws, goes to 105,823 in one period, where game by game it converges to 3100 with `RD` 15, and solving the series for the rating where the prior and the score agree, the maximum of a concave log posterior found by bisection on its slope, gives 3092 with `RD` 16 (computed).
 - The equilibrium `RD` depends on the period length, because `σ²` is added once per period.
 - Ingesting the same corpus in a different order or in different chunks therefore gives different ratings.
 

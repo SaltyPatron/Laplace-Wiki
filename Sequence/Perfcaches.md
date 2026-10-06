@@ -71,7 +71,7 @@ Tier 0 is the anchor cache, what everything boils down to in all cases, but it i
 | Blob | Role | Lookup | Rebuilt from | Stage that needs it |
 | --- | --- | --- | --- | --- |
 | Tier-0 codepoint ROM | U+0000..U+10FFFF: id, UCA order, PointZM, Hilbert value, UAX flags, NFC compose and decomposition; format v4 `LPRF`, the only format the loader accepts | `records[cp]` | the UCD emit, [5. Tier 0](Tier-0.md) | every stage after 5 |
-| Highway ROM | the relation-law bit plane: canonical name, band, bit, rank | bit test, 256-bit mask | the relation manifest, [6. Registries](Registries.md) | [12. Attestations](Attestations.md) |
+| Highway ROM | the relation-law bit plane: each relation's content ID, band, bit, and rank, its English name a developer handle only | bit test, 256-bit mask | the relation manifest, [6. Registries](Registries.md) | [12. Attestations](Attestations.md) |
 | Number ROM | canonical integer roots 0..255, `0 → ['0']`, `42 → ['4','2']`, `255 → ['2','5','5']` | `records[value]` | tier 0 through the scalar recipe | [11. Content](Content.md) for images, audio, bytes |
 | Vocabulary ROM | UPOS, dependency relations and subtypes, features, feature values: content id, coordinate, Hilbert value, tier, code, parent code, label | `(vocabulary, code)` direct index; `(vocabulary, id)` open-addressed | tier 0 plus the vocabulary manifests | [12. Attestations](Attestations.md) |
 | Separator-id ROM | alphabet-bounded separator atoms and clusters | compiled set | tier 0 plus the grapheme law | [11. Content](Content.md) |

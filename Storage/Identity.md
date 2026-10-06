@@ -12,6 +12,8 @@ A codepoint's ID is the BLAKE3 hash of its UTF-8 bytes. UTF-8 handles every Unic
 
 The hash is purely content. Type, tier, source, position within the source, index, and so on are not the content; they are the observation and position of that content, and they are never part of the ID. Hashes are never faked: if a hash could be made from a made-up string, that string should instead be a decomposed entity with a trunk node.
 
+A composition's ID is BLAKE3 over its children's 16-byte IDs, in order, repeats included, truncated to 16 bytes, and nothing else: no domain byte, tier, type, recipe name, version, source, position, index, or role label. A composition with one child is that child. None of these is needed to keep a node from colliding with a leaf: a leaf hashes the 1 to 4 bytes of one codepoint's UTF-8, and a node at least 32. A recipe decides how content decomposes into a tree, so the same bytes under a different decomposition can give a different trunk, but a recipe never salts a hash: the same content has the same ID.
+
 For text, the same codepoint sequence is the same content; the tree matters when it is rendered.
 
 Text is recorded as it arrives, without normalization: precomposed and decomposed forms are different content, and the form a source arrived in is recorded as a filter. Case is never folded: `King` is not `king`, and `Carlsen, Magnus` is not `MagnusCarlsen`.

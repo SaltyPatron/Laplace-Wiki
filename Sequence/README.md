@@ -9,7 +9,7 @@ Each stage is its own page, and each page is the operations of that stage in the
 - **Out:** what it leaves for the next operation.
 - **From:** the specification page or invention document the operation comes from.
 
-A stage's first operation needs the last operation of the stage before it. The specification pages of this wiki and the invention documents of the monorepo (`docs/INVENTION.md`, `docs/INVENTIONS.md`, `docs/CAPABILITIES.md`, and the binding specs 05, 06, 08, 09, 11, 12, 33, 34, 36, 37, 38, 39) are the authority; these pages repeat them operation by operation so that the order itself is recorded, and link to the page each operation comes from. Where the two authorities disagree, the disagreement is recorded in [30. Conflicts](Conflicts.md) and not resolved here.
+A stage's first operation needs the last operation of the stage before it. The specification pages of this wiki and the invention documents of the monorepo (`docs/INVENTION.md`, `docs/INVENTIONS.md`, `docs/CAPABILITIES.md`, and the binding specs 05, 06, 08, 09, 11, 12, 33, 34, 36, 37, 38, 39) are the authority; these pages repeat them operation by operation so that the order itself is recorded, and link to the page each operation comes from. Where the two authorities disagree, the disagreement is recorded in [30. Conflicts](Conflicts.md), with its decision where one has been made, and not resolved here.
 
 ## Where to start
 
@@ -61,14 +61,14 @@ flowchart TD
 - [3. Builds](Builds.md): the server, the library, the extension, the engine, one deployed revision.
 - [4. Projection](Projection.md): every codepoint onto the S³.
 - [5. Tier 0](Tier-0.md): the anchor perf-cache and its fingerprint.
-- [6. Registries](Registries.md): relations, qualifiers, trust classes, entity types, vocabularies, firmware policy kinds: governed, append-only, bit-stable.
+- [6. Registries](Registries.md): relations, qualifiers, trust classes, entity types, vocabularies, firmware policy kinds: governed, append-only perf-caches whose stable bits index content entities.
 - [7. Perfcaches](Perfcaches.md): the derived ROM lattice above tier 0.
 - [8. Database](Database.md): the tuned server and the four families of durable state.
-- [9. Sources](Sources.md): a source generation: authority, release, artifact graph, provider, recipe, activated together.
+- [9. Sources](Sources.md): a source is its trunk over its files and a release is its files, staged with its artifact graph, provider, and recipe and activated together.
 - [10. Recipes](Recipes.md): one format decomposer per format, one semantic recipe per source.
 - [11. Content](Content.md): the ingest spine, from unpack to fold completion.
 - [12. Attestations](Attestations.md): witnesses, typed claims, qualifiers, collections, record versus calculate.
-- [13. Consensus](Consensus.md): one matchup per attestation, at the witness's trust.
+- [13. Consensus](Consensus.md): one attestation per strand and witness, its games played as one series, solved on the client as one update, at the witness's trust, witnesses first in, first out.
 - [14. Indexes](Indexes.md): after the bulk load, then measurement.
 - [15. Web](Web.md): the spider-colony web and its typed channels.
 - [16. Authority](Authority.md): knowledge, authority, and compute as three axes; packages and capabilities.
@@ -85,7 +85,7 @@ flowchart TD
 - [27. Chess](Chess.md): the proving domain.
 - [28. Games](Games.md): the Knowledge Arena.
 - [29. Maintenance](Maintenance.md): forget, sweep, reseed, regenerate, upgrade.
-- [30. Conflicts](Conflicts.md): what the two authorities say differently, recorded and unresolved.
+- [30. Conflicts](Conflicts.md): what the two authorities say differently, recorded, and decided where the inventor has decided.
 
 ## What comes after the chain
 

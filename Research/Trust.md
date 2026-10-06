@@ -20,7 +20,7 @@ Negative trust needs an anchor. Without facts known to be true, "every witness i
 
 ### Trust as a Glicko-2 opponent
 
-Glicko-2 weighs every matchup by g(φ) = 1 / √(1 + 3φ² / π²), where φ is the opponent's deviation. [Glickman (1999)](http://www.glicko.net/research/glicko.pdf) derives g as the flattening of the win-probability curve caused by uncertainty in the opponent's strength. Setting g(φ) = |*t*| turns trust into the deviation a witness plays with, φ = (π / √3) · √(1/*t*² − 1):
+This mapping is what Laplace-Native builds; the specification bounds a witness's vote by pulling each game's outcome toward a draw by its trust and makes the witness's trust its own earned rating, [13. Consensus](../Sequence/Consensus.md) operation 13.2, because played against a fixed 1500 opponent the mapping leaves a claim higher the lower its witness's trust. Glicko-2 weighs every matchup by g(φ) = 1 / √(1 + 3φ² / π²), where φ is the opponent's deviation. [Glickman (1999)](http://www.glicko.net/research/glicko.pdf) derives g as the flattening of the win-probability curve caused by uncertainty in the opponent's strength. Setting g(φ) = |*t*| turns trust into the deviation a witness plays with, φ = (π / √3) · √(1/*t*² − 1):
 
 | Trust *t* | Deviation (rating scale) | Information per attestation (*t*²) |
 | --- | --- | --- |

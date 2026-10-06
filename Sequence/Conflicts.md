@@ -1,8 +1,8 @@
 # 30. Conflicts
 
-The wiki's specification pages and the monorepo's invention documents state some things differently, and each difference is recorded here as both positions with their sources, unresolved, for the inventor.
+The wiki's specification pages and the monorepo's invention documents state some things differently, and each difference is recorded here as both positions with their sources, with the inventor's decision where one has been made and open for the inventor where none has.
 
-None of these is settled by this page. Where an operation in another Sequence page touches one of them, it says so and points here.
+An entry marked **Decided** records the inventor's decision, and the Sequence pages state it; every other entry is open, and none of those is settled by this page. Where an operation in another Sequence page touches one of them, it says so and points here.
 
 ## Placement and packing
 
@@ -50,6 +50,12 @@ None of these is settled by this page. Where an operation in another Sequence pa
 - **Laplace-Refactor.** OODA is the control and effect cycle, evidence learning is an epoch change, and Gödel is candidate calculus and procedure discovery with falsification; "Gödel = multi-scale OODA" is marked historical terminology.
 - **Open.** Whether "Gödel engine" names the whole self-referential loop of [23. Learning](Learning.md) or only its discovery lane, 23.7 to 23.10. `docs/specs/39_Personality_Firmware.md` §9 C3.
 
+### C4. Trust is a fixed opponent's deviation, or a bound on each vote
+
+- **Wiki.** [13. Consensus](Consensus.md) operation 13.2 and [Research: Trust](../Research/Trust.md#trust-as-a-glicko-2-opponent), as first written: the witness's trust alone sets the opponent; setting g(φ) = |*t*| turns trust into the deviation the witness plays with.
+- **Built.** Laplace-Native's `lp_trust_deviation` and `lp_attest` play every witness as a fixed 1500 opponent whose trust sets only its deviation, g(φ) = |*t*|, φ = (π / √3) · √(1/*t*² − 1), trust 1.0 at deviation 0, 0.9 at 153, 0.5 at 546, 0.1 at 3,135, and a claim enters at the witness's deviation; computed with that code, an affirming series leaves a claim higher and more certain the lower the witness's trust, an inversion of the rule: over 1,000 games, trust 0.2 ends at 3235 with deviation 55, and trust 0.9 at 1884 with deviation 30.
+- **Decided.** Trust bounds a vote: each game's outcome is pulled toward a draw by the witness's trust, *s*_eff = 0.5 + *t*(*s* − 0.5), so no repetition takes a source past its trust's ceiling, symmetrically for affirmation and refutation and monotone in trust, and one witness alone can give a claim only bounded certainty, a per-witness floor on its deviation; a negative *t* flips the outcome, because being reliably wrong is informative and being randomly wrong is not. Count is never independence: witnesses sharing a dependence root or a trust class count as one root, capped, wherever low-trust voices do attest, explicit feedback, model outputs, Laplace's own responses. A prompt is an observation and attests nothing merely by being said, [22. Users](Users.md) operation 22.6: Laplace records that people say a thing, a fact about discourse, without its standing moving. A witness's own trust is its own rating, starting at its trust class's default and earned only through agreement or disagreement with independent witnesses and verified outcomes, never by repeating itself. The inventor's test: user prompts screaming that the earth is flat must not drown out GPS, photographs, mathematics, reports, and NASA. Computed with a series solver, the round-earth evidence alone stands at 2000, *p* 0.947; a million flat-earth prompts as a million independent witnesses drown it, 1393, *p* 0.351, even with a per-witness cap; as one capped root they dent it, 1765, *p* 0.821; as observations only it stands, 2027, *p* 0.954. [13. Consensus](Consensus.md) operation 13.2.
+
 ### Q1 to Q5
 
 - **Q1.** Is firmware a source, witnessed and rated like any other source, or a rated participant with no trust class, the chess-player model, because it observes nothing?
@@ -67,21 +73,24 @@ None of these is settled by this page. Where an operation in another Sequence pa
 - **Monorepo.** Relations, qualifiers, trust classes, entity types, vocabularies, and firmware policy kinds are governed registries with stable bits generated from manifests into native law and perf-cache ROMs, never seeded as rows; a type's, class's, or relation's id is the content id of its label. `docs/plan/ASSIMILATION_ROADMAP.md` law 4. The monorepo's workstream G lists the fake machinery still to remove: blake3 source ids, marker entities, the canonical-names table, `ByteAtoms` as a second alphabet, static registries.
 - **Wiki.** [8. Database](Database.md): entity, physicality, source, statistics, witness, claim, attestation, consensus.
 - **Agree.** No lookup table holds semantics; a registry value is the content entity of its label.
-- **Open.** Whether a statistics table and a claim table are "fake lookup tables" or the physicality and attestation the inventor names; and whether a registry held outside the database as generated code and ROM satisfies "no more tables than this."
+- **Decided.** A registry is a perf-cache. Its members are content entities like everything else, `noun` the same `[n,o,u,n]` as the word anywhere, and a stable bit or slot is an index over them, never the identity of a meaning. "Never seeded as rows" means a registry is not a lookup table of made-up IDs, not that its members have no entities. A member's meaning is attested and realizable in any language; English names in manifests and code are developer handles, no code path tests for an English value, and no identity is derived from an invented label such as `WordNet_Synset` or `AcademicCurated`. [6. Registries](Registries.md).
+- **Open.** Whether a statistics table and a claim table are "fake lookup tables" or the physicality and attestation the inventor names.
 
 ### T2. Two claim hashes, or one typed cell plus a qualifier mask
 
 - **Wiki.** [Claims: IDs](../Semantics/Claims.md#ids): a witnessing ID over the claim's specifics and a consensus ID over what makes it unique; masks in separate columns for part of speech, sense, dependency relation.
-- **Monorepo.** `docs/specs/05_Substrate_Invariants.txt` Rule #6: the consensus address is the typed `(subject, relation, object)` triple; the attestation row carries the witness, context, outcome, score, and a 256-bit qualifier mask; consensus has no qualifiers yet, so a reader needing one variant probes the attestations behind the cell.
+- **Monorepo.** `docs/specs/05_Substrate_Invariants.txt` Rule #6, line 131: the consensus address is the typed `(subject, relation, object)` triple; the attestation row carries the witness, context, outcome, score, and a 256-bit qualifier mask; consensus has no qualifiers yet, so a reader needing one variant probes the attestations behind the cell.
 - **Agree.** Two witnesses of the same claim land on one consensus cell; the specifics live on the attestation.
-- **Open.** Whether the wiki's masks and the monorepo's qualifier mask are one column, and whether qualifiers reach consensus.
+- **Decided.** A claim is a composition of content IDs with referential integrity, of any arity and any tier: a lexicalization `[lemma, language, ILI]`, a concept relation `[ILI, hypernym, ILI]`, a role inside a roleset, a valence pattern. The `(subject, relation, object)` triple is one shape among many. The consensus ID covers the claim's composition; the witnessing ID adds the witness, the context, and the qualifiers. Consensus is keyed on the claim's composition, never on BLAKE3(subject‖type‖object) with a missing object filled with zeros. The qualifier mask is on the attestation and says which variants of one proposition a source asserts; the part-of-speech, dependency, and other enum masks are bits set where a source asserts them, at the tier it asserts them. [12. Attestations](Attestations.md) operations 12.5 to 12.7.
+- **Open.** Whether the consensus row carries the OR of its attestations' qualifier masks.
 
 ### T3. No consensus folds, or a set-sized fold
 
 - **Wiki.** [Consensus: No ETL](../Semantics/Consensus.md#no-etl): there are no consensus folds; standings are updated in place, one matchup per attestation as it arrives, and ETL is forbidden.
 - **Monorepo.** The ingest spine ends in "fold completion" and "set-sized evidence fold (attestations → consensus)"; roadmap workstream C measures that the current fold reads every touched cell's evidence back over SPI and refolds from neutral on every working set, and targets folding each witness's rating period per cell in memory natively and emitting consensus deltas.
 - **Agree.** The update is native Glicko-2 per cell, set-sized per batch, never per record, never delayed, never SQL doing the arithmetic.
-- **Open.** Only the word: the monorepo's "fold" names the batch Glicko-2 update; the wiki forbids "folds" meaning delayed aggregation. Whether a witness's whole rating period is played as one matchup per cell, or each attestation as its own period.
+- **Built.** Laplace-Engine `src/db.c` plays one `lp_attest` for a claim the first time a lineage attests it, ever; every later occurrence only adds to the attestation's `games` and averages its score, so an attestation's games are counted and never played.
+- **Decided.** A witness asserting the same claim *n* times is one attestation with *n* games, played as that series: if WordNet says a dog is a noun 30 times, that is one attestation with 30 games. The client folds every repeat from one witness before the database sees anything, and the database receives one update per strand per witness; different witnesses play first in, first out. The client solves the series as that one update, not by Glicko-2's single period step: it finds the rating where the claim's prior standing and the series' score agree, the log posterior being concave so bisection on its slope always converges, and the deviation from the series' games, at a cost independent of *n*. The single period step is one linearized move, fine for small moves and wrong for a long series: a 450 player against a 3400 player, 1,000 games, 100 wins and 100 draws, is one series with score 0.15; played game by game Glicko-2 converges to 3100 with deviation 15, where an expected score of 0.15 against 3400 sits, 3097; solved as one update it gives 3092 with deviation 16; the single period step from 450 gives 105,823. "No rating periods" and "no folds" mean no global, delayed, ETL-style periods or aggregation. A number a source states, such as WordNet's `tag_cnt`, is an observation, not games. [13. Consensus](Consensus.md) operation 13.4.
 
 ## Reading standings
 
@@ -94,12 +103,12 @@ None of these is settled by this page. Where an operation in another Sequence pa
 
 ## Strands and meaning
 
-### S1. An ILI is a key recorded nowhere, or a hub a word bubbles up to
+### S1. An ILI is a key recorded nowhere, or a highway node a word bubbles up to
 
 - **Wiki.** [Corpora](../Corpora/README.md): an ILI number is a source's key, resolved to the thing it names and recorded nowhere. [Semantics](../Semantics/README.md) and [Claims: Tuples](../Semantics/Claims.md#tuples): `dog` has an ILI; bubble up to it, change the language, bubble down, and there is `Hund`; `dog → ILI i46360`. [Claims: Masks](../Semantics/Claims.md#masks): an ILI is an identifier and gets no mask.
 - **Monorepo.** `docs/plan/ASSIMILATION_ROADMAP.md` workstream B: a word binds to a language-neutral key (`dog —HAS_SENSE→ i46360 @eng`), and facts about the key are language-neutral.
-- **Agree.** The concept is the hub that translation passes through, and it has no mask bit.
-- **Open.** What the hub's entity is: the identifier's text as CILI writes it, its definition, or the composition of the synsets that map to it; and so whether `i46360` is ever content.
+- **Agree.** The concept is the highway node that translation passes through, and it has no mask bit.
+- **Decided.** A source writes two kinds of identifier. A highway ID is a highway node, from a shared vocabulary that other sources cite too: an ILI, a PropBank roleset, a VerbNet class, a FrameNet frame, frame element, or lexical unit, a VerbAtlas frame, a language code. It is content, `i46360` is `[i,4,6,3,6,0]` exactly as `3.14159` is `[3,.,1,4,1,5,9]`, every source that cites it lands on the same node, and that it is an ILI is attested by CILI, the source that says so; it is never canonicalized into a governed reference or a made-up key. An internal pointer is how a source addresses its own records or another release's: a WordNet offset, a synset or sense id, a FrameNet number, a UD token number or `sent_id`, a Tatoeba sentence number, a GeoNames geonameid, a dataset's row id, a line or row number. It is packaging: the recipe decomposes it by the source's own notation only to extract the facts it carries, a WordNet offset's part of speech `v`, a sense key's lexicographer file `38`, resolves it to the ID of what it points at, through the source's own tree or the highway perf-cache, and does not record it; the Engine's `key`, `refer`, and `type` do exactly this. A WordNet 3.0 offset is the byte position of its synset's line in that release's `data.<pos>` file: byte 1,976,841 of `data.verb` starts `01976841 38 v 01 drop`; it is unique only with its part of speech, 73 offsets occurring in both `data.noun` and `data.verb`, `00001740` being noun 'entity' and verb 'breathe', and only within its release. A synset cannot be identified by its words either: 19,619 of WordNet 3.0's 117,659 synsets share their exact word list with another, eleven verb synsets being just `drop`; a synset is its ILI. Traversal bubbles up from a word to its highway node through the lexicalization strand, `[dog, eng, i46360]`, changes the language or hops along a highway mapping, roleset to VerbNet class to frame, and bubbles down to words, every step a GIN read over strands; facts about the highway node are language-neutral. Positions, a line, a byte offset, a row number, an ordinal, are never part of any ID. A sense key is a pointer, I7. [10. Recipes](Recipes.md) operation 10.11, [12. Attestations](Attestations.md) operation 12.4.
 
 ### S2. The stock default a claim enters at, when relations are content
 
@@ -114,6 +123,7 @@ None of these is settled by this page. Where an operation in another Sequence pa
 - **Wiki.** [Claims: Tuples](../Semantics/Claims.md#tuples): nothing is hard-coded except pregenerated relations, types, and kinds that act like a perf-cache or flagged enums. Q3 above.
 - **Monorepo.** `engine/manifest/relation_types.toml` `[ranks]`: thirteen rank tiers over 233 English canonical relation names (`HAS_POS` lexical glue 0.18, `IS_A` taxonomic 0.90), read as salience by the forward pass and by model export.
 - **Built.** Laplace-Engine has no rank table. Its firmware weighs strands by predicate content (`weigh N KIND...`) and words by what is attested of them (`role by UPOS`, `role 1 NOUN ADJ NUM`), names resolved to their entities when the firmware loads.
+- **Decided.** English is never identity: the 233 English names of `relation_types.toml` are developer handles, a relation is the content its source writes, with its meaning attested and realizable in any language, and a registry bit is a perf-cache index over it. No code path tests for an English value. [6. Registries](Registries.md) operation 6.1.
 - **Open.** Whether salience is a flagged enum per source relation inventory, a value the firmware supplies by naming content, or something measured, as [Research: Trust: Role trust](../Research/Trust.md#role-trust) measures the information a part of speech carries.
 
 ### S4. Firmware is a file never a record, or a content-addressed program over the operation ISA
@@ -124,6 +134,70 @@ None of these is settled by this page. Where an operation in another Sequence pa
 - **Agree.** Firmware never writes knowledge or standing, and the same records read under two firmwares give two behaviours over one truth.
 - **Open.** Whether a firmware is content (an ID, not attested), and how much of the stage order and election order is the firmware's program rather than the engine's code.
 
+## Identity
+
+### I1. A composition's hash input has a domain byte, or only its children's IDs
+
+- **Wiki.** [Identity: Pure content](../Storage/Identity.md#pure-content) and [11. Content](Content.md) operation 11.5: a composition's ID is BLAKE3 over its children's 16-byte IDs, in order, and nothing else. [Research: Hashing: Hash input](../Research/Hashing.md#hash-input).
+- **Monorepo.** `docs/ARCHITECTURE.md` line 55: the executable id is a BLAKE3-derived hash over the Merkle domain byte plus the ordered child-id sequence; `hash128_merkle` prepends `0x01`.
+- **Built.** Laplace-Native and Laplace-Engine hash the child IDs alone.
+- **Decided.** There is no domain byte. A leaf hashes the 1 to 4 bytes of one codepoint's UTF-8 and a node at least 32, and a composition with one child is that child, so a node can never collide with a leaf. The monorepo's domain byte is wrong.
+
+### I2. The same content under the same recipe, or the same content
+
+- **Wiki.** [Identity](../Storage/Identity.md): the same content always has the same ID.
+- **Monorepo.** `docs/INVENTION.md` line 169: composite identity is Merkle-style over the ordered child identities under the selected recipe/domain separation. `docs/INVENTIONS.md` #1, line 7: equal canonical content under one declared recipe converges across sources and modalities.
+- **Decided.** The same content has the same ID; the recipe decides the tree. The same bytes under a different decomposition can give a different trunk, but a recipe never salts a hash, and no recipe name or version is in a hash input.
+
+### I3. The witness is `[authority, release]`, or the source trunk
+
+- **Wiki.** [9. Sources](Sources.md) operation 9.4 and [12. Attestations](Attestations.md) operation 12.2, as first written: the witness is the content composition `[authority, release]`, one per lexicon. [10. Recipes](Recipes.md) operation 10.4: a source is a trunk entity above its files.
+- **Monorepo.** `docs/plan/ASSIMILATION_ROADMAP.md` law 1, line 48: the witness identity is the content composition `[authority, release]` (`SourceWitness.Id`), one per lexicon, `[omw-fr, 2.0]`.
+- **Agree.** The witness is a content-derived entity, never a blob hash of a name or an ID made from a made-up key such as `substrate/source/X/v1`. A source is the trunk over its files, a release is its files, and version suffixes never appear in IDs.
+- **Built.** Laplace-Engine names a witness by the name its source gives itself, emits claims as events only (`say.c` `claim()` and `together()`: no entity is made of the claims together), and keeps provenance only in the `attestation` table, a row of claim, witness, score, and position.
+- **Decided.** The witness is the source trunk, `[source record, its files' trunks in path order]`. The corpus is the trunk: Universal Dependencies, Open Multilingual Wordnet, the WSD evaluation framework, and HateCheck are each one source trunk and one witness, and a treebank, a lexicon, or a dataset under one of them is files, with their paths, under that trunk, never a witness of its own. Annotators, workers, speakers, and members a corpus names are content, not witnesses: the corpus is the witness, and what it reports of them, that this annotator labelled this case hateful, that this speaker said this sentence, that this member added this sentence, are relations the corpus attests, added to the web explicitly. Provenance by containment is the target: a record is a path over the strands, the claims, it asserts, inside its file's content tree, with each strand's outcome or score in its vertex's M, and many source trunks can reference the same strand, several parents found through the GIN. Standing, rating, deviation, volatility, and matches, is one metadata table keyed by the strand ID, beside the path, never on the GIN-indexed path row, where a non-HOT update would re-insert GIN entries for every vertex. The per-claim-and-witness attestation table, with its qualifier masks, stays until a working prototype on real data shows that containment answers everything the table answers today, who said a claim, its games, score, and position, its qualifiers, forgetting and replay, with nothing lost; the two run side by side until then. Trust and lineage are keyed by the trunk ID. Standing is stored on every strand. Forgetting a source removes its attestations and its trunk, sweeps what nothing references, and replays the standings it touched. Entities, an ID and a coordinate, and physicality, the content, stay separate rows. A source's own name stays content inside its source record. Witnessing is not attribution: that any entity was witnessed is calculated by a walk up to the trunks that hold it, and never stored; that a source asserted a claim is its attestation row, and in the target the strand in a record path under that source's trunk. What the Engine does now is as built, including the witnesses it names below the corpus, a treebank by its directory (`witness {dir}`), a lexicon by its label (`{first label}`), and an annotator column as a witness of its own (`voices`, `own`, `by`); the target is the one corpus trunk as the only witness, with those treebanks, lexicons, and annotators content under it. [9. Sources](Sources.md) operation 9.4, [12. Attestations](Attestations.md) operations 12.2 and 12.9, [Attestations: Witnesses](../Semantics/Attestations.md#witnesses).
+
+### I4. Records, files, and packaging are not content, or they have trunks
+
+- **Wiki.** [11. Content](Content.md) operations 11.2 and 11.3: a file is a trunk, `[metadata, content]`, under a source trunk.
+- **Monorepo.** `docs/plan/ASSIMILATION_ROADMAP.md` law 2, line 49: curated sources are mined for knowledge, not recorded bit-perfect; records, files and packaging are not content; only user content needs exact reconstruction.
+- **Agree.** A curated source is mined for what it teaches, and only user content needs exact reconstruction.
+- **Decided.** A curated source's records, files, and packaging need not reproduce the admitted bytes, but the records, the files, and the source still have trunks and IDs like any content: one Merkle DAG from leaf to source trunk. [10. Recipes](Recipes.md) operation 10.8.
+
+### I5. An external identifier is a typed reference, or content
+
+- **Wiki.** [Claims: Tuples](../Semantics/Claims.md#tuples): every part of a claim is an entity.
+- **Monorepo.** `docs/plan/INGEST_BOUNDARY_AND_RECIPE_LAW.md` lines 82 and 168: an opaque external identity lowers to a typed reference; a sense key, synset id, frame id, roleset id, or external record key is a typed reference under a governed identity, and not ordinary text content just because the identifier is UTF-8.
+- **Decided.** It depends on the kind of identifier. A highway ID is content, a highway node, the same entity wherever its text occurs, and what kind of identifier it is is attested by the source that says so; it is never a typed reference under a governed identity. An internal pointer is decomposed by the source's notation only for the facts it carries, resolved to the ID of what it points at, and not recorded. Structured notation decomposes by the source's grammar, declared in the recipe, never by word segmentation: `mcr:ili-30-01976841-v` is a prefix, a scheme, release 30, an offset, and a part of speech; `drop%2:38:00::` is a lemma, part of speech 2, lexicographer file 38, and lex_id 00. S1 above. [10. Recipes](Recipes.md) operation 10.11.
+
+### I6. How repetition counts at each level
+
+- **Wiki.** [13. Consensus](Consensus.md) operation 13.4 and [Consensus: Matchups](../Semantics/Consensus.md#matchups), as first written: a witness's repeats of one claim are run-length games, folded on the client into one rating period per cell. [21. Sessions](Sessions.md): the same prompt text in two turns is one content entity occurring twice.
+- **Agree.** Repetition is read off the tree at its level: inside one message's tree, across the turns of one session, across users, across tenants.
+- **Built.** Laplace-Engine `src/db.c` plays one `lp_attest` for a claim the first time a lineage attests it, ever; every later occurrence only adds to the attestation's `games` and averages its score, so an attestation's games are counted and never played.
+- **Decided.** If WordNet says a dog is a noun 30 times, that is one attestation with 30 games. An attestation is one per strand and witness: its games, how many times that witness asserts the strand, and a score; a claim is a game series, games plus a score, played at the witness's trust. The client folds a source's repeats before the database sees anything, so the database takes one update per strand per witness. The client solves the series as that one update, not by Glicko-2's single period step: it finds the rating where the claim's prior standing and the series' score agree, the log posterior being concave so bisection on its slope always converges, and the deviation from the series' games, at a cost independent of *n*. The single period step is one linearized move, fine for small moves and wrong for a long series: a 450 player against a 3400 player, 1,000 games, 100 wins and 100 draws, is one series with score 0.15; played game by game Glicko-2 converges to 3100 with deviation 15, where an expected score of 0.15 against 3400 sits, 3097; solved as one update it gives 3092 with deviation 16; the single period step from 450 gives 105,823. Run-length encoding is content structure only: identical consecutive children in a path, with the run in M. A sentence pasted a million times into one prompt is a run in that prompt's content, an observation that attests nothing; the same message across turns lengthens the session's trajectory, a turn being itself a trajectory of referenced IDs. Across users or witnesses, repeats are separate witnesses, independent only as far as their dependence roots are. A number a source states, such as WordNet's `tag_cnt`, is an observation, not games. Packaging is not repetition: a cross-product table layout or an automatic tagger's per-token output repeating one fact is not the source saying it again. [13. Consensus](Consensus.md) operation 13.4.
+
+### I7. A sense key is an internal pointer, or a lexicalization in its own right
+
+- **Wiki.** [Corpora: Wordnets](../Corpora/Wordnets.md) and [Corpora: Hops](../Corpora/Hops.md): sense keys, `abandon%2:40:00::`, are among the identifiers the highway's `ili` list resolves to a concept; VerbNet's members, SemCor's gold labels, and the Predicate Matrix write them.
+- **Built.** Laplace-Engine resolves a sense key to the concept it names (`type sense_key ili`, `type wn ili`) and records nothing of it.
+- **Agree.** A sense key is structured notation, decomposed by WordNet's grammar into a lemma, a part of speech, a lexicographer file, and a lex_id, and the facts those parts carry are extracted.
+- **Decided.** A sense key, `dog%1:05:00::`, is WordNet's internal pointer to a lexicalization. It is decomposed for its facts, the lemma, the part of speech, and the lexicographer file, resolved through the highway perf-cache to the lexicalization strand it addresses, and not recorded. Other sources that cite a sense key land, through the same resolution, on that lexicalization. [10. Recipes](Recipes.md) operation 10.11.
+
+### I8. Language is a part of the lexicalization strand, or a flag on it
+
+- **Wiki.** [12. Attestations](Attestations.md) operation 12.5 and [9. Sources](Sources.md), the ISO 639 row of the estate: a lexicalization is `[lemma, language, ILI]`, with the language a part of it and not a context column; bubbling changes the language on the strand filter.
+- **Agree.** Language is never a context column, and a word in two languages is two lexicalizations.
+- **Decided.** The language is a part of the lexicalization strand, `[dog, eng, i46360]`, an ISO 639 highway node in the path, never a flag or a mask bit, and no mask bank holds languages. Changing the language is intersecting on the ILI and a different language part, the same GIN read. [12. Attestations](Attestations.md) operation 12.5.
+
+### I9. ToxiGen's generated and human text: two witnesses, or one trunk
+
+- **Wiki.** [9. Sources](Sources.md), the ToxiGen row of the estate, as first written: labels under two witnesses, AcademicCurated for the human annotations and AIModelProbe for the generated text.
+- **Monorepo.** `docs/source-estate.tsv` line 54: admit generated and human provenance separately.
+- **Built.** Laplace-Engine admits ToxiGen as one witness, `ToxiGen`, class AcademicCurated (`recipes/toxigen/source`).
+- **Decided.** ToxiGen is one source trunk and one witness, I3, and its trust class is keyed by that trunk, so one trunk has one class; which statements a model generated and which people annotated are relations the corpus attests.
+- **Open.** Which class the one trunk takes: AcademicCurated, a model's class such as AIModelProbe, or another.
+
 ## What this page leaves behind
 
-The list of decisions that are the inventor's. Every other Sequence page is written to hold under either answer where it can, and says which answer it assumed where it cannot.
+The list of decisions that are the inventor's, and the decisions already made. Every other Sequence page states a decided entry's decision, is written to hold under either answer of an open one where it can, and says which answer it assumed where it cannot.

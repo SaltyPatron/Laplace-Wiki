@@ -13,7 +13,7 @@ A running install: everything through [22. Users](Users.md).
 ### 29.1 Forget a source
 
 - **In:** a witness to correct or remove.
-- **Do:** correcting a source is per-witness replacement, never a database recreate: evict the witness's claims, refold the touched cells, re-ingest the corrected generation. The engine's forget removes a source's contributions; observed testimony from other witnesses stays. Old evidence remains addressable rather than being overwritten. Never reset or drop the database without explicit authorization for that action.
+- **Do:** correcting a source is per-witness replacement, never a database recreate: remove the source's attestations and its trunk, sweep what nothing references any more, replay the standings it touched, and re-ingest the corrected generation, whose files give it a trunk of its own. The engine's forget removes a source's contributions; observed testimony from other witnesses stays. With provenance by containment, the target, removing the trunk is the whole of the forget, once a working prototype shows containment replays exactly what the attestation table does. Old evidence remains addressable rather than being overwritten. Never reset or drop the database without explicit authorization for that action.
 - **Out:** the world without that witness's testimony, standings refolded.
 - **From:** `docs/plan/ASSIMILATION_ROADMAP.md` workstream C; `docs/specs/06_Engineering_Ruleset.txt` §Operational constraints; `docs/INVENTION.md` §11.
 

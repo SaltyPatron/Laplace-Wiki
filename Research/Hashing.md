@@ -58,7 +58,7 @@ Laplace hashes pure content only:
 
 Type, tier, source, and position are observations about a node, not content, and are not part of the hash input.
 
-Every child ID has the same fixed width, so a composition's input is a concatenation of fixed-width fields. That concatenation parses in exactly one way, and the byte length fixes the child count: `[a,a]` is twice as long as `[a]`. A composition with one child collapses to that child, so no composition input consists of a single child ID. Together, fixed-width child IDs and one-child collapse keep leaf inputs and composition inputs apart.
+Every child ID has the same fixed width, so a composition's input is a concatenation of fixed-width fields. That concatenation parses in exactly one way, and the byte length fixes the child count: `[a,a]` is twice as long as `[a]`. A composition with one child collapses to that child, so no composition input consists of a single child ID. Together, fixed-width child IDs and one-child collapse keep leaf inputs and composition inputs apart: a leaf's input is the 1 to 4 bytes of one codepoint's UTF-8 and a composition's is at least 32 bytes, so no domain byte is prepended, unlike RFC 6962 below.
 
 The classic ambiguity of hashing concatenated variable-length content, `"ab" + "c" == "a" + "bc"`, cannot arise: the input holds child IDs, not child content.
 
