@@ -32,7 +32,7 @@ As built, the relation of a claim above is the name of the field that carries it
 | `[[dog, [dog, …]], adjposition, a]`, `[Somebody %s something, senses, …]` | the attribute's name | what WN-LMF documents: an adjective's position; the senses that take that subcategorization frame |
 | `[[dog, [dog, …]], Count, 70]`, `[sense, tag_cnt, 10742]`, `[sense, sense_number, 1]` | the element's or column's name | observations: numbers WordNet states of the sense, kept beside it and never games |
 | `[[dog, …], dc:source, …]` | the attribute's name | who said it: that this author wrote this example, a relation the wordnet attests |
-| `[[…], ili, in]` | the attribute's name | the synset's highway node; how a concept with no ILI yet is named is not decided |
+| `[[…], ili, in]` | the attribute's name | the synset's highway node; a concept with no ILI yet is given no stand-in identity, and its content-derived nodes link by collision when CILI states its ILI |
 | `[inflected form, noun, base form]` | the file's category | WordNet's morphological exception: the inflected form's base form, under that part of speech, a value of WordNet's list |
 
 ## WN-LMF
@@ -52,7 +52,7 @@ Open English WordNet and every wordnet of Open Multilingual Wordnet are one file
 | `Count` | text inside a sense | an observation of the sense: the number the wordnet states, content as written; it is not games, and the sense's standing is not played 70 times for it | `[[dog, [dog, …]], Count, 70]`, an observation | |
 | the `dc:` attributes, `status`, `note`, `confidenceScore` | on the elements that declare them | said of the thing the element is or is inside, under the attribute's name as written. `dc:source` names who said it, an example's author (W.B.Yeats), a synset's source: content, and that this author wrote this example is a relation the wordnet attests, with the wordnet the witness; as built, the Engine makes each a witness of its own (`own dc:source`), and the target is the relation | `[[dog, …], dc:source, …]` | |
 | `LexicalResource`, `xmlns:dc` | the root, namespaces | structure and XML's own plumbing: nothing | nothing | |
-| an `ili` written `in`, or a number the index does not know | `ili="in"` | as built, content as written, said of the synset: `in` names no concept CILI lists, and a number CILI does not list is one CILI attests nothing of. Such a synset is still a concept node; how it is named until CILI gives it an ILI is not decided | as built, `[[…], ili, in]` | |
+| an `ili` written `in`, or a number the index does not know | `ili="in"` | as built, content as written, said of the synset: `in` names no concept CILI lists, and a number CILI does not list is one CILI attests nothing of. Such a synset is still a concept node, and it is given no stand-in identity: nothing is order-dependent, every node is content-derived, and its content-derived nodes, its lexicalizations, definition, and relations, link by entity collision when CILI states its ILI, whichever is ingested first | as built, `[[…], ili, in]` | |
 
 What one element says it says together, as one record: a thing's place in the thing it is inside, its own attributes, its own text; an element that is not a thing speaks of the thing it is inside. Every entry stands on lines of its own (`records`), so a long file is read in parts on every core.
 
