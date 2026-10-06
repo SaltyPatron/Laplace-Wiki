@@ -1,6 +1,6 @@
 # Social Chemistry
 
-Social-Chem-101 attests what a breakdown row says of its rule of thumb, which is the rule's text, as one record of the set; the row's ids are internal pointers recorded nowhere, and its bookkeeping columns attest nothing.
+Social-Chem-101 attests what a breakdown row says of its rule of thumb, which is the rule's text, as one record of the set, and which worker wrote the rule and which broke it down; the ids of the rule and the situation are internal pointers recorded nowhere, the worker ids are content, and its bookkeeping columns attest nothing.
 
 The source is the "Social-Chem-101 Dataset": rules of thumb written by workers about situations, and the breakdowns workers made of them. One recipe reads its one table.
 

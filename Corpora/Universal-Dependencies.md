@@ -32,7 +32,7 @@ Universal Dependencies           the source trunk, [source record, its files' tr
       ├ layers                   UPOS, XPOS, LEMMA and FEATS, aligned to the tokens; identical layers are one
       ├ dependency tree          DEPREL by HEAD, its subtrees composed and shared
       ├ notes                    text_en and the like, said of the sentence at the sentence's tier
-      ├ speaker, annotator       content: [sentence, speaker_id, SP], [token, Annotator, Sv], which the treebank attests
+      ├ speaker, annotator       content: [sentence, speaker_id, SP], [token, Annotator, Sv], which the corpus attests
       └ strands                  [forces, NOUN], [forces, force], [forces, Number=Plur]: what it says of each word
 ```
 

@@ -141,7 +141,7 @@ A resource's recipe says which of its things are types and what it maps between 
 | --- | --- |
 | `types LIST "SAY" TIER` | each thing of TIER is a type of the highway's LIST, in the order the files write them (a text of a list is a type by itself) |
 | `keyed LIST TIER PATH [matching PATTERN] [as TEMPLATE]` | the value at PATH is a resource's identifier of that type, as those who point at it write it |
-| `alias LIST TIER PATH [matching ...] to PATH [matching ...]` | an identifier that names the type another identifier names (a sense key and its synset's offset) |
+| `alias LIST TIER PATH [matching ...] to PATH [matching ...]` | an identifier that names the type another identifier names (a BabelNet id and its synset's WordNet offset; as built also a sense key and its synset's offset, though a sense key points at a lexicalization, not at the concept) |
 | `maps TIER PATH LIST [matching ...] to PATH LIST [matching ...]` | an edge between the type one identifier names and the type another names |
 
 A pattern is POSIX extended; a template writes `\0` the whole match and `\1` to `\9` its parts; with no template, the first part, or the whole. What names no type of its list is left out and said, by lists, with an example.

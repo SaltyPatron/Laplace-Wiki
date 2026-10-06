@@ -23,7 +23,7 @@ The class is the witness's trust class, one of those [6. Registries](../Sequence
 | the third field | `a#00057580` | a WordNet 1.6 offset: a pointer (`key synsets`), recorded nowhere | nothing | "All synsets refer to WordNet version 1.6" |
 | an empty field | | what the file leaves empty | nothing | |
 
-Each claim stands alone, witnessed once. That is as built: a row is one mapping, one interchange strand of the frame, the lexical unit and the synset, never a claim per column. How the synset is named in it while its WordNet 1.6 offset resolves to nothing is not decided.
+Each claim stands alone, witnessed once. That is as built: a claim of the frame and the lexical unit, and nothing of the synset; the target is a row as one mapping, one interchange strand of the frame, the lexical unit and the synset, never a claim per column. How the synset is named in it while its WordNet 1.6 offset resolves to nothing is not decided.
 
 ## Not read
 
