@@ -20,7 +20,7 @@ The chain through [23. Learning](Learning.md). Game rules are firmware, [18. Fir
 ### 28.2 Pin the challenge generation
 
 - **In:** a ranked challenge.
-- **Do:** the Tetris property: every contestant gets mechanically comparable state, the challenge set id and ordered queue, a closed world and evidence epoch, provider, relation, and calculation rules, source, domain, time, and sense scope, hop, fanout, and resource boundaries, anti-hub and specificity constraints, the visibility law, the scoring and tie law, and the server timing and event-order law. Later substrate growth produces a new generation instead of changing yesterday's board. Practice may target the live world; ranked play binds a closed epoch.
+- **Do:** the Tetris property: every contestant gets mechanically comparable state, the challenge set id and ordered queue, a closed world and evidence epoch, provider, relation, and calculation rules, source, domain, time, and sense scope, hop, fanout, and resource boundaries, fan-limit and specificity constraints, the visibility law, the scoring and tie law, and the server timing and event-order law. Later substrate growth produces a new generation instead of changing yesterday's board. Practice may target the live world; ranked play binds a closed epoch.
 - **Out:** the challenge generation.
 - **From:** `docs/guides/knowledge-arena.md` §Ranked fairness.
 

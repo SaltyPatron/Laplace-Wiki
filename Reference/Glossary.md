@@ -20,7 +20,7 @@ Every term the documentation uses, defined once, with the page that owns it.
 | fingerprint | the BLAKE3-256 of a tier-0 table; two installs with one fingerprint give the same content the same coordinates | [Atoms](../Storage/Atoms.md) |
 | firmware | one human being's decisions for a pull, a file never a record | [Personality firmware](../Semantics/Firmware.md) |
 | flags | the 256 bits per codepoint holding the Unicode Standard's properties | [Atoms](../Storage/Atoms.md) |
-| games | how many times a witness has attested a strand; a claim is a game series, games plus a score | [Attestations](../Semantics/Attestations.md#strands) |
+| games | the matchups a strand has played, one per witness per ingestion, each carrying the witness's run length as the certainty of its assertion; a claim is a game series, matchups plus a score | [Attestations](../Semantics/Attestations.md#strands) |
 | Hilbert value | the 4D Hilbert curve position of a coordinate on a 16-bit grid, for locality and ordering | [Physicality](../Storage/Physicality.md) |
 | hop | following a claim from an entity to the entity at its other end | [Pull](../Semantics/Pull.md) |
 | ID | BLAKE3-128 of pure content | [Identity](../Storage/Identity.md) |

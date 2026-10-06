@@ -93,7 +93,7 @@ Ordered by standing alone, `dog`'s senses tie: the animal, a ratchet catch, and 
 
 The test uses the standard evaluation framework of [Raganato et al. (2017)](https://aclanthology.org/E17-1010.pdf): SemCor (226,036 sense-tagged instances) and five test sets. Every gold WordNet 3.0 sense key maps to an ILI through `index.sense` and CILI. Following common practice, SemEval-2007 was used for tuning and the other four sets, 6,798 instances, for scoring.
 
-The pull scored each candidate sense as its prior, the attested sense frequency, plus the pull of the sentence's other words through WordNet's identifier hubs (hypernyms, supersense, definition words, synset members), discounting frequent hubs:
+The pull scored each candidate sense as its prior, the attested sense frequency, plus the pull of the sentence's other words through WordNet's connecting nodes (hypernyms, supersense, definition words, synset members), discounting frequent ones:
 
 | Set | Instances | Prior only | Prior + pull |
 | --- | --- | --- | --- |
@@ -130,7 +130,7 @@ Three earlier runs scored lower, each for a measured reason:
 - Merging frequency into a standing loses it: a standing measures whether a claim holds, it saturates as its deviation shrinks, and a lemma's true senses end up close together whatever their frequency.
 - Without the part-of-speech filter, a verb instance of *run* is scored against the noun senses too.
 - WordNet's frequency file writes every lemma in lower case, while its data files and the claims keep `Einstein` as written; matching the counts back to the written form, and adding Open English WordNet, raised coverage from 6,404 to 6,613 instances and standing alone from 50.1 to 61.5.
-- The pull through relation claims does not yet add to the prior. The pull through WordNet's hubs above, which also used definition words and supersenses, added 0.7.
+- The pull through relation claims does not yet add to the prior. The pull through WordNet's connecting nodes above, which also used definition words and supersenses, added 0.7.
 - Scoring took about 1 ms per word in single-threaded Python, including the two-hop neighborhoods of every other word in the sentence; the claims were read once from the database.
 
 With the context intersected with each sense's record set and every shared record weighted by role trust, the same four sets score 66.2; see [Trust](Trust.md#role-trust-in-word-sense-disambiguation).

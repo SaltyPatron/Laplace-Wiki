@@ -4,6 +4,8 @@ Laplace stores all digital content as a self-deduplicating Merkle DAG with deter
 
 The storage exploits spatial datatypes and old technologies. Like Git and IPFS, the same content always has the same hash.
 
+The PostGIS tables are the structure of the Census Bureau's MAF/TIGER applied to knowledge. TIGER's blocks are shared by overlapping hierarchies, tracts nesting in counties and states while ZCTAs, places, and school and congressional districts cross them, as content is shared by many trees; a GEOID is a structured pointer; an MTFCC class is an identifier system; a feature name is a lexicalization; the geocoder's normalize-and-resolve with a rating is pointer resolution with standing; and routing over classed edges is A* over strands. Laplace goes further: identity is content, not an assigned ID that changes with every vintage.
+
 Laplace is both a Merkle DAG and an AST. Tree-sitter is the example: a grammar gives every file its syntax tree, and Laplace records that tree as content.
 
 All digital content boils down to Unicode codepoints. Content is broken down into its smallest constituent components, the Merkle DAG of those components is persisted, and the content is stored as trajectories in the [space](Space.md).

@@ -1,6 +1,6 @@
 # 13. Consensus
 
-A witness's assertions of one claim are run-length games, folded on the client into one Glicko-2 rating period per cell per witness and played at the witness's trust as they arrive; witnesses play first in, first out, with no global or delayed folds.
+Each witness plays one Glicko-2 matchup per strand per ingestion, at its trust, as it arrives, with its run length carried as the certainty of its assertion and never played as separate games; witnesses play first in, first out, with no global or delayed folds.
 
 Everything attested about a claim, as a whole, provides its overall score: a Glicko-2 standing that tells how hard a strand tugs back. Glicko-2 replaces a lot of conventional AI mechanisms.
 
@@ -33,35 +33,35 @@ Everything attested about a claim, as a whole, provides its overall score: a Gli
 
 ### 13.4 Play the matchup
 
-- **In:** the standing of 13.1, the opponent of 13.2, the witness's *n* games on this claim and their mean score *s*, each game an outcome of 1, ½, or 0, or a score in [0, 1] a calculated witness supplies.
-- **Do:** a claim is a game series: games plus a score, a draw at 0.5. A witness that asserts the same claim *n* times plays *n* games, run-length like a repeat in a path; the client folds every repeat from one witness, per cell, into one rating period, and the database receives one update per cell per witness:
+- **In:** the standing of 13.1, the opponent of 13.2, the witness's outcome on this claim, 1, ½, or 0, or a score *s* in [0, 1] a calculated witness supplies, and its run length *n*, how many times the witness asserts the claim.
+- **Do:** a claim is a game series: one matchup per witness per ingestion, with a score, a draw at 0.5. Repetition is run length read off the tree: a run of one vertex in M, a session trajectory that lengthens, a strand occurring in *k* records under the corpus's trunk. A witness that asserts the same claim *n* times plays one matchup on that strand, carrying *n* as the certainty of its assertion; the client folds every repeat from one witness before the database sees anything, and the database receives one update per strand per witness:
 
   ```text
   Scale:       μ = (r − 1500) / 173.7178,   φ = RD / 173.7178
   Helpers:     g(φ_j) = 1 / sqrt(1 + 3φ_j²/π²)
                E = 1 / (1 + exp(−g(φ_j)(μ − μ_j)))
-  Variance:    v = [ n g(φ_j)² E (1 − E) ]⁻¹
-  Improvement: Δ = v n g(φ_j)(s − E)
+  Variance:    v = [ g(φ_j)² E (1 − E) ]⁻¹
+  Improvement: Δ = v g(φ_j)(s − E)
   Volatility:  σ' solves f(x) = 0 by the Illinois method, where
                f(x) = e^x(Δ² − φ² − v − e^x) / (2(φ² + v + e^x)²) − (x − ln σ²) / τ²
   Pre-period:  φ* = sqrt(φ² + σ'²)
   Update:      φ' = 1 / sqrt(1/φ*² + 1/v)
-               μ' = μ + φ'² n g(φ_j)(s − E)
+               μ' = μ + φ'² g(φ_j)(s − E)
   Convert:     r' = 173.7178 μ' + 1500,   RD' = 173.7178 φ'
   ```
 
-  There are no global, delayed, ETL-style rating periods: one witness's repeats of one claim are that witness's period for the cell, and different witnesses play first in, first out, as content is observed, each as its own period, with deviation growing with elapsed time instead, clamped to a floor and a cap, and volatility capped. Incoming records play existing records. The more something is attested to, the more its score rises or lowers, just like a chess rating, and repetition does not limit itself. For *n* identical results against one opponent, 1/v = n·g²·E(1 − E), and
+  There are no global, delayed, ETL-style rating periods: each witness's matchup on a strand is its own period, and different witnesses play first in, first out, as content is observed, with deviation growing with elapsed time instead, clamped to a floor and a cap, and volatility capped. Incoming records play existing records. The more witnesses attest something, the more its score rises or lowers, just like a chess rating. The run length *n* is never played as *n* separate games, because repetition played that way does not limit itself. For *n* identical results against one opponent in one period, 1/v = n·g²·E(1 − E), and
 
   $$\mu' - \mu = \frac{n\,g\,(s - E)}{1/\phi^{*2} + n\,g^2 E(1 - E)} \;\to\; \frac{s - E}{g\,E(1 - E)} \quad (n \to \infty)$$
 
-  one full Newton step, larger for a low-trust witness than for a high-trust one; low trust only needs more games to reach it. A million refutations at an opponent deviation of 1500 take a claim at 2300 with deviation 60 to −720, with deviation 1.9. So the rating does not stop spam: what limits one witness's repetition is structural (a prompt gives no semantic attestation merely by being said, and dependence roots count copies once), and how repeats count at each level is open in [Conflicts](Conflicts.md). A million identical repeats from one witness are still one row, one matchup with *n* = 1,000,000. Because a standing saturates, the run length *n* is also kept as a count beside the claim, never only merged into the standing. Copies count once, by 13.3.
+  one full Newton step, larger for a low-trust witness than for a high-trust one; low trust only needs more games to reach it. A million refutations at an opponent deviation of 1500 would take a claim at 2300 with deviation 60 to −720, with deviation 1.9. Run length as the certainty inside one matchup has no such runaway: a million identical repeats from one witness are one matchup, with *n* = 1,000,000 the certainty of that assertion. Because a standing saturates, the run length *n* is also kept as a count beside the claim, never only merged into the standing. Different witnesses are independent only as far as their dependence roots are, and copies count once, by 13.3. Packaging is not repetition: a cross-product table layout, the Predicate Matrix's rows, or an automatic tagger's per-token output, FrameNet's BNC and PENN layers or Universal Dependencies EWT's mostly automatic UPOS, repeating one fact is not the source saying it again. As built, the Engine plays each record's attestation as its own matchup, so a claim a witness asserts in *n* records plays *n* matchups. [30. Conflicts](Conflicts.md) I6.
 - **Out:** the new standing.
 - **From:** [Consensus: Glicko-2](../Semantics/Consensus.md#glicko-2), [Consensus: Matchups](../Semantics/Consensus.md#matchups), [Research: Relations Research: The Glicko-2 update](../Research/Relations.md#the-glicko-2-update), [Research: Learning: Rating one matchup at a time](../Research/Learning.md#rating-one-matchup-at-a-time), [Research: Engine Measurements: Native operations](../Research/Engine.md#native-operations).
 
 ### 13.5 Write the standing in place
 
 - **In:** the new standing of 13.4.
-- **Do:** update the standing row in place, one metadata table keyed by the strand ID beside the path, never on the GIN-indexed path row. The claim's witness set is its rows of the attestation table; in the target it is the trunks that hold its strand, read by a walk up through the GIN and never stored, once a working prototype on real data shows containment answers everything the table does. There are no delayed consensus folds. ETL is forbidden: no delayed segments that group everything together, no lazy, manually updated hot caches, and no SQL doing the heavy operations. The matchup arithmetic is native; a witness's repeats on one cell arrive already tallied into its one rating period, and the write is a set-based statement per batch of arriving rows, one update per cell per witness.
+- **Do:** update the standing row in place, one metadata table keyed by the strand ID beside the path, never on the GIN-indexed path row. The claim's witness set is its rows of the attestation table; in the target it is the trunks that hold its strand, read by a walk up through the GIN and never stored, once a working prototype on real data shows containment answers everything the table does. There are no delayed consensus folds. ETL is forbidden: no delayed segments that group everything together, no lazy, manually updated hot caches, and no SQL doing the heavy operations. The matchup arithmetic is native; a witness's repeats on one strand arrive already folded into its one matchup, and the write is a set-based statement per batch of arriving rows, one update per strand per witness.
 - **Out:** the standing, current as of this attestation.
 - **From:** [Consensus: No ETL](../Semantics/Consensus.md#no-etl), [Research: Engine Measurements: Consensus writes](../Research/Engine.md#consensus-writes).
 
@@ -79,7 +79,7 @@ There are also trusts that differentiate subjects, pronouns, stopwords, and so o
 
 ## What this stage leaves behind
 
-A standing on every claim that tells how hard it tugs back, current as of the last witness's rating period, and every attestation that produced it.
+A standing on every claim that tells how hard it tugs back, current as of the last witness's matchup, and every attestation that produced it.
 
 ## Without this stage
 

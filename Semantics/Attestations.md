@@ -20,7 +20,7 @@ The spider web connects entities, and Glicko-2 sets the tension. An attestation 
 
 A strand is a composition of the entities it connects, and its physicality is geometry ZM like any other: a point, a line, a polygon, a multi-line, and more. It does not have to be a line.
 
-A claim is a game series: games plus a score. Another file of the same source that attests the same thing adds to the games already played; it does not add a second record.
+A claim is a game series: one matchup per witness per ingestion, with a score. Another file of the same source that attests the same thing lengthens that witness's run on the claim, the certainty of its one matchup; it does not add a second record.
 
 ## Seeded corpora
 
