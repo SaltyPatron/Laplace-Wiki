@@ -58,7 +58,7 @@ A restriction is the same kind of decision, applied before the sort. A firmware 
 
 $\lambda$ decides whether a longer, stronger chain beats a shorter, weaker one. Two hops at confidence 0.90 cost $0.211 + 2\lambda$. One hop at 0.70 costs $0.357 + \lambda$. They cross at $\lambda = 0.146$. Below that, the search walks the two strong hops. Above it, the search takes the single weaker hop and stops. The records of the three claims are the same either way.
 
-Fanout is the other limit. A hop reads at most 4,096 claims that hold the entity, then orders that set by confidence. A degrees search reads at most 512, walks at most 8 hops, and pays $\lambda = 0.05$. An entity that holds more claims than the fan — a part of speech, a language — is reached and not crossed. The limit is applied before the ordering, so past the fan the set is whatever the index returned, not the strongest claims.
+Fanout is the other limit. A hop reads every claim that holds the entity, orders them by confidence, ties by ID, and keeps 4,096. A degrees search reads at most 512 a step, walks at most 8 hops, and pays $\lambda = 0.05$. An entity that holds more claims than the fan — a part of speech, a language — is reached and not crossed, and a search's origin that does is read whole and its 512 hardest-pulling claims crossed. Past the fan the set is never whatever the index returned first, which differs between two installs of the same content ([30. Conflicts](../Sequence/Conflicts.md) R2).
 
 ## Weights that are not standings
 
