@@ -42,7 +42,7 @@ Every term the documentation uses, defined once, with the page that owns it.
 | tier | an entity's level of composition: atoms 0, and a composition one above its highest constituent; never part of an ID | [Compositions](../Storage/Compositions.md) |
 | tier 0 | the perf-cache of every codepoint's ID, coordinate, Hilbert value, and rank | [Atoms](../Storage/Atoms.md) |
 | trunk | the top of a file's DAG, `[metadata, content]`; also the composition of a prompt | [Compositions](../Storage/Compositions.md) |
-| trust | how far a witness is believed, −1 to 1, played as the opponent's deviation | [Consensus](../Semantics/Consensus.md) |
+| trust | how far a witness is believed, −1 to 1: its own rating, from its class's default, earned through independent agreement and verified outcomes; it pulls each game's outcome toward a draw, bounding the vote | [Consensus](../Semantics/Consensus.md) |
 | tuple | a path of things that together name one thing; not text, not a claim | [Claims](../Semantics/Claims.md) |
 | wall | the surface of the 4-ball, `Σ m² = 2^106`, which no coordinate crosses | [Space](../Storage/Space.md) |
 | witness | whoever testifies: a source trunk, `[source record, its files' trunks]`, one per corpus, its treebanks, lexicons, and datasets files under it, its name content inside its source record, its lineage and trust keyed by the trunk; as built a row of `witness` | [Attestations](../Semantics/Attestations.md) |

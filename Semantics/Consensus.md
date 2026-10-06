@@ -30,6 +30,8 @@ Trust runs from MANDATE, 1.0, down through mathematical results, academically cu
 
 AI models rank above user prompts, around user-curated sources, and below academically curated datasets: still curated content, but honestly, still the opinions of others.
 
+Trust bounds a vote. Each game's outcome is pulled toward a draw by the witness's trust, so no repetition takes a source past its trust's ceiling, for affirmation and refutation alike, and one witness alone gives a claim only bounded certainty. Count is never independence: witnesses sharing a dependence root or a trust class count as one root, capped. Prompts are observations and attest nothing by being said. A witness's own trust is its own rating, starting at its class's default and earned only through agreement with independent witnesses and verified outcomes, never by repeating itself. User prompts screaming that the earth is flat must not drown out GPS, photographs, mathematics, reports, and NASA: as a million independent witnesses they would, *p* 0.351 from 0.947; as one capped root they dent it, 0.821; as observations it stands, 0.954.
+
 There are also trusts that differentiate subjects, pronouns, stopwords, and so on: a trust level for part of speech, for sense, and for dependency relation, so that filler does not drown everything. See [Research: Trust](../Research/Trust.md).
 
 ## Entry

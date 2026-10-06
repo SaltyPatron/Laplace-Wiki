@@ -18,7 +18,7 @@ Hund → deu
 
 Relations are tied together by types and tiers. An ILI synset is a type, just like an IP segment is.
 
-Laplace does not speak English; it speaks Unicode and renders language. `NOUN` is English. `noun` is still an entity, probably a word that gets ingested, and `is a` is a sentence, not a hard-coded enum name. Attestations are links and relations between the IDs of entities and physicalities. Pregenerated relations, types, and kinds that act like a perf-cache or flagged enums may be generated ahead; nothing else is hard-coded.
+Laplace does not speak English; it speaks Unicode and renders language. `NOUN` is English. `noun` is still an entity, probably a word that gets ingested, and `is a` is a sentence, not a hard-coded enum name. Attestations are links and relations between the IDs of entities, and only of entities: a physicality has no identity of its own, being the entity's row keyed by the entity's ID, so nothing attests a physicality. Pregenerated relations, types, and kinds that act like a perf-cache or flagged enums may be generated ahead; nothing else is hard-coded.
 
 A claim's relation, like every other part of it, is what the source means, never the name of the field, column, attribute, or layer the source's markup happens to use. FrameNet's BNC layer tags `dog` `NN1`: `BNC` is a layer name, and `NN1` is a value of the BNC's CLAWS C5 tagset meaning a singular common noun, which reaches `NOUN` through an attested equivalence; `[dog, BNC, NN1]` records the markup, not the meaning. A per-span label belongs in its sentence's annotation layer, and a pointer's attribute name, such as `feID`, is in no claim.
 
