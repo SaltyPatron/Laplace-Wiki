@@ -1,16 +1,16 @@
 # Universal Dependencies
 
-A Universal Dependencies treebank attests what it says of each word within its sentence, the validator's lists of parts of speech and relations are the highway's `upos` and `deprel` lists, and the documentation attests what each of those is called.
+Universal Dependencies is one source and one witness, its treebanks, its documentation pages and its validator data all files under one trunk: a treebank attests what it says of each word within its sentence, the validator's lists of parts of speech and relations are the highway's `upos` and `deprel` lists, and the documentation attests what each of those is.
 
-Three sources read Universal Dependencies, in the order [`recipes/order`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/order) gives: the tools, then the documentation, then the treebanks. None is lineage of another: the treebanks use the tags the tools permit and the documentation names, but the treebanks are the ones saying that this word carries that tag. Universal Dependencies is one source trunk and one witness: every treebank is a directory of files under that trunk, each file with its path, and a treebank is never a witness of its own. The Engine is built otherwise: the `universal-dependencies` source names a witness per treebank, by its directory (`witness {dir}`), and the target is the one trunk.
+One organization's corpus set is one source. Universal Dependencies is one source trunk and one witness, and everything it publishes is observation and witnessing by that one source: its treebanks, [release 2.18](https://lindat.mff.cuni.cz/repository/handle/11234/1-6149); its documentation pages, UD's own definitions of each part of speech, relation, and feature, from the `pages-source` branch of [UniversalDependencies/docs](https://github.com/UniversalDependencies/docs/tree/pages-source); and its validator's data, derived by UD's own system from those definitions, the `data` folder of [UniversalDependencies/tools](https://github.com/UniversalDependencies/tools/tree/10ce40cf8a577714e51cf56b443dd4c2c6d55f91/data) at commit `10ce40cf`. Every treebank is a directory of files under that trunk, each file with its path, and so are the documentation pages and the validator's data; none of them is a witness of its own. The treebanks are the ones saying that this word carries that tag; the documentation says what the tag is. The Engine is built otherwise: three sources read Universal Dependencies, in the order [`recipes/order`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/order) gives, the tools, then the documentation, then the treebanks, each with a witness of its own, and the `universal-dependencies` source names a witness per treebank, by its directory (`witness {dir}`). The target is the one trunk.
 
 ## Sources
 
 | Source | Witness | Trust class | After | Files | Recipe |
 | --- | --- | --- | --- | --- | --- |
 | `universal-dependencies` | `Universal Dependencies`, the source trunk; a treebank, such as `UD_English-EWT`, is a directory of files under it. As built, the Engine names a witness per treebank by its directory name (`witness {dir}`) | class `AcademicCurated` | `unicode`, `iso-639` | `*.conllu` under `UD-Treebanks/ud-treebanks-*` | [`conllu.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/universal-dependencies/conllu.recipe) |
-| `universal-dependencies-tools` | `UniversalDependencies tools` | class `StandardsDerived` | `unicode`, `iso-639` | `upos.json`, `udeprels.json` under `UD-Tools/*/data` | [`upos.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/universal-dependencies-tools/upos.recipe), [`udeprels.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/universal-dependencies-tools/udeprels.recipe) |
-| `universal-dependencies-documentation` | `Universal Dependencies` | class `StandardsDerived` | `universal-dependencies-tools` | `*.md` under `UD-Docs/extracted/docs-pages-source` | [`pages.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/universal-dependencies-documentation/pages.recipe) |
+| `universal-dependencies-tools` | `Universal Dependencies`, the same source trunk: the validator's data is files under it. As built, a source of its own with the witness `UniversalDependencies tools` | as built, class `StandardsDerived`; the one trunk has one class, `AcademicCurated` | `unicode`, `iso-639` | `upos.json`, `udeprels.json` under `UD-Tools/*/data` | [`upos.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/universal-dependencies-tools/upos.recipe), [`udeprels.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/universal-dependencies-tools/udeprels.recipe) |
+| `universal-dependencies-documentation` | `Universal Dependencies`, the same source trunk: the documentation pages are files under it. As built, a source of its own | as built, class `StandardsDerived`; the one trunk has one class, `AcademicCurated` | `universal-dependencies-tools` | `*.md` under `UD-Docs/extracted/docs-pages-source` | [`pages.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/universal-dependencies-documentation/pages.recipe) |
 
 The class is the witness's trust class, one of those [6. Registries](../Sequence/Registries.md#65-declare-the-trust-classes) declares; its prior is the trust every attestation of the source plays at, and [9. Sources](../Sequence/Sources.md#the-estate-and-why-each-source-is-in-it) gives the class of each source.
 
@@ -21,7 +21,9 @@ Universal Dependencies is one tree, from its source trunk down to the codepoints
 ```text
 Universal Dependencies           the source trunk, [source record, its files' trunks in path order]: the witness
 ├ source record                  "Universal Dependencies" and its release, content
-├ UD_Abaza-ATB/ …                a treebank: a directory, its path the files' metadata; never a witness of its own
+├ _u-pos/ADJ.md …                the documentation pages, UD's definitions of its tags, relations and features: files
+├ data/upos.json …               the validator's data, derived from those definitions: files under the same trunk
+├ UD_Abaza-ATB/ …                a treebank, one of 2.18's 353: a directory, its path the files' metadata; no witness
 └ UD_English-EWT/en_ewt-ud-train.conllu
   │                              a file, [metadata, content]; README.md, LICENSE.txt and stats.xml are files too
   ├ metadata                     the OS's record, and what the file says of itself (the newdoc and newpar notes)
@@ -89,11 +91,11 @@ Only `.conllu` files are read. The treebank's README, LICENSE, and statistics ar
 
 ## The validator's data
 
-The `tools` repository of UniversalDependencies carries, under `data`, the tags, relations, and features the validator permits, language by language, and its auxiliaries and tokens with spaces. Two files of it are read: `upos.json` and `udeprels.json`, each the list of the universal tags or relations (`content`), and each a list of the highway's (`types upos`, `types deprel`, each value keyed by itself). The rest of the data is the validator's own configuration, read by nothing.
+The validator's data is files under the Universal Dependencies trunk, observation and witnessing by the same source as the treebanks; as built it is a source of its own. The `tools` repository of UniversalDependencies carries, under `data`, the tags, relations, and features the validator permits, language by language, and its auxiliaries and tokens with spaces. Two files of it are read: `upos.json` and `udeprels.json`, each the list of the universal tags or relations (`content`), and each a list of the highway's (`types upos`, `types deprel`, each value keyed by itself). The rest of the data is the validator's own configuration, read by nothing.
 
 ## The documentation
 
-Each page of the project's documentation source documents one tag, relation, or feature, named by its `title`. The page's head says what it is, shortly, and a feature's page says what each of its values is.
+The documentation pages are files under the Universal Dependencies trunk, UD's own definitions, witnessed by the same source as the treebanks; as built they are a source of their own. Each page of the project's documentation source documents one tag, relation, or feature, named by its `title`. The page's head says what it is, shortly, and a feature's page says what each of its values is.
 
 | Piece | Written as | Laplace reads it as | Claim recorded |
 | --- | --- | --- | --- |

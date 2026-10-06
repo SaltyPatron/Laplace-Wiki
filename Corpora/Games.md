@@ -14,3 +14,5 @@ No directory under [`recipes/`](https://github.com/SaltyPatron/Laplace-Engine/tr
 | opening row | eco, name, pgn | One opening: its ECO code, its English name, and a PGN move sequence. The README also describes uci and epd in a dist/ build that is not in this tarball. | README.md and a.tsv inside the Lichess openings tarball. The same header is on the TSV tables. |
 | FIDE player | FideId, Name, Federation, Sex, Title, Standard, Rapid, Blitz, BirthYear, Flag | One object in the Players array of the snapshot. What Standard, Rapid, and Blitz mean beyond those key names is not defined on a page opened for this row. | rating-list.snapshot.json.gz |
 | files-345.txt line | one URL | The download URL of one table file. | files-345.txt |
+
+A FIDE ID is a publicly known identifier used across sources and languages, and so a highway node: the node for a player, as an ILI is for a concept. A player's `Name` in the rating list, the names a PGN writes in its `White` and `Black` tags, and the player's names in every other language and script are lexicalizations of that node, and the languages the player speaks are attested relations, [27. Chess](../Sequence/Chess.md).
