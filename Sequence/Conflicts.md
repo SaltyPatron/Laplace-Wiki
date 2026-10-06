@@ -27,6 +27,13 @@ An entry marked **Decided** records the inventor's decision, and the Sequence pa
 - **Agree.** The bounded-domain theorem holds for the centroid; a set must land at one coordinate regardless of member order.
 - **Open.** One placement law for every lane, and whether the sorted-member composition of a collection makes the centroid already permutation-invariant for sets.
 
+### P4. Content partitioned by tier and ID hash, or by ID alone
+
+- **Wiki.** [8. Database](Database.md) operation 8.10 and [Deployment](../Operations/Deployment.md): list-partition entities, paths, and statistics by tier; split the largest tiers again into 16 by the first hex digit of their ID. [Research: Engine Measurements: Queries](../Research/Engine.md#queries): every container of `Holmes` in 0.80 ms touching 52 partitions, because a container sits above what it holds and the tiers at and below are pruned.
+- **Built.** Laplace-postgres 1.11 and Laplace-Engine `src/db.c`: "an entity is its ID, so entity and physicality partition by the ID alone, 256 ways by its first byte"; the tier is a column, never part of a key, so one row an ID and a foreign key from a path to its entity hold.
+- **Measured** on HART-DESKTOP, 2026-10-06, 28.4 million entities: a containment lookup on `physicality` touches all 256 partitions, 108 to 172 ms, of which the index's own search in one partition is 0.011 ms and one partition's statement 0.4 ms; `laplace_claims_each` for one entity 101 ms; `laplace_couple` for one word 233 ms. A turn makes hundreds of such lookups.
+- **Open.** Whether paths go back to tier partitions with the largest tiers split 16 ways, keeping one row an ID with the tier as the partition column, so a containment lookup prunes to the tiers above what it holds; or stay partitioned by ID alone, the read path asking every leaf at once on every core as the Engine's `holds_core` does. Either requires a redeploy and a reingest.
+
 ## Firmware and witnessing
 
 ### C1. Do Laplace's own outputs, and user prompts, become attestations?
