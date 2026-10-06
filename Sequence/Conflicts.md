@@ -166,7 +166,7 @@ An entry marked **Decided** records the inventor's decision, and the Sequence pa
 
 - **Wiki.** [13. Consensus](Consensus.md) operation 13.4 and [Consensus: Matchups](../Semantics/Consensus.md#matchups): a witness's repeats of one claim are run-length games, folded on the client into one rating period per cell. [21. Sessions](Sessions.md): the same prompt text in two turns is one content entity occurring twice.
 - **Agree.** Repetition is read off the tree at its level: inside one message's tree, across the turns of one session, across users, across tenants.
-- **Open.** How each level counts as games: whether one sentence pasted a million times into one prompt is one act or a million games, whether the same message across turns is repeated acts by one witness, and how repeats across users and across tenants count.
+- **Open.** How each level counts as games: whether one sentence pasted a million times into one prompt is one act or a million games, whether the same message across turns is repeated acts by one witness, and how repeats across users and across tenants count. The answer carries weight because the rating math does not cap repetition: n identical games in one period approach a full Newton step, larger for a low-trust witness, so a million refutations at an opponent deviation of 1500 take a claim at 2300 with deviation 60 to −720 with deviation 1.9. Whatever limits one witness's repetition is structural, and is decided here.
 
 ## What this page leaves behind
 
