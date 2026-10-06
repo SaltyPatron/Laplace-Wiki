@@ -36,9 +36,26 @@ Universal Dependencies           the source trunk, [source record, its files' tr
       └ strands                  [forces, NOUN], [forces, force], [forces, Number=Plur]: what it says of each word
 ```
 
-The pointers, `ID`, `HEAD`, `sent_id`, `newdoc id`, `newpar id` and MISC's ids and offsets, resolve into the tree and are recorded nowhere. One walk up from `[forces, NOUN]` reaches the records, files and trunk that assert it, the attribution and its count; one walk up from `forces` reaches every trunk that holds it, the witnessing. A strand occurring in k records under the trunk is one attestation of the corpus with k games, counted off the tree, and Glicko-2 plays that series in the corpus's rating period. English-EWT's README says its UPOS and features were mainly assigned automatically: content under the trunk a read can use, and an automatic tag repeated token by token is packaging, not the corpus saying it again.
+The pointers, `ID`, `HEAD`, `sent_id`, `newdoc id`, `newpar id` and MISC's ids and offsets, resolve into the tree and are recorded nowhere. One walk up from `[forces, NOUN]` reaches the records, files and trunk that assert it, the attribution and its count; one walk up from `forces` reaches every trunk that holds it, the witnessing. A strand occurring in k records under the trunk is one attestation of the corpus with k games, counted off the tree, a series the client solves as one update ([Consensus: Matchups](../Semantics/Consensus.md#matchups)). English-EWT's README says its UPOS and features were mainly assigned automatically: content under the trunk a read can use, and an automatic tag repeated token by token is packaging, not the corpus saying it again.
 
 As built, the Engine differs: each treebank is a witness of its own (`witness {dir}`); claims are emitted as events outside the tree; no layer is composed; `relate row DEPREL to HEAD` makes the type-level `[word, nsubj, head word]`, with the sentence lost; MISC's `Annotator` and the `speaker_id` note are witnesses of their own (`own`); and the README, LICENSE and statistics are not read. Open Multilingual Wordnet's `witness {first label}`, a witness per lexicon, is the same mistake ([Wordnets](Wordnets.md)).
+
+## Relations
+
+As built, the relation of a claim above is the name of the field that carries its value: the CoNLL-U column's name, a FEATS or MISC key, or a comment's key. That is markup, not meaning. A relation is what the source means, resolved through the road classes, never the name of a field, column, attribute, or layer: a tagset value is a value of its tagset with its attested equivalence, a per-span label belongs in the sentence's annotation layer, and a pointer's attribute name is in no claim, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field).
+
+| Claim, as built | Its relation, as built | What it means: the target |
+| --- | --- | --- |
+| `[word, UPOS, ADJ]` | the column's name, `UPOS` | `ADJ` is a value of the UPOS road class, "Universal part-of-speech tag": the strand is `[word, ADJ]`, as `[forces, NOUN]` is, one claim per pair with the bit on the word's row, and the sentence's UPOS layer beside it |
+| `[word, XPOS, value]` | the column's name, `XPOS` | a value of the treebank's own tagset, "language-specific (or treebank-specific)", a road class of its own, with its attested equivalence to UPOS; in the sentence's XPOS layer |
+| `[word, LEMMA, value]` | the column's name, `LEMMA` | the word's lemma, "Lemma or stem of word form": `[forces, force]`, in the sentence's LEMMA layer |
+| `[word, Number, Plur]` | the feature's name, `Number` | `Number=Plur`, a value of the universal feature inventory: `[forces, Number=Plur]`, the feature a part of the value, not a relation |
+| `[word, nsubj, head word]`, `[barked, root]` | the DEPREL value | already meaning, a value of the dependency road class; what is wrong as built is the type-level shape with the sentence lost, and the target is the sentence's dependency layer |
+| `[sentence, text_en, value]`, and every other comment key | the comment's key | what the key documents: `text_en` is the sentence in English, a sentence-tier translation strand, as OpenSubtitles' are; a key nothing documents is an explicit unresolved obligation |
+| `[sentence, speaker_id, value]` | the comment's key | that this speaker said this sentence, a relation the corpus attests |
+| `[word, Translit, value]`, `[word, Annotator, value]`, `[word, MISC, part]` | the MISC key, or the column's name | what Universal Dependencies documents each MISC key to mean, a transliteration for `Translit`; that this annotator annotated the token for `Annotator`; a part without a key has no documented meaning and is an explicit unresolved obligation |
+| `[ADJ, shortdef, adjective]` | the front matter's key | what the documentation calls the tag: its short definition |
+| `[Number, Sing, singular number]` | the value's name, `Sing` | the value `Number=Sing` and what the page says it is |
 
 ## The treebank
 

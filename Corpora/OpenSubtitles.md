@@ -26,6 +26,10 @@ A file such as `OpenSubtitles.en-ja.en` is sentences, one on a line, nothing els
 
 Each line pair is one attestation, witnessed once by OpenSubtitles. Nothing is attested of the words inside a sentence: the source says nothing of them.
 
+## Relations
+
+As built, `[the Japanese sentence, en, the English sentence]` takes its relation from the paired file's language suffix, `en`: markup, not meaning, with only one of the two languages. A relation is what the source means, never the name of a field, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field): the two sentences translate each other, both languages, at the sentence tier.
+
 ## Not yet recorded
 
 - The Japanese sentence's own language. Both languages belong in what is attested, the language translated from and the language translated to; the shape of the claim that carries both is not yet decided.

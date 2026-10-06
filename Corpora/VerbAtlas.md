@@ -29,3 +29,20 @@ One source reads VerbAtlas 1.1.0, "WordNet synsets clustered into frames", by on
 `VA_bn2va.tsv` and `pb2va.tsv` are mappings: each row is one interchange strand, where a route changes road class, with the argument-to-role pairs said within it, never a claim per column.
 
 The first line of each `VA_*.tsv` file is a licence line, passed over. `README.txt` is not read: the source has no `reads` line and no recipe of its own matches it.
+
+## Relations
+
+As built, the relation of a claim above is the name of the field that carries its value: the README format's field name, or the file's name. That is markup, not meaning. A relation is what the source means, resolved through the road classes, never the name of a field, column, attribute, or layer: a tagset value is a value of its tagset with its attested equivalence, a per-span label belongs in the sentence's annotation layer, and a pointer's attribute name is in no claim, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field).
+
+| Claim, as built | Its relation, as built | What it means: the target |
+| --- | --- | --- |
+| `[TOLERATE, definition, …]`, `small_definition` | the field's name | the frame's definition and short definition, as the README's formats document them |
+| `[TOLERATE, prototypical_synset, concept]` | the field's name | the frame's prototypical concept: a highway mapping |
+| `[TOLERATE, Agent, Theme, Beneficiary, Attribute]` | none: the row's own shape | already meaning: the frame's roles in order |
+| `[absorbent, reference_BabelNet_synset_ID, concept]` | the field's name | the concept the selectional preference refers to |
+| `[absorbent, https://upload.wikimedia.org/…]` | none: an unnamed field | what VerbAtlas documents the field to be; until it does, an explicit unresolved obligation |
+| `[concept, shadow, Stimulus]`, `[concept, Stimulus, concept]` | the file's name, `shadow` or `implicit`; the role | the concept's role as a shadow or implicit argument, and what fills it, as FORMATS 6 and 7 document |
+| `[concept, CONCRETE]`, `[concept, frame]`, `[roleset, frame]` | none: pairs | mappings, already interchange strands |
+| `[concept, lemma, breathe]` | the field's name | a lexicalization of the concept |
+| `[roleset, A0, Agent]` | the argument | already meaning: the PropBank argument maps to the VerbAtlas role |
+| `[frame, type, C]`, `[frame, role, preference]` | the field's name; the role | the frame's type as FORMAT 3 documents it; the role's selectional preference |

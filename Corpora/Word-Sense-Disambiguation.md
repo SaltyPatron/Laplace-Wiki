@@ -27,6 +27,10 @@ A record is one sentence: the path of its words, in order (`words sentence wf in
 
 The record is witnessed once, as one attestation, by the framework, the one witness; as built, by the dataset whose directory the file is in (`witness {dir}`).
 
+## Relations
+
+As built, `[This, lemma, this]` and `[This, pos, DET]` take their relations from the attributes' names: markup, not meaning. A relation is what the source means, never the name of a field, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field): `DET` is a value of the UPOS road class, the word's part of speech as it stands in its sentence, and `this` its lemma, each in the sentence's annotation layer.
+
 ## Not read
 
 The gold keys (`*.gold.key.txt`), the systems' answers (`*.key`), `candidatesWN30.txt` and the `ili_mapped` tables point at instances by the framework's ids and nothing else: with the ids pointers, the row would say its sense key of nothing, so they are not read. The sense keys themselves are WordNet's internal pointers to lexicalizations, resolved through the highway perf-cache and recorded nowhere. When a pointer points at a word across files of one source ([Recipes](../Reference/Recipes.md#what-each-named-part-is): `refer`), the gold keys can say of each instance's word the concept it is annotated with; that is not yet written for XML words. `schema.xsd` is recorded as its syntax tree; the READMEs and `PROVENANCE.md` are read as text: observed content that attests nothing.

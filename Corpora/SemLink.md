@@ -23,6 +23,10 @@ SemLink 2 is "the mappings between PropBank, VerbNet and FrameNet". The README s
 | its list | `["Moving_in_place", "Body_movement"]` | the frames, by name ([FrameNet](FrameNet.md)) | `[class, frame]`; edges `vnclass`→`fnframe` |
 | `external_vn2pb.json` | `"change_bodily_state-40.8.4": ["sicken.01"]` | not taken | nothing |
 
+## Relations
+
+No relation SemLink's recipes record is a field's name: `[roleset, class]` and `[class, frame]` are interchange strands, and in `[[roleset, class], ARG0, agent]` the PropBank argument maps to the VerbNet role, both values of their road classes. A relation is what the source means, never the name of a field, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field).
+
 ## Not read
 
 The annotated instances under `instances`, the role mappings and supporting files under `other_resources`, the tools, and `README.md` are read by nothing.

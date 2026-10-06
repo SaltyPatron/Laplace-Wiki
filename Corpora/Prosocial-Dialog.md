@@ -31,3 +31,7 @@ A JSON object on every line. The [dataset card](https://huggingface.co/datasets/
 | `null`, an empty text | | nothing | none | |
 
 Nothing else is attested. The card is not read: no recipe of the source matches it, and the source does not read text (`reads`), so nothing of it is recorded.
+
+## Relations
+
+As built, the relation of every claim above is the JSON key, `[context, safety_label, __needs_caution__]`, `[context, rots, text]`: markup, not meaning. A relation is what the source means, never the name of a field, column, attribute, or layer, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field). The target for each column is what the source documents it to mean, quoted in the Specification column; a column whose meaning the source does not document is an explicit unresolved obligation, its target the meaning the source documents. `safety_label` is "the final verdict of the context", `rots` "the relevant rules-of-thumb", `safety_annotations` the three workers' raw annotations, and `episode_done` "whether it is the end of the dialogue", which the trajectory already holds.

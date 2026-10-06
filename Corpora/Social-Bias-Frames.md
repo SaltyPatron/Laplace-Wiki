@@ -50,3 +50,7 @@ Every file is a table of comma-separated fields whose first row names the column
 | the first column, which has no name | a number | nothing | none | |
 
 Nothing else is attested. The README is not read: no recipe of the source matches it, and the source does not read text (`reads`), so nothing of it is recorded.
+
+## Relations
+
+As built, the relation of every claim above is the column's name, `[post, offensiveYN, value]`, `[worker, annotatorGender, value]`: markup, not meaning. A relation is what the source means, never the name of a field, column, attribute, or layer, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field). The target for each column is what the source documents it to mean, quoted in the Specification column; a column whose meaning the source does not document is an explicit unresolved obligation, its target the meaning the source documents. `offensiveYN` is the worker's answer to "could the post be offensive to anyone", `targetStereotype` the "implied statement", and in the aggregation each number is the mean over the post's annotations; `hasBiasedImplication` is a calculation the README gives.

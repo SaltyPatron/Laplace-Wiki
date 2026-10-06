@@ -1,6 +1,6 @@
 # Predicate Matrix
 
-The Predicate Matrix attests of each row, the role of a predicate its predicate and role columns name, every column under its own name, and gives the highway its edges between the WordNet sense, the ILI number, the VerbNet class, the FrameNet frame and the PropBank roleset each row ties.
+The Predicate Matrix attests of each row, the role of a predicate its predicate and role columns name, every column, as built, under its own name, and gives the highway its edges between the WordNet sense, the ILI number, the VerbNet class, the FrameNet frame and the PropBank roleset each row ties.
 
 Predicate Matrix v1.3 is "a role of a predicate, mapped over VerbNet, WordNet, the MCR, FrameNet, PropBank and ESO": a tab-separated table whose first row names its 27 columns, "Each row of the Predicate Matrix represents the mapping of a role over the different resources and includes all the aligned knowledge about its corresponding verb." It is a hop, as [Hops](Hops.md) lists it.
 
@@ -26,3 +26,7 @@ A row is the thing its `3_ID_PRED` and `4_ID_ROLE` name (`thing row 3_ID_PRED 4_
 | each row | | every pair of the four that resolved | edges `ili`→`vnclass`, `ili`→`fnframe`, `ili`→`pbroleset`, `vnclass`→`fnframe`, `pbroleset`→`vnclass`, `pbroleset`→`fnframe`, each once |
 | `NULL` in any of them | `vn:NULL` | resolves nothing | no edge |
 | the other 22 columns | roles, lemmas, MCR domains, SUMO classes, ESO classes, frequencies | attested of the row under their own names, as written | nothing |
+
+## Relations
+
+As built, `attest row *` records each column under its header: `[pred, role, 10_VN_ROLE, vn:Theme]`, the column header `10_VN_ROLE` as the relation. That is markup, not meaning. A relation is what the source means, never the name of a field, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field): `vn:Theme` is the VerbNet thematic role the row's role of the predicate is, one part of the row's one mapping strand that ties the role across the resources. The other 22 columns mean what the Predicate Matrix documents of them, frequencies being observations it states; the target is that meaning, and where it documents none, an explicit unresolved obligation.

@@ -26,6 +26,19 @@ A record is one row of one file: fields parted by tabs, each recorded as written
 | `iso-languagecodes.txt` | the header's columns | the language by its name; its codes | `[French, ISO 639-3, fra]` |
 | `timeZones.txt` | the header's columns | the time zone by its id; the rest | `[Europe/Andorra, rawOffset, 1.0]` |
 
+## Relations
+
+As built, the relation of a claim above is the name of the field that carries its value: the readme's or the header's name for a column. That is markup, not meaning. A relation is what the source means, resolved through the road classes, never the name of a field, column, attribute, or layer: a tagset value is a value of its tagset with its attested equivalence, a per-span label belongs in the sentence's annotation layer, and a pointer's attribute name is in no claim, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field).
+
+| Claim, as built | Its relation, as built | What it means: the target |
+| --- | --- | --- |
+| `[[Earth, 0, 0], feature code, AREA]`, `[A.ADM1, name, first-order administrative division]` | the column's name | the place's feature code, a value of GeoNames' feature-code list, and what that list says the code is |
+| `[[Roc Meler, …], alternatenames, Roc Mélé]`, `[place, alternate name, Roc Mélé]`, `[place, isolanguage, fr]` | the column's name | a name of the place, in a language where the row gives one: the name, the place and the language together, as a lexicalization is |
+| `[[Sant Julià de Loria, …], name, …]`, `[[…], code, AD.06]` | the column's name | the place's name and its administrative code, as GeoNames documents them |
+| `[[Earth, 0, 0], childId, [Europe, …]]`, `[[Earth, 0, 0], type, ADM]` | the column's name, `childId` a pointer's | one hierarchy edge from the parent to the child, of the type the row gives; the column names are in no claim |
+| `[AD, geonameid, [Principality of Andorra, …]]` | the name of a pointer's column | the country is that place; `geonameid` is in no claim |
+| `[AD, Capital, Andorra la Vella]`, `[French, ISO 639-3, fra]`, `[Europe/Andorra, rawOffset, 1.0]` | the header's name | what GeoNames documents each column to mean; where it documents none, an explicit unresolved obligation |
+
 ## Not read
 
 `readme.txt` and every other `.txt` or `.md` under the root that no recipe names is not read: the source has no `reads` line.

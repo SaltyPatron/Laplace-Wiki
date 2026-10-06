@@ -48,6 +48,18 @@ The attestation is the claim and its specifics, witnessed by ConceptNet, with wh
 
 The page attests what a relation is called and described as. It does not attest that any edge carries it: that is the assertions' to say.
 
+## Relations
+
+As built, the relation of a claim above is the name of the field that carries its value: a JSON key, or the relations page's column. That is markup, not meaning. A relation is what the source means, resolved through the road classes, never the name of a field, column, attribute, or layer: a tagset value is a value of its tagset with its attested equivalence, a per-span label belongs in the sentence's annotation layer, and a pointer's attribute name is in no claim, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field).
+
+| Claim, as built | Its relation, as built | What it means: the target |
+| --- | --- | --- |
+| `[dog, IsA, animal]` | the `rel` value | already meaning: a ConceptNet relation, defined on its relations page |
+| `[dog, en]`, `[dog, n]` | none: pairs from the URI | the term's language, the language part of a lexicalization, and its part of speech, `n` a value with its attested equivalence |
+| `[edge, weight, 1.0]`, `[edge, surfaceText, text]` | the JSON key | what ConceptNet documents: "the strength with which this edge expresses this assertion", and "the original natural language text that expressed this statement" |
+| `[edge, contributor, value]` | the JSON key | that this contributor gave this edge, a relation ConceptNet attests |
+| `[IsA, Description, …]`, `[IsA, Examples, …]` | the column's name | the relation's definition and examples, as ConceptNet documents them |
+
 ## What is not read
 
 The other documentation pages beside `Relations.md` — Downloads, Edges, URI hierarchy — are matched by no recipe and are not read; the recipes quote them, as this page does. Every other file under the root is not read either.

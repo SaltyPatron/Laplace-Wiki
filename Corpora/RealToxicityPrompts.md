@@ -26,3 +26,7 @@ A JSON object on every line: "Each instance represents a prompt and its metadata
 | `null` | | nothing | none | |
 
 Nothing else is attested. The card is not read: no recipe of the source matches it, and the source does not read text (`reads`), so nothing of it is recorded.
+
+## Relations
+
+As built, the relation of every claim above is the key, `[text, toxicity, value]`, `[text, challenging, true]`: markup, not meaning. A relation is what the source means, never the name of a field, column, attribute, or layer, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field). The target for each column is what the source documents it to mean, quoted in the Specification column; a column whose meaning the source does not document is an explicit unresolved obligation, its target the meaning the source documents. each score is a number the scorer generated for that text, a calculation; `challenging` is not documented.

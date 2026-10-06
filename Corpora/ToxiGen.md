@@ -59,3 +59,7 @@ Every table is tab-separated, its first row names the columns, and a `\` makes t
 | `Answer.annotatorAge`, `Answer.annotatorGender`, `Answer.annotatorMinority`, `Answer.annotatorPolitics.1` to `.5`, `Answer.annotatorRace` | said of the worker (`attest row Answer.annotator* of HashedWorkerId`), witnessed by ToxiGen | `[worker, Answer.annotatorRace, value]` | what the worker answered of themself |
 
 Nothing else is attested. The CSV files and the Parquet files are not the source: they are the same rows. The card is not read: no recipe of the source matches it, and the source does not read text (`reads`), so nothing of it is recorded.
+
+## Relations
+
+As built, the relation of every claim above is the column's name, `[prompt, prompt_label, 1]`, `[text, Answer.framingQ, value]`: markup, not meaning. A relation is what the source means, never the name of a field, column, attribute, or layer, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field). The target for each column is what the source documents it to mean, quoted in the Specification column; a column whose meaning the source does not document is an explicit unresolved obligation, its target the meaning the source documents. `prompt_label` is "whether or not the prompt is toxic (1 is toxic, 0 is benign)", `roberta_prediction` a model's probability, a calculation; the annotated set's columns and the `Answer.` columns are not documented beyond what the worker was asked.

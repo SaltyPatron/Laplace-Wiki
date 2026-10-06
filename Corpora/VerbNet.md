@@ -24,6 +24,20 @@ One source reads VerbNet: the class files of VerbNet 3.4, "their members, themat
 
 A thing's own attributes are one record, witnessed once; an element that is no thing is one record of what it says. Nothing is renamed, reordered, or filled in: what the file says of a frame is said of the class, under the attribute's name, because the recipe names no other thing for it to be said of.
 
+## Relations
+
+As built, the relation of a claim above is the name of the field that carries its value: the element's or attribute's name. That is markup, not meaning. A relation is what the source means, resolved through the road classes, never the name of a field, column, attribute, or layer: a tagset value is a value of its tagset with its attested equivalence, a per-span label belongs in the sentence's annotation layer, and a pointer's attribute name is in no claim, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field).
+
+| Claim, as built | Its relation, as built | What it means: the target |
+| --- | --- | --- |
+| `[leave-51.2, VNSUBCLASS, leave-51.2-1]` | the element's name | the subclass of the class, which inherits its features, "VerbNet subclasses inherit features from the top class" |
+| `[leave-51.2, MEMBER, abandon]` | the element's name | the verb is a member of the class |
+| `[[leave-51.2, abandon], wn, concept]` | the attribute's name, `wn` | the WordNet sense the member has in the class: the lexicalization its sense key points at, the key resolved and in no claim |
+| `[[leave-51.2, abandon], grouping, abandon.01]`, `fn_mapping` | the attribute's name | a highway mapping of the member in its class to that PropBank roleset or FrameNet frame: an interchange strand |
+| `[leave-51.2, THEMROLE, Theme]` | the element's name | the class has the thematic role, "the semantic relationship between a predicate and its arguments" |
+| `[Theme, Value, +]`, `[Theme, type, animate]` | the attributes' names | one selectional restriction on the role in that class, `+animate`, the two values together |
+| `[leave-51.2, primary, NP V NP.initial_location]`, `[leave-51.2, EXAMPLE, …]`, `[leave-51.2, value, has_location]` | the attribute's or element's name | of the frame, not the class: its primary description, its example, and a predicate of its semantics, as VerbNet documents its frames |
+
 ## Not read
 
 `vn_schema-3.xsd` and the README match no recipe and are not read.

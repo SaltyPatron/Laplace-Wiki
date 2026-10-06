@@ -28,6 +28,20 @@ A record is one row of one file. A field is what stands between two tabs; a tab,
 
 Each thing a row says is a claim, a tuple as [Claims](../Semantics/Claims.md#tuples) defines it.
 
+## Relations
+
+As built, the relation of a claim above is the name of the field that carries its value: the column's name in the file's documented header, or a script's name. That is markup, not meaning. A relation is what the source means, resolved through the road classes, never the name of a field, column, attribute, or layer: a tagset value is a value of its tagset with its attested equivalence, a per-span label belongs in the sentence's annotation layer, and a pointer's attribute name is in no claim, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field).
+
+| Claim, as built | Its relation, as built | What it means: the target |
+| --- | --- | --- |
+| `[Let's try it., Lang, eng]` | the column's name, `Lang` | the sentence's language, an ISO 639 highway node |
+| `[我們試試看！, Translation id, Versuchen wir es.]` | the name of a pointer's column, `Translation id` | the one sentence translates the other: a sentence-tier translation strand, as OpenSubtitles' are; the column's name is in no claim |
+| `[Let's try it., Tag name, proverb]` | the column's name | the tag Tatoeba gives the sentence |
+| `[text, Date last modified, value]`, `[text, License, value]` | the column's name | bookkeeping and licence: the file's metadata, not testimony |
+| `[text, Hrkt, transcription]` | the script's name | the sentence's transcription in that script |
+| `[[member, eng], Skill level, 5]` | the column's name | the skill the member states in the language: an observation |
+| `[[member, text], Review, 1]`, `[Tatoeba, Username, name]` | the column's name | the member's review of the sentence, a relation Tatoeba attests; the member, content |
+
 ## Not read
 
 `sentences_in_lists.csv` names lists only by an id no file names, and `tags_detailed.csv` and `tag_metadata.csv` have no documented fields: nothing in them is content, and they are not read. `sentences_base.csv` and every other file under the root are not read. Nothing is read of a sentence's words.

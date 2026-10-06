@@ -49,3 +49,7 @@ The Specification cells are from `README.v1.0.md`, "Dataset Columns".
 | `characters` | parts joined by `\|` | each part said of the rule under the column's name | `[rot, characters, narrator]` | '"\|" separated list' of the characters that appeared |
 
 Nothing else is attested. The README is not read: no recipe of the source matches it, and the source does not read text (`reads`), so nothing of it is recorded.
+
+## Relations
+
+As built, the relation of every claim above is the column's name, `[rot, rot-agree, value]`, `[rot, action-legal, value]`: markup, not meaning. A relation is what the source means, never the name of a field, column, attribute, or layer, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field). The target for each column is what the source documents it to mean, quoted in the Specification column; a column whose meaning the source does not document is an explicit unresolved obligation, its target the meaning the source documents. `rot-agree` is what portion of people probably agree with the rule of thumb, in the set's buckets; `action-moral-judgment` the bucket of the rule's judgment of the action; `rot-categorization` and `rot-moral-foundations` values of the set's own lists. Where a target above is written with a column's name in it, the name stands for what the column records; the target relation is that meaning, as the set documents it, and never the column's name.

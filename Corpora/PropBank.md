@@ -28,6 +28,22 @@ One source reads PropBank: its frame files, "every predicate's rolesets, their r
 
 A thing's own attributes are one record, witnessed once; an element that is no thing is one record of what it says. Nothing is renamed, reordered, or filled in.
 
+## Relations
+
+As built, the relation of a claim above is the name of the field that carries its value: the element's or attribute's name. That is markup, not meaning. A relation is what the source means, resolved through the road classes, never the name of a field, column, attribute, or layer: a tagset value is a value of its tagset with its attested equivalence, a per-span label belongs in the sentence's annotation layer, and a pointer's attribute name is in no claim, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field).
+
+| Claim, as built | Its relation, as built | What it means: the target |
+| --- | --- | --- |
+| `[abandon, roleset, [abandon, leave behind]]` | the element's name | the predicate's lemma has this roleset |
+| `[[abandon, leave behind], name, leave behind]` | the attribute's name | the roleset's name as PropBank writes it |
+| `[[abandon, leave behind], pos, v]`, `[…, alias, abandon]` | the attribute's or element's name | an alias of the roleset, the word and part of speech that evoke it, `v` a value of PropBank's list with its attested equivalence |
+| `[…, n, 0]`, `[…, f, PPT]`, `[…, descr, abandoner]` | the attributes' names | one role of the roleset: its number, its function tag and its description together, a role inside a roleset, never three claims |
+| `[…, class, leave-51.2]`, `[…, class, Departing]`, `[…, rolelink, theme]` | the attribute's or element's name | the roleset's or role's link to that VerbNet class or FrameNet frame and its role: one interchange strand |
+| `[…, inuse, +]` | the attribute's name | a usage note: bookkeeping the rules of [Corpora](README.md) read by nothing |
+| `[[abandon, leave behind], example, …]`, `[…, name, abandon-v: typical transitive]` | the element's or attribute's name | an example of the roleset, and its name as PropBank writes it |
+| `[And they believe …, type, ARG0]`, `[…, arg, the Big Board]`, `[…, rel, abandoned]` | the element's or attribute's name | the example's annotation: the span `the Big Board` is `ARG0` of the predicate `abandoned` in that sentence, in the sentence's annotation layer |
+| `[…, note, text]` | the element's name | a note on the roleset or predicate, as PropBank writes it |
+
 ## Not read
 
 `frameset.dtd` matches no recipe. The source names no `reads`, so no README of the release is read.

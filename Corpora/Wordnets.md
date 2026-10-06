@@ -15,6 +15,26 @@ Four sources read the wordnets, in the order [`recipes/order`](https://github.co
 
 The class is the witness's trust class, one of those [6. Registries](../Sequence/Registries.md#65-declare-the-trust-classes) declares; its prior is the trust every attestation of the source plays at, and [9. Sources](../Sequence/Sources.md#the-estate-and-why-each-source-is-in-it) gives the class of each source.
 
+## Relations
+
+As built, the relation of a claim above is the name of the field that carries its value: the WN-LMF attribute's or element's name, or the Princeton file's column or category. That is markup, not meaning. A relation is what the source means, resolved through the road classes, never the name of a field, column, attribute, or layer: a tagset value is a value of its tagset with its attested equivalence, a per-span label belongs in the sentence's annotation layer, and a pointer's attribute name is in no claim, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field).
+
+| Claim, as built | Its relation, as built | What it means: the target |
+| --- | --- | --- |
+| `[dog, partOfSpeech, n]` | the attribute's name, `partOfSpeech` | `n` is a value of WordNet's part-of-speech list, which WordNet asserts of the concept and of the entry, reaching UD's `NOUN` through an attested equivalence and setting the same bit |
+| a synset's `lexfile`, `noun.animal` | the attribute's name, `lexfile` | a value of the lexicographer-file road class, the bit of the `lexfile` bank, set where WordNet asserts it |
+| `[Open English WordNet, language, en]`, `[Open English WordNet, version, 2024]` | the attributes' names | the language part of every lexicalization the lexicon gives; the release's own metadata, in the file's metadata tree |
+| `[Open English WordNet, LexicalEntry, dog]` | the element's name | the lexicon holds the entry: containment, which the file's tree holds |
+| `[dog, writtenForm, dogs]`, `[dog, Pronunciation, dɒɡ]` | the attribute's or element's name | a form of the word and its pronunciation, as WN-LMF documents them |
+| `[dog, Sense, [dog, [dog, …]]]` | the element's name | the lexicalization itself, `[dog, eng, i46360]` |
+| `[[dog, …], Definition, …]`, `ILIDefinition`, `Example` | the element's name | the synset's or sense's definition and example, as WN-LMF documents them |
+| `[[dog, …], hypernym, [canine, canid]]`, `antonym` | the `relType` value | already meaning: a value of WN-LMF's relation list |
+| `[[dog, [dog, …]], adjposition, a]`, `[Somebody %s something, senses, …]` | the attribute's name | what WN-LMF documents: an adjective's position; the senses that take that subcategorization frame |
+| `[[dog, [dog, …]], Count, 70]`, `[sense, tag_cnt, 10742]`, `[sense, sense_number, 1]` | the element's or column's name | observations: numbers WordNet states of the sense, kept beside it and never games |
+| `[[dog, …], dc:source, …]` | the attribute's name | who said it: that this author wrote this example, a relation the wordnet attests |
+| `[[…], ili, in]` | the attribute's name | the synset's highway node; how a concept with no ILI yet is named is not decided |
+| `[inflected form, noun, base form]` | the file's category | WordNet's morphological exception: the inflected form's base form, under that part of speech, a value of WordNet's list |
+
 ## WN-LMF
 
 Open English WordNet and every wordnet of Open Multilingual Wordnet are one file each in WN-LMF, the Global WordNet Association's XML for wordnets, [WN-LMF-1.3.dtd](http://globalwordnet.github.io/schemas/WN-LMF-1.3.dtd). Both read like the shared [`wn-lmf.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/wn-lmf.recipe), which says what each element is:

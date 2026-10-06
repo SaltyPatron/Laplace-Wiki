@@ -25,6 +25,10 @@ The class is the witness's trust class, one of those [6. Registries](../Sequence
 
 Each claim stands alone, witnessed once. That is as built: a claim of the frame and the lexical unit, and nothing of the synset; the target is a row as one mapping, one interchange strand of the frame, the lexical unit and the synset, never a claim per column. How the synset is named in it while its WordNet 1.6 offset resolves to nothing is not decided.
 
+## Relations
+
+As built, `[Abounding_with, lus, bejewelled.a]` takes its relation, `lus`, from the file's name for the field, `mapping_lus_synsets.txt`: markup, not meaning. A relation is what the source means, never the name of a field, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field): the target is the row as one mapping of the frame, the lexical unit and the synset, as above.
+
 ## Not read
 
 `mapping_frame_synsets.txt` pairs a frame with a WordNet 1.6 offset and nothing else: with the offset a pointer that resolves to nothing, a row would say nothing, so the file is not read. `README` is not read: there is no recipe for it, and the source has no `reads` line.
