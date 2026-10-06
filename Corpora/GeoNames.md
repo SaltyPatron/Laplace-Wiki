@@ -1,6 +1,6 @@
 # GeoNames
 
-GeoNames attests what its gazetteer's tables say of each place, which is its name, latitude and longitude together; a geonameid is GeoNames's key to the place, recorded nowhere, by which the other tables point at it; the codes' own tables say what each code is; and the readme is not read.
+GeoNames attests what its gazetteer's tables say of each place, which is its name, latitude and longitude together; a geonameid is GeoNames's internal pointer to the place, recorded nowhere, by which the other tables point at it; the codes' own tables say what each code is; and the readme is not read.
 
 One source, `geonames`, reads the GeoNames Gazetteer extract files: the `geoname` table, the alternate names, the hierarchy, and the tables of the codes they are written with. "The data format is tab-delimited text in utf8 encoding." Each recipe names its columns as [readme.txt](https://download.geonames.org/export/dump/readme.txt) does.
 
@@ -12,19 +12,32 @@ One source, `geonames`, reads the GeoNames Gazetteer extract files: the `geoname
 
 ## The record
 
-A record is one row of one file: fields parted by tabs, each recorded as written under its column's name; an empty field attests nothing. A place is its `name`, `latitude` and `longitude` together, the path of the three; `allCountries.txt` defines each under its geonameid (`key geonameid`), and every table that points at a place by geonameid reads it as the place (`refer geonameid geonames-geoname`), its file read after `allCountries.txt`. A code (`US.CA`, `A.ADM1`, `Europe/Andorra`, an ISO country code) is the content a code table defines and is recorded as written.
+A record is one row of one file: fields parted by tabs, each recorded as written under its column's name; an empty field attests nothing. A place is its `name`, `latitude` and `longitude` together, the path of the three; `allCountries.txt` defines each under its geonameid (`key geonameid`), and every table that points at a place by geonameid reads it as the place (`refer geonameid geonames-geoname`), its file read after `allCountries.txt`. The geonameid is resolved to the place and recorded nowhere. A code (`US.CA`, `A.ADM1`, `Europe/Andorra`, an ISO country code) is the content a code table defines and is recorded as written.
 
 | File | Piece | Laplace reads it as | Claim recorded |
 | --- | --- | --- | --- |
 | `allCountries.txt` | the `geoname` table's 19 columns | the place, `[name, latitude, longitude]`; every other column said of it under the readme's name, `alternatenames` and `cc2` each value on its own | `[[Earth, 0, 0], feature code, AREA]`, `[[Roc Meler, 42.58765, 1.7418], alternatenames, Roc Mélé]` |
 | `hierarchy.txt` | parentId; childId; type | both ids read as places; the row says together of the parent which child it has and of what type | `[[Earth, 0, 0], childId, [Europe, 48.69096, 9.14062]]`, `[[Earth, 0, 0], type, ADM]` |
-| `admin1CodesASCII.txt` | code; name; name ascii; geonameid | the place the geonameid points at; its name and ascii name said of it; the code a key | `[[Sant Julià de Loria, …], name, Sant Julià de Loria]` |
+| `admin1CodesASCII.txt` | code; name; name ascii; geonameid | the place the geonameid points at; its name, ascii name and code said of it, the code content as written | `[[Sant Julià de Loria, …], name, Sant Julià de Loria]`, `[[Sant Julià de Loria, …], code, AD.06]` |
 | `admin2Codes.txt` | concatenated codes; name; asciiname; geonameId | the same | |
-| `alternateNamesV2.txt` | alternateNameId; geonameid; isolanguage; alternate name; isPreferredName; isShortName; isColloquial; isHistoric; from; to | the place; each other column said of it; the row's own id a key | `[place, alternate name, Roc Mélé]`, `[place, isolanguage, fr]` |
+| `alternateNamesV2.txt` | alternateNameId; geonameid; isolanguage; alternate name; isPreferredName; isShortName; isColloquial; isHistoric; from; to | the place; each other column said of it; the row's own id a pointer, recorded nowhere | `[place, alternate name, Roc Mélé]`, `[place, isolanguage, fr]` |
 | `countryInfo.txt` | the header's 19 columns | the country by its `#ISO` code; each other column said of it, `Languages` and `neighbours` each value on its own; the geonameid column read as the country's place | `[AD, Capital, Andorra la Vella]`, `[AD, geonameid, [Principality of Andorra, 42.55, 1.58333]]` |
 | `featureCodes_en.txt` | the code; name; description | the code, as written; its name and description | `[A.ADM1, name, first-order administrative division]` |
 | `iso-languagecodes.txt` | the header's columns | the language by its name; its codes | `[French, ISO 639-3, fra]` |
 | `timeZones.txt` | the header's columns | the time zone by its id; the rest | `[Europe/Andorra, rawOffset, 1.0]` |
+
+## Relations
+
+As built, the relation of a claim above is the name of the field that carries its value: the readme's or the header's name for a column. That is markup, not meaning. A relation is what the source means, resolved through the road classes, never the name of a field, column, attribute, or layer: a tagset value is a value of its tagset with its attested equivalence, a per-span label belongs in the sentence's annotation layer, and a pointer's attribute name is in no claim, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field).
+
+| Claim, as built | Its relation, as built | What it means: the target |
+| --- | --- | --- |
+| `[[Earth, 0, 0], feature code, AREA]`, `[A.ADM1, name, first-order administrative division]` | the column's name | the place's feature code, a value of GeoNames' feature-code list, and what that list says the code is |
+| `[[Roc Meler, …], alternatenames, Roc Mélé]`, `[place, alternate name, Roc Mélé]`, `[place, isolanguage, fr]` | the column's name | a name of the place, in a language where the row gives one: the name, the place and the language together, as a lexicalization is |
+| `[[Sant Julià de Loria, …], name, …]`, `[[…], code, AD.06]` | the column's name | the place's name and its administrative code, as GeoNames documents them |
+| `[[Earth, 0, 0], childId, [Europe, …]]`, `[[Earth, 0, 0], type, ADM]` | the column's name, `childId` a pointer's | one hierarchy edge from the parent to the child, of the type the row gives; the column names are in no claim |
+| `[AD, geonameid, [Principality of Andorra, …]]` | the name of a pointer's column | the country is that place; `geonameid` is in no claim |
+| `[AD, Capital, Andorra la Vella]`, `[French, ISO 639-3, fra]`, `[Europe/Andorra, rawOffset, 1.0]` | the header's name | what GeoNames documents each column to mean; where it documents none, an explicit unresolved obligation |
 
 ## Not read
 

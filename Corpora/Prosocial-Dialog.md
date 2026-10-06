@@ -26,8 +26,12 @@ A JSON object on every line. The [dataset card](https://huggingface.co/datasets/
 | `safety_annotation_reasons` | a list of texts | each text said of the context under `safety_annotation_reasons` | `[context, safety_annotation_reasons, text]` | "the reasons behind the safety annotations in free-form text from each worker" |
 | `source` | a text | said of the context | `[context, source, socialchemistry]` | "the source of the seed text that was used to craft the first utterance of the dialogue: socialchemistry, sbic, ethics_amt, ethics_reddit" |
 | `etc` | a text, or `null` | said of the context | `[context, etc, text]` | "other information" |
-| `dialogue_id`, `response_id` | numbers | the set's numbering of its turns: keys, recorded nowhere (`key record dialogue_id`, `key record response_id`) | nothing | "the dialogue index"; "the response index" |
+| `dialogue_id`, `response_id` | numbers | the set's numbering of its dialogues and of the turns within each: internal pointers, recorded nowhere ([Attestations](../Semantics/Attestations.md#seeded-corpora)); the order of the turns is read from the trajectory (`key record dialogue_id`, `key record response_id`) | nothing | "the dialogue index"; "the response index" |
 | `episode_done` | `true` or `false` | said of the context, as written | `[context, episode_done, true]` | "an indicator of whether it is the end of the dialogue" |
 | `null`, an empty text | | nothing | none | |
 
 Nothing else is attested. The card is not read: no recipe of the source matches it, and the source does not read text (`reads`), so nothing of it is recorded.
+
+## Relations
+
+As built, the relation of every claim above is the JSON key, `[context, safety_label, __needs_caution__]`, `[context, rots, text]`: markup, not meaning. A relation is what the source means, never the name of a field, column, attribute, or layer, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field). The target for each column is what the source documents it to mean, quoted in the Specification column; a column whose meaning the source does not document is an explicit unresolved obligation, its target the meaning the source documents. `safety_label` is "the final verdict of the context", `rots` "the relevant rules-of-thumb", `safety_annotations` the three workers' raw annotations, and `episode_done` "whether it is the end of the dialogue", which the trajectory already holds.

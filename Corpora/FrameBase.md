@@ -30,6 +30,10 @@ The witness is named as the source says: "The set has no README on this machine.
 
 Each statement is a claim of its own, witnessed once. Nothing is renamed, reordered, or filled in: a predicate of the lemon file under `http://lemon-model.net/lemon#` or `http://www.lexinfo.net/ontology/2.0/lexinfo#` is recorded as that identifier, and a class under `http://framebase.org/meta/`, such as `LuMicroframe`, `SynsetMicroframe`, or `Miniframe`, is what the file says of a subject, not a kind Laplace gives it.
 
+## Relations
+
+As built, a statement's relation is its RDF predicate, as written, `http://www.w3.org/2002/07/owl#sameAs`: a vocabulary's property, whose meaning the vocabulary that defines it documents, not the name of a markup field. A relation is what the source means, never the name of a field, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field); the target is the property's meaning, reached through the vocabulary that defines it.
+
 ## Not read
 
 Nothing under the root but the three schema files matches a recipe, and the source names no `reads`: no other file is read. The schema page's own encoding of an identifier's path is not applied: an identifier is one entity, as written.

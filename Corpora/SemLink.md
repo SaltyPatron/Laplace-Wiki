@@ -1,6 +1,6 @@
 # SemLink
 
-SemLink attests of each PropBank roleset the VerbNet classes it maps to and, of each pairing, which thematic role each argument plays, and of each VerbNet class the FrameNet frames it maps to; the same files give the highway its edges, and no claim holds a SemLink key.
+SemLink attests of each PropBank roleset the VerbNet classes it maps to and, of each pairing, which thematic role each argument plays, and of each VerbNet class the FrameNet frames it maps to; the same files give the highway its edges, between the identifiers PropBank, VerbNet and FrameNet write, each content as written.
 
 SemLink 2 is "the mappings between PropBank, VerbNet and FrameNet". The README says the release is "designed to handle the latest versions of each of its linked resources: VerbNet 3.3, the Unified PropBank frame files, and FrameNet 1.7", and that "we don't include direct links from PB to FN, but they can be retrieved through VN". SemLink is a hop, as [Hops](Hops.md) lists it, not a lexicon.
 
@@ -10,7 +10,7 @@ SemLink 2 is "the mappings between PropBank, VerbNet and FrameNet". The README s
 | --- | --- | --- | --- |
 | `semlink` | `SemLink`, class `AcademicCurated`, after `propbank` and `verbnet` | `instances/pb-vn2.json`, `instances/vn-fn2.json` | [`pb-vn.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/semlink/pb-vn.recipe), [`vn-fn.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/semlink/vn-fn.recipe); their `maps` lines feed `laplace highway` ([Types](../Reference/Types.md#perf-caches)) |
 
-`pb-vn.recipe` makes each roleset and each class under it a thing (`type … pbroleset`, `type … vnclass`), attests the pair `[roleset, class]` and, of it, each argument's role: `[[roleset, class], ARG0, agent]`. `vn-fn.recipe` attests `[class, frame]`, the class named by the number before its dash.
+`pb-vn.recipe` makes each roleset and each class under it a thing (`type … pbroleset`, `type … vnclass`), attests the pair `[roleset, class]` and, of it, each argument's role: `[[roleset, class], ARG0, agent]`. `vn-fn.recipe` attests `[class, frame]`, the class named by the number before its dash. Each mapping is one interchange strand, where a route changes road class, never a claim per column.
 
 ## What is read
 
@@ -22,6 +22,10 @@ SemLink 2 is "the mappings between PropBank, VerbNet and FrameNet". The README s
 | a key of `vn-fn2.json` | `"26.5-shake": [ ... ]` | the class the number before the dash names | |
 | its list | `["Moving_in_place", "Body_movement"]` | the frames, by name ([FrameNet](FrameNet.md)) | `[class, frame]`; edges `vnclass`→`fnframe` |
 | `external_vn2pb.json` | `"change_bodily_state-40.8.4": ["sicken.01"]` | not taken | nothing |
+
+## Relations
+
+No relation SemLink's recipes record is a field's name: `[roleset, class]` and `[class, frame]` are interchange strands, and in `[[roleset, class], ARG0, agent]` the PropBank argument maps to the VerbNet role, both values of their road classes. A relation is what the source means, never the name of a field, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field).
 
 ## Not read
 

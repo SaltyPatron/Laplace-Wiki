@@ -1,6 +1,6 @@
 # Social Bias Frames
 
-Social Bias Frames attests what each MTurk worker answered of a post as that worker's own witness, what the set says of the post and of the worker, and the same aggregated per post, where the first, unnamed column attests nothing.
+Social Bias Frames attests what each MTurk worker answered of a post, what the set says of the post and of the worker, and the same aggregated per post, where the first, unnamed column attests nothing.
 
 The source is "the data splits from v2 of Social Bias Frames / Social Bias Inference Corpus": posts, what MTurk workers said of each, and the same aggregated per post. Two recipes read it: the annotations, one line per worker per post, and the aggregation, one line per post.
 
@@ -8,7 +8,7 @@ The source is "the data splits from v2 of Social Bias Frames / Social Bias Infer
 
 | Source | Witness | Trust class | After | Files | Recipes |
 | --- | --- | --- | --- | --- | --- |
-| `social-bias-frames` | `Social Bias Frames`; in the annotations, each worker is a witness of their own, `[Social Bias Frames, WorkerId, value]` | class `AcademicCurated` | `unicode`, `iso-639` | `SBIC.v2.trn.csv`, `SBIC.v2.dev.csv`, `SBIC.v2.tst.csv`; `SBIC.v2.agg.*.csv` | [`annotations.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/social-bias-frames/annotations.recipe), [`aggregated.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/social-bias-frames/aggregated.recipe) |
+| `social-bias-frames` | `Social Bias Frames`; as built, in the annotations each worker is also a witness of their own, `[Social Bias Frames, WorkerId, value]` (`own WorkerId`) | class `AcademicCurated` | `unicode`, `iso-639` | `SBIC.v2.trn.csv`, `SBIC.v2.dev.csv`, `SBIC.v2.tst.csv`; `SBIC.v2.agg.*.csv` | [`annotations.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/social-bias-frames/annotations.recipe), [`aggregated.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/social-bias-frames/aggregated.recipe) |
 
 The class is the witness's trust class, one of those [6. Registries](../Sequence/Registries.md#65-declare-the-trust-classes) declares; its prior is the trust every attestation of the source plays at, and [9. Sources](../Sequence/Sources.md#the-estate-and-why-each-source-is-in-it) gives the class of each source.
 
@@ -16,12 +16,12 @@ Every file is a table of comma-separated fields whose first row names the column
 
 ## The annotations
 
-`SBIC.v2.trn.csv`, `SBIC.v2.dev.csv`, `SBIC.v2.tst.csv`. A line is one worker's reading of one post. The post is its text; its `HITId` is the crowdsourcing task's key to it, recorded nowhere (`key row HITId`). The worker is named as the set names them, the path `[Social Bias Frames, WorkerId, value]`, "post" and "worker" below. What the worker answered of the post, the worker says, of the post: those claims are witnessed by the worker. What the line holds of the worker is said of the worker, and the post's text and source are said of the post, both by Social Bias Frames. Each claim is its own attestation.
+`SBIC.v2.trn.csv`, `SBIC.v2.dev.csv`, `SBIC.v2.tst.csv`. A line is one worker's reading of one post. The post is its text; its `HITId` is the crowdsourcing task's pointer to it, recorded nowhere (`key row HITId`). The worker is named as the set names them, the path `[Social Bias Frames, WorkerId, value]`, "post" and "worker" below. What the worker answered of the post, Social Bias Frames reports of the worker: the worker is content, never a witness, and that this worker gave this answer of this post is a relation of the worker and the post that Social Bias Frames attests, added to the web explicitly. As built, those claims are witnessed by the worker, a witness of their own (`own WorkerId`), which is what "by the worker" means in the rows below; the target is the set's relation. What the line holds of the worker is said of the worker, and the post's text and source are said of the post, both by Social Bias Frames. Each claim is its own attestation.
 
 | Piece | Laplace reads it as | Claim recorded | Specification |
 | --- | --- | --- | --- |
-| `HITId` | the crowdsourcing task's key to the post: recorded nowhere | nothing | "id that uniquely identifies each post" |
-| `WorkerId` | the witness of the worker's answers, and the subject of what is said of the worker | `[Social Bias Frames, WorkerId, value]` | "hashed version of the MTurk workerId" |
+| `HITId` | the crowdsourcing task's pointer to the post: recorded nowhere | nothing | "id that uniquely identifies each post" |
+| `WorkerId` | the worker, content: the subject of what is said of the worker, and a part of each relation of an answer; as built, also the witness of the worker's answers | `[Social Bias Frames, WorkerId, value]` | "hashed version of the MTurk workerId" |
 | `post` | the subject: the post, as the text it is | | "post that was annotated" |
 | `dataSource` | said of the post, by Social Bias Frames | `[post, dataSource, value]` | "source of the post" |
 | `whoTarget` | said of the post, by the worker | `[post, whoTarget, value]` | "group vs. individual target" |
@@ -50,3 +50,7 @@ Every file is a table of comma-separated fields whose first row names the column
 | the first column, which has no name | a number | nothing | none | |
 
 Nothing else is attested. The README is not read: no recipe of the source matches it, and the source does not read text (`reads`), so nothing of it is recorded.
+
+## Relations
+
+As built, the relation of every claim above is the column's name, `[post, offensiveYN, value]`, `[worker, annotatorGender, value]`: markup, not meaning. A relation is what the source means, never the name of a field, column, attribute, or layer, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field). The target for each column is what the source documents it to mean, quoted in the Specification column; a column whose meaning the source does not document is an explicit unresolved obligation, its target the meaning the source documents. `offensiveYN` is the worker's answer to "could the post be offensive to anyone", `targetStereotype` the "implied statement", and in the aggregation each number is the mean over the post's annotations; `hasBiasedImplication` is a calculation the README gives.

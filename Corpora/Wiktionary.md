@@ -35,3 +35,7 @@ A record is one line: one JSON object, one entry. Wiktextract's README, "Format 
 | `null`, an empty text | | nothing | none | |
 
 Everything one entry says it says together: it is one record, witnessed once, and its claims within it; a claim said twice in one record is witnessed in it once. A sense, a form, a translation, or a linked word says what it holds of its being there in the entry, not of the word alone.
+
+## Relations
+
+As built, the relation of a claim above is the JSON key that holds its value, `[entry, senses, sense]`, `[entry, forms, form]`, `[entry, translations, [fi, vapari]]`, `[entry, lang, English]`: markup, not meaning. A relation is what the source means, never the name of a field, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field). The target for each key is what Wiktextract's README documents it to mean, quoted in the Specification column: a sense of the word and part of speech, an inflected or alternative form, a translation for a sense, the name of the language; a key it does not document is an explicit unresolved obligation. `pos` is a value of Wiktextract's part-of-speech list, with its attested equivalence to the shared vocabulary.

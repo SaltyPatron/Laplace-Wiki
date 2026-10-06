@@ -1,15 +1,15 @@
 # Word sense disambiguation
 
-A dataset of the WSD evaluation framework attests the words of each sentence, their lemma and part of speech, every dataset as a witness of its own; the ids the data files write (`d000.s000.t000`) are the framework's keys, recorded nowhere, and the gold keys and the systems' answers, which name instances only by those ids, are not read; the README files, schema and candidate list attest nothing.
+The WSD evaluation framework attests the words of each sentence, their lemma and part of speech, as one witness whose datasets are directories of files under its trunk; the ids the data files write (`d000.s000.t000`) are the framework's internal pointers, recorded nowhere, and the gold keys and the systems' answers, which name instances only by those ids, are not read; the README files, schema and candidate list attest nothing.
 
-The source is the unified evaluation framework of Raganato, Camacho-Collados and Navigli (2017) at [lcl.uniroma1.it/wsdeval](http://lcl.uniroma1.it/wsdeval/). Every dataset is its own witness, named as the framework names its directory.
+The source is the unified evaluation framework of Raganato, Camacho-Collados and Navigli (2017) at [lcl.uniroma1.it/wsdeval](http://lcl.uniroma1.it/wsdeval/). The framework is one source trunk and one witness: every dataset, `SemCor`, `senseval2`, `ALL`, is a directory of files under that trunk, each file with its path, and never a witness of its own. The Engine is built otherwise: it names a witness per dataset, as the framework names its directory (`witness {dir}`), and the target is the one trunk.
 
 ## Sources
 
 | Source | Witness | Trust class | After | Files | Recipe |
 | --- | --- | --- | --- | --- | --- |
-| `wsd-evaluation-framework` | the dataset's directory name, `SemCor`, `senseval2`, `ALL` | class `AcademicCurated` | `princeton-wordnet`, `cili` | `*.data.xml` | [`data.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/wsd-evaluation-framework/data.recipe) |
-| `wsd-evaluation-framework` | the directory the file is in | class `AcademicCurated` | | `schema.xsd` | [`schema.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/wsd-evaluation-framework/schema.recipe) |
+| `wsd-evaluation-framework` | the framework, the source trunk; as built, the dataset's directory name, `SemCor`, `senseval2`, `ALL` (`witness {dir}`) | class `AcademicCurated` | `princeton-wordnet`, `cili` | `*.data.xml` | [`data.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/wsd-evaluation-framework/data.recipe) |
+| `wsd-evaluation-framework` | the framework, the source trunk; as built, the directory the file is in | class `AcademicCurated` | | `schema.xsd` | [`schema.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/wsd-evaluation-framework/schema.recipe) |
 | `wsd-evaluation-framework` | none: read as text | | | `README`, `PROVENANCE.md` | [`documentation.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/wsd-evaluation-framework/documentation.recipe) |
 
 `Data_Validation/sample-dataset` repeats `semeval2015` byte for byte and is read there; `semcor+omsti.data.xml` is not read, as the source says.
@@ -21,12 +21,16 @@ A record is one sentence: the path of its words, in order (`words sentence wf in
 | Piece | Written as | Laplace reads it as | Claim recorded | Specification |
 | --- | --- | --- | --- | --- |
 | `<corpus lang="en" source="senseval2">` | the root | nothing: no thing is inside none | none | |
-| `<text id="d000">` | an element | not a thing; its `id` a key (`key id`) | none | "corpus -> text -> sentence" |
-| `<sentence id="d000.s000">` | inside a text | the record of its words; its `id` a key | the record `[[This, document, is, …], [This, lemma, this], …]` | |
-| `<wf lemma="this" pos="DET">This</wf>`, `<instance id="…" lemma="document" pos="NOUN">document</instance>` | word elements | the word, its text; `lemma` and `pos` said of it; an instance's `id` a key | `[This, lemma, this]`, `[This, pos, DET]` | "Both types should contain two mandatory attributes ("lemma" and "pos")." |
+| `<text id="d000">` | an element | not a thing; its `id` a pointer (`key id`) | none | "corpus -> text -> sentence" |
+| `<sentence id="d000.s000">` | inside a text | the record of its words; its `id` a pointer | the record `[[This, document, is, …], [This, lemma, this], …]` | |
+| `<wf lemma="this" pos="DET">This</wf>`, `<instance id="…" lemma="document" pos="NOUN">document</instance>` | word elements | the word, its text; `lemma` and `pos` said of it as it stands in its sentence; an instance's `id` a pointer | `[This, lemma, this]`, `[This, pos, DET]` | "Both types should contain two mandatory attributes ("lemma" and "pos")." |
 
-The record is witnessed once, as one attestation, by the dataset whose directory the file is in.
+The record is witnessed once, as one attestation, by the framework, the one witness; as built, by the dataset whose directory the file is in (`witness {dir}`).
+
+## Relations
+
+As built, `[This, lemma, this]` and `[This, pos, DET]` take their relations from the attributes' names: markup, not meaning. A relation is what the source means, never the name of a field, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field): `DET` is a value of the UPOS road class, the word's part of speech as it stands in its sentence, and `this` its lemma, each in the sentence's annotation layer.
 
 ## Not read
 
-The gold keys (`*.gold.key.txt`), the systems' answers (`*.key`), `candidatesWN30.txt` and the `ili_mapped` tables point at instances by the framework's ids and nothing else: with the ids keys, the row would say its sense key of nothing, so they are not read. The sense keys themselves are the highway's `ili` keys. When a key points at a word across files of one source ([Recipes](../Reference/Recipes.md#what-each-named-part-is): `refer`), the gold keys can say of each instance's word the concept it is annotated with; that is not yet written for XML words. `schema.xsd` is recorded as its syntax tree; the READMEs and `PROVENANCE.md` are read as text: observed content that attests nothing.
+The gold keys (`*.gold.key.txt`), the systems' answers (`*.key`), `candidatesWN30.txt` and the `ili_mapped` tables point at instances by the framework's ids and nothing else: with the ids pointers, the row would say its sense key of nothing, so they are not read. The sense keys themselves are WordNet's internal pointers to lexicalizations, resolved through the highway perf-cache and recorded nowhere. When a pointer points at a word across files of one source ([Recipes](../Reference/Recipes.md#what-each-named-part-is): `refer`), the gold keys can say of each instance's word the concept it is annotated with; that is not yet written for XML words. `schema.xsd` is recorded as its syntax tree; the READMEs and `PROVENANCE.md` are read as text: observed content that attests nothing.

@@ -72,3 +72,7 @@ Each file that says something the XML does not is a table of `;`-separated field
 | `ReadMe.txt`, `ucdxml.readme.txt` | ordinary text | observed, as [Attestations](../Semantics/Attestations.md#observations) says of ordinary content | nothing | |
 
 Every file of the database not named here is not read: either the XML already says what it says, or no recipe exists for it yet. A file that is read is read whole; a row it does not name is not filled in.
+
+## Relations
+
+As built, the relation of a claim above is the attribute's name in the XML, `[A, na, LATIN CAPITAL LETTER A]`, or the field's name in a property file's header, `[cp, decomposition tag, value]`, `[cp, DoCoMo Shift-JIS code, value]`. A relation is what the source means, never the name of a field, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field). The XML's attribute names are the properties' short aliases, `na` for Name, `dm` for Decomposition_Mapping, which `PropertyAliases.txt` attests, so the target is the property the alias names, with the meaning the standard documents for it, `na` and `Name` reaching one property through that attested alias; a value such as `Lu` is a value of its property's list, with its long alias. A property file's field means what the file's header or the standard documents it to mean.

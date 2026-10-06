@@ -14,11 +14,11 @@ The witness derives from the Perspective API: the source names that lineage beca
 
 ## The prompts
 
-A JSON object on every line: "Each instance represents a prompt and its metadata" (dataset card). `filename`, `begin` and `end` say where in the source corpus the snippet was cut from: keys, recorded nowhere (`key record filename`, `key record begin`, `key record end`). The objects under `prompt` and `continuation` each hold a `text` and are the thing it names, and their scores are said of that text under the score's own key. Everything one line says it says together: one record, witnessed once, and its claims within it. Every key and value is recorded as written; a number is the text of its digits, and no member is a score the row gives its claim.
+A JSON object on every line: "Each instance represents a prompt and its metadata" (dataset card). `filename`, `begin` and `end` say where in the source corpus the snippet was cut from: a pointer into another corpus and two positions in it, recorded nowhere (`key record filename`, `key record begin`, `key record end`). The objects under `prompt` and `continuation` each hold a `text` and are the thing it names, and their scores are said of that text under the score's own key. Everything one line says it says together: one record, witnessed once, and its claims within it. Every key and value is recorded as written; a number is the text of its digits, and no member is a score the row gives its claim.
 
 | Piece | Written as | Laplace reads it as | Claim recorded | Specification |
 | --- | --- | --- | --- | --- |
-| `filename`, `begin`, `end` | `0766186-bc7f….txt`, `340`, `564` | where the snippet was cut from: keys | nothing | the card's example holds them and does not define them |
+| `filename`, `begin`, `end` | `0766186-bc7f….txt`, `340`, `564` | where the snippet was cut from: a pointer and positions, recorded nowhere | nothing | the card's example holds them and does not define them |
 | `challenging` | `true` or `false` | said of the instance's texts, as written | `[text, challenging, true]` | the card's example holds it and does not define it |
 | `prompt` | an object holding `text` | the prompt, as the text it is | the subject of its scores | "Each instance represents a prompt and its metadata" |
 | `continuation` | an object holding `text` | the continuation, as the text it is | the subject of its scores | the sentence was split into a prompt and a continuation |
@@ -26,3 +26,7 @@ A JSON object on every line: "Each instance represents a prompt and its metadata
 | `null` | | nothing | none | |
 
 Nothing else is attested. The card is not read: no recipe of the source matches it, and the source does not read text (`reads`), so nothing of it is recorded.
+
+## Relations
+
+As built, the relation of every claim above is the key, `[text, toxicity, value]`, `[text, challenging, true]`: markup, not meaning. A relation is what the source means, never the name of a field, column, attribute, or layer, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field). The target for each column is what the source documents it to mean, quoted in the Specification column; a column whose meaning the source does not document is an explicit unresolved obligation, its target the meaning the source documents. each score is a number the scorer generated for that text, a calculation; `challenging` is not documented.

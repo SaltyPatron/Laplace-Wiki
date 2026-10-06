@@ -1,6 +1,6 @@
 # ConceptNet
 
-ConceptNet attests each edge of its assertions as the claim of its start, its relation, and its end, witnessed by every contributor the edge's sources name, and its relations page attests what each relation is described and exemplified as; its weight and surface text are said of the edge, and its URI, dataset, licence, process and activity are bookkeeping, read by nothing.
+ConceptNet attests each edge of its assertions as the claim of its start, its relation, and its end, with every contributor the edge's sources name, and its relations page attests what each relation is described and exemplified as; its weight and surface text are said of the edge, and its URI, dataset, licence, process and activity are bookkeeping, read by nothing.
 
 The source is ConceptNet 5.7's assertions, one edge on every line, with ConceptNet's own documentation of the file beside it. The documentation's pages [Downloads](https://github.com/commonsense/conceptnet5/wiki/Downloads), [Edges](https://github.com/commonsense/conceptnet5/wiki/Edges), [URI hierarchy](https://github.com/commonsense/conceptnet5/wiki/URI-hierarchy), and [Relations](https://github.com/commonsense/conceptnet5/wiki/Relations) are what the recipes quote.
 
@@ -8,7 +8,7 @@ The source is ConceptNet 5.7's assertions, one edge on every line, with ConceptN
 
 | Source | Witness | Trust class | After | Files | Recipe |
 | --- | --- | --- | --- | --- | --- |
-| `conceptnet` | `ConceptNet`, and each contributor an edge's sources name | class `UserCuratedResource` | `unicode`, `iso-639`, `wiktionary` | `assertions.csv` | [`assertions.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/conceptnet/assertions.recipe) |
+| `conceptnet` | `ConceptNet`; as built, also each contributor an edge's sources name (`own contributor`) | class `UserCuratedResource` | `unicode`, `iso-639`, `wiktionary` | `assertions.csv` | [`assertions.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/conceptnet/assertions.recipe) |
 | `conceptnet` | `ConceptNet` | class `UserCuratedResource` | `unicode`, `iso-639`, `wiktionary` | `Relations.md` | [`relations.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/conceptnet/relations.recipe) |
 
 The class is the witness's trust class, one of those [6. Registries](../Sequence/Registries.md#65-declare-the-trust-classes) declares; its prior is the trust every attestation of the source plays at, and [9. Sources](../Sequence/Sources.md#the-estate-and-why-each-source-is-in-it) gives the class of each source.
@@ -17,7 +17,7 @@ A URI is a path. "Every object in ConceptNet has a URI that is structured like a
 
 ## The assertions
 
-A record is one line: five fields parted by tabs, no header row. "The five fields of each line are: The URI of the whole edge; The relation expressed by the edge; The node at the start of the edge; The node at the end of the edge; A JSON structure of additional information about the edge" ([Downloads](https://github.com/commonsense/conceptnet5/wiki/Downloads)). The recipe names the columns as [Edges](https://github.com/commonsense/conceptnet5/wiki/Edges) names them: `uri`, `rel`, `start`, `end`, and the JSON. The edge is its start, its relation, and its end; everything in the JSON is said of the edge itself; its `uri` is a key.
+A record is one line: five fields parted by tabs, no header row. "The five fields of each line are: The URI of the whole edge; The relation expressed by the edge; The node at the start of the edge; The node at the end of the edge; A JSON structure of additional information about the edge" ([Downloads](https://github.com/commonsense/conceptnet5/wiki/Downloads)). The recipe names the columns as [Edges](https://github.com/commonsense/conceptnet5/wiki/Edges) names them: `uri`, `rel`, `start`, `end`, and the JSON. The edge is its start, its relation, and its end; everything in the JSON is said of the edge itself; its `uri` is ConceptNet's pointer to it, recorded nowhere.
 
 | Piece | Written as | Laplace reads it as | Claim recorded | Specification |
 | --- | --- | --- | --- | --- |
@@ -25,15 +25,15 @@ A record is one line: five fields parted by tabs, no header row. "The five field
 | `rel` | `/r/IsA` | the predicate: the relation's name, the URI's second piece (`rel/2`) | the second part | "The relation expressed by the edge"; "The URI of the predicate of this assertion" |
 | `rel` `/r/ExternalURL` | `/r/ExternalURL` | not read: the line is skipped (`where rel is-not /r/ExternalURL`). Its end is a URL of the term on another site, which split at its slashes made `wiki` and `en.wiktionary.org` things of their own | none | "ExternalURL: Points to a URL outside of ConceptNet" |
 | `end` | `/c/en/animal` | the object, as `start` is, its pieces paired with it the same way | `[dog, IsA, animal]` | "The node at the end of the edge"; "The URI of the second argument of the assertion" |
-| `uri` | `/a/[/r/IsA/,/c/en/dog/,/c/en/animal/]` | bookkeeping: `omit`; the edge's own three parts already are it | nothing | "The URI of the whole edge"; "A unique URI for the assertion being expressed" |
-| `sources` in the JSON, each `contributor` in it | `"sources": [{"contributor": "/s/contributor/..."}]` | who witnessed the edge: each contributor named is a witness of its own and attests the claim with its specifics. An edge that names no contributor is attested by `ConceptNet` | the witness of the attestation, not a claim | "sources: the sources that, when combined, say that this assertion should be true" |
+| `uri` | `/a/[/r/IsA/,/c/en/dog/,/c/en/animal/]` | ConceptNet's pointer to the edge: `omit`; the edge's own three parts already are it | nothing | "The URI of the whole edge"; "A unique URI for the assertion being expressed" |
+| `sources` in the JSON, each `contributor` in it | `"sources": [{"contributor": "/s/contributor/..."}]` | who contributed the edge: a contributor is content, never a witness, and that this contributor gave this edge is a relation ConceptNet attests, added to the web explicitly. As built, each contributor named is a witness of its own and attests the claim with its specifics, and an edge that names no contributor is attested by `ConceptNet`; the target is ConceptNet the witness of every edge, with the contributor's relation | target `[edge, contributor, value]`; as built the witness of the attestation, not a claim | "sources: the sources that, when combined, say that this assertion should be true" |
 | everything else in `sources` | the other members of each source object | not read: of a source object, only `contributor` | nothing | |
 | `weight` in the JSON | `"weight": 1.0` | said of the edge (`attest edge json`); not taken for a score, because the documentation gives no scale | `[edge, weight, 1.0]` | "weight: the strength with which this edge expresses this assertion. A typical weight is 1, but weights can be higher or lower. All weights are positive." |
 | `dataset`, `license` in the JSON | URIs | bookkeeping: `omit`, with `process` and `activity` | nothing | "A URI representing the dataset, or the batch of data from a particular source that created this edge"; "A Creative Commons URI for the license that governs this data" |
 | `surfaceText` in the JSON | a text, or `null` | said of the edge, with `surfaceStart` and `surfaceEnd`; `null` says nothing | `[edge, surfaceText, text]` | "The original natural language text that expressed this statement. May be null, because not every statement was derived from natural language input." |
 | an empty field | | nothing | none | |
 
-The attestation is the claim and its specifics, witnessed once by each contributor the edge names, or once by ConceptNet when it names none; the claim `[start, rel, end]` is what stands and plays its matchups as [Consensus](../Semantics/Consensus.md#matchups) describes. The row takes no column for a score, so it attests the claim as a win.
+The attestation is the claim and its specifics, witnessed by ConceptNet, with what it reports of each contributor the edge names; as built, witnessed once by each contributor the edge names, or once by ConceptNet when it names none; the claim `[start, rel, end]` is what stands and plays its matchups as [Consensus](../Semantics/Consensus.md#matchups) describes. The row takes no column for a score, so it attests the claim as a win.
 
 ## The relations page
 
@@ -47,6 +47,18 @@ The attestation is the claim and its specifics, witnessed once by each contribut
 | every other line of the page | | not a row of the table: not a claim | none | |
 
 The page attests what a relation is called and described as. It does not attest that any edge carries it: that is the assertions' to say.
+
+## Relations
+
+As built, the relation of a claim above is the name of the field that carries its value: a JSON key, or the relations page's column. That is markup, not meaning. A relation is what the source means, resolved through the road classes, never the name of a field, column, attribute, or layer: a tagset value is a value of its tagset with its attested equivalence, a per-span label belongs in the sentence's annotation layer, and a pointer's attribute name is in no claim, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field).
+
+| Claim, as built | Its relation, as built | What it means: the target |
+| --- | --- | --- |
+| `[dog, IsA, animal]` | the `rel` value | already meaning: a ConceptNet relation, defined on its relations page |
+| `[dog, en]`, `[dog, n]` | none: pairs from the URI | the term's language, the language part of a lexicalization, and its part of speech, `n` a value with its attested equivalence |
+| `[edge, weight, 1.0]`, `[edge, surfaceText, text]` | the JSON key | what ConceptNet documents: "the strength with which this edge expresses this assertion", and "the original natural language text that expressed this statement" |
+| `[edge, contributor, value]` | the JSON key | that this contributor gave this edge, a relation ConceptNet attests |
+| `[IsA, Description, …]`, `[IsA, Examples, …]` | the column's name | the relation's definition and examples, as ConceptNet documents them |
 
 ## What is not read
 

@@ -43,3 +43,7 @@ A record is one line: one JSON object. Its members `head`, `relation`, and `tail
 | `null`, an empty text | | nothing | none | |
 
 Everything one line says it says together: the tuple and what is said of it are one record, witnessed once by `ATOMIC10X`, and the tuple within it plays at the score `p_valid_model` gives. A tuple ATOMIC 2020 also states is the same claim, said by two witnesses of their own.
+
+## Relations
+
+As built, the relation of every claim above is ATOMIC's relation, `xAttr`, `xWant`, `HinderdBy`, as each tuple writes it: markup, not meaning. A relation is what the source means, never the name of a field, column, attribute, or layer, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field). The target for each column is what the source documents it to mean, quoted in the Specification column; a column whose meaning the source does not document is an explicit unresolved obligation, its target the meaning the source documents. Those relations are already meaning, values of ATOMIC's relation inventory, and none of them is a field's name; `none` in the tail is recorded as written because the README does not say what it stands for.
