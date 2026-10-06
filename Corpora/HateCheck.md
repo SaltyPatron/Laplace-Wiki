@@ -17,11 +17,11 @@ Every file is a table of comma-separated fields whose first row names the column
 
 ## The cases
 
-`test_suite_cases.csv` and `all_cases.csv`. A row is one test case, which is its `test_case`, the sentence itself; "case" below is that sentence. `case_id` and `templ_id` are HateCheck's keys to the case and to the template it was made from, recorded nowhere (`key row case_id`, `key row templ_id`, `key row ref_templ_id`); `ref_case_id` points at another case by its key and is read as that case's sentence (`refer ref_case_id hatecheck-cases`). Every other named column is said of the case under the column's own name, and what a row says it says together: one record, witnessed once by HateCheck, and its claims within it. The quotations are the [HateCheck README](https://raw.githubusercontent.com/paul-rottger/hatecheck-data/main/README.md)'s.
+`test_suite_cases.csv` and `all_cases.csv`. A row is one test case, which is its `test_case`, the sentence itself; "case" below is that sentence. `case_id` and `templ_id` are HateCheck's identifiers of the case and of the template it was made from: content, the digits as written, said of the case like any other column (`key row case_id`, `key row templ_id`, `key row ref_templ_id`, which as built record nothing of them); `ref_case_id` points at another case by its identifier and is read as that case's sentence (`refer ref_case_id hatecheck-cases`). Every other named column is said of the case under the column's own name, and what a row says it says together: one record, witnessed once by HateCheck, and its claims within it. The quotations are the [HateCheck README](https://raw.githubusercontent.com/paul-rottger/hatecheck-data/main/README.md)'s.
 
 | Piece | Laplace reads it as | Claim recorded | Specification |
 | --- | --- | --- | --- |
-| `case_id` | a key | nothing | "The unique ID of the test case" |
+| `case_id` | said of the case: HateCheck's identifier of it, content as written | `[case, case_id, value]` | "The unique ID of the test case" |
 | `functionality` | said of the case | `[case, functionality, value]` | "The shorthand for the functionality tested by the test case." |
 | `test_case` | the subject: the case, the sentence itself | | "The text of the test case." |
 | `label_gold` | said of the case | `[case, label_gold, hateful]` | "The gold standard label (hateful/non-hateful) of the test case" |
@@ -30,7 +30,7 @@ Every file is a table of comma-separated fields whose first row names the column
 | `focus_words` | said of the case | `[case, focus_words, value]` | "Where applicable, the key word or phrase in a given test case." |
 | `focus_lemma` | said of the case | `[case, focus_lemma, value]` | "Where applicable, the corresponding lemma." |
 | `ref_case_id` | said of the case: the case it points at, as that case's sentence | `[I have met many women and I hate every single one of them., ref_case_id, I hate women.]` | "the ID of the simpler hateful case which was perturbed to generate them", or "of the hateful case which is contrasted" |
-| `ref_templ_id`, `templ_id` | keys | nothing | "The unique ID of the template from which the test case was generated" |
+| `ref_templ_id`, `templ_id` | said of the case: HateCheck's identifiers of its template and of the template it points at, content as written | `[case, templ_id, value]`, `[case, ref_templ_id, value]` | "The unique ID of the template from which the test case was generated" |
 | `case_templ` | said of the case under the column's name | `[case, case_templ, value]` | the README does not name it |
 | the first column, which has no name | nothing | none | |
 
@@ -40,7 +40,7 @@ Every file is a table of comma-separated fields whose first row names the column
 
 | Piece | Laplace reads it as | Claim recorded | Specification |
 | --- | --- | --- | --- |
-| `test_case` | the subject: the case, its sentence; `case_id` and `templ_id` keys | | "The text of the test case." |
+| `test_case` | the subject: the case, its sentence; `case_id` and `templ_id` its identifiers, content, as in the cases file | | "The text of the test case." |
 | `label_1` to `label_10` | what annotator N says of the case: a pair, witnessed by `[HateCheck, label_N]` | `[case, hateful]` | "The label provided for the test case by a given annotator. We recruited and trained a team of ten annotators. Each test case was annotated by exactly five annotators." |
 | `functionality`, `label_gold` | said of the case by HateCheck, as in the cases file | `[I hate women., label_gold, hateful]` | as above |
 | `count_label_h` | said of the case by HateCheck | `[case, count_label_h, value]` | "The number of annotators who labeled a given test case as hateful." |

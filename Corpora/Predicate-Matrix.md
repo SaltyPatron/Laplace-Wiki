@@ -14,7 +14,7 @@ The source directory holds `source` and `matrix.recipe`, which matches `Predicat
 
 ## What is read
 
-A row is the thing its `3_ID_PRED` and `4_ID_ROLE` name (`thing row 3_ID_PRED 4_ID_ROLE`), and every column is attested of it under its own name (`attest row *`); `NULL` in any family (`id:NULL`, `vn:NULL`, …) is empty and attests nothing. The keys of the four lists are read as their types.
+A row is the thing its `3_ID_PRED` and `4_ID_ROLE` name (`thing row 3_ID_PRED 4_ID_ROLE`), and every column is attested of it under its own name (`attest row *`); `NULL` in any family (`id:NULL`, `vn:NULL`, …) is empty and attests nothing. The four lists' identifiers are content as written, each naming the type the highway's list holds a slot for.
 
 | Column | Written as | Read as | On the highway |
 | --- | --- | --- | --- |

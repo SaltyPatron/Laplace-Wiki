@@ -1,6 +1,6 @@
 # SemLink
 
-SemLink attests of each PropBank roleset the VerbNet classes it maps to and, of each pairing, which thematic role each argument plays, and of each VerbNet class the FrameNet frames it maps to; the same files give the highway its edges, and no claim holds a SemLink key.
+SemLink attests of each PropBank roleset the VerbNet classes it maps to and, of each pairing, which thematic role each argument plays, and of each VerbNet class the FrameNet frames it maps to; the same files give the highway its edges, between the identifiers PropBank, VerbNet and FrameNet write, each content as written.
 
 SemLink 2 is "the mappings between PropBank, VerbNet and FrameNet". The README says the release is "designed to handle the latest versions of each of its linked resources: VerbNet 3.3, the Unified PropBank frame files, and FrameNet 1.7", and that "we don't include direct links from PB to FN, but they can be retrieved through VN". SemLink is a hop, as [Hops](Hops.md) lists it, not a lexicon.
 

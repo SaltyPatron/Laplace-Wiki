@@ -1,8 +1,8 @@
 # MapNet
 
-MapNet's lexical-unit file attests of each FrameNet frame the lexical units it lists for it, as written; its synset column is a WordNet 1.6 offset, a key of an edition no source here has, and is recorded nowhere; its frame-to-synset file holds nothing else and is not read; and the README attests nothing.
+MapNet's lexical-unit file attests of each FrameNet frame the lexical units it lists for it, as written; its synset column is a WordNet 1.6 offset, content as written, which MapNet attests the lexical unit maps to, though no source here has that edition to say what the offset names; its frame-to-synset file is not read; and the README attests nothing.
 
-MapNet is "FrameNet 1.3 frames and lexical units mapped to WordNet 1.6 synsets". The README says "All frames and lexical units included in the resource are described in FrameNet v. 1.3." and "All synsets refer to WordNet version 1.6, compatible with MultiWordNet." It is listed under [Hops](Hops.md), but its synset keys cannot be resolved: the highway's `ili` list knows WordNet 3.0 offsets and sense keys, not 1.6 offsets, so MapNet is not on the highway.
+MapNet is "FrameNet 1.3 frames and lexical units mapped to WordNet 1.6 synsets". The README says "All frames and lexical units included in the resource are described in FrameNet v. 1.3." and "All synsets refer to WordNet version 1.6, compatible with MultiWordNet." It is listed under [Hops](Hops.md), but its synset offsets name nothing another source here attests: the highway's `ili` list knows WordNet 3.0 offsets and sense keys, not 1.6 offsets, so MapNet is not on the highway.
 
 ## Source
 
@@ -20,11 +20,11 @@ The class is the witness's trust class, one of those [6. Registries](../Sequence
 | --- | --- | --- | --- | --- |
 | the first field | `Abounding_with` | the frame, as FrameNet names it: the same entity as the highway's frame and [FrameNet](FrameNet.md)'s | the subject | "- file 'mapping_lus_synsets.txt': mapping between FrameNet frames, lus and WordNet synsets" README |
 | the second field | `bejewelled.a` | the lexical unit as written, said of the frame under `lus` | `[Abounding_with, lus, bejewelled.a]` | |
-| the third field | `a#00057580` | a WordNet 1.6 offset: a key (`key synsets`), recorded nowhere | nothing | "All synsets refer to WordNet version 1.6" |
+| the third field | `a#00057580` | a WordNet 1.6 offset, content as written, a part of speech and an offset: what MapNet says the lexical unit maps to; as built the recipe names it a key (`key synsets`) and records nothing of it | `[[Abounding_with, bejewelled.a], synsets, a#00057580]` | "All synsets refer to WordNet version 1.6" |
 | an empty field | | what the file leaves empty | nothing | |
 
 Each claim stands alone, witnessed once.
 
 ## Not read
 
-`mapping_frame_synsets.txt` pairs a frame with a WordNet 1.6 offset and nothing else: with the offset a key, a row would say nothing, so the file is not read. `README` is not read: there is no recipe for it, and the source has no `reads` line.
+`mapping_frame_synsets.txt` pairs a frame with a WordNet 1.6 offset and nothing else: each row says of the frame the offset it maps to, the offset content as written, but no recipe matches the file and it is not read. `README` is not read: there is no recipe for it, and the source has no `reads` line.

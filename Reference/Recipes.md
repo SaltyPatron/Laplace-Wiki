@@ -83,9 +83,9 @@ A tree-sitter field names a child that has no name of its own; a group named by 
 | Directive | Meaning |
 | --- | --- |
 | `content NAME...` | the part is content, the text it is, the same entity wherever that text stands |
-| `key TIER NAME` | the part is the file's key for a TIER: it resolves to the TIER's thing, and is written nowhere; the source's other files may refer to it |
-| `refer NAME TIER [within] [TIER...]` | the part's text is a key of a TIER, here or in another recipe of the source: it is read as that thing (`within`: as the thing that TIER is inside); several targets, the first that holds the key; a key nothing holds says nothing and is counted |
-| `type NAME LIST... [matching PATTERN] [as TEMPLATE]` | the part's text is a resource's key of a type in the highway's LIST, read as that type; several lists, the first that knows it; with a pattern, the key as those lists write it (`vn:51.2` read as `51.2`), and a text the pattern does not match is no key of theirs; a key no list knows is counted and said, never taken for text |
+| `key TIER NAME` | the part is the file's identifier for a TIER: it resolves to the TIER's thing, and the source's other files may refer to it. As built it is written nowhere. That falls short of the law: an identifier is content, recorded as written and decomposed like any other text, and that it names the thing is attested by the source; only a position (a row's or token's number used to place records in the source's own files) is left unattested ([Corpora](../Corpora/README.md#page-shape)) |
+| `refer NAME TIER [within] [TIER...]` | the part's text is an identifier of a TIER, here or in another recipe of the source: it is read as that thing (`within`: as the thing that TIER is inside); several targets, the first that holds the identifier; an identifier nothing holds says nothing and is counted |
+| `type NAME LIST... [matching PATTERN] [as TEMPLATE]` | the part's text is a resource's identifier of a type in the highway's LIST, read as that type; several lists, the first that knows it; with a pattern, the identifier as those lists write it (`vn:51.2` read as `51.2`), and a text the pattern does not match is no identifier of theirs; an identifier no list knows is counted and said, never taken for text. As built the claim holds the type and not the text; the law keeps the identifier as content, as written, the type's slot only an index over it |
 | `metadata NAME...` | the part is said of the file itself: it goes in the file's metadata tree |
 | `omit NAME...` | the part is the file's bookkeeping, read by nothing, nor anything inside it |
 | `perfcache` | after the layout (`format`, `tier`): a part named as a property the flags perf-cache holds (`tier0.flags`, by its name or its long name, matched loosely) is read from the flags for every codepoint and not attested again; the flags must be generated |
@@ -138,9 +138,9 @@ A resource's recipe says which of its things are types and what it maps between 
 | Directive | Meaning |
 | --- | --- |
 | `types LIST "SAY" TIER` | each thing of TIER is a type of the highway's LIST, in the order the files write them (a text of a list is a type by itself) |
-| `keyed LIST TIER PATH [matching PATTERN] [as TEMPLATE]` | the value at PATH is a resource's key of that type, as those who point at it write it |
-| `alias LIST TIER PATH [matching ...] to PATH [matching ...]` | a key that names the type another key names (a sense key and its synset's offset) |
-| `maps TIER PATH LIST [matching ...] to PATH LIST [matching ...]` | an edge between the type one key names and the type another names |
+| `keyed LIST TIER PATH [matching PATTERN] [as TEMPLATE]` | the value at PATH is a resource's identifier of that type, as those who point at it write it |
+| `alias LIST TIER PATH [matching ...] to PATH [matching ...]` | an identifier that names the type another identifier names (a sense key and its synset's offset) |
+| `maps TIER PATH LIST [matching ...] to PATH LIST [matching ...]` | an edge between the type one identifier names and the type another names |
 
 A pattern is POSIX extended; a template writes `\0` the whole match and `\1` to `\9` its parts; with no template, the first part, or the whole. What names no type of its list is left out and said, by lists, with an example.
 
@@ -192,8 +192,8 @@ attest record note:*
 relate row DEPREL to HEAD alone
 ```
 
-A record is the sentence its `# text = ...` note writes; a row is the word its `FORM` writes; `ID` numbers the rows of one record and `HEAD` points at a row by it, keys written nowhere; `UPOS` is a type of the highway; what the file writes about its documents is its metadata tree; every other note is what the treebank says of the sentence under the note's name; `DEPREL` relates the word to the row `HEAD` numbers, and to nothing, alone, for the root.
+A record is the sentence its `# text = ...` note writes; a row is the word its `FORM` writes; `ID` numbers the rows of one record and `HEAD` points at a row by it, positions within the sentence, never part of an ID; `UPOS` is a type of the highway; what the file writes about its documents is its metadata tree; every other note is what the treebank says of the sentence under the note's name; `DEPREL` relates the word to the row `HEAD` numbers, and to nothing, alone, for the root.
 
 ## Where recipes are checked
 
-`laplace structure LAYOUT FILE` shows a file's tree as a layout parts it. `laplace tree FILE` shows a file's syntax tree as its grammar reads it. `laplace ingest --plan` shows which recipe takes which file; `--claims` prints every claim as text and loads nothing; `--no-load` decomposes and checks recomposition without writing, and says every named part left open and every key no list of the highway holds. A recipe that does not load stops its own source and no other.
+`laplace structure LAYOUT FILE` shows a file's tree as a layout parts it. `laplace tree FILE` shows a file's syntax tree as its grammar reads it. `laplace ingest --plan` shows which recipe takes which file; `--claims` prints every claim as text and loads nothing; `--no-load` decomposes and checks recomposition without writing, and says every named part left open and every identifier no list of the highway holds. A recipe that does not load stops its own source and no other.

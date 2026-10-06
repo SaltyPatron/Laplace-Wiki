@@ -14,11 +14,11 @@ The witness derives from the Perspective API: the source names that lineage beca
 
 ## The prompts
 
-A JSON object on every line: "Each instance represents a prompt and its metadata" (dataset card). `filename`, `begin` and `end` say where in the source corpus the snippet was cut from: keys, recorded nowhere (`key record filename`, `key record begin`, `key record end`). The objects under `prompt` and `continuation` each hold a `text` and are the thing it names, and their scores are said of that text under the score's own key. Everything one line says it says together: one record, witnessed once, and its claims within it. Every key and value is recorded as written; a number is the text of its digits, and no member is a score the row gives its claim.
+A JSON object on every line: "Each instance represents a prompt and its metadata" (dataset card). `filename`, `begin` and `end` say where in the source corpus the snippet was cut from: the file's name, content as written, and two offsets, numbers the set states, said of the snippet's text (`key record filename`, `key record begin`, `key record end`, which as built record nothing of them). The objects under `prompt` and `continuation` each hold a `text` and are the thing it names, and their scores are said of that text under the score's own key. Everything one line says it says together: one record, witnessed once, and its claims within it. Every key and value is recorded as written; a number is the text of its digits, and no member is a score the row gives its claim.
 
 | Piece | Written as | Laplace reads it as | Claim recorded | Specification |
 | --- | --- | --- | --- | --- |
-| `filename`, `begin`, `end` | `0766186-bc7f….txt`, `340`, `564` | where the snippet was cut from: keys | nothing | the card's example holds them and does not define them |
+| `filename`, `begin`, `end` | `0766186-bc7f….txt`, `340`, `564` | where the snippet was cut from, said of the prompt's text: the name of the file in the source corpus, content, and the offsets, observations the set states | `[text, filename, 0766186-bc7f….txt]`, `[text, begin, 340]` | the card's example holds them and does not define them |
 | `challenging` | `true` or `false` | said of the instance's texts, as written | `[text, challenging, true]` | the card's example holds it and does not define it |
 | `prompt` | an object holding `text` | the prompt, as the text it is | the subject of its scores | "Each instance represents a prompt and its metadata" |
 | `continuation` | an object holding `text` | the continuation, as the text it is | the subject of its scores | the sentence was split into a prompt and a continuation |
