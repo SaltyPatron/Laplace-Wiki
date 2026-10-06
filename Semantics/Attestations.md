@@ -24,13 +24,17 @@ A claim is a game series: games plus a score. Another file of the same source th
 
 ## Seeded corpora
 
-A seeded corpus is mined for what it teaches: its semantic knowledge, observations, and attestations. Laplace does not export UD Treebanks; it records what UD Treebanks teaches. WordNet, PropBank, SemLink, and every other seed are the same: they happen to be standardized files and formats that can be parsed and decomposed. What a source observed is attested in its own terms; the index a source gives a sentence is not, because Laplace never exports the source.
+A seeded corpus is mined for what it teaches: its semantic knowledge, observations, and attestations. Laplace does not export UD Treebanks; it records what UD Treebanks teaches. WordNet, PropBank, SemLink, and every other seed are the same: they happen to be standardized files and formats that can be parsed and decomposed. What a source observed is attested in its own terms; the index a source gives a sentence is not, because Laplace never exports the source. The highway IDs a source cites, an ILI, a roleset, a frame, a language code, are content, and every source that cites one lands on the same node; the pointers by which a source addresses its own records, an offset, a synset id, a sentence number, are resolved to what they point at and not recorded.
 
 A source is a trunk entity above its files, each file is a trunk under it, and each record of each file sits under that. If the file's trunk node is recorded and its metadata matches, everything in that file is already recorded.
 
 ## Witnesses
 
 Entities are witnessed. WordNet does not own `dog`: we observe `dog` from WordNet. Every witness observes the same entity.
+
+The witness is the source trunk, `[source record, its files' trunks]`. Provenance is containment: a record is a path over the strands it asserts, inside its file's content tree, with each strand's run length and outcome in its vertex's M, and many source trunks can hold the same strand. The source's own name is content inside its source record. Its trust and lineage are keyed by the trunk; the standing of a strand is one row keyed by the strand's ID, beside the path. Forgetting a source removes its trunk, sweeps what nothing references, and replays the standings it touched.
+
+Witnessing is not attribution, and both are containment. Witnessing is of any entity: it was recorded in some tree. It is calculated, never stored: a walk up through the GIN gives every trunk that holds the entity, and its occurrence counts follow. Normal user content only adds observations: new trees that contain existing nodes. Attribution is of a claim: a source asserted this strand, with an outcome. The strand sits in a record path under the source's trunk, so attribution is a walk up too. Attestations come from seeded corpora and from Laplace's own calculations and outcomes at their trust; ordinary prompts give observations. What is stored per claim is the strand's entity and path, and its standing where that is not a pure function of one witness's series.
 
 A witness derived from another witness records that lineage, so copies do not count as independent consensus.
 

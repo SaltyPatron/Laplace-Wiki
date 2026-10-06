@@ -5,7 +5,7 @@ Every term the documentation uses, defined once, with the page that owns it.
 | Term | Definition | Owner |
 | --- | --- | --- |
 | atom | a codepoint, an entity of tier 0; its physicality is a POINT ZM holding its own ID | [Atoms](../Storage/Atoms.md) |
-| attestation | a link between IDs: a strand and the witness that pulls on it, with the outcome and the games played; a row of `attestation` | [Attestations](../Semantics/Attestations.md#strands) |
+| attestation | a link between IDs: a strand and the witness that pulls on it, with the outcome and the games played; a strand in a record path under the witness's trunk, as built a row of `attestation` | [Attestations](../Semantics/Attestations.md#strands) |
 | bank | the mask of one semantic group (a part of speech, a dependency relation, a kind), its bits the frozen slots of one list | [Types](Types.md#masks) |
 | claim | a tuple of entities with referential integrity, a composition whose path relates them; the address of a standing | [Claims](../Semantics/Claims.md) |
 | composition | an entity of tier 1 or above: an ordered sequence of constituents, its ID the hash of theirs, its coordinate their exact average | [Compositions](../Storage/Compositions.md) |
@@ -45,4 +45,4 @@ Every term the documentation uses, defined once, with the page that owns it.
 | trust | how far a witness is believed, −1 to 1, played as the opponent's deviation | [Consensus](../Semantics/Consensus.md) |
 | tuple | a path of things that together name one thing; not text, not a claim | [Claims](../Semantics/Claims.md) |
 | wall | the surface of the 4-ball, `Σ m² = 2^106`, which no coordinate crosses | [Space](../Storage/Space.md) |
-| witness | whoever testifies, named as content; a row of `witness` with its lineage and trust | [Attestations](../Semantics/Attestations.md) |
+| witness | whoever testifies: a source trunk, `[source record, its files' trunks]`, its name content inside its source record, its lineage and trust keyed by the trunk; as built a row of `witness` | [Attestations](../Semantics/Attestations.md) |
