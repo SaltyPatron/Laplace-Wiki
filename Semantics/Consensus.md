@@ -12,7 +12,13 @@ Glicko-2 is what tells how hard a strand tugs back, and it replaces a lot of con
 
 ## Matchups
 
-There are no rating periods. As content is observed, first in, first out, the matchups are played.
+There are no global, delayed rating periods. As content is observed, first in, first out, the matchups are played.
+
+A witness that asserts the same claim n times plays n games: run-length, like a repeat in a path. The client folds every repeat from one witness, per cell, into one Glicko-2 rating period, games and score, and the database receives one update per cell per witness. Different witnesses play first in, first out.
+
+Repetition saturates. For n identical results against one opponent, 1/v = n·g²·E(1−E), and μ′ − μ = n·g·(s−E) / (1/φ*² + n·g²·E(1−E)), which tends to (s−E) / (g·E(1−E)) as n grows: repeats buy certainty only up to a ceiling the witness's trust sets, so spam limits itself. A million prompts saying the earth is flat are one row, one matchup with n = 1,000,000 at user-prompt trust. Because a standing saturates, the run length n is also kept as a count beside the claim, never only merged into the standing. Copies count once: a derived witness records its lineage, so dependence never masquerades as independent confirmation.
+
+A number a source states, such as WordNet's `tag_cnt 10742`, is content, an observation, not games.
 
 Incoming records play existing records, for attestation and Glicko-2 scores. Querying picks the records with higher scores, but does not change scores.
 
@@ -32,4 +38,4 @@ A witness or claim entering for the first time starts from a stock default for i
 
 ## No ETL
 
-There are no consensus folds. ETL is forbidden: no delayed segments that group everything together, no lazy, manually updated hot caches, and no SQL doing the heavy operations.
+There are no delayed consensus folds. ETL is forbidden: no delayed segments that group everything together, no lazy, manually updated hot caches, and no SQL doing the heavy operations.

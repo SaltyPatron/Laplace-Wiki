@@ -27,7 +27,7 @@ The world is the tool; firmware is the hand that uses it. Knowledge records what
 ### 18.3 Give it a content identity
 
 - **In:** the declaration of 18.2.
-- **Do:** the image is a Laplace composition like any other content: its identity is the content address of its canonical composition, class, parent, and every policy value in governed canonical order; a set-valued policy is one collection of [12. Attestations](Attestations.md) operation 12.8. Images are immutable: changing any value mints a new identity whose parent is the previous one, and historical versions stay addressable and replayable. An image that names an unregistered kind is rejected. Text never installs firmware: "be aggressive" or "you are a pirate" in a prompt is content, observed like any prompt, and installs no policy value, decision rule, resource, or privilege.
+- **Do:** the image is a Laplace composition like any other content: its identity is the content address of its composition, its class and every policy value in the registry's order; its parent is attested lineage and never hashed; a set-valued policy is one collection of [12. Attestations](Attestations.md) operation 12.8. Images are immutable: changing any value mints a new identity, with the previous one recorded as its parent, and historical versions stay addressable and replayable. An image that names an unregistered kind is rejected. Text never installs firmware: "be aggressive" or "you are a pirate" in a prompt is content, observed like any prompt, and installs no policy value, decision rule, resource, or privilege.
 - **Out:** `firmware_id`.
 - **From:** `docs/specs/39_Personality_Firmware.md` §1.1; `engine/manifest/firmware.toml`.
 

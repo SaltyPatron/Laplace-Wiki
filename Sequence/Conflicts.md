@@ -1,8 +1,8 @@
 # 30. Conflicts
 
-The wiki's specification pages and the monorepo's invention documents state some things differently, and each difference is recorded here as both positions with their sources, unresolved, for the inventor.
+The wiki's specification pages and the monorepo's invention documents state some things differently, and each difference is recorded here as both positions with their sources, with the inventor's decision where one has been made and open for the inventor where none has.
 
-None of these is settled by this page. Where an operation in another Sequence page touches one of them, it says so and points here.
+An entry marked **Decided** records the inventor's decision, and the Sequence pages state it; every other entry is open, and none of those is settled by this page. Where an operation in another Sequence page touches one of them, it says so and points here.
 
 ## Placement and packing
 
@@ -67,21 +67,23 @@ None of these is settled by this page. Where an operation in another Sequence pa
 - **Monorepo.** Relations, qualifiers, trust classes, entity types, vocabularies, and firmware policy kinds are governed registries with stable bits generated from manifests into native law and perf-cache ROMs, never seeded as rows; a type's, class's, or relation's id is the content id of its label. `docs/plan/ASSIMILATION_ROADMAP.md` law 4. The monorepo's workstream G lists the fake machinery still to remove: blake3 source ids, marker entities, the canonical-names table, `ByteAtoms` as a second alphabet, static registries.
 - **Wiki.** [8. Database](Database.md): entity, physicality, source, statistics, witness, claim, attestation, consensus.
 - **Agree.** No lookup table holds semantics; a registry value is the content entity of its label.
-- **Open.** Whether a statistics table and a claim table are "fake lookup tables" or the physicality and attestation the inventor names; and whether a registry held outside the database as generated code and ROM satisfies "no more tables than this."
+- **Decided.** A registry is a perf-cache. Its members are content entities like everything else, `noun` the same `[n,o,u,n]` as the word anywhere, and a stable bit or slot is an index over them, never the identity of a meaning. "Never seeded as rows" means a registry is not a lookup table of made-up IDs, not that its members have no entities. A member's meaning is attested and realizable in any language; English names in manifests and code are developer handles, no code path tests for an English value, and no identity is derived from an invented label such as `WordNet_Synset` or `AcademicCurated`. [6. Registries](Registries.md).
+- **Open.** Whether a statistics table and a claim table are "fake lookup tables" or the physicality and attestation the inventor names.
 
 ### T2. Two claim hashes, or one typed cell plus a qualifier mask
 
 - **Wiki.** [Claims: IDs](../Semantics/Claims.md#ids): a witnessing ID over the claim's specifics and a consensus ID over what makes it unique; masks in separate columns for part of speech, sense, dependency relation.
-- **Monorepo.** `docs/specs/05_Substrate_Invariants.txt` Rule #6: the consensus address is the typed `(subject, relation, object)` triple; the attestation row carries the witness, context, outcome, score, and a 256-bit qualifier mask; consensus has no qualifiers yet, so a reader needing one variant probes the attestations behind the cell.
+- **Monorepo.** `docs/specs/05_Substrate_Invariants.txt` Rule #6, line 131: the consensus address is the typed `(subject, relation, object)` triple; the attestation row carries the witness, context, outcome, score, and a 256-bit qualifier mask; consensus has no qualifiers yet, so a reader needing one variant probes the attestations behind the cell.
 - **Agree.** Two witnesses of the same claim land on one consensus cell; the specifics live on the attestation.
-- **Open.** Whether the wiki's masks and the monorepo's qualifier mask are one column, and whether qualifiers reach consensus.
+- **Decided.** A claim is a composition of content IDs with referential integrity, of any arity and any tier: a lexicalization `[lemma, language, ILI]`, a concept relation `[ILI, hypernym, ILI]`, a role inside a roleset, a valence pattern. The `(subject, relation, object)` triple is one shape among many. The consensus ID covers the claim's composition; the witnessing ID adds the witness, the context, and the qualifiers. Consensus is keyed on the claim's composition, never on BLAKE3(subject‖type‖object) with a missing object filled with zeros. The qualifier mask is on the attestation and says which variants of one proposition a source asserts; the part-of-speech, dependency, and other enum masks are bits set where a source asserts them, at the tier it asserts them. [12. Attestations](Attestations.md) operations 12.5 to 12.7.
+- **Open.** Whether the consensus row carries the OR of its attestations' qualifier masks.
 
 ### T3. No consensus folds, or a set-sized fold
 
 - **Wiki.** [Consensus: No ETL](../Semantics/Consensus.md#no-etl): there are no consensus folds; standings are updated in place, one matchup per attestation as it arrives, and ETL is forbidden.
 - **Monorepo.** The ingest spine ends in "fold completion" and "set-sized evidence fold (attestations → consensus)"; roadmap workstream C measures that the current fold reads every touched cell's evidence back over SPI and refolds from neutral on every working set, and targets folding each witness's rating period per cell in memory natively and emitting consensus deltas.
 - **Agree.** The update is native Glicko-2 per cell, set-sized per batch, never per record, never delayed, never SQL doing the arithmetic.
-- **Open.** Only the word: the monorepo's "fold" names the batch Glicko-2 update; the wiki forbids "folds" meaning delayed aggregation. Whether a witness's whole rating period is played as one matchup per cell, or each attestation as its own period.
+- **Decided.** A witness asserting the same claim *n* times plays *n* games, run-length like a repeat in a path. The client folds every repeat from one witness, per cell, into one Glicko-2 rating period, games and score, and the database receives one update per cell per witness; different witnesses play first in, first out. "No rating periods" and "no folds" mean no global, delayed, ETL-style periods or aggregation. A number a source states, such as WordNet's `tag_cnt`, is an observation, not games. [13. Consensus](Consensus.md) operation 13.4.
 
 ## Reading standings
 
@@ -99,7 +101,7 @@ None of these is settled by this page. Where an operation in another Sequence pa
 - **Wiki.** [Corpora](../Corpora/README.md): an ILI number is a source's key, resolved to the thing it names and recorded nowhere. [Semantics](../Semantics/README.md) and [Claims: Tuples](../Semantics/Claims.md#tuples): `dog` has an ILI; bubble up to it, change the language, bubble down, and there is `Hund`; `dog → ILI i46360`. [Claims: Masks](../Semantics/Claims.md#masks): an ILI is an identifier and gets no mask.
 - **Monorepo.** `docs/plan/ASSIMILATION_ROADMAP.md` workstream B: a word binds to a language-neutral key (`dog —HAS_SENSE→ i46360 @eng`), and facts about the key are language-neutral.
 - **Agree.** The concept is the hub that translation passes through, and it has no mask bit.
-- **Open.** What the hub's entity is: the identifier's text as CILI writes it, its definition, or the composition of the synsets that map to it; and so whether `i46360` is ever content.
+- **Decided.** `i46360` is content, `[i,4,6,3,6,0]`, the same entity wherever that text occurs, exactly as `3.14159` is `[3,.,1,4,1,5,9]`; that it is an ILI is attested by CILI, the source that says so. The same holds for synset offsets, sense keys, rolesets, VerbNet classes, FrameNet ids, ISO codes, geonameids, and game ids, and a structured identifier decomposes into its parts. No identifier is a key recorded nowhere or a typed reference outside content. What is not identity is a record's position in a file, a row or line number, or a byte offset: those are occurrence under the trunk. The hub a word bubbles up to is the concept that identifier is: `dog` lexicalizes it in English, `[dog, eng, i46360]`, and facts about it are language-neutral. [10. Recipes](Recipes.md) operation 10.11, [12. Attestations](Attestations.md) operation 12.4.
 
 ### S2. The stock default a claim enters at, when relations are content
 
@@ -114,6 +116,7 @@ None of these is settled by this page. Where an operation in another Sequence pa
 - **Wiki.** [Claims: Tuples](../Semantics/Claims.md#tuples): nothing is hard-coded except pregenerated relations, types, and kinds that act like a perf-cache or flagged enums. Q3 above.
 - **Monorepo.** `engine/manifest/relation_types.toml` `[ranks]`: thirteen rank tiers over 233 English canonical relation names (`HAS_POS` lexical glue 0.18, `IS_A` taxonomic 0.90), read as salience by the forward pass and by model export.
 - **Built.** Laplace-Engine has no rank table. Its firmware weighs strands by predicate content (`weigh N KIND...`) and words by what is attested of them (`role by UPOS`, `role 1 NOUN ADJ NUM`), names resolved to their entities when the firmware loads.
+- **Decided.** English is never identity: the 233 English names of `relation_types.toml` are developer handles, a relation is the content its source writes, with its meaning attested and realizable in any language, and a registry bit is a perf-cache index over it. No code path tests for an English value. [6. Registries](Registries.md) operation 6.1.
 - **Open.** Whether salience is a flagged enum per source relation inventory, a value the firmware supplies by naming content, or something measured, as [Research: Trust: Role trust](../Research/Trust.md#role-trust) measures the information a part of speech carries.
 
 ### S4. Firmware is a file never a record, or a content-addressed program over the operation ISA
@@ -124,6 +127,47 @@ None of these is settled by this page. Where an operation in another Sequence pa
 - **Agree.** Firmware never writes knowledge or standing, and the same records read under two firmwares give two behaviours over one truth.
 - **Open.** Whether a firmware is content (an ID, not attested), and how much of the stage order and election order is the firmware's program rather than the engine's code.
 
+## Identity
+
+### I1. A composition's hash input has a domain byte, or only its children's IDs
+
+- **Wiki.** [Identity: Pure content](../Storage/Identity.md#pure-content) and [11. Content](Content.md) operation 11.5: a composition's ID is BLAKE3 over its children's 16-byte IDs, in order, and nothing else. [Research: Hashing: Hash input](../Research/Hashing.md#hash-input).
+- **Monorepo.** `docs/ARCHITECTURE.md` line 55: the executable id is a BLAKE3-derived hash over the Merkle domain byte plus the ordered child-id sequence; `hash128_merkle` prepends `0x01`.
+- **Built.** Laplace-Native and Laplace-Engine hash the child IDs alone.
+- **Decided.** There is no domain byte. A leaf hashes the 1 to 4 bytes of one codepoint's UTF-8 and a node at least 32, and a composition with one child is that child, so a node can never collide with a leaf. The monorepo's domain byte is wrong.
+
+### I2. The same content under the same recipe, or the same content
+
+- **Wiki.** [Identity](../Storage/Identity.md): the same content always has the same ID.
+- **Monorepo.** `docs/INVENTION.md` line 169: composite identity is Merkle-style over the ordered child identities under the selected recipe/domain separation. `docs/INVENTIONS.md` #1, line 7: equal canonical content under one declared recipe converges across sources and modalities.
+- **Decided.** The same content has the same ID; the recipe decides the tree. The same bytes under a different decomposition can give a different trunk, but a recipe never salts a hash, and no recipe name or version is in a hash input.
+
+### I3. The witness is `[authority, release]`, or the source trunk
+
+- **Wiki.** [9. Sources](Sources.md) operation 9.4 and [12. Attestations](Attestations.md) operation 12.2: the witness is the content composition `[authority, release]`, one per lexicon. [10. Recipes](Recipes.md) operation 10.4: a source is a trunk entity above its files.
+- **Monorepo.** `docs/plan/ASSIMILATION_ROADMAP.md` law 1, line 48: the witness identity is the content composition `[authority, release]` (`SourceWitness.Id`), one per lexicon, `[omw-fr, 2.0]`.
+- **Agree.** The witness is a content-derived entity, never a blob hash of a name or an ID made from a made-up key such as `substrate/source/X/v1`. A source is the trunk over its files, a release is its files, and version suffixes never appear in IDs.
+- **Open.** Which content-derived entity the witness is: the source trunk, `[source record, its files' trunks]`, which is known only after every file is decomposed while claims stream earlier, or the composition `[authority, release]`, which is known up front.
+
+### I4. Records, files, and packaging are not content, or they have trunks
+
+- **Wiki.** [11. Content](Content.md) operations 11.2 and 11.3: a file is a trunk, `[metadata, content]`, under a source trunk.
+- **Monorepo.** `docs/plan/ASSIMILATION_ROADMAP.md` law 2, line 49: curated sources are mined for knowledge, not recorded bit-perfect; records, files and packaging are not content; only user content needs exact reconstruction.
+- **Agree.** A curated source is mined for what it teaches, and only user content needs exact reconstruction.
+- **Decided.** A curated source's records, files, and packaging need not reproduce the admitted bytes, but the records, the files, and the source still have trunks and IDs like any content: one Merkle DAG from leaf to source trunk. [10. Recipes](Recipes.md) operation 10.8.
+
+### I5. An external identifier is a typed reference, or content
+
+- **Wiki.** [Claims: Tuples](../Semantics/Claims.md#tuples): every part of a claim is an entity.
+- **Monorepo.** `docs/plan/INGEST_BOUNDARY_AND_RECIPE_LAW.md` lines 82 and 168: an opaque external identity lowers to a typed reference; a sense key, synset id, frame id, roleset id, or external record key is a typed reference under a governed identity, and not ordinary text content just because the identifier is UTF-8.
+- **Decided.** An identifier is content, the same entity wherever its text occurs; what kind of identifier it is is attested by the source that says so, and a structured identifier decomposes into its parts. S1 above. [10. Recipes](Recipes.md) operation 10.11.
+
+### I6. How repetition counts at each level
+
+- **Wiki.** [13. Consensus](Consensus.md) operation 13.4 and [Consensus: Matchups](../Semantics/Consensus.md#matchups): a witness's repeats of one claim are run-length games, folded on the client into one rating period per cell. [21. Sessions](Sessions.md): the same prompt text in two turns is one content entity occurring twice.
+- **Agree.** Repetition is read off the tree at its level: inside one message's tree, across the turns of one session, across users, across tenants.
+- **Open.** How each level counts as games: whether one sentence pasted a million times into one prompt is one act or a million games, whether the same message across turns is repeated acts by one witness, and how repeats across users and across tenants count.
+
 ## What this page leaves behind
 
-The list of decisions that are the inventor's. Every other Sequence page is written to hold under either answer where it can, and says which answer it assumed where it cannot.
+The list of decisions that are the inventor's, and the decisions already made. Every other Sequence page states a decided entry's decision, is written to hold under either answer of an open one where it can, and says which answer it assumed where it cannot.

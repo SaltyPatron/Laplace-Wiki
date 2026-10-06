@@ -1,6 +1,6 @@
 # 13. Consensus
 
-Each attestation is played as one Glicko-2 matchup at the witness's trust, as it arrives, with no rating periods and no folds.
+A witness's assertions of one claim are run-length games, folded on the client into one Glicko-2 rating period per cell per witness and played at the witness's trust as they arrive; witnesses play first in, first out, with no global or delayed folds.
 
 Everything attested about a claim, as a whole, provides its overall score: a Glicko-2 standing that tells how hard a strand tugs back. Glicko-2 replaces a lot of conventional AI mechanisms.
 
@@ -8,12 +8,12 @@ Everything attested about a claim, as a whole, provides its overall score: a Gli
 
 [12. Attestations](Attestations.md): the attestations, in order, each with its witness's trust and outcome.
 
-## Operations, per attestation
+## Operations, per claim and witness
 
 ### 13.1 Find the claim's standing
 
 - **In:** the attestation's consensus ID from [12. Attestations](Attestations.md) operation 12.6.
-- **Do:** same content means the same hash, and the deduplication applies to the attestations, to form a consensus: look up the standing by the consensus ID, the typed `(subject, relation, object)` cell. Every source speaking about that cell folds into the same standing while its own attestation stays inspectable. If none exists, the claim enters for the first time at its stock default for its level of attestation. Consensus is not an answer vote; it is the standing evidence state consumed before and during a forward pass.
+- **Do:** same content means the same hash, and the deduplication applies to the attestations, to form a consensus: look up the standing by the consensus ID, the claim's composition, whatever its arity. Every source speaking about that claim folds into the same standing while its own attestation stays inspectable. If none exists, the claim enters for the first time at its stock default for its level of attestation. Consensus is not an answer vote; it is the standing evidence state consumed before and during a forward pass.
 - **Out:** the standing: rating *r*, deviation RD, volatility σ. Stock is rating 1500, deviation 350 or the level's default, volatility 0.06.
 - **From:** [Consensus: Deduplication](../Semantics/Consensus.md#deduplication), [Consensus: Entry](../Semantics/Consensus.md#entry), `docs/specs/05_Substrate_Invariants.txt` Rule #6, [Research: Engine Measurements: Consensus writes](../Research/Engine.md#consensus-writes).
 
@@ -33,31 +33,35 @@ Everything attested about a claim, as a whole, provides its overall score: a Gli
 
 ### 13.4 Play the matchup
 
-- **In:** the standing of 13.1, the opponent of 13.2, the outcome *s* of 1, ½, or 0, or the score in [0, 1] a calculated witness supplies.
-- **Do:** a claim is a game series: games plus a score, a draw at 0.5. One Glicko-2 update, with this attestation as the whole rating period:
+- **In:** the standing of 13.1, the opponent of 13.2, the witness's *n* games on this claim and their mean score *s*, each game an outcome of 1, ½, or 0, or a score in [0, 1] a calculated witness supplies.
+- **Do:** a claim is a game series: games plus a score, a draw at 0.5. A witness that asserts the same claim *n* times plays *n* games, run-length like a repeat in a path; the client folds every repeat from one witness, per cell, into one rating period, and the database receives one update per cell per witness:
 
   ```text
   Scale:       μ = (r − 1500) / 173.7178,   φ = RD / 173.7178
   Helpers:     g(φ_j) = 1 / sqrt(1 + 3φ_j²/π²)
                E = 1 / (1 + exp(−g(φ_j)(μ − μ_j)))
-  Variance:    v = [ g(φ_j)² E (1 − E) ]⁻¹
-  Improvement: Δ = v g(φ_j)(s − E)
+  Variance:    v = [ n g(φ_j)² E (1 − E) ]⁻¹
+  Improvement: Δ = v n g(φ_j)(s − E)
   Volatility:  σ' solves f(x) = 0 by the Illinois method, where
                f(x) = e^x(Δ² − φ² − v − e^x) / (2(φ² + v + e^x)²) − (x − ln σ²) / τ²
   Pre-period:  φ* = sqrt(φ² + σ'²)
   Update:      φ' = 1 / sqrt(1/φ*² + 1/v)
-               μ' = μ + φ'² g(φ_j)(s − E)
+               μ' = μ + φ'² n g(φ_j)(s − E)
   Convert:     r' = 173.7178 μ' + 1500,   RD' = 173.7178 φ'
   ```
 
-  There are no rating periods: as content is observed, first in, first out, the matchups are played, each as its own period, with deviation growing with elapsed time instead, clamped to a floor and a cap, and volatility capped. Incoming records play existing records. The more something is attested to, the more its score rises or lowers, just like a chess rating.
+  There are no global, delayed, ETL-style rating periods: one witness's repeats of one claim are that witness's period for the cell, and different witnesses play first in, first out, as content is observed, each as its own period, with deviation growing with elapsed time instead, clamped to a floor and a cap, and volatility capped. Incoming records play existing records. The more something is attested to, the more its score rises or lowers, just like a chess rating, but repetition saturates. For *n* identical results against one opponent, 1/v = n·g²·E(1 − E), and
+
+  $$\mu' - \mu = \frac{n\,g\,(s - E)}{1/\phi^{*2} + n\,g^2 E(1 - E)} \;\to\; \frac{s - E}{g\,E(1 - E)} \quad (n \to \infty)$$
+
+  so repeats buy certainty only up to a ceiling that the witness's trust sets through g, and the information they add, n·g²·E(1 − E), grows with the square of that trust. Spam limits itself: a million prompts saying the earth is flat are one row, one matchup with *n* = 1,000,000 at user-prompt trust. Because a standing saturates, the run length *n* is also kept as a count beside the claim, never only merged into the standing. Copies count once, by 13.3.
 - **Out:** the new standing.
 - **From:** [Consensus: Glicko-2](../Semantics/Consensus.md#glicko-2), [Consensus: Matchups](../Semantics/Consensus.md#matchups), [Research: Relations Research: The Glicko-2 update](../Research/Relations.md#the-glicko-2-update), [Research: Learning: Rating one matchup at a time](../Research/Learning.md#rating-one-matchup-at-a-time), [Research: Engine Measurements: Native operations](../Research/Engine.md#native-operations).
 
 ### 13.5 Write the standing in place
 
 - **In:** the new standing of 13.4.
-- **Do:** update the standing row in place, and add the witness to the claim's witness set. There are no consensus folds. ETL is forbidden: no delayed segments that group everything together, no lazy, manually updated hot caches, and no SQL doing the heavy operations. The matchup arithmetic is native; the write is a set-based statement per batch of arriving rows, in which a batch's repeated hits on one claim collapse.
+- **Do:** update the standing row in place, and add the witness to the claim's witness set. There are no delayed consensus folds. ETL is forbidden: no delayed segments that group everything together, no lazy, manually updated hot caches, and no SQL doing the heavy operations. The matchup arithmetic is native; a witness's repeats on one cell arrive already tallied into its one rating period, and the write is a set-based statement per batch of arriving rows, one update per cell per witness.
 - **Out:** the standing, current as of this attestation.
 - **From:** [Consensus: No ETL](../Semantics/Consensus.md#no-etl), [Research: Engine Measurements: Consensus writes](../Research/Engine.md#consensus-writes).
 
@@ -67,7 +71,7 @@ The standing is rating, deviation, volatility, witness count, and source and con
 
 ## What is not a matchup
 
-Querying picks the records with higher scores, but does not change scores. Observations beside a claim, such as usage counts and a witness's sense order, are recorded as given and are not played: ordered by standing alone, `dog`'s senses tie, the animal, a ratchet catch, and a morally reprehensible person all standing at 1743 with the same three witnesses; standing says whether a lexicalization holds, and how often it is meant is a different measure. See [Consensus: Matchups](../Semantics/Consensus.md#matchups) and [Research: Semantics Experiments: Translation through the ILI](../Research/Semantics-Experiments.md#translation-through-the-ili).
+Querying picks the records with higher scores, but does not change scores. Numbers a source states beside a claim, such as a usage count it writes and a witness's sense order, are content, recorded as given and not played as games: ordered by standing alone, `dog`'s senses tie, the animal, a ratchet catch, and a morally reprehensible person all standing at 1743 with the same three witnesses; standing says whether a lexicalization holds, and how often it is meant is a different measure. See [Consensus: Matchups](../Semantics/Consensus.md#matchups) and [Research: Semantics Experiments: Translation through the ILI](../Research/Semantics-Experiments.md#translation-through-the-ili).
 
 ## Role trust
 
@@ -75,7 +79,7 @@ There are also trusts that differentiate subjects, pronouns, stopwords, and so o
 
 ## What this stage leaves behind
 
-A standing on every claim that tells how hard it tugs back, current as of the last attestation, and every attestation that produced it.
+A standing on every claim that tells how hard it tugs back, current as of the last witness's rating period, and every attestation that produced it.
 
 ## Without this stage
 

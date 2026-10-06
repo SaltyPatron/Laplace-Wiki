@@ -1,8 +1,8 @@
 # 6. Registries
 
-Before any claim is written, the relations, qualifiers, trust classes, entity types, vocabularies, and firmware policy kinds are enumerated as governed, append-only registries with stable bits, and never seeded as rows.
+Before any claim is written, the relations, qualifiers, trust classes, entity types, vocabularies, and firmware policy kinds are enumerated as governed, append-only perf-caches: every member is a content-derived entity (`noun` is `[n,o,u,n]`), its stable bit or slot is only an index over it, and no registry is a table of made-up IDs.
 
-Everything a claim can say is drawn from a fixed, governed list: which relation, under which qualifiers, by a witness of which trust class, about an entity of which type, using which part of speech or dependency label. Those lists are enumerated as completely as possible once, frozen, and only ever appended to, because at millions and billions of records a renumbering is not a maintenance operation. Each registry's identifiers are content identities, so the registry is knowledge the substrate already has, not a lookup table.
+Everything a claim can say is drawn from a fixed, governed list: which relation, under which qualifiers, by a witness of which trust class, about an entity of which type, using which part of speech or dependency label. Those lists are enumerated as completely as possible once, frozen, and only ever appended to, because at millions and billions of records a renumbering is not a maintenance operation. Each registry's members are content entities like everything else, `noun` the same `[n,o,u,n]` as the word anywhere, and a stable bit or slot is a perf-cache index over them, never the identity of a meaning: the registry is knowledge the substrate already has, not a lookup table of made-up IDs. A member's meaning is attested and realizable in any language; the English names in the manifests and the code are developer handles only, and no code path tests for an English value.
 
 ## Before this stage
 
@@ -13,8 +13,8 @@ Everything a claim can say is drawn from a fixed, governed list: which relation,
 ### 6.1 Enumerate the relations completely, then freeze
 
 - **In:** the meanings a claim can carry.
-- **Do:** one relation per meaning. Ask how many different options human communication really has: `HAS_PART`, synonymy, antonymy, hypernymy, definition, example, external identifier, name, case mapping, decomposition, and the rest. A variant of a meaning is not a new relation; it is a qualifier on the claim (6.2). A direction is not a new relation; an inverse is an alias that resolves to the canonical relation read the other way. A negation is not a new relation; "hot is not cold" is a refute outcome on the positive relation, never a `NOT_` relation. An order or containment fact is not a relation at all; it lives in physicality trajectories and not in testimony. Before the freeze, do a deliberate completeness pass so that the families known to be coming, the modality ladders, the code and repository lane, the governance and credit bands, get their bits reserved now rather than appended piecemeal later. Reserved-but-unused bits are cheap; renumbering is not.
-- **Out:** the canonical relation inventory, one element per meaning.
+- **Do:** one relation per meaning. Ask how many different options human communication really has: `HAS_PART`, synonymy, antonymy, hypernymy, definition, example, external identifier, name, case mapping, decomposition, and the rest. A variant of a meaning is not a new relation; it is a qualifier on the claim (6.2). A direction is not a new relation; an inverse is an alias that resolves to the same relation read the other way. A negation is not a new relation; "hot is not cold" is a refute outcome on the positive relation, never a `NOT_` relation. An order or containment fact is not a relation at all; it lives in physicality trajectories and not in testimony. Before the freeze, do a deliberate completeness pass so that the families known to be coming, the modality ladders, the code and repository lane, the governance and credit bands, get their bits reserved now rather than appended piecemeal later. Reserved-but-unused bits are cheap; renumbering is not.
+- **Out:** the relation inventory, one element per meaning, each a content entity whose meaning is attested; its English name in the manifest, `HAS_PART` or `IS_A`, is a developer handle and never its identity.
 - **From:** [Claims: Tuples](../Semantics/Claims.md#tuples); `docs/decisions/0001-highway-bit-order.md`; `engine/manifest/relation_types.toml`; `docs/plan/ASSIMILATION_ROADMAP.md` law 5.
 
 ### 6.2 Assign every relation an explicit, append-only bit
@@ -42,20 +42,20 @@ Everything a claim can say is drawn from a fixed, governed list: which relation,
 
 - **In:** the kinds of witness Laplace will ever hear from.
 - **Do:** a witness's class is the only statement of its trust, and the class's prior in [0, 1] seeds the standing of every claim that witness makes. Classes are append-only; a class's label and meaning never change once declared. The registry: SubstrateMandate 1.00, the substrate's own mandated structure, the governed laws and operational records; StandardsDerived 0.95, a standards body's published data, Unicode, ISO 639, FIDE, endgame tablebases, a toolchain's specified behaviour; AcademicCurated 0.85, OEWN, OMW, CILI, UD, FrameNet, VerbNet, PropBank, SemLink, opening theory; AcademicCuratedWithUserInput 0.78; StructuredCorpus 0.70; UserCuratedResource 0.60, Wiktionary; AIModelProbe 0.50, an ingested model; AppDerived 0.40; UserPromptContent 0.30; ResponseContent 0.20, Laplace's own responses; AdversarialUntrusted 0.00; DerivedCalculation 0.70; AgentTranscript 0.40; ToolResultContent 0.40. A standards body ranks above an academic curation, which ranks above a user-curated wiki, which ranks above subtitles; a model ranks above a user prompt and below a curated dataset; Laplace's own output ranks below a user prompt, by design.
-- **Out:** the trust-class law, each class's identity the content identity of its label.
+- **Out:** the trust-class law; each class is a content entity whose meaning is attested, and `AcademicCurated` and the other names are developer handles, never identities.
 - **From:** `engine/manifest/trust_classes.toml`; `docs/plan/ASSIMILATION_ROADMAP.md` law 8 and workstream A; [Consensus: Trust](../Semantics/Consensus.md#trust).
 
 ### 6.6 Declare the entity types
 
 - **In:** the kinds of thing a recipe will mark.
-- **Do:** a type is a filter on entity rows, never testimony and never seeded into the substrate. A type's identity is the content identity of its single-word label, the same entity that text is anywhere else. The registry holds the types recipes disposition recovered objects into: `Word`, `Scalar`, `Byte`, `Channel`, `Collection`, `CILI_Concept`, `WordNet_Synset`, `Architecture`, `Agent_Model`, `Bidi_Resolution`, and so on. A value gets a type only when it is put into a composition; the same `[2,5,5]` serves as a pixel channel intensity, a raw byte value, and an IP segment.
+- **Do:** a type is a filter on entity rows, never testimony and never seeded into the substrate. A type is a content entity like any other, its meaning attested, and its bit is a perf-cache index over it. The manifest's names for the types recipes disposition recovered objects into, `Word`, `Scalar`, `Byte`, `Channel`, `Collection`, `CILI_Concept`, `WordNet_Synset`, `Architecture`, `Agent_Model`, `Bidi_Resolution`, and so on, are developer handles, and no identity is derived from an invented label such as `WordNet_Synset` as if that label were the meaning. A value gets a type only when it is put into a composition; the same `[2,5,5]` serves as a pixel channel intensity, a raw byte value, and an IP segment.
 - **Out:** the entity-type law.
 - **From:** `engine/manifest/entity_types.toml`; [Compositions: Types](../Storage/Compositions.md#types).
 
 ### 6.7 Declare the governed vocabularies
 
 - **In:** the authorities' own lists: UD tools' `upos.json`, the dependency relations and subtypes, the features and feature values.
-- **Do:** refresh each vocabulary manifest from its authority file, recording the authority path and its SHA-256, and assign each value an append-only code with a parent code. Normalize to these at ingest: things that mean the same attest the same, so WordNet's `n` becomes `NOUN` and every language code becomes ISO 639-3, each mapping justified by a governed authority, never through a synonym attestation, never by recording the raw code, never by fabricating a record. A feature value is the ordered composition `[feature, value]`, so vocabulary records equal the ordinary content path.
+- **Do:** refresh each vocabulary manifest from its authority file, recording the authority path and its SHA-256, and assign each value an append-only code with a parent code. Source text is recorded as it arrives and never rewritten: WordNet's `n` stays `[n]` and UD's `NOUN` stays `[N,O,U,N]`. Things that mean the same set the same bit: that `n` and `NOUN` are one part of speech, or that a two-letter code and an ISO 639-3 code name one language, is attested by the mapping source or the governed alias, each mapping justified by a governed authority, and both codes set the same mask bit; never by fabricating a record. A feature value is the ordered composition `[feature, value]`, so vocabulary records equal the ordinary content path.
 - **Out:** `upos.tsv`, `deprel.tsv`, `deprel_subtype.tsv`, `feature.tsv`, `feature_value.tsv`, `pos_alias.tsv`, each generated, never hand-edited.
 - **From:** `engine/manifest/vocabulary/`; `docs/plan/ASSIMILATION_ROADMAP.md` laws 3 and 4; [Claims: Masks](../Semantics/Claims.md#masks).
 
@@ -76,13 +76,13 @@ Everything a claim can say is drawn from a fixed, governed list: which relation,
 ### 6.10 Generate the code and the ROMs from the manifests
 
 - **In:** the manifests of 6.1 to 6.9.
-- **Do:** the code generator emits the relation law, the qualifier law, the trust-class law, the entity-type law, the firmware law, and the vocabulary and highway perf-caches of [7. Perfcaches](Perfcaches.md). The TOML is the single input; the registry is the TOML; nothing becomes hidden state. Governed vocabularies are perf-cache ROM registries with stable bits; they are never seeded as rows.
+- **Do:** the code generator emits the relation law, the qualifier law, the trust-class law, the entity-type law, the firmware law, and the vocabulary and highway perf-caches of [7. Perfcaches](Perfcaches.md). The TOML is the single input; the registry is the TOML; nothing becomes hidden state. Governed vocabularies are perf-cache ROM registries whose stable bits index content entities; they are never seeded as rows, because a registry is not a lookup table of made-up IDs: its members are content like everything else.
 - **Out:** generated native code and the manifest-derived blobs.
 - **From:** `docs/decisions/0001-highway-bit-order.md`; `docs/plan/ASSIMILATION_ROADMAP.md` law 4.
 
 ## What this stage leaves behind
 
-The complete, frozen, append-only lists of what a claim can say, who can say it and at what trust, what an entity can be typed as, which vocabularies normalization lands on, and which decisions a firmware can make, each identified by the content identity of its label and none of them a table row.
+The complete, frozen, append-only lists of what a claim can say, who can say it and at what trust, what an entity can be typed as, which bit each source's codes set, and which decisions a firmware can make: every member a content entity whose meaning is attested, every bit a perf-cache index over it, and none of them a lookup table of made-up IDs.
 
 ## Without this stage
 
