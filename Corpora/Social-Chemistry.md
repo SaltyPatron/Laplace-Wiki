@@ -14,7 +14,7 @@ The class is the witness's trust class, one of those [6. Registries](../Sequence
 
 ## The breakdowns
 
-"The dataset is tab-separated with the following columns" (README), and its first row names them. A row is one worker's breakdown of one rule of thumb. It is said of the rule of thumb, which is its `rot`, the rule's text; its `rot-id` is the set's pointer to it, recorded nowhere. What the row says it says together: one record, witnessed once by the set, and its claims within it, so one worker's answers stay in one record. The worker is not a witness: the set is. An empty field attests nothing; the README says an empty answer means the question was unanswered.
+"The dataset is tab-separated with the following columns" (README), and its first row names them. A row is one worker's breakdown of one rule of thumb. It is said of the rule of thumb, which is its `rot`, the rule's text; its `rot-id` is the set's pointer to it, recorded nowhere. What the row says it says together: one record, witnessed once by the set, and its claims within it, so one worker's answers stay in one record. The worker is not a witness: the set is. A worker is content, and that this worker wrote this rule of thumb, or did this breakdown, is a relation the set attests, added to the web explicitly. The Engine is built otherwise: it makes each worker a witness of their own, `[the set, the column, the id]` (`own rot-worker-id breakdown-worker-id`), the author saying the rule of thumb of its situation and the breakdown worker giving every answer of the breakdown; the target is the set's relations. An empty field attests nothing; the README says an empty answer means the question was unanswered.
 
 The file writes a field that holds a double quote between double quotes, with the quote doubled; the recipe reads that notation (`quoted`).
 
@@ -24,8 +24,8 @@ The Specification cells are from `README.v1.0.md`, "Dataset Columns".
 | --- | --- | --- | --- | --- |
 | `rot-id` | an id | a pointer: the set's id of the rule of thumb, recorded nowhere (`key row rot-id`) | none | "ID of the rule of thumb"; it includes the worker id of the RoT author and which RoT it was, from 1 to 5 |
 | `rot` | text | the subject: the rule of thumb, which is its text (`thing row rot`) | the first part of every claim of the row | the rule of thumb written by the worker |
-| `rot-worker-id` | an id | a pointer, recorded nowhere | none | the worker who wrote this rule of thumb; no relation to the breakdown worker, except by coincidence |
-| `breakdown-worker-id` | an id | a pointer, recorded nowhere | none | the worker who did this RoT breakdown |
+| `rot-worker-id` | an id | the worker who wrote the rule, content: that this worker wrote this rule of thumb is a relation the set attests; as built, a witness of its own (`own`) | target `[rot, rot-worker-id, id]`; as built none | the worker who wrote this rule of thumb; no relation to the breakdown worker, except by coincidence |
+| `breakdown-worker-id` | an id | the worker who did the breakdown, content: that this worker did this breakdown is a relation the set attests; as built, a witness of its own (`own`) whose answers the row's claims are | target `[rot, breakdown-worker-id, id]`; as built none | the worker who did this RoT breakdown |
 | `area` | a name | said of the rule | `[rot, area, value]` | source of the situation: confessions, dearabby, rocstories, amitheasshole |
 | `m` | a number | content of the row, not attested | none | how many workers did the RoT breakdown for this RoT: 1, 3, 5, 50 |
 | `split` | a name | bookkeeping: `omit` | none | which split this RoT belongs to: train, dev, test, dev-extra, test-extra, analysis, none |

@@ -2,7 +2,7 @@
 
 VerbAtlas attests what its tables say of a frame, a selectional preference, and a synset: a frame is its name, the type the highway lists from `VA_frame_info.tsv`, and its id (`va:0001f`) VerbAtlas's identifier of it, content attested of it; a BabelNet or WordNet synset id is a pointer, read as the ILI concept it resolves to and recorded nowhere; and the mapping files the package ships are read too: those that pair a synset or a roleset with a frame attest the pair, and those that only pair one pointer with another give the highway its aliases.
 
-One source reads VerbAtlas 1.1.0, "WordNet synsets clustered into frames", by one recipe per file under [`recipes/verbatlas`](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/verbatlas). The frames are the highway's `vaframe` list (432); `bn2wn.tsv` gives the highway the `bn:` and `wn:` spellings of each ILI concept, `VA_bn2va.tsv` and `pb2va.tsv` its edges to the frames ([Hops](Hops.md)).
+One source reads VerbAtlas 1.1.0, "WordNet synsets clustered into frames", by one recipe per file under [`recipes/verbatlas`](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/verbatlas). The frames are the highway's `vaframe` list (432), hubs exactly as an ILI is, concept nodes of the linguistic superhighway; as built a frame is its name, and the target is the frame as the content of its highway ID; `bn2wn.tsv` gives the highway the `bn:` and `wn:` spellings of each ILI concept, `VA_bn2va.tsv` and `pb2va.tsv` its edges to the frames ([Hops](Hops.md)).
 
 ## Source
 

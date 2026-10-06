@@ -1,6 +1,6 @@
 # XSTest
 
-XSTest attests what its prompt file says of each prompt and what each model's completion file says of the prompt as that model completed it, with the two annotation columns each a witness of its own, and the evaluation files attest nothing.
+XSTest attests what its prompt file says of each prompt and what each model's completion file says of the prompt as that model completed it, with what its two annotators said of each completion, and the evaluation files attest nothing.
 
 The source names itself by its readme's title, "XSTest: A Test Suite for Identifying Exaggerated Safety Behaviours in Large Language Models". Two recipes read it: the prompts, and the models' completions of them.
 
@@ -8,7 +8,7 @@ The source names itself by its readme's title, "XSTest: A Test Suite for Identif
 
 | Source | Witness | Trust class | After | Files | Recipes |
 | --- | --- | --- | --- | --- | --- |
-| `xstest` | `XSTest`; `annotation_1` and `annotation_2` are each a witness of their own, `[XSTest, annotation_1]` | class `AcademicCurated` | `unicode`, `iso-639` | `xstest_prompts.csv`; `model_completions/xstest_v2_completions_*.csv`; not `*/evaluation/*` or `.gitignore` | [`prompts.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/xstest/prompts.recipe), [`completions.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/xstest/completions.recipe) |
+| `xstest` | `XSTest`; as built, `annotation_1` and `annotation_2` are also each a witness of their own, `[XSTest, annotation_1]` (`voices`) | class `AcademicCurated` | `unicode`, `iso-639` | `xstest_prompts.csv`; `model_completions/xstest_v2_completions_*.csv`; not `*/evaluation/*` or `.gitignore` | [`prompts.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/xstest/prompts.recipe), [`completions.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/xstest/completions.recipe) |
 
 The class is the witness's trust class, one of those [6. Registries](../Sequence/Registries.md#65-declare-the-trust-classes) declares; its prior is the trust every attestation of the source plays at, and [9. Sources](../Sequence/Sources.md#the-estate-and-why-each-source-is-in-it) gives the class of each source.
 
@@ -29,14 +29,14 @@ Both files are tables of comma-separated fields whose first row names the column
 
 ## The completions
 
-`model_completions/xstest_v2_completions_*.csv`: "model_completions / Model completions on XSTest". A file is one model's completions, and what it says of a prompt is said within the file, of the prompt as that model completed it: the subject is the path of the file's name and the prompt, `[xstest_v2_completions_gpt4, prompt]`, "completed prompt" below. The two annotation columns are voices: each is a witness of its own, `[XSTest, annotation_1]`, the same witness in every completion file, and its field is what that annotator says of the completed prompt, with nothing written between the two. The other columns are said of the completed prompt by XSTest, each claim on its own.
+`model_completions/xstest_v2_completions_*.csv`: "model_completions / Model completions on XSTest". A file is one model's completions, and what it says of a prompt is said within the file, of the prompt as that model completed it: the subject is the path of the file's name and the prompt, `[xstest_v2_completions_gpt4, prompt]`, "completed prompt" below. The two annotation columns are what two annotators said, and XSTest reports it: an annotator is content, never a witness, and that this annotator labelled this completed prompt is the relation `[completed prompt, annotation_N, label]`, which XSTest attests. As built, the columns are voices: each is a witness of its own, `[XSTest, annotation_1]`, the same witness in every completion file, and its field is what that annotator says of the completed prompt, with nothing written between the two; the target is the relation, with XSTest the witness. The other columns are said of the completed prompt by XSTest, each claim on its own.
 
 | Piece | Laplace reads it as | Claim recorded | Specification |
 | --- | --- | --- | --- |
 | `prompt` | the subject, within the file: the prompt as the model of that file completed it | `[xstest_v2_completions_gpt4, prompt]` | |
 | `completion` | said of the completed prompt | `[completed prompt, completion, text]` | "Model completions on XSTest" |
 | `id`, `type` | said of the completed prompt | `[completed prompt, type, value]` | |
-| `annotation_1`, `annotation_2` | what that annotator says of the completed prompt: a pair, witnessed by `[XSTest, annotation_N]` | `[completed prompt, 2_full_refusal]` | the paper defines three response types, full compliance, full refusal, and partial refusal, and says two of its three authors annotated each prompt [Röttger et al. 2024, §4.2](https://ar5iv.labs.arxiv.org/html/2308.01263) |
+| `annotation_1`, `annotation_2` | what that annotator says of the completed prompt, which XSTest attests; as built, a pair witnessed by `[XSTest, annotation_N]` | target `[completed prompt, annotation_N, 2_full_refusal]`; as built `[completed prompt, 2_full_refusal]` | the paper defines three response types, full compliance, full refusal, and partial refusal, and says two of its three authors annotated each prompt [Röttger et al. 2024, §4.2](https://ar5iv.labs.arxiv.org/html/2308.01263) |
 | `agreement` | said of the completed prompt | `[completed prompt, agreement, value]` | |
 | `final_label` | said of the completed prompt | `[completed prompt, final_label, 2_full_refusal]` | the paper says disagreements were discussed among the three annotating authors to decide a final label [Röttger et al. 2024, §4.2](https://ar5iv.labs.arxiv.org/html/2308.01263) |
 

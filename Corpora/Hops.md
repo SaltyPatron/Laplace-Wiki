@@ -6,7 +6,7 @@ A hop is not a third lexicon. It says that a thing named in one resource is the 
 
 | Hop | Joins | On the highway as |
 | --- | --- | --- |
-| [CILI](Wordnets.md) | a wordnet's synsets and the Collaborative Interlingual Index: WordNet 3.0 offsets and sense keys, resolved to the concept each names | the `ili` list's hub, `i46360`, and what resolves to it: the pointers `00001740-a`, `wn:00001740v`, `bn:00082138v`, and the sense keys `abandon%2:40:00::` and without `::`, whose kind is open in [30. Conflicts](../Sequence/Conflicts.md) |
+| [CILI](Wordnets.md) | a wordnet's synsets and the Collaborative Interlingual Index: WordNet 3.0 offsets and sense keys, resolved to the concept each names | the `ili` list's hub, `i46360`, and what resolves to it: the pointers `00001740-a`, `wn:00001740v`, `bn:00082138v`, and the sense keys `abandon%2:40:00::` and without `::`, WordNet's internal pointers to lexicalizations, resolved through the highway to the lexicalization strand and recorded nowhere |
 | [SemLink](SemLink.md) | PropBank rolesets and VerbNet classes; VerbNet classes and FrameNet frames | edges `pbroleset`→`vnclass`, `vnclass`→`fnframe` |
 | [Predicate Matrix](Predicate-Matrix.md) | one predicate role across WordNet, VerbNet, FrameNet and PropBank | edges `ili`→`vnclass`, `ili`→`fnframe`, `ili`→`pbroleset`, `vnclass`→`fnframe`, `pbroleset`→`vnclass`, `pbroleset`→`fnframe` |
 | [VerbAtlas](VerbAtlas.md) | BabelNet and WordNet synsets; synsets and VerbAtlas frames; PropBank rolesets and VerbAtlas frames | `bn:` and `wn:` pointers to `ili`; edges `ili`→`vaframe`, `pbroleset`→`vaframe` |
