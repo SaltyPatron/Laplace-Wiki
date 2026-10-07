@@ -1,6 +1,6 @@
 # CLI
 
-Laplace is one program, `laplace`, with twenty-one commands: the generators of tier 0 and its flags, the deployment of a database, ingestion and its inverses, the indexes, the read commands, and the measurements.
+Laplace is one program, `laplace`, with twenty-four commands: the generators of tier 0 and its flags, the deployment of a database, ingestion and its inverses, the indexes, the read commands, and the measurements.
 
 `laplace` with no command prints the commands and where it will look: the database, tier 0, the recipes, the grammars, the firmware. Where things are comes from the environment, [Environment](Environment.md), else from what the engine was built with. Every command that touches the database takes `-d conninfo`. A command exits 0 when it did what it says, 1 on a failure it reports, 2 on a usage error or a broken recipe or firmware.
 
@@ -22,7 +22,7 @@ Laplace is one program, `laplace`, with twenty-one commands: the generators of t
 
 ## laplace sources
 
-`laplace sources [-d conninfo]`. Every source there is a recipe directory for, in the order `recipes/order` gives: its number, name, how many recipes it has, whether it is in (its witness's ID is in `witness`), where it is kept on this machine or that it is at none of its roots, and the sources it comes after.
+`laplace sources [-d conninfo]`. Every source there is a recipe directory for, in the order `recipes/order` gives: its number, name, how many recipes it has, whether it is in (a witness in `witness` is a trunk whose record is the source's name), where it is kept on this machine or that it is at none of its roots, and the sources it comes after.
 
 ## laplace ingest
 
@@ -36,13 +36,25 @@ Files or directories, walked for every non-hidden non-empty file; a source by it
 
 With nothing named: each source runs in a process of its own with the same options, its output in `$LAPLACE_WORK/logs/ingest/<source>.log`; a source none of whose files is here is passed over as absent; one no recipe reads yet is passed over; one that would leave the database's volume with less than a tenth of itself, its files' size times its `room` or `LAPLACE_ROOM_FACTOR`, is not begun and that is said. Summary: sources in, absent, without a recipe, not begun for want of room, and the seconds.
 
+## laplace merge
+
+`laplace merge [-d conninfo] [-j jobs]`. What an ingest staged goes into the real tables at once, a leaf at a time, as one transaction in parts ([Ingest](Ingest.md)); `laplace ingest` runs it at the end of every source.
+
 ## laplace forget
 
-`laplace forget [-d conninfo] [-j connections] witness...` or `--except witness...`. The witnesses' rows leave `attestation`; what no other witness witnessed goes with its consensus; what others witnessed stays. Then, level by level down the DAG, whatever nothing holds any more goes: an entity stays while any path holds it, or while it is a file, a witness, or witnessed; a file whose content is what it witnessed stays while any of that is still witnessed; atoms always stay. SQL fetches and deletes sets of rows, in chunks of 50,000 IDs on every connection at once; what to delete is decided in the engine.
+`laplace forget [-d conninfo] [-j connections] [--trunk] witness...` or `--except witness...`. A witness is a source's trunk, `[its record, its files' trunks]`, named by the source's name its record is, or by its ID with `--trunk`. The claims its records say are found first, by a walk down from the trunk; its row leaves `witness`; then, level by level down from the trunk, whatever it alone held goes: its files, their records, and the claims and content no other trunk or path holds, each with its consensus; atoms always stay. Last, the standings of every claim its records said that something still holds are played again from the witnesses that still hold them, in the order the sources go in, as `laplace replay` plays them; a claim no witness holds any more loses its standing. SQL fetches and deletes sets of rows, in chunks of 50,000 IDs on every connection at once; what to delete is decided in the engine.
 
 ## laplace sweep
 
-`laplace sweep [-d conninfo] [-j connections] [--dry]`. One pass over every path counts, for every entity, the places that hold it; an entity no path holds goes, unless it is a file, a witness, or something `attestation` says was witnessed, and its consensus with it; what it held is counted down and goes in turn when its count reaches nothing. `--dry` reports and deletes nothing.
+`laplace sweep [-d conninfo] [-j connections] [--dry]`. One pass over every path counts, for every entity, the places that hold it; an entity no path holds goes, unless it is a witness (a trunk), a lineage, or a file whose content is its own, and its consensus with it; what it held is counted down and goes in turn when its count reaches nothing. A file whose content is what a source says is held by the source's trunk. `--dry` reports and deletes nothing.
+
+## laplace held
+
+`laplace held [-d conninfo] [--files] [--voices] [--tsv FILE] [--id] PART...`. Who said a claim, how many times and how, by containment: the claims of that shape found as one set read over the claims (each `PART` a text, `LIST:KEY` a type of the highway, `?` a part left open; with `--id`, the claims by their IDs), then a walk up the container index, one set read a level, to the records that say them, the files, and the trunks at the top, each trunk a witness where `witness` holds it, with its trust. The count is read off the tree: games, the records under the trunk that say the claim; tokens, with the times each says it; the score, from the outcome each record's vertex carries; the least position any record gave it. `--files` gives the count under each file, `--voices` under each voice (who in a record says it). `--tsv`: one line a claim and who (a trunk, `file:PATH`, `voice:ID`): games, tokens, the sum of the scores, the least position. The forward pass reads provenance the same way ([Reads](Reads.md)).
+
+## laplace replay
+
+`laplace replay [-d conninfo] [--write] [--tsv FILE] [--voices] [--files]`. The standings again from containment alone: every witness's trunk, in the order the sources go in (`recipes/order`, by the trunk's record), walked down to the claims its records say, each claim's series played as the ingest plays it (once a source, at the witness's trust, from the stock default), and every standing compared bit for bit with the one recorded: identical, different, or with no standing recorded. `--write` puts the replayed standings in place. `--tsv` as `laplace held`'s, for every claim under every trunk. Exit 1 when any differs.
 
 ## laplace index
 
@@ -50,7 +62,7 @@ With nothing named: each source runs in a process of its own with the same optio
 
 ## laplace status
 
-`laplace status [-d conninfo]`. Prints the database and its size; the server version; the extension's version and `laplace_isa()`; the tier-0 path the database is set to and `laplace_fingerprint()`; the highway's path and `laplace_highway_fingerprint()`, against this engine's; and whether that fingerprint is **the same as this engine's** or **DIFFERS from this engine's tier 0: the two would give the same content different coordinates**; entities by tier with the planner's counts and sizes; the witness, attestation, and consensus counts; and how many GIN and GiST indexes exist on `entity` and `physicality`.
+`laplace status [-d conninfo]`. Prints the database and its size; the server version; the extension's version and `laplace_isa()`; the tier-0 path the database is set to and `laplace_fingerprint()`; the highway's path and `laplace_highway_fingerprint()`, against this engine's; and whether that fingerprint is **the same as this engine's** or **DIFFERS from this engine's tier 0: the two would give the same content different coordinates**; entities by tier with the planner's counts and sizes; the witness and consensus counts; and how many GIN and GiST indexes exist on `entity` and `physicality`.
 
 ## laplace text
 
