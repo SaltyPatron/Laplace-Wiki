@@ -1,6 +1,6 @@
 # 27. Chess
 
-Chess is the proving domain: pieces, squares, moves, positions, lines, and games are content-addressed compositions above tier 0, a game is a trajectory, a move is a witnessed transition, analysis is versioned calculated testimony, play is the forward program, Stockfish is a pinned calculation provider and comparator, and cutechess is the neutral conductor of a falsifiable ladder.
+Chess is the proving domain: pieces, squares, moves, positions, lines, and games are content-addressed compositions above tier 0, a game is a trajectory, a move is a witnessed transition, analysis is versioned calculated testimony, play is the forward program, Stockfish is a pinned calculation provider and comparator, and fastchess is the neutral conductor of a falsifiable ladder, with cutechess for watched games.
 
 Chess makes the common architecture falsifiable under exact rules and an unusually strong external reference. It gets no private identity, no private coordinate system, no private intelligence stack. The chess player ratings are not Glicko-2 standings of Laplace, and conflating the two is the defect that once put players above Carlsen.
 
@@ -52,12 +52,12 @@ The chain through [23. Learning](Learning.md). [7. Perfcaches](Perfcaches.md): t
 - **Out:** the move, with a receipt separating legal and material state, structure calculations, Stockfish when selected, PGN and player observations, book testimony, lexical state, routes, standing and dependence, work, provider identities, the selection reason, and the witnessed consequence.
 - **From:** `docs/specs/11_Chess_Provenance_Consensus_Spec.txt` §Forward pass; `docs/guides/chess-forward-pass-proof.md` §Chess uses the canonical forward program and §Move / analysis receipt.
 
-### 27.7 Fix the ruler with cutechess
+### 27.7 Fix the ruler with fastchess
 
 - **In:** an experiment.
-- **Do:** a frozen match generation binds the Stockfish opponent generation, the Stockfish analysis provider and its inclusion or holdout law, the cutechess version and orchestration, hardware, affinity, and serviceable-or-isolated resource profile, the paired colour-swapped opening suite, clock, depth, nodes, and adjudication law, the Laplace evidence epoch, and the Laplace firmware and operation recipe. cutechess owns process lifecycle, pairings, timing, adjudication, and PGN and result artifacts. Profiles stay distinct: deterministic single-thread analysis census; a pinned limited-strength calibration opponent, comparator evidence not a human Elo claim; one frozen fixed-reference opponent across a ladder; a host-max full-strength opponent with every setting pinned. State whether evaluated positions were covered by an admitted Stockfish generation or held out.
+- **Do:** a frozen match generation binds the Stockfish opponent generation, the Stockfish analysis provider and its inclusion or holdout law, the conductor's version and orchestration, hardware, affinity, and serviceable-or-isolated resource profile, the paired colour-swapped opening suite, clock, depth, nodes, and adjudication law, the Laplace evidence epoch, and the Laplace firmware and operation recipe. The conductor, fastchess, owns process lifecycle, pairings, timing, CPU affinity, adjudication, pentanomial statistics and SPRT, and PGN and result artifacts; cutechess conducts watched GUI sessions and cross-checks the conductor ([30. Conflicts](Conflicts.md) K1). Adjudication when a Laplace build plays is by rules, tablebase, and move limit only, never by an engine's reported score. Profiles stay distinct: deterministic single-thread analysis census; a pinned limited-strength calibration opponent, comparator evidence not a human Elo claim; one frozen fixed-reference opponent across a ladder; a host-max full-strength opponent with every setting pinned. State whether evaluated positions were covered by an admitted Stockfish generation or held out.
 - **Out:** a replayable experiment.
-- **From:** `docs/guides/chess-forward-pass-proof.md` §Stockfish experiment profiles and §Cute Chess experiment law.
+- **From:** `docs/guides/chess-forward-pass-proof.md` §Stockfish experiment profiles and §Cute Chess experiment law. The conductor: the inventor's decision of 2026-10-06, [30. Conflicts](Conflicts.md) K1.
 
 ### 27.8 Climb the ladder
 
