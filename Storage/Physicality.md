@@ -10,6 +10,8 @@ Every entity is its own record, with its [ID](Identity.md) and its real coordina
 
 The physicality is the path recorded with geometry ZM, which can be a point, a line, a polygon, a multi-line, and more. Each vertex is the ID of a constituent entity, in order; M carries that vertex's metadata: a fixed-length binary field of bits for flags, values, segmentation, and anything else, such as run-length encoding, filtering, indexing, and querying. An atom's physicality is a POINT ZM holding its own ID.
 
+As built (Laplace-Native, `lp_m_full`), M is an integer a double holds exactly, 53 bits: the low 30 are the run, how many times the vertex repeats; the next 3 say what the vertex is within the path: a claim, a record, a tuple, the metadata of what the path is, a part of a content tree that holds records below it, or who in a record says the claim after it. Above them, a claim's vertex in a record carries how the record said it: the outcome in 2 bits (a win, the default and every vertex that is no claim; a draw; a loss; a score) and its position among the claims said together in 18 bits (0, none). A score other than a win, a draw or a loss is carried in the vertex's spare bits ([Identity](Identity.md)), tag 1, the score times 2^24: exact for every single-precision score at or above one half, within 2^-25 below. None of it is part of any ID; provenance is read from it ([Attestations: Witnesses](../Semantics/Attestations.md#witnesses)).
+
 The same entity ID is placed into every path that uses it. That is what lets `[2,5,5]` be text, a number, an IP segment, and more: the entity never changes, and each path records one use of it.
 
 ## Real coordinates

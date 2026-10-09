@@ -5,7 +5,7 @@ Every term the documentation uses, defined once, with the page that owns it.
 | Term | Definition | Owner |
 | --- | --- | --- |
 | atom | a codepoint, an entity of tier 0; its physicality is a POINT ZM holding its own ID | [Atoms](../Storage/Atoms.md) |
-| attestation | a link between IDs: a strand and the witness that pulls on it, with the outcome and the games played; a row of `attestation`, with its qualifier mask; in the target, once proven against the table, a strand in a record path under the witness's trunk | [Attestations](../Semantics/Attestations.md#strands) |
+| attestation | a link between IDs: a strand and the witness that pulls on it, with the outcome and the games played; as built, a strand in a record path under the witness's trunk, its outcome and position in its vertex's M, found by a walk up the container index (the `attestation` table is retired) | [Attestations](../Semantics/Attestations.md#strands) |
 | bank | the mask of one semantic group (a part of speech, a dependency relation, a kind), its bits the frozen slots of one list | [Types](Types.md#masks) |
 | claim | a tuple of entities with referential integrity, a composition whose path relates them; the address of a standing | [Claims](../Semantics/Claims.md) |
 | composition | an entity of tier 1 or above: an ordered sequence of constituents, its ID the hash of theirs, its coordinate their exact average | [Compositions](../Storage/Compositions.md) |
@@ -33,7 +33,7 @@ Every term the documentation uses, defined once, with the page that owns it.
 | perf-cache | a memory-mapped, fingerprinted, rebuildable file of deterministic records; tier 0 is the anchor | [Atoms](../Storage/Atoms.md) |
 | pull | a read of the web under a firmware; the forward pass | [Pull](../Semantics/Pull.md) |
 | recipe | how a kind of file decomposes and what it attests | [Ingestion](../Storage/Ingestion.md) |
-| record | a set of claims witnessed together, a sentence with what is said of it, one attestation | [Recipes](Recipes.md) |
+| record | what a source says of one part it speaks of: a path in its file's content tree over the part's thing and the claims it says, each claim a vertex with its run, outcome and position | [Ingest](Ingest.md) |
 | run | a vertex's repeat count, the low 30 bits of M | [Physicality](../Storage/Physicality.md) |
 | said | what a vertex is within its path: claim, record, tuple, metadata; the high bits of M | [Formats](Formats.md) |
 | segment | a UAX #29 word segment, tier 2; also a contiguous run of one trajectory | [Compositions](../Storage/Compositions.md) |
