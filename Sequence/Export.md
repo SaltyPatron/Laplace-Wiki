@@ -20,8 +20,9 @@ Export is "I know kung fu", not `cp model.gguf`. The live substrate is the prima
 ### 25.2 Deposit the recipe as content
 
 - **In:** the target architecture and the operator choices.
-- **Do:** a recipe is a versioned JSON description deposited as a content-addressed `Model_Recipe` entity, its hyperparameters also emitted as scalar attestations; export reads the stored recipe, never a disk file, and a hand-written recipe is a development fixture that goes through deposit like any other. Its fields: `structure` dense or MoE; `hidden_size`, an integer or `auto` for the spectral rank of the selected operators' graph; `num_layers`; `rope`; `tie_embeddings`; `norm`; `vocab`, the content selection from a real tokenizer, a topic crawl with seeds, hops, fanout, and size, or the grapheme floor; `embed`, default the coordinate operator; `lm_head`, default the trajectory operator; and `layers`, one entry per layer with its KV heads, its heads each as an operator, and its FFN operator. The user designs the vessel and chooses what fills it; the substrate determines every weight value; the math turning knowledge into weights is fixed.
+- **Do:** a recipe is a versioned JSON description deposited as a content-addressed `Model_Recipe` entity, its hyperparameters also emitted as scalar attestations; export reads the stored recipe, never a disk file, and a hand-written recipe is a development fixture that goes through deposit like any other. Its fields: `structure` dense or MoE; `hidden_size`, an integer or `auto` for the spectral rank of the selected operators' graph; `num_layers`; `rope`; `tie_embeddings`; `norm`; `vocab`, the content selection from a real tokenizer, a topic crawl with seeds, hops, fanout, and size, or the grapheme floor; `embed`, default the coordinate operator; `lm_head`, default the trajectory operator; and `layers`, one entry per layer with its KV heads, its heads each as an operator, and its FFN operator. For Laplace-native cartridges (`laplace-blake3-v1`), the vocabulary table replaces flat BPE/SentencePiece integer token IDs with **16-byte `blake3` entity IDs** across **all tiers** of the DAG (codepoints, graphemes, words, phrases, AST nodes, chess moves, and highway concept identifiers), binding the exported model to Laplace's decomposer and perf-cache (`tier0.bin` + `highway.bin`). The user designs the vessel and chooses what fills it; the substrate determines every weight value; the math turning knowledge into weights is fixed.
 - **Out:** the recipe entity.
+
 - **From:** `docs/invention/recipe-schema.md`.
 
 ### 25.3 Choose each slot's operator
@@ -45,12 +46,12 @@ Export is "I know kung fu", not `cp model.gguf`. The live substrate is the prima
 - **Out:** the tensors, with a cell-to-tensor receipt per slot.
 - **From:** `docs/invention/recipe-schema.md` §Knobs vs derived vs fixed; `docs/specs/12_Mold_A_Model_Synthesis_Map.txt` §Export law; `docs/INVENTIONS.md` #90.
 
-### 25.6 Emit the artifact and its receipts
+### 25.6 Emit the artifact, its cell-to-tensor provenance, and its basis-point attribution receipt
 
 - **In:** the tensors of 25.5.
-- **Do:** translate the constructed program into SafeTensors, GGUF, or another target through its codec. Every output slot declares its recipe, source scope, substrate cells, calculations, and determinism inputs. The artifact retains a reproducible recipe and never silently copies unknown witness weights because the format expects a tensor. Seeded corpora and checkpoints are exported as world state, a snapshot, never round-tripped bit-perfect; user content the operator asked Laplace to keep is the case that requires exact realization, and that is the other lane.
-- **Out:** the file and its provenance receipts.
-- **From:** `docs/INVENTION.md` §15; `docs/specs/12_Mold_A_Model_Synthesis_Map.txt` §Export law.
+- **Do:** translate the constructed program into SafeTensors, GGUF (`laplace.tokenizer.scheme = "laplace-blake3-v1"`, `laplace.vocab.size`, and `laplace.vocab.blake3_ids` carrying the 128-bit BLAKE3 entity hex IDs), or an encrypted cartridge (`LPCART01` AES-256-GCM envelope via `FoundryCartridgeCrypto`) through its codec. Every output slot declares its recipe, source scope, substrate cells, calculations, and determinism inputs. In the same native C + SQL pass, compute the **Source Attribution Receipt** (`source_id`, `claims_touched`, `games`, `fisher_weight`, `share_bp` summing to `10000` basis points) across all witness trunks in the export scope, weighted by each witness's Glicko-2 Fisher information on the exported cells (`app.billing_royalties`). All synthesis, scoped consensus refolding, and attribution execute in the canonical SQL + native C substrate—never in hand-rolled C# loops or out-of-process CLI shells. The artifact retains a reproducible recipe and never silently copies unknown witness weights because the format expects a tensor. Seeded corpora and checkpoints are exported as world state, a snapshot, never round-tripped bit-perfect; user content the operator asked Laplace to keep is the case that requires exact realization, and that is the other lane.
+- **Out:** the file, its cell-to-tensor provenance receipts, and its basis-point source attribution receipt (`share_bp`) for royalty settlement ([17. Envelope](Envelope.md) operation 17.7).
+- **From:** `docs/INVENTION.md` §15; `docs/specs/12_Mold_A_Model_Synthesis_Map.txt` §Export law & native source attribution.
 
 ### 25.7 Validate by loading and by ablation
 

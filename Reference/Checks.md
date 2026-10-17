@@ -2,6 +2,14 @@
 
 Every check that proves the built machine: the native golden tests, the prototype's verification of a loaded database, the engine's own checks during ingest, the fingerprint comparison of `laplace status`, the operation benchmark, and the query benchmark.
 
+## The three core proofs
+
+System-wide verification is anchored on three real end-to-end proofs executed in order (with [Laplace-Prototype](../Research/Prototype.md) serving as the cleanroom proving ground rather than running multi-corpus ingests on every build in active development CI):
+
+1. **Proof 1 — `db-roundtrip` (Decomposition → PostgreSQL → Byte-Exact Recomposition):** Decompose real multi-domain inputs (UTF-8 text, XML, TSV/CSV, JSON/JSONL, Turtle, CoNLL-U, PGN) bottom-up (**Leaf → Trunk**) on the client using `tier0.bin` and `highway.bin`, deduplicate top-down (**Trunk → Leaf**) against PostgreSQL, stage whole files in `UNLOGGED` `stage.*` tables, merge into `public.*`, and recompose 100% byte-for-byte from PostgreSQL alone while asserting all structural and geometric invariants.
+2. **Proof 2 — The Linguistic Super Highway (`highway.bin` Perf-Cache & Crosswalk Hops):** Build the self-contained `highway.bin` perf-cache alongside `tier0.bin` without requiring raw corpus definitions on disk or a `.nodes` sidecar dump, and verify $O(1)$ bit-banger masks (`upos`, `lexfile`, `deprel`, `vnrole`, `kind`) and cross-source identifier indexing, filtering, and interchange hops (`ili` ↔ `Synset` ↔ `vaframe` ↔ `pbroleset` ↔ `vnclass` ↔ `fnframe`).
+3. **Proof 3 — Full Multi-Corpus Ingestion (`recipes/order`):** Ingest the full corpus suite on top of Proofs 1 and 2 with one source trunk and one witness per corpus, verifying cross-corpus convergence on highway identifier nodes, database-side `laplace_attest_series` folding into `consensus`, multi-hop translation, and containment provenance (`laplace_witnesses_of` → Fisher-information `share_bp` summing to `10000` basis points).
+
 ## The native tests
 
 `ctest` in Laplace-Native, each executable against the tier 0 at `LAPLACE_TIER0`, both compilers:

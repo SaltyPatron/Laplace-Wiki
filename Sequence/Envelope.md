@@ -52,12 +52,14 @@ Hops and fanout are first-class work coordinates. The work of a pull is shaped b
 - **Out:** the work receipt.
 - **From:** `docs/INVENTION.md` §17.6; `docs/read-path.md` §10; `docs/INVENTIONS.md` #96, #97.
 
-### 17.7 Reconcile
+### 17.7 Reconcile and settle two-sided Seeder & Knowledge Royalties
 
-- **In:** the reservation of 17.4 and the receipt of 17.6.
-- **Do:** refund the unused reserve; compare calculated against observed to calibrate the physical and environment model; residual error tugs cache assumptions, branch behaviour, frequency scaling, OS scheduling, memory latency, JIT and compiler differences, and omitted machine semantics.
-- **Out:** the reconciled charge and a calibration witness.
-- **From:** `docs/CAPABILITIES.md` §Compute depth is the product tier; `docs/guides/machine-cost-analysis.md` §Calculated versus observed.
+- **In:** the reservation of 17.4, the physical work receipt of 17.6, and the native C + SQL attribution receipt (`laplace_attested` / `laplace_attribution`) over the claims realized in [20. Forward](Forward.md) or [25. Export](Export.md).
+- **Do:** refund the unused reserve; compare calculated against observed to calibrate the physical and environment model; residual error tugs cache assumptions, branch behaviour, frequency scaling, OS scheduling, memory latency, JIT and compiler differences, and omitted machine semantics. In the same SQL transaction, settle the two-sided Seeder ledger ("the BitTorrent of AI"):
+  1. **Compute & Perfcache Seeders**: credit hardware/ROM nodes that served verified perfcache lookups, coupling walks, or synthesis passes from the physical work receipt of 17.6.
+  2. **Knowledge Seeders**: compute each contributing witness trunk's exact basis-point share (`share_bp` summing to `10000`, weighted by Glicko-2 Fisher information $I_{c,s} = g(\varphi_s)^2 E(1 - E)$ / $1/\varphi^2$ and trust-bounded games) via the canonical native C + SQL attribution operator, and credit each licensed witness trunk owner accordingly.
+- **Out:** the reconciled charge, deterministic royalty and compute seeder allocations, and a calibration witness.
+- **From:** `docs/CAPABILITIES.md` §Compute depth is the product tier and §The BitTorrent of AI; `docs/BILLING_PLACEHOLDER_MIGRATION.md`; `docs/guides/machine-cost-analysis.md` §Calculated versus observed.
 
 ## What this stage leaves behind
 
