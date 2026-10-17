@@ -73,9 +73,16 @@ One knowledge world does not mean every principal has authority to use every par
 - **Out:** the principal's entitlement, as a witnessed fact the policy reads.
 - **From:** `docs/INVENTOR_RECORD.md` §Product, Patreon post 2, 2026-08-26.
 
+### 16.10 Gate and license witness trunks as Knowledge Seeders
+
+- **In:** a witness trunk `[source record, file trunks]` ([11. Sources](Sources.md)) and its owner's visibility/licensing declaration.
+- **Do:** every ingested corpus, repository, or user dataset is a witness trunk. Its owner sets its authority scope (`private`, `tenant`, `public`, or `licensed` as a Content Package of 16.2). When an authorized principal's effective scope (16.4) includes that witness trunk during [20. Forward](Forward.md) or [25. Export](Export.md), the canonical native C + SQL attribution walk (`laplace_attested` / `laplace_attribution`) measures the trunk's exact Fisher-weighted contribution (`share_bp`, summing to `10000` basis points across contributing trunks) so the trunk owner earns deterministic royalties whenever their knowledge is coupled and realized.
+- **Out:** the witness trunk's visibility/licensing grant and its attribution eligibility.
+- **From:** `docs/guides/content-authority.md` §Billing is orthogonal; `docs/BILLING_PLACEHOLDER_MIGRATION.md` §Provider model and two-sided Seeder/Royalty settlement.
+
 ## What this stage leaves behind
 
-For every principal, an effective scope and a capability mask that the forward program binds at its first operation and re-checks at every act, and a personal effective mind composed of the shared world, licensed and institutional grants, private knowledge, witnessed experience, governance and firmware, the active scope, and the compute envelope, without training a model per person.
+For every principal, an effective scope and a capability mask that the forward program binds at its first operation and re-checks at every act, a gated/licensed witness trunk model where every user can act as a Knowledge Seeder, and a personal effective mind composed of the shared world, licensed and institutional grants, private knowledge, witnessed experience, governance and firmware, the active scope, and the compute envelope, without training a model per person.
 
 ## Without this stage
 

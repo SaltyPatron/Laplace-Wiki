@@ -7,7 +7,7 @@ Five repositories implement Laplace: the monorepo SaltyPatron/Laplace is the fir
 | Repository | Version | Holds | Builds | Links |
 | --- | --- | --- | --- | --- |
 | Laplace-Native | 0.2.0 | `include/laplace/laplace.h`, the one public header; `src/`: `cpu.c`, `flags.c`, `utf8.c`, `identity.c`, `coord.c`, `compose.c`, `geometry.c`, `ids.c`, `follows.c`, `consensus.c`, `tier0.c`, `highway.c`, `trust.c`, `geom4d.c`, `pull.c`, `text.c`, `rowsig.c`, `isa/` kernels; `manifest/` (`banks.tsv`, the frozen slots `slots/`); `tests/`; `cmake/LaplacePaths.cmake`, `cmake/LaplaceFlags.cmake` | `liblaplace.a` and `liblaplace.so` (everything but text and model); `liblaplace_text` (needs ICU 78); `liblaplace_model` (needs MKL and OpenMP); `lp_crmath` (CORE-MATH `cr_sin`, `cr_cos`); BLAKE3 with its assembly | BLAKE3, libm, pthread |
-| Laplace-postgres | 0.6.0; extension 1.8 | `src/laplace_pg.c`; `sql/laplace--1.8.sql` (the install script), `laplace--1.0.sql` to `laplace--1.7.sql`, and the upgrade scripts `laplace--1.0--1.1.sql` to `laplace--1.7--1.8.sql`; `laplace.control`; `bench/bench_queries.py` | `laplace.so` into PostgreSQL's `pkglibdir`; the control and SQL files into `sharedir/extension` | Laplace-Native statically, PostgreSQL 18 headers, PostGIS geometry serialization |
+| Laplace-postgres | 0.6.0; extension 1.12 | `src/laplace_pg.c`; `sql/laplace--1.12.sql` (the install script), `laplace--1.0.sql` to `laplace--1.11.sql`, and the upgrade scripts `laplace--1.0--1.1.sql` to `laplace--1.11--1.12.sql`; `laplace.control`; `bench/bench_queries.py` | `laplace.so` into PostgreSQL's `pkglibdir`; the control and SQL files into `sharedir/extension` | Laplace-Native statically, PostgreSQL 18 headers, PostGIS geometry serialization |
 | Laplace-Engine | 0.2.0 | `src/`: `main.c`, `engine.h`, `recipe.c`, `structure.c`, `structure.h`, `say.c`, `highway.c`, `table.c`, `file.c`, `ingest.c`, `db.c`, `read.c`, `pull.c`, `forward.c`, `fills.c`, `forget.c`, `deploy.c`, `tier0.c`, `flags.c`, `firmware.c`, `program.c`, `bench.c`, `model.c`; `recipes/`; `firmware/program.firmware`; `tools/build_grammars.sh` | `laplace`, one executable | `laplace_text`, `laplace_static`, `lp_crmath`, BLAKE3, the tree-sitter runtime, libpq, OpenMP, zlib, dl; `laplace_model` when MKL is present |
 | SaltyPatron/Laplace, the monorepo | engine 0.1.0 | `docs/` (the invention documents and specs), `engine/` (core, synthesis, dynamics, manifests), `extension/laplace_substrate` and `laplace_geom`, `app/` (twelve .NET projects), `web/`, `recipes/`, `seeds/`, `db/migrations`, `scripts/` | `liblaplace_core`, `liblaplace_dynamics`, `liblaplace_synthesis`, `laplace_substrate.so`, `laplace_geom.so`, the application, the web, the perfcaches; see [Monorepo](Monorepo.md) | PostgreSQL 18 and PostGIS at `/opt/laplace/pgsql-18`, tree-sitter, MKL, TBB, .NET 10 |
 | Laplace-Prototype | | `tier0/gen_tier0.py`, `ducet_order.py`, `nfd17.py`, `fingerprint.txt`; `dag/ingest.c`; `db/schema.sql`, `indexes.sql`, `load.sh`, `ext/`; `tests/verify.py`, `queries.py`, `gap_query.py`, `breaktest.c`; `chess/`, `semantics/`, `models/`, `code/`, `recipes/` | the golden values the native tests reproduce | ICU 78, BLAKE3, PostgreSQL 18 at port 5439 |
@@ -25,7 +25,7 @@ flowchart LR
     UCD[Unicode data<br>$LAPLACE_UCD] --> T0[tier0.bin<br>laplace tier0]
     UCD --> FL[tier0.flags + .layout<br>laplace flags]
     BL[BLAKE3, CORE-MATH,<br>ICU 78, tree-sitter] --> NAT[liblaplace, liblaplace_text<br>Laplace-Native]
-    NAT --> EXT[laplace.so, laplace--1.8.sql<br>Laplace-postgres]
+    NAT --> EXT[laplace.so, laplace--1.12.sql<br>Laplace-postgres]
     NAT --> ENG[laplace<br>Laplace-Engine]
     GR[grammar sources] -->|build_grammars.sh| SO[libtree-sitter-*.so<br>$LAPLACE_GRAMMARS]
     SO --> ENG
@@ -34,7 +34,7 @@ flowchart LR
     FL --> DB
     T0 --> ENG
     FL --> ENG
-    MAN[banks.tsv, slots/<br>Laplace-Native manifest] -->|laplace highway| HW[tier0.highway + .layout, .keys, .nodes]
+    MAN[banks.tsv, slots/, maps/<br>Laplace-Native manifest] -->|laplace highway| HW[tier0.highway + .layout, .keys]
     HW --> DB
     HW --> ENG
     REC[recipes/, order] --> ENG

@@ -1,8 +1,8 @@
 # SQL
 
-The extension installs one type, `blake3`, its operators and operator classes, and 80 functions, 76 of them in C calling Laplace-Native, 3 in SQL over them and one in PL/pgSQL (`laplace_schema_indexes`), and one aggregate; every function is `IMMUTABLE STRICT PARALLEL SAFE` unless stated, so a constant argument folds at plan time and a lookup by computed ID becomes an index lookup.
+The extension installs one type, `blake3`, its operators and operator classes, and 82 functions, 78 of them in C calling Laplace-Native, 3 in SQL over them and one in PL/pgSQL (`laplace_schema_indexes`), and one aggregate; every function is `IMMUTABLE STRICT PARALLEL SAFE` unless stated, so a constant argument folds at plan time and a lookup by computed ID becomes an index lookup.
 
-`laplace--1.8.sql` declares them; `laplace_pg.c` defines them. The extension's CI installs it fresh into a scratch database before every update, so a script that does not install fails there.
+`laplace--1.12.sql` declares them; `laplace_pg.c` defines them. The extension's CI installs it fresh into a scratch database before every update, so a script that does not install fails there.
 
 ## The type
 
@@ -139,6 +139,15 @@ Each plans its statement once per backend and keeps the plan; each call is one e
 | --- | --- | --- |
 | `laplace_isa()` | `text` | `cpu: …; dispatch: …`, the CPU's features and the level the dispatcher uses; `STABLE` |
 
+## Provenance, scoped consensus, and attribution
+
+Provenance by containment (`walk_up`, `down_from`, `tally_under`, `attested` in `Laplace-Engine/src/walk.c` and `laplace_attested`, `laplace_attribution` in `Laplace-postgres/src/laplace_pg.c`) walks the GIN container index (`physicality_paths`) from strands (`claims`) up to records (`LP_SAID_RECORD`, `LP_SAID_CLAIM`), files, and witness trunks (`witness`). Providing this containment walk and basis-point attribution directly in `Laplace-postgres` (`laplace_pg.c`) gives one canonical SQL + native C implementation for every surface (`Laplace-Engine`, `Laplace-MCP`, `.NET`, and billing settlement) with zero hand-rolled application SQL:
+
+| Function | Returns | Computes |
+| --- | --- | --- |
+| `laplace_attested(claims blake3[], scope blake3[] DEFAULT '{}')` | `SETOF (claim blake3, witness blake3, games bigint, tokens bigint, score float8, pos bigint, trust float8)` | containment walk up `physicality_paths` from `claims` to `witness` trunks (filtered by `scope` when non-empty), tallying exact `games`, `tokens`, `score`, and `pos` per `(claim, witness)` |
+| `laplace_attribution(claims blake3[], scope blake3[] DEFAULT '{}')` | `SETOF (witness blake3, claims_touched bigint, games bigint, fisher_weight float8, share_bp integer)` | aggregates `laplace_attested` joined to `consensus` and `witness`, weighting each witness trunk by Glicko-2 Fisher information ($I_{c,s} = g(\varphi_s)^2 E(1 - E)$ / $1/\varphi^2$) and normalizing deterministic basis points (`share_bp` summing to `10000`) for `WHY` receipts and royalty settlement |
+
 ## How the engine calls the database
 
-The engine never calls these functions in its hot paths; it computes IDs, coordinates, and paths itself with the same native code and asks the database only to find and write. The statements it issues are listed under [Ingest](Ingest.md#the-statements) and [Reads](Reads.md). The query benchmark and interactive SQL use the functions above.
+The engine never calls scalar helper functions in its hot paths; it computes IDs, coordinates, and paths itself with the same native code and asks the database only to find, fold, attribute, and write through coarse set-based operators. The statements it issues are listed under [Ingest](Ingest.md#the-statements) and [Reads](Reads.md). The query benchmark, MCP server, billing settlement, and interactive SQL use the functions above.

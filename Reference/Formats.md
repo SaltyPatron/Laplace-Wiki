@@ -90,10 +90,9 @@ In memory during an ingest (`table.c`): one flat table of slots shared by every 
 | --- | --- |
 | `tier0.highway` | one record per type in the form of a tier-0 record, its rank the type's slot and its pad the content's tier; then the edges, each a pair of 32-bit slots, grouped by the pair of lists |
 | `.layout` | text, a line each: `records N`; `edges-count N`; `list NAME TITLE FIRST COUNT`, the lists in order with the record each begins at; `edges A B FIRST COUNT`; `bank NAME LIST GROUP CARRIER WIDTH`, copied from `banks.tsv` |
-| `.keys` | `LIST KEY SLOT` a line: the identifiers the resources point at their types with, each to its slot. The readers resolve them through this file and record nothing of them, which is right for a pointer (a WordNet offset, a BabelNet id, an FE's number); a highway ID among them (`i46360`, `abandon.01`) is content, and the law records it as written, its slot an index over it |
-| `.nodes` | the content of every type as the composition it is: `N` lines (a node, its ID, its tier and its path) and `S` lines (a list's slot and its content's ID), which `laplace deploy` records |
+| `.keys` | `LIST KEY SLOT` a line: the identifiers the resources point at their types with, each to its slot. Every highway node is the canonical Tier-0 composition of its own identifier string (`oewn-00001740-n`, `abandon.01`, `va:0001f`, `leave-51.2`, `NOUN`, `i46360`), deterministic from `tier0.bin` alone without a `.nodes` sidecar |
 
-Laplace-Native's manifest keeps what must not move between builds: `manifest/banks.tsv` (`bank list group carrier width`, a line a bank) and `manifest/slots/LIST.tsv` (`slot id status key`, `status` `live` or `retired`), written back by `laplace highway` and never by hand.
+Laplace-Native's manifest keeps what must not move between builds: `manifest/banks.tsv` (`bank list group carrier width`, a line a bank), `manifest/slots/LIST.tsv` (`slot id status key`, `status` `live` or `retired`), and `manifest/maps/*.tsv` (cross-list slot edges), written back by `laplace highway` and never by hand.
 
 ## The recipe, firmware, and layout text files
 

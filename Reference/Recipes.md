@@ -150,18 +150,22 @@ A pattern is POSIX extended; a template writes `\0` the whole match and `\1` to 
 
 A file's trunk is `[metadata, content]`. The metadata tree is the OS's record of the file, its parts as the OS names them (`pathname`, a composition of its filenames; `filename`; and what `statx` returns, `stx_mode` to `stx_mtime`), each `[name, value]` and each disposed of by the file's recipe or, where that says nothing of it, by the stock recipe `file` (`metadata` or `omit`); then what the recipe says is said of the file itself. A part neither disposes of is said once and not recorded. The content tree is the file's own tree. A file a recipe records only by its grammar is its syntax tree, each node the composition of its children with the bytes between them kept as text, so it recomposes byte for byte; leaves are text, decomposed by UAX #29. A curated file's content is the whole of each of its outermost parts as its recipe reads them, in the file's order, each the claim it is where it is one; a few thousand are one path, and more are factored into blocks from the content alone: a block ends after a part whose own ID says so, never at a count or a position, and the blocks are composed the same way, level by level, until one holds them all. A file's tier is one above its highest constituent. The trunk is written last of everything the file is and attests, so a recorded trunk means all of it is recorded.
 
-A source's trunk is `[record, content]`: the record is the witness its `source` file names, or its `called` line where the witness is named file by file; the content is its files' trunks in the order of their paths. It is written after the last of its files, in a load of its own, and found recorded like any other trunk, by its ID. By the law this trunk is the witness, and the trust and lineage are keyed by the trunk; as built the witness is the named record. Provenance is the `attestation` table, a row per claim and witness, and it stays: provenance by containment, a record a path over the claims it asserts under its file's content tree, is the target, and replaces the table only once a working prototype on real data shows, side by side with it, that containment answers everything the table answers, who said a claim, its games, score and position, its qualifiers, forgetting and replay, with nothing lost.
+A source's trunk is `[record, content]`: the record is the witness its `source` file names, or its `called` line where the witness is named file by file; the content is its files' trunks in the order of their paths. It is written after the last of its files, in a load of its own, and found recorded like any other trunk, by its ID. By the law this trunk is the witness, and the trust and lineage are keyed by the trunk; as built the witness is the named record. Provenance is containment (`LP_SAID_RECORD` and `LP_SAID_CLAIM` vertices under each file's content tree, walked by `laplace_attested` and `laplace_attribution`), replacing the retired `attestation` table with nothing lost.
 
 ## The stock recipes
 
-Format recipes that belong to no source, which any source's `reads` may name and which `laplace ingest FILE` uses by extension:
+Format recipes that belong to no source, which any source's `reads` may name and which `laplace ingest FILE` uses by extension or structural content sniffing (`detect_structure_recipe` in `Laplace-Engine/src/recipe.c` when an extension is absent or unrecognized):
 
 | Recipe | Matches | Reads |
 | --- | --- | --- |
 | `text` | `*.txt *.md` | UAX #29 codepoint, grapheme, word segment (a separator separates at the word tier, [Types](Types.md#segmentation)), sentence, paragraph, file |
+| `markdown` | `*.md *.markdown` | Markdown structure (`tier block by \n\n`, `tier line by \n`), leaves text |
 | `xml` | `*.xml` | its syntax tree, leaves text |
 | `json` | `*.json` | its syntax tree; a tokenizer's `tokenizer.json` is read so, its vocabulary the members that name each token and give its number |
-| `turtle` | | `format turtle`: a statement is its subject; its property is the relation to its objects; a literal says its language tag or datatype |
+| `jsonl` | `*.jsonl *.ndjson` | line-delimited JSON objects (`tier row by \n`, `part . by object`) |
+| `tsv` | `*.tsv *.tab` | tab-separated records and fields (`tier row by \n`, `tier field by \t`) |
+| `csv` | `*.csv` | comma-separated records and quoted fields (`tier row by \n`, `quoted`, `tier field by ,`) |
+| `turtle` | `*.ttl *.nt *.n3` | `format turtle`: a statement is its subject; its property is the relation to its objects; a literal says its language tag or datatype |
 | `wn-lmf` | | `format xml`: a lexical entry is the word its `Lemma` writes; a synset is the composition of the words its `members` are; a sense is the word with its synset; `ili` a type of the highway's interlingual index |
 | `file` | | no layout: what the OS keeps of every file, `metadata pathname filename stx_mode stx_uid stx_gid stx_nlink stx_ino stx_size stx_blocks stx_blksize stx_attributes stx_dev_major stx_dev_minor stx_rdev_major stx_rdev_minor stx_btime stx_ctime stx_mtime`, `omit stx_atime` (reading the file changes it) |
 
