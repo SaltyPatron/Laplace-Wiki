@@ -11,10 +11,10 @@ Ingestion is the learning process. It computes content's IDs on the client and d
 ## The spine
 
 ```text
-unpack → records → working-set dedup → accumulation → bulk tier descent → apply/COPY → fold completion
+unpack → grammar-framed records → working-set dedup → in-stream series accumulation → bulk tier descent → pipelined stage.* COPY & in-DB series update
 ```
 
-Decomposers are pure content-to-change streams with no inline SQL, and they declare every relation they emit. The shared spine owns batching, novelty proof, tier descent, COPY, attestation merge, consensus fold, and completion semantics. The right operation at the wrong stage violates this rule. Parallel producers communicate through bounded channels; per-cell non-commutative folds keep FIFO order, commutative deposits may run concurrently; outer index-build concurrency stays at one unless measured safe. Batch, commit, and working-set sizing derive from source shape and machine capacity, not from environment overrides.
+Decomposers are pure content-to-change streams with no inline SQL, and they declare every relation they emit. The shared spine is a continuous, non-blocking **assembly line**: outer packaging grammars frame records in a single pass; parallel worker threads parse records via reusable thread-local `TSParser` + compiled integer `TSSymbol`/`TSFieldId` jump tables + thread-local arenas (`0` `malloc`/`free` per record), compose bottom-up into lock-free `NODE[]`/`VTX[]`, and accumulate `(claim, games, score)` series directly in-stream; top-down `Trunk -> Leaf` deduplication prunes known subtrees; and novel rows + series updates stream via binary `COPY` into `UNLOGGED` `stage.*` tables and update standings in PostgreSQL via set-based `laplace_attest_series` (never stalling workers for a lagged end-of-source "consensus fold", 2-pass stretch read, or 16-connection Two-Phase Commit on unlogged tables). Parallel producers communicate through bounded channels; per-cell non-commutative updates keep FIFO order, commutative deposits may run concurrently; outer index-build concurrency stays at one unless measured safe. Batch, commit, and working-set sizing derive from source shape and machine capacity, not from environment overrides.
 
 ## Operations, per source
 
