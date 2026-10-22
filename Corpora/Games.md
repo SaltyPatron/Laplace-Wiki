@@ -1,10 +1,21 @@
 # Games
 
-The PGN collections and the Lichess opening tables have no recipe yet, so they are not ingested and attest nothing.
+The Engine reads PGN collections through its compiled chess grammar and Lichess opening tables through a TSV recipe with injected PGN move text.
 
 ## Source
 
-No directory under [`recipes/`](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes) reads this collection, and `recipes/order` does not name it. Until a recipe exists, nothing in it is decomposed, recorded, or attested; see [Attestations](../Semantics/Attestations.md#observations). The format below is the publisher's, kept so that a recipe can be written from it.
+The Engine's [`recipes/order`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/order) names four sources:
+
+| Source | Packaging | Recipe |
+| --- | --- | --- |
+| `chess-com` | Chess.com PGN | [Chess.com](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/chess-com) |
+| `twic` | The Week in Chess PGN | [TWIC](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/twic) |
+| `lumbras-gigabase` | Lumbras Gigabase PGN | [Lumbras Gigabase](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/lumbras-gigabase) |
+| `openings` | Lichess TSV tables a.tsv through e.tsv | [Openings](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/openings) |
+
+Each source has one corpus witness trunk. Players, event names, tags and annotations are content under its records; they do not create additional corpus witnesses. FIDE snapshots and endgame-tablebase files need their own recipes; these four sources do not cover those formats.
+
+The compiled PGN grammar feeds the native chess reducer, which composes transitions from the before-position, move and after-position. Completed-game results supply the carriers' win, loss or draw outcomes. An unfinished result supplies no played outcome. Opening rows instead associate an ordered SAN line with its name and ECO code, using a chained PGN move-sequence grammar over the TSV field; no result marker or played-game outcome is invented.
 
 ## Format
 
@@ -19,7 +30,7 @@ A FIDE ID is a publicly known identifier used across sources and languages, and 
 
 ## Record kinds
 
-A PGN file holds several kinds of record, and a recipe disposes each by what it is (SaltyPatron/Laplace-Engine#46). This is a proposal for the recipe; the inventor decides it.
+A PGN file can hold the kinds of record below. This table describes their intended meanings; the presence of a PGN recipe does not by itself verify every variant, annotation convention or puzzle behavior.
 
 | Kind | How the source marks it | What it is |
 | --- | --- | --- |
@@ -30,4 +41,4 @@ A PGN file holds several kinds of record, and a recipe disposes each by what it 
 | Study, lesson or annotated game | variations in parentheses, `{comments}`, numeric annotation glyphs (`$1`, `!?`) | Not a played game: the variations make a tree of lines, comments are text, and the glyphs are the annotator's judgments. All of it is the study's own testimony, under its source, with no occurrence of anyone playing it. |
 | Puzzle or composed problem | a start position and a solution line | The composer's claimed solution: testimony about a line from that position. |
 
-The monorepo's chess ingest, the only one built so far, keeps moves and positions losslessly and content-derived, and differs from the law in what Engine#46 lists: minted player, event and occurrence identities with folded names, dropped tags (Site, Round, Link, UTC times, Tournament), a domain byte in composition, a private atom alphabet instead of the codepoint floor, and a four-bit castling encoding instead of [27.1](../Sequence/Chess.md)'s eight-bit mask.
+The Engine's native PGN route is implemented under [Engine#46](https://github.com/SaltyPatron/Laplace-Engine/issues/46). Convergence with the monorepo's chess route remains part of [Laplace#1879](https://github.com/SaltyPatron/Laplace/issues/1879) and [Laplace#1725](https://github.com/SaltyPatron/Laplace/issues/1725); a working Engine recipe does not establish cross-stack parity.
