@@ -1,0 +1,32 @@
+# Exact, reviewed publisher endpoints that reject automated link checkers.
+# Checked 2026-10-22 against the publishers' indexed documents/metadata.
+# Exclusion means bot access is unverified; it is not an HTTP 200 result.
+# Do not broaden these expressions to domains or accept all 403/404 responses.
+^https://www\.intel\.com/content/www/us/en/developer/articles/guide/guide-for-developing-multithreaded-applications\.html$
+^https://www\.intel\.com/content/www/us/en/developer/articles/guide/intel-advisor-roofline\.html$
+^https://www\.intel\.com/content/www/us/en/developer/articles/guide/porting-guide-for-icc-users-to-dpcpp-or-icx\.html$
+^https://www\.intel\.com/content/www/us/en/developer/articles/release-notes/oneapi-dpcpp/2026\.html$
+^https://www\.intel\.com/content/www/us/en/developer/articles/technical/compiler-optimization-report-news-2025\.html$
+^https://www\.intel\.com/content/www/us/en/developer/articles/technical/consistency-of-floating-point-results-using-the-intel-compiler\.html$
+^https://www\.intel\.com/content/www/us/en/docs/advisor/user-guide/2024-2/work-with-standalone-html-reports\.html$
+^https://www\.intel\.com/content/www/us/en/docs/advisor/user-guide/2025-1/build-target\.html$
+^https://www\.intel\.com/content/www/us/en/docs/dpcpp-cpp-compiler/developer-guide-reference/2023-1/ax-qax\.html$
+^https://www\.intel\.com/content/www/us/en/docs/dpcpp-cpp-compiler/developer-guide-reference/2023-1/x-qx\.html$
+^https://www\.intel\.com/content/www/us/en/docs/dpcpp-cpp-compiler/developer-guide-reference/2023-2/qopt-report-qopt-report\.html$
+^https://www\.intel\.com/content/www/us/en/docs/dpcpp-cpp-compiler/developer-guide-reference/2024-2/fimf-arch-consistency-qimf-arch-consistency\.html$
+^https://www\.intel\.com/content/www/us/en/docs/dpcpp-cpp-compiler/developer-guide-reference/2024-2/hardware-profile-guided-optimization\.html$
+^https://www\.intel\.com/content/www/us/en/docs/dpcpp-cpp-compiler/developer-guide-reference/2024-2/ipo-qipo\.html$
+^https://www\.intel\.com/content/www/us/en/docs/ipp-crypto/developer-guide-reference/2021-12/hashinit\.html$
+^https://www\.intel\.com/content/www/us/en/docs/ipp-crypto/developer-guide-reference/2021-12/multi-buffer-cryptography-functions\.html$
+^https://www\.intel\.com/content/www/us/en/docs/vtune-profiler/cookbook/2023-0/openmp-code-analysis-method\.html$
+^https://www\.intel\.com/content/www/us/en/docs/vtune-profiler/cookbook/2023-2/openmp-imbalance-and-scheduling-overhead\.html$
+^https://www\.intel\.com/content/www/us/en/docs/vtune-profiler/user-guide/2023-0/filtering-and-grouping-reports\.html$
+^https://www\.intel\.com/content/www/us/en/docs/vtune-profiler/user-guide/2023-0/hotspots-report\.html$
+^https://www\.intel\.com/content/www/us/en/docs/vtune-profiler/user-guide/2023-0/run-basic-hotspots-analysis-command-line\.html$
+^https://www\.intel\.com/content/www/us/en/docs/vtune-profiler/user-guide/2024-2/running-threading-analysis-from-the-command-line\.html$
+^https://www\.intel\.com/content/www/us/en/docs/vtune-profiler/user-guide/2024-2/sep-driver\.html$
+^https://www\.intel\.com/content/www/us/en/docs/vtune-profiler/user-guide/2025-4/hpc-performance-characterization-analysis\.html$
+^https://id\.loc\.gov/vocabulary/$
+^https://www\.tandfonline\.com/doi/abs/10\.1080/00437956\.1954\.11659520$
+^https://doi\.org/10\.1142/S0218195995000064$
+^https://stratos\.seas\.harvard\.edu/publications/periodic-table-data-structures$
