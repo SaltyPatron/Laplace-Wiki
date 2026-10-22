@@ -2,13 +2,16 @@
 
 VerbNet attests what a class file says of each class, subclass, thematic role and member; a class is its ID as VerbNet writes it, a role its type, a member the verb it names; a member's `verbnet_key` is VerbNet's pointer to the member, read by nothing (`omit`, with `xtag` and `descriptionNumber`); its `grouping` and `fn_mapping` are PropBank rolesets and a FrameNet frame by their highway IDs, content as written, and its `wn` WordNet senses by their sense keys, each attested of the member in its class; the schema and README attest nothing.
 
-One source reads VerbNet: the class files of VerbNet 3.4, "their members, thematic roles and frames", by [`classes.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/verbnet/classes.recipe). The classes and roles are the highway's `vnclass` (609) and `vnrole` (39, a mask field) lists ([Types](../Reference/Types.md)), a class a highway node exactly as an ILI is, a concept node of the linguistic superhighway; the members' mappings are its edges ([Hops](Hops.md)).
+The `verbnet` source reads the class files of VerbNet 3.4, "their members, thematic roles and frames", by [`classes.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/verbnet/classes.recipe). The classes and roles are the highway's `vnclass` (609) and `vnrole` (39, a mask field) lists ([Types](../Reference/Types.md)), a class a highway node exactly as an ILI is, a concept node of the linguistic superhighway; the members' mappings are its edges ([Hops](Hops.md)).
 
 ## Source
 
 | Source | Witness | Trust class | After | Files | Recipe |
 | --- | --- | --- | --- | --- | --- |
 | `verbnet` | `VerbNet` | class `AcademicCurated` | `unicode`, `iso-639` | `*.xml` under `verbnet3.4` | [`classes.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/verbnet/classes.recipe) |
+| `verbnet-gl` | `VerbNet Generative Lexicon` | class `AcademicCurated` | `verbnet` | `vn-gl/*.xml` | [Inherited class recipe](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/verbnet-gl) |
+
+The Generative Lexicon source reuses the class-file semantic recipe and has its own corpus trunk. Its presence in the recipe estate does not imply that every file has been admitted into a database.
 
 ## The class file
 

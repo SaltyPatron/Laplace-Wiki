@@ -38,7 +38,7 @@ Two things every page needs are not on any page yet, because the words for them 
 
 ## Recipes
 
-Every source in `recipes/order`, in that order, and the page that is its glossary. A page not in this table documents a collection no recipe reads yet, and says so. The table is the Engine as built: its three Universal Dependencies sources are one source in the target, and its one `iso-639` source is a source per authority.
+Every source in the Engine's `recipes/order`, in that order, and the page that describes it. Recipe coverage does not imply that the raw collection is present locally or that its full ingestion has been verified. The three Universal Dependencies entries share one corpus trunk; directories and source-management entries do not create extra witnesses.
 
 | Source | Page |
 | --- | --- |
@@ -50,6 +50,7 @@ Every source in `recipes/order`, in that order, and the page that is its glossar
 | `princeton-wordnet` | [Wordnets](Wordnets.md) |
 | `propbank` | [PropBank](PropBank.md) |
 | `verbnet` | [VerbNet](VerbNet.md) |
+| `verbnet-gl` | [VerbNet](VerbNet.md) |
 | `framenet` | [FrameNet](FrameNet.md) |
 | `semlink` | [SemLink](SemLink.md) |
 | `predicate-matrix` | [Predicate Matrix](Predicate-Matrix.md) |
@@ -70,6 +71,7 @@ Every source in `recipes/order`, in that order, and the page that is its glossar
 | `opensubtitles` | [OpenSubtitles](OpenSubtitles.md) |
 | `project-gutenberg` | [Project Gutenberg](Project-Gutenberg.md) |
 | `tokenizers` | [Tokenizers](Tokenizers.md) |
+| `brown` | [NLTK](NLTK.md) |
 | `geonames` | [GeoNames](GeoNames.md) |
 | `hatecheck` | [HateCheck](HateCheck.md) |
 | `sghatecheck` | [HateCheck](HateCheck.md) |
@@ -81,6 +83,11 @@ Every source in `recipes/order`, in that order, and the page that is its glossar
 | `toxigen` | [ToxiGen](ToxiGen.md) |
 | `measuring-hate-speech` | [Measuring Hate Speech](Measuring-Hate-Speech.md) |
 | `civil-comments` | [Civil Comments](Civil-Comments.md) |
+| `chess-com` | [Games](Games.md) |
+| `twic` | [Games](Games.md) |
+| `lumbras-gigabase` | [Games](Games.md) |
+| `openings` | [Games](Games.md) |
+| `workspace-code` | [Code corpus](Code-Corpus.md) |
 
 ## Pages
 
