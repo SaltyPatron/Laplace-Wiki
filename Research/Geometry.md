@@ -204,4 +204,4 @@ PostGIS already sorts geometry by a Hilbert key of the bounding-box centre (`gse
 - [Skilling, "Programming the Hilbert curve", AIP Conf. Proc. 707, 2004](https://ui.adsabs.harvard.edu/abs/2004AIPC..707..381S), with ports in [Rust](https://github.com/paulchernoch/hilbert) and [Python](https://pypi.org/project/hilbertcurve/).
 - [Hamilton, "Compact Hilbert Indices"](https://web.cs.dal.ca/~arc/publications/2-43/paper.pdf).
 - [Haverkort, arXiv:1711.04473](https://arxiv.org/abs/1711.04473), [arXiv:1211.0175](https://arxiv.org/abs/1211.0175), and [Haverkort and van Walderveen, arXiv:0806.4787](https://arxiv.org/abs/0806.4787).
-- [Moon, Jagadish, Faloutsos, Saltz, IEEE TKDE 13(1), 2001](https://dl.acm.org/doi/10.1109/69.908985).
+- [Moon, Jagadish, Faloutsos, Saltz, IEEE TKDE 13(1), 2001](https://snu.elsevierpure.com/en/publications/analysis-of-the-clustering-properties-of-the-hilbert-space-fillin/).
