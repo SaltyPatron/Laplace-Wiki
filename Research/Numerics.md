@@ -216,14 +216,14 @@ The discrete Fréchet 0.2025 is the chord from `twenty` to `no`. Skipping that v
 - [NIST SP 800-57 Part 1 Rev. 5](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-57pt1r5.pdf).
 - [van Oorschot and Wiener, "Parallel Collision Search with Cryptanalytic Applications", J. Cryptology 12](https://people.scs.carleton.ca/~paulv/papers/JoC97.pdf).
 - [Stevens et al., "The first collision for full SHA-1" (SHAttered)](https://www.shattered.io/static/shattered.pdf).
-- [Leurent and Peyrin, "SHA-1 is a Shambles"](https://eprint.iacr.org/2020/014.pdf).
+- [Leurent and Peyrin, "SHA-1 is a Shambles"](https://github.com/BLAKE3-team/BLAKE3-specs/blob/master/blake3.pdf).
 - [CoinWarz Bitcoin hashrate](https://www.coinwarz.com/bitcoin-hashrate) and [Cryptolexicon, September 2026 difficulty](https://cryptolexicon.org/en/blog/bitcoin-difficulty-rise-hashprice-jump-september-2026/).
 - [hashcat benchmark, NVIDIA RTX 4090](https://www.onlinehashcrack.com/tools-benchmark-hashcat-nvidia-rtx-4090.php).
 - [Bringmann, "Why walking the dog takes time", arXiv:1404.1448](https://arxiv.org/abs/1404.1448).
 - [k-outlier Fréchet distance, arXiv:2202.12824](https://arxiv.org/abs/2202.12824).
 - [Driemel and Har-Peled, "Jaywalking your dog", arXiv:1107.1720](https://arxiv.org/abs/1107.1720).
 - [Shortcut Fréchet distance is NP-hard, arXiv:1307.2097](https://arxiv.org/abs/1307.2097).
-- [Chen, Özsu, Oria, "Robust and Fast Similarity Search for Moving Object Trajectories", SIGMOD 2005](https://dl.acm.org/doi/10.1145/1066157.1066213).
+- [Chen, Özsu, Oria, "Robust and Fast Similarity Search for Moving Object Trajectories", SIGMOD 2005](https://cs.uwaterloo.ca/~tozsu/publications/spatial/sigmod05-leichen.pdf).
 - [Non-learning subtrajectory search, arXiv:2307.10082](https://arxiv.org/abs/2307.10082).
 - [Trit-array trie for discrete Fréchet, arXiv:2005.10917](https://arxiv.org/abs/2005.10917).
 - [N-tree exact trajectory search, arXiv:2408.07650](https://arxiv.org/abs/2408.07650).

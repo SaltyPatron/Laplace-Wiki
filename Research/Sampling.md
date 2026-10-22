@@ -168,7 +168,7 @@ Centroids are not injective: the same multiset of points has the same centroid i
 - Anna Yershova, Swati Jain, Steven M. LaValle, Julie C. Mitchell, [Generating Uniform Incremental Grids on SO(3) Using the Hopf Fibration](https://msl.cs.illinois.edu/~lavalle/papers/YerJaiLavMit10.pdf), International Journal of Robotics Research 29(7):801–812, 2010.
 - Ricardo Marques, Christian Bouville, Mickaël Ribardière, Luís Paulo Santos, Kadi Bouatouch, [Spherical Fibonacci Point Sets for Illumination Integrals](https://people.irisa.fr/Mickael.Ribardiere/articles/2013/CGF_SF.pdf), Computer Graphics Forum 32(8), 2013.
 - Ricardo Marques et al., [Extensible Spherical Fibonacci Grids](https://doi.org/10.1109/TVCG.2019.2952131), IEEE TVCG 27(4):2341–2354, 2021.
-- Benjamin Keinert et al., [Spherical Fibonacci Mapping](https://doi.org/10.1145/2816795.2818131), ACM Transactions on Graphics 34(6), 2015.
+- Benjamin Keinert et al., [Spherical Fibonacci Mapping](https://cris.fau.de/publications/116802224/?lang=en_GB), ACM Transactions on Graphics 34(6), 2015.
 - David W. Lyons, [An Elementary Introduction to the Hopf Fibration](https://nilesjohnson.net/hopf-articles/Lyons_Elem-intro-Hopf-fibration.pdf), Mathematics Magazine 76(2), 2003.
 - Matt Pharr, Wenzel Jakob, Greg Humphreys, [Physically Based Rendering, 4th edition: Halton Sampler](https://pbr-book.org/4ed/Sampling_and_Reconstruction/Halton_Sampler).
 - [Wikipedia: Van der Corput sequence](https://en.wikipedia.org/wiki/Van_der_Corput_sequence).
