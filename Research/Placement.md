@@ -106,6 +106,6 @@ For scale, 3,000 pairs of random four-letter lowercase words have a measured mea
 ## Sources
 
 - Marc Alexa, [Super-Fibonacci Spirals: Fast, Low-Discrepancy Sampling of SO(3)](https://openaccess.thecvf.com/content/CVPR2022/papers/Alexa_Super-Fibonacci_Spirals_Fast_Low-Discrepancy_Sampling_of_SO3_CVPR_2022_paper.pdf), CVPR 2022, and the [reference implementation](https://github.com/marcalexa/superfibonacci).
-- John Skilling, [Programming the Hilbert curve](https://doi.org/10.1063/1.1751381), AIP Conference Proceedings 707, 2004.
+- John Skilling, [Programming the Hilbert curve](https://ui.adsabs.harvard.edu/abs/2004AIPC..707..381S), AIP Conference Proceedings 707, 2004.
 - Unicode Technical Standard #10, [Unicode Collation Algorithm](https://www.unicode.org/reports/tr10/tr10-53.html), revision 53, Unicode 17.0.0.
 - [Wikipedia: Van der Corput sequence](https://en.wikipedia.org/wiki/Van_der_Corput_sequence), for the radical inverse.
