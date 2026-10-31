@@ -1,16 +1,8 @@
 # Laplace-Wiki
 
-This repository is the Laplace documentation. It explains how everything at every level works.
+Laplace documentation lives in this repository. Start at [README.md](README.md).
 
-Before any Laplace work, read `README.md` and every page it lists, in full.
-
-Every documentation page in this repository is listed in `README.md`. Add a page to that list when the page is created.
-
-`Spitball.md` holds text that has not been properly considered for the documentation as a whole. Settled documentation is every other page.
-
-Pages under `Research/` hold sourced research and measured results that support the specification. They cite their sources, mark what was measured, and are not specification.
-
-Add specification text only from words the inventor supplies. A missing section stays missing until those words exist. Pages are not imported from any other tree. Status updates and reports are not pages.
+Relocated repository trees live under `Repositories/` with their original paths and contents.
 
 ## Page format
 

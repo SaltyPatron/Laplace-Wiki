@@ -1,0 +1,34 @@
+# Working on Laplace on this machine
+
+Laplace is the user's invention. On hart-server its repositories are under `/repos/src` (on HART-DESKTOP under
+`E:\Repositories\Laplace`, see below): `Laplace` (the original SaltyPatron/Laplace
+monorepo: the invention documents, decisions, specs and registries), `Laplace-Native`, `Laplace-postgres`,
+`Laplace-Engine`, `Laplace-Wiki` and `Laplace-Operations`. `/repos/src/Laplace-Operations/laplace.env` names every path,
+database and service.
+
+## Search the whole system before you answer or change anything
+
+The `code-search` MCP server indexes every one of those repositories: code, SQL, recipes and docs. Use it first.
+
+- `search(query, k, scope, repo)`: the most relevant chunks across all repositories, reranked, with file and lines.
+  `scope` is `all`, `code` or `prose`; `repo` limits it to one directory, such as `Laplace` or `Laplace-Engine`.
+- `reindex(paths)`: bring given files (or, without paths, every changed file) up to date. The `code-search-watch`
+  service already reindexes files a few seconds after they change, so this is rarely needed.
+
+Before answering a design question, or editing schema, Engine, recipe or Operations code:
+
+1. Search for the concept in the user's own design (the monorepo's `docs/`, `docs/decisions/`, `engine/manifest/`)
+   and in the current code, with several phrasings. Read what comes back.
+2. Answer from what the documents and code say, with file and line references. One `grep` is not a search, and one
+   file is not the system: check how the piece connects to the rest before narrowing to it.
+3. Use the user's own names for things (tables, columns, concepts), never names you make up.
+4. Text in `Laplace-Wiki` may have been written by earlier AI sessions. Do not present it as the user's words; where it
+   conflicts with the monorepo or the user, ask.
+
+The vectors are in Qdrant on hart-server (localhost:6333 there); the embedding and reranking models are served from
+HART-DESKTOP at 192.168.1.3. `README.md` has the services, tools and how to register the server. On HART-DESKTOP the
+repositories are under `E:\Repositories\Laplace` (`run.cmd`), and a search fails with a refused connection on
+`127.0.0.1:8711` when the model services are not running.
+
+`CODESEARCH_KEY` (the services' key) has no default and nothing starts without it: on hart-server it is in
+`~/.config/code-search/env`, read by `run` and the service; on HART-DESKTOP it is a user environment variable.

@@ -11,5 +11,5 @@
     "MD004": { "style": "dash" }
   },
   "globs": ["**/*.md"],
-  "ignores": ["CLAUDE.md", ".site-src/**", "site/**", ".venv/**", "node_modules/**"]
+  "ignores": ["CLAUDE.md", "Repositories/*/**", ".site-src/**", "site/**", ".venv/**", "node_modules/**"]
 }
