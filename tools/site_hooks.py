@@ -35,6 +35,7 @@ def _sources():
         rel = path.relative_to(ROOT)
         if (
             path.is_file()
+            and not (rel.parts[0] == "Repositories" and len(rel.parts) > 2)
             and not any(part.startswith(".") or part in check_wiki.SKIP_DIRS for part in rel.parts)
             and not (rel.parent == Path(".") and (rel.name in NOT_COPIED or rel.suffix != ".md"))
         ):

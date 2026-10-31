@@ -41,6 +41,9 @@ FENCE_RE = re.compile(r"^(```|~~~)")
 def markdown_files():
     for path in sorted(ROOT.rglob("*.md")):
         rel = path.relative_to(ROOT)
+        # Relocated trees retain their original formatting and references.
+        if rel.parts[0] == "Repositories" and len(rel.parts) > 2:
+            continue
         if not any(part in SKIP_DIRS for part in rel.parts):
             yield rel
 
