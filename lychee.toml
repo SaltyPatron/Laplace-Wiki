@@ -1,5 +1,0 @@
-# Give slow scholarly sites a bounded retry without accepting error statuses.
-timeout = 60
-max_retries = 3
-retry_wait_time = 2
-max_concurrency = 8
