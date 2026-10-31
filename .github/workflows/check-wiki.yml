@@ -25,6 +25,8 @@ jobs:
 
   site:
     name: Site builds
+    # Main is built and checked by pages.yml before publication.
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
