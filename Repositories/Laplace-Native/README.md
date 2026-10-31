@@ -22,7 +22,7 @@ Engine, PostgreSQL and monorepo adapters call these owners.
 
 | Layer | Shared interface | What varies at the caller |
 | --- | --- | --- |
-| Unicode floor | `lp_utf8_next`, `lp_id_codepoint`, `lp_tier0_at/find` | UTF-8 input or a scalar/ID; the validated mapped cache |
+| Unicode floor | `lp_utf8_next`, `lp_id_codepoint`, `lp_tier0_at/find` | Generalized UTF-8 input or a codepoint/ID; all 1,114,112 codepoints, including surrogates, in the validated mapped cache |
 | Ordered identity | `lp_id_compose`, `lp_id_compose_runs` | Contiguous children or a run reader; exact expanded count |
 | Ordered occurrence pairs | `lp_id_run_pairs` | Compressed positive runs, offset range, multiplicity callback; no codec or vocabulary policy |
 | DAG dependency order | `lp_dag_levels` | Indexed child reader and edge distance; ordinary depth or barriers between transaction owners |
