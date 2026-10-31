@@ -10,7 +10,7 @@ model-export consumer checks. Historical measurements remain in
 - `rebuild.sh` forwards explicit binaries, caches and a test database to that runner.
 - [models/README.md](models/README.md) describes native CPU model consumers,
   tensor/state verification and runtime measurements.
-- `tier0/fingerprint.txt` identifies the canonical scalar cache.
+- `tier0/fingerprint.txt` identifies the canonical complete codepoint cache.
 
 Generate Tier-0 with the installed native Engine and existing local Unicode data:
 
@@ -19,8 +19,8 @@ laplace tier0 -u E:\Data\Ingest\UCD -o E:\Data\Laplace\work\tier0\tier0.bin
 ```
 
 The Native owner defines Unicode ordering, CORE-MATH projection, exact fixed-point
-quantization and cache validation. The cache contains 1,112,064 Unicode scalar
-records, sorted by content ID. The removed Python coordinate generators,
+quantization and cache validation. The cache contains 1,114,112 Unicode codepoint
+records, including all 2,048 surrogate codepoints, sorted by content ID. The removed Python coordinate generators,
 and independent prototype ingester/schema are available in Git history; they are
 superseded by Native, Engine and the production PostgreSQL extension.
 
