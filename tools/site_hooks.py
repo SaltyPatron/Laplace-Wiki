@@ -16,6 +16,7 @@ import os
 import shutil
 import sys
 from pathlib import Path
+from urllib.parse import quote
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import check_wiki  # noqa: E402
@@ -35,6 +36,7 @@ def _sources():
         rel = path.relative_to(ROOT)
         if (
             path.is_file()
+            and not (rel.parts[0] == "Repositories" and len(rel.parts) > 2)
             and not any(part.startswith(".") or part in check_wiki.SKIP_DIRS for part in rel.parts)
             and not (rel.parent == Path(".") and (rel.name in NOT_COPIED or rel.suffix != ".md"))
         ):
@@ -106,6 +108,17 @@ def _list(paths_titles, here):
 
 def on_page_markdown(markdown, page, config, files):
     rel = Path(page.file.src_path)
+    if rel == Path("Repositories/README.md"):
+        def repository_link(match):
+            href = match.group(1)
+            if ":" in href or href.startswith("#"):
+                return match.group(0)
+            kind = "tree" if href.endswith("/") else "blob"
+            url = f"https://github.com/SaltyPatron/Laplace-Wiki/{kind}/main/Repositories/{quote(href)}"
+            start, end = match.start(1) - match.start(), match.end(1) - match.start()
+            return match.group(0)[:start] + url + match.group(0)[end:]
+
+        markdown = check_wiki.LINK_RE.sub(repository_link, markdown)
     extra = []
 
     # A section page lists its child pages, as the README.md catalog does.

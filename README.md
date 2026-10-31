@@ -6,10 +6,11 @@ This repository is the Laplace documentation. It explains how everything at ever
 
 Read it online at <https://saltypatron.github.io/Laplace-Wiki/>.
 
-Every page in this repository is listed below. Read every listed page in full.
+The page tree below covers the Wiki pages. [Repository documentation](Repositories/README.md) holds the relocated repository trees.
 
 ## Pages
 
+- [Repository documentation](Repositories/README.md) — Documentation relocated from the implementation repositories is grouped here by its original repository and path.
 - [Architecture](Architecture.md) — Laplace is native C, with SQL and C# as orchestration.
 - [Sequence](Sequence/README.md) — Laplace is built in one order, and each stage is impossible without the one before it: Unicode onto the S³, tier 0, the registries and perf-caches, the store, sources through recipes into content, attestations, consensus, indexes, the web, authority, the compute envelope, the firmware, the forward program, sessions, and only then a user, whose consequences feed the learning loop that models, export, code, chess, and games all run on.
   - [1. Unicode](Sequence/Unicode.md) — the first operations fix one Unicode version and read every file tier 0 and segmentation are built from.
