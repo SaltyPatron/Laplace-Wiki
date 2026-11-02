@@ -1,12 +1,18 @@
 # Existing host repair
 
 The desktop modular browser has its own IIS publication declaration:
-`hart-desktop-modular-web.json`. From an elevated desktop operator shell, run
-`pwsh -File installation/Publish-ModularWeb.ps1` to build, activate and verify
+`hart-desktop-modular-web.json`. Run
+`laplace-ops deploy -Target desktop -Components modular-web` to build, activate and verify
 `https://dev.hartonomous.com/modular/` without switching the mono release.
 Receipts live under `E:/Data/Laplace/work/operations/modular-web`. The application
-uses the installed same-origin identity service; its current substrate screens
-are explicitly labelled captured data. See `Laplace-MCP/web/README.md`.
+uses the installed same-origin identity service and native live reads. Routine
+publication grants the existing IIS application identity read/execute on each
+selected operator-owned Native release and records that grant in its receipt.
+It uses the provisioned stable IIS host without elevation. The initial
+`Initialize-ModularWeb.ps1` provisions IIS, SSPI and ACL state as the elevated
+declared operator. Each immutable web package freezes its installed native
+resources; storage retention protects the active and previous package closures.
+See [Modular browser application](../../Laplace-MCP/web/README.md).
 
 From the updated Operations checkout on hart-server:
 

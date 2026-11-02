@@ -11,16 +11,25 @@ Identity discovery, Google/Microsoft challenges and session reads
 use the installed same-origin `/v1/auth` service. OAuth callbacks remain on that
 identity service; no provider secrets or service bearer tokens enter this host.
 
-Home and Sources discover stored source/file trunks from the native kind bank
-on physicality, independently of the witness registry. The source's ordered
-file collection comes from its actual content path. Library lookup includes
-mixed resource projections by default; optional kind/tier facets filter the
-returned collection. Canonical-ID links resolve live details. Physicalities
+Knowledge opens with a search workspace. Content lookup reads the canonical
+entity, assertions and containing structures; observed continuation reads run
+alongside it for text input. Both contribute to one result collection. A failed
+method is reported independently while successful results remain usable.
+Visible kind, tier and match-method checkboxes combine values within a facet
+and intersect different facets over the returned collection. Details lead with
+content and assertions; storage metadata is available under read scope.
+
+Source discovery is available from evidence inspection. It reads stored
+source/file trunks from the native kind bank on physicality, independently of
+the witness registry. The source's ordered file collection comes from its actual
+content path. Sources and knowledge use master/detail, with selection, filters
+and page retained in the address. Detail reads do not replace the collection's
+resource projections. Canonical-ID links resolve live details. Physicalities
 retain repeated ordered positions and stored vertex annotations. Attestation
 rows and bounded structural ancestry are separate views. A registry row adds
 metadata; it does not define the witness trunk's existence.
 
-The thin browser API exposes `GET api/library`, `api/catalog`, `api/lookup?q=`,
+The thin browser API exposes `GET api/library`, `api/catalog`, `api/lookup?q=`, `api/continuations?q=`,
 `api/resources/{id}`, `api/provenance/{id}`, `api/sources`, `api/surface`, and
 `POST api/operations/{embeddings|forward|shape}`. Only these explicit read
 operations are forwarded; arbitrary filesystem/shell/ingestion routes are not.
@@ -46,22 +55,30 @@ The installed identity service is intentionally shared during coexistence. This
 is not a standalone identity deployment; removing mono requires replacing that
 explicit dependency with the equivalent shared identity service first.
 
-Deploy through the Operations-owned declaration and publisher:
+Initial host provisioning uses the elevated declared desktop operator once:
 
 ```powershell
 pwsh -File ../Laplace-Operations/installation/Initialize-ModularWeb.ps1
-pwsh -File ../Laplace-Operations/installation/Publish-ModularWeb.ps1
+```
+
+Routine publication runs without elevation:
+
+```powershell
+laplace-ops deploy -Target desktop -Components modular-web
 ```
 
 The publisher builds outside the source tree, creates an immutable release,
-grants declared operator and pool access, activates only the modular IIS
-application, verifies native read-only database scope and a live lookup, checks
-mono health, and writes a deployment receipt. Initial provisioning grants the
-dedicated SSPI role read access; it does not seed/reset substrate data. IIS
-configuration needs elevation. The mono release stays independently owned.
+updates the stable host's application configuration, verifies native read-only
+database scope and live reads, checks mono health, and writes a receipt. It uses
+the installed modular client's native binary and cache closure. Each web release
+freezes its native resource selection; storage retention protects resources used
+by the active and previous web releases. Repeating an unchanged publication
+reuses the release and does not restart its host. `Publish-ModularWeb.ps1
+-PrepareOnly` builds and verifies a package without activation.
 
-The child pool needs read access to the parent site's configuration. Publication
-grants read access to the parent web directory and its immediate files, without
+Initial provisioning creates the stable IIS application, the dedicated read-only
+SSPI identity and pool access. The child pool needs read access to the parent
+site's configuration. Provisioning grants access to that directory and immediate files, without
 inheriting into the mono releases or runtime state. The child inherits the
 installed parent ANCM handler and supplies its own process configuration.
 
@@ -71,6 +88,11 @@ Verify the deployed IIS URL with:
 node web/checks/iis.mjs
 ```
 
+`node web/checks/collections.mjs` runs isolated browser interaction fixtures for
+multi-select filters, collection/detail navigation, paging, keyboard focus,
+Back/reload, responsive navigation and failed-read recovery. These fixtures do
+not prove installed native or database behavior.
+
 The check uses the workspace's existing Playwright/axe development tools by
 default. `LAPLACE_BROWSER_CHECK_PACKAGE` can select another package containing
 those tools; no browser tooling is a dependency of the deployed application.
@@ -78,7 +100,8 @@ It verifies both configured provider challenges without logging their state,
 nonce or cookies. Human provider consent and authenticated callback completion
 are separate acceptance steps.
 
-The browser check begins at a fresh Home with no IDs or queries. It follows
-source/file controls, direct reload and Back, enters search through the form,
-inspects structure/evidence/ancestry, saves notes, downloads a real response,
-runs an operation, and checks mobile and recoverable read failure states.
+The browser check begins at Knowledge with no IDs or queries, enters search
+through the form, inspects assertions and their optional provenance, follows
+source/file controls, checks reload and Back, saves notes, downloads the selected
+readback and runs a contextual calculation. It also checks mobile and recoverable
+read failure states.
