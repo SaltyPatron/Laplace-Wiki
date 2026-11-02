@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   lychee:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, laplace, Laplace-Wiki]
     steps:
       - uses: actions/checkout@v7
       - id: lychee
