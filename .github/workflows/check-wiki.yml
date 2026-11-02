@@ -8,7 +8,7 @@ on:
 jobs:
   catalog:
     name: Catalog and links
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, laplace, Laplace-Wiki]
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
@@ -18,7 +18,7 @@ jobs:
 
   markdownlint:
     name: Markdown style
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, laplace, Laplace-Wiki]
     steps:
       - uses: actions/checkout@v7
       - uses: DavidAnson/markdownlint-cli2-action@v24
@@ -27,7 +27,7 @@ jobs:
     name: Site builds
     # Main is built and checked by pages.yml before publication.
     if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, laplace, Laplace-Wiki]
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7

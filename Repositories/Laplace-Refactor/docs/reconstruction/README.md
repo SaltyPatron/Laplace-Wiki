@@ -68,6 +68,8 @@ Research and documentation proceed in this order so the reconstruction cannot be
 - `08_PRODUCT_INFORMATION_WORLDS.md` — faceted sports/reference-style information worlds, domain-native realization, entity-first acquisition and operator/admin separation.
 - `09_PHYSICALITY_MODALITY_GEOMETRYZM.md` — modality-derived physicality, full GeometryZM carrier family, live `coord` versus packed trajectory/address payload and typed structural metrics.
 - `10_HARTONOMOUS_EVOLUTION_2025.md` — dated transition from D&D/agent factory through deterministic substrate, database-centric unified knowledge fabric, spatial/geometric turn and Dec-13 PostgreSQL/PostGIS convergence; superseded historical claims remain explicitly marked.
+- `11_UI_IMPLEMENTATION_CONFORMANCE.md` — implemented reader behavior, evidence boundaries and remaining information-world requirements.
+- `12_SEARCH_SURFACE_AUDIT.md` — browser discovery, finite filtering, direct addressing and explicit calculation contracts, including unresolved shared-query work.
 
 Next dossiers are blocked on explicit primary-source passes rather than being filled from inference: original-Laplace invention chronology; machine ontology/state classes; evidence/standing; whole-observation cognition; realization/conversation; model/AImap/target compilation; full product acceptance; exact current implementation conformance.
 

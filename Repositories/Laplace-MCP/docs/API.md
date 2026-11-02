@@ -59,7 +59,9 @@ The browser-oriented read extensions are additive:
   table counts and observation time. `registered_witness_rows` counts registry
   rows only, not all source trunks in the DAG.
 - `search` accepts `display:true` for bounded Native-rendered labels and trunk
-  metadata. `recorded` distinguishes a computed identity from stored content.
+  metadata. `recorded` reports database recording; canonical cache content can
+  be present without a database row. `storage` distinguishes `database`,
+  `tier0-cache`, `highway-cache`, `computed` and `unresolved`.
   Physicality rows include their mask string and original vertex annotations
   alongside expanded constituent IDs. Labels are display projections.
 
@@ -69,26 +71,41 @@ direct UTF-8 resolve to the same canonical identity.
 
 `POST /v1/search` with `{"input":"Sherlock Holmes"}` or `{"id":"d91895c654f33a108a63bb64f10ca69f"}`.
 
-The string is named here. The database is then called with that one ID:
+The string is named by Native. Root and first-level member identities are read
+through the Engine reader's `holds_above`, `attested`, `paths_of` and `tiers_of`
+operations. The response retains root calculation, physicalities, claims,
+containing structures, attestations and per-member reads separately.
 
-- `laplace_containers(ARRAY[id], '{}')` returns every path that holds it, with its tier and whether mask bit 0 is set (a claim).
-- `laplace_claims(ARRAY[id], 64, '{}', '{}')` returns the claims that hold it, with rating, deviation, volatility, and matches.
+`discovery` declares `schema: "laplace-discovery/v1"`, `query_kind` (`text` or
+`id`), `root_present`, `members_complete`, `scope: "returned-read"` and
+`matches`. Only known database or selected canonical-cache content appears in
+matches. A calculated root can have an ID, coordinate and decomposition while
+being absent from discovery matches. Known members and their recorded relations
+remain available even when that complete root has not been recorded.
 
-Through nginx, `POST /mcp` with `{"op":"search","input":"Sherlock Holmes"}` returned the same ID and six containers and three claims. The three claims are the WordNet records: part of speech noun, the lexical entry, and the sense. Ratings on this database were 1575.95, deviation 176.20, volatility 0.060, one match each.
+Each match includes `id`, `tier`, `match` (`exact` or `member`), `recorded`,
+`storage` and `stored_tier`. Member matches add `via` (the query root ID) and
+zero-based `ordinal`. Repeated equal members retain separate query positions.
+These positions describe the query decomposition; they are not stored witness
+occurrences, and their count is not a witness count. Canonical ID input is
+normalized to lowercase hexadecimal.
 
-`{"text":true}` adds `laplace_text` of each returned entity, cut at 400 characters. Without it, the rows are IDs and standings.
+Text and cache decomposition return at most 64 first-level parts.
+`parts_total`, `parts_complete` and `discovery.members_complete` expose that
+bound. An incomplete prefix does not establish that later members are absent.
+Stored physicalities and containing paths retain their own returned order.
+`fan`, when positive, caps claims and containing structures for each read;
+omitting it returns the available rows. This response is not a global ranked
+collection, a snapshot cursor or a complete semantic discovery protocol.
 
-Measured on this machine, 2026-10-03, against the loaded `laplace` database (13,764,010 entities at the start of the measurement):
+`GET /v1/schema` returns each selected Highway bank's layout and its canonical
+`values: [{slot, id, label}]`. Slot and identity come from that frozen Highway
+generation. This enumerates governed mask values; it does not declare global
+search predicates, facet counts or operators that the endpoint does not implement.
 
-| Call | Time |
-|---|---|
-| Identity, tier 0 already mapped | 0.020–0.288 ms |
-| `laplace_containers` alone, earlier `EXPLAIN ANALYZE` | 3.96 ms execution, 408 cached pages, 6 rows |
-| This endpoint, containers and claims together, in `psql` | 244 ms |
-| The same endpoint on the service | about 205–255 ms |
-| The same with `laplace_text` rendered | about 210–300 ms |
-
-The per-partition GIN probes in an unpruned scan of `physicality` were a few microseconds each. The plan that appends every partition, and the claims read joined to consensus, are what the caller waits on. This endpoint does not claim a microsecond response.
+`tests/read-snapshot.py` verifies this contract against a disposable database,
+including unrecorded phrase roots, recorded repeated members, cache-only
+content, bounded prefixes and HTTP/MCP parity.
 
 ## Shape
 

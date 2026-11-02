@@ -4,8 +4,8 @@ This file distinguishes delivered browser read workflows from full product accep
 
 ## Live IIS read workflows
 
-- A fresh Home discovers actual stored source/file trunks without a prepared query or identifier. Source hierarchy and ordered files are navigable from visible controls.
-- Home, Library, Research, Sources, Workbench and Exports render at desktop and mobile widths.
+- Knowledge opens with combined content/assertion/containment/continuation search. Source hierarchy and ordered files are available through evidence inspection.
+- Knowledge and local Research render at desktop and mobile widths. Calculation and download controls act on selected read context.
 - Query, kind/tier filters, selected resource and selected view survive reload and browser Back/Forward.
 - A child, claim, physicality, assertion or source reference opens through shared resource detail. Following a link retains lookup context.
 - Ordered constituent positions preserve repeated equal identities. Unknown labels and unavailable standing stay explicit.
@@ -16,6 +16,19 @@ This file distinguishes delivered browser read workflows from full product accep
 - Sign-in controls discover the installed identity service and produce real provider challenges. No account consent or payment completion is simulated.
 - Explicit native read operations execute through browser forms. Failed reads stay distinct from empty results and can recover.
 - Keyboard access, dialog focus, contextual titles, accessible names, contrast and responsive layout are checked with Playwright and axe. No uncaught exceptions, missing local files or page-wide horizontal overflow.
+
+These checks are bounded read and presentation acceptance. They do not establish the information-world contract or whole-product completion.
+
+## Information-world acceptance
+
+- A shared context carries observation/subject, competing interpretations, domain/type, relation identity/direction/roles, occurrence/structure, standing measure/arena, event/time/epoch, evidence/dependence, realization, authority/work and research/action state.
+- Users enter and pivot through those dimensions as peers. Entry does not require source knowledge or internal tool selection. Inapplicable constraints are reported rather than silently discarded.
+- Domain-native realizations share references and operations: sports/reference subjects, chess player/game/board, language/sense/frame/role, document/spans, code/declarations and a nontext modality. A single generic inspector cannot satisfy this requirement.
+- Cross-domain paths retain context: player → game → opening → another player; surface → sense → taxonomy/frame/role → usage; code declaration → caller/callee → recorded repair; subject → claim → testimony → source → another subject.
+- Search methods, filters and execution dials compose in the query model. Filter semantics and result/read scope are explicit. No query controls or domain capabilities disappear when navigation is reorganized.
+- Related collections, ranking, grouping, comparison, timeline and structure are addressable projections. Their state survives reload and pivots.
+- Acquisition, conversation, computation, construction, realization and export execute against selected context and retain their real receipts. Missing backend contracts remain open acceptance items.
+- Independent acceptance covers the whole model and domain realizations. A successful lookup, checkbox test or deployment cannot substitute for it.
 
 ## Identity and authority: required live acceptance
 

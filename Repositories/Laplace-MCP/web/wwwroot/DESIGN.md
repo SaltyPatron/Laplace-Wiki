@@ -10,6 +10,35 @@ The master/detail analogy describes interaction continuity and shared model-deri
 
 The invention determines scope. Today's endpoints determine which contracts need implementation. Missing capabilities are engineering work, not permission to erase a product requirement.
 
+The governing product corrections are [R-008 through R-016](../../../Laplace-Refactor/docs/reconstruction/03_CORRECTIONS_LEDGER.md) and the [information-world model](../../../Laplace-Refactor/docs/reconstruction/08_PRODUCT_INFORMATION_WORLDS.md). A successful search/inspector delivery establishes those particular reads. It does not establish this product contract.
+
+## Information-world contract
+
+An information world has a shared, addressable context. Entry and pivot dimensions are peers; no word lookup, source tree, storage tier or domain hierarchy is its mandatory root. The current center may be an exact observation, a candidate set, an entity, an occurrence, a relation, an arena or another declared subject. A natural-language observation remains whole before any focus is selected.
+
+| Coordinate | Required behavior |
+| --- | --- |
+| Subject and interpretation | Keep the observation, candidate identities, competing readings, selected centers and unresolved obligations distinct. |
+| Domain/world and type | Enter through domain-native subjects or discovered type/class/noun facets. Types come from declared state and evidence. |
+| Relation | Retain canonical relation identity, direction, ordered roles and context. N-ary claims retain all members. |
+| Occurrence and structure | Preserve parent, selected physicality/path, position, run and ordinal. Repeated equal content remains individually addressable. |
+| Standing and ranking | Name the arena and measure; retain rating, deviation, uncertainty, witness breadth and dependence separately. Sorting does not invent a universal importance score. |
+| Time and epoch | Carry the actual event/observation/version boundary. A timestamp on a read is not a historical data snapshot. |
+| Evidence and source | Support dependence, contradiction, testimony and origin as applicable scopes and drill-throughs. Source selection is optional for ordinary discovery. |
+| Realization | Choose applicable domain, text, code, game, spatial or media presentation while retaining the same content identity and context. |
+| Authority and work | Server-derived principal/workspace grants, accessible content and compute envelope remain independent. A URL cannot grant access. |
+| Research and action | Preserve selection, comparison, navigation trail, saved work, operation inputs, receipts and applicable acquisition/construction/export state. |
+
+A pivot is a typed transition over this context. It changes its declared coordinates, retains other applicable coordinates and explicitly reports constraints that cannot carry forward. Following a player to a game, a meaning to a role, or a claim to its source must not silently discard the query, scope, comparison or time boundary.
+
+Collection, relation, ranking, timeline, structure, comparison and domain realization are projections of this context. They use the same references and query contracts. Registered renderers determine presentation; route names and current database tables do not determine product ontology. A chess game needs a replayable board and move trajectory; a document needs readable content and spans; code needs declarations and navigable structure; media needs its native presentation. A generic record table is a fallback rather than completion of those renderers.
+
+Operation availability is discovered against the same selected context. Acquisition, conversation, calculation, construction, realization and export name their real input/output contracts, applicable authority and work, progress, obligations and receipts. A raw tool response or disabled placeholder does not establish an implemented workflow.
+
+Current contract gaps include full discovery of facet values/operators, global filtered collections, snapshot-bound paging, stable occurrence addressing, complete relation/arena/time context, batch resource reads, private research persistence, entity-first acquisition, construction and attributed synthesis. These remain required engineering work. Existing read adapters must expose their exact supported boundary and preserve unsupported requirements in the conformance inventory.
+
+The [implementation conformance inventory](../../../Laplace-Refactor/docs/reconstruction/11_UI_IMPLEMENTATION_CONFORMANCE.md) maps current reads and transitions to the outstanding product requirements.
+
 ## Product organization
 
 | Area | User purpose | Shared resources and operations |
