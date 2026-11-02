@@ -3,6 +3,12 @@
 Semantic search over the Laplace repositories for coding agents: an MCP server (stdio) with two tools, backed by
 Qdrant and local llama.cpp embedding and reranking servers.
 
+> [!IMPORTANT]
+> Historical implementation, superseded by Laplace-MCP. Do not register this
+> service for a current Laplace installation. Use the deployed authenticated
+> HTTP endpoint described in the [Laplace-MCP API](../Laplace-MCP/docs/API.md#deployed-clients).
+> The commands and configuration below are retained as implementation history.
+
 ## How a search works
 
 Files are cut into chunks of up to 60 lines (6 lines overlap, at most 900 tokens by the embedding model's own

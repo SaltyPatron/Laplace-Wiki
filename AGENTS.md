@@ -2,7 +2,7 @@
 
 Laplace documentation lives in this repository. Start at [README.md](README.md).
 
-Relocated repository trees live under `Repositories/` with their original paths and contents.
+Relocated repository documentation lives under `Repositories/` with its original paths. Keep active operational guides aligned with their owning code and verified installations; preserve invention documents, research and historical reports, and label superseded setup examples rather than presenting them as current instructions.
 
 ## Page format
 

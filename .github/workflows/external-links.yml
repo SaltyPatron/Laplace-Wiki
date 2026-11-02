@@ -22,8 +22,20 @@ jobs:
           args: --no-progress --exclude-path .site-src --exclude-path site --exclude-path Repositories "./**/*.md"
           fail: false
       - if: steps.lychee.outputs.exit_code != 0
-        uses: peter-evans/create-issue-from-file@v6
-        with:
-          title: Broken external links
-          content-filepath: ./lychee/out.md
-          labels: links
+        name: Maintain one external-reference issue
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          report=./lychee/out.md
+          test -s "$report"
+          printf '\n[Workflow evidence](%s/%s/actions/runs/%s)\n' "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" >> "$report"
+          title='External link verification'
+          issue=$(gh issue list --state open --label links --search '"External link verification" in:title' --limit 1 --json number --jq '.[0].number // empty')
+          if [[ -n "$issue" ]]; then
+            gh issue edit "$issue" --title "$title" --body-file "$report"
+          else
+            gh issue create --title "$title" --body-file "$report" --label links
+          fi
