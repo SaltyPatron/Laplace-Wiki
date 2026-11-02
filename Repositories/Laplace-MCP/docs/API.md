@@ -172,7 +172,7 @@ A proof file `/tmp/lpm-api-proof.txt`, one line `Sherlock Holmes kept his pipe o
 
 `GET /health` answers without the database.
 
-Served now: embeddings, rerank, code_search, reindex, code_where, code_callers, code_callees, sources, ingest_status, file_outline, recipe_plan, search, forward, shape, ingest, hop, text, translate, pull, degrees, surface, health. `hop`, `text`, `translate`, `pull` and `degrees` run the engine command of that name on `input` (`translate` also takes `from` and `to`; `degrees` takes `other`) and return its exit code and log.
+Served now: library, catalog, provenance, schema, embeddings, rerank, code_search, reindex, code_where, code_callers, code_callees, sources, ingest_status, file_outline, recipe_plan, recipe_catalog, search, forward, shape, ingest, hop, text, translate, pull, degrees, surface, health. `hop`, `text`, `translate`, `pull` and `degrees` run the engine command of that name on `input` (`translate` also takes `from` and `to`; `degrees` takes `other`) and return its exit code and log. HTTP routes and MCP tools are separate catalogs; `/v1/surface` and `tools/list` describe their respective installed surfaces.
 
 Engine commands that are not a route here: tier0, flags, highway, deploy, forget, sweep, index, structure, tree, turn, fills, status, bench, model; `sources` is read from the database rather than run. `hop` is the engine's program over the same container and claim reads search calls. `fills` in the engine is containers, then `lp_follows` for the exact run, then a parent walk through `laplace_fills`. `laplace_fills` by itself is that parent walk, so this service does not expose it as "what follows."
 
