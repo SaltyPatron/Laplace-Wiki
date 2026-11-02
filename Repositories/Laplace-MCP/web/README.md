@@ -8,8 +8,10 @@ The small .NET host serves browser assets, public runtime configuration and a
 health endpoint. It implements no substrate semantics and does not connect to
 PostgreSQL. A packaged native reader connects to the declared modular database.
 Identity discovery, Google/Microsoft challenges and session reads
-use the installed same-origin `/v1/auth` service. OAuth callbacks remain on that
-identity service; no provider secrets or service bearer tokens enter this host.
+use the installed same-origin `/v1/auth` service. OAuth callbacks and provider
+secrets remain on that identity service. The separate MCP endpoint accepts the
+caller's existing bearer credential for server-side verification; it is not
+stored or delivered to browser assets.
 
 Knowledge opens with a search workspace. Content lookup reads the canonical
 entity, assertions and containing structures; observed continuation reads run
@@ -81,6 +83,38 @@ SSPI identity and pool access. The child pool needs read access to the parent
 site's configuration. Provisioning grants access to that directory and immediate files, without
 inheriting into the mono releases or runtime state. The child inherits the
 installed parent ANCM handler and supplies its own process configuration.
+
+## Native MCP over IIS
+
+The same deployed host exposes the native MCP catalog at
+`https://dev.hartonomous.com/modular/mcp`. This is separate from the browser's
+read-only API and from the monorepo catalog at `/mcp`. Editor clients use HTTP
+with the installation's existing MCP bearer identity, not a local stdio
+launcher. The host verifies that identity through the same-origin monorepo MCP
+service, closes its verification session, and forwards authenticated JSON-RPC
+requests to its private native HTTP reader. Missing or invalid credentials are
+rejected before dispatch. The native catalog retains code search, index
+refresh, declaration/caller/callee reads, and file outlines; advertised tools
+remain subject to the installed database grants and filesystem access.
+
+The owning installation declares `native.code_roots`; editor-side environment
+variables do not configure a server process. The reader stores its workspace
+index in its own declared writable state. Normal browser reads have a
+45-second request budget; native MCP calls have a bounded 300-second budget
+to include cold loading of the workspace index.
+
+Publication verifies the native catalog and a real authenticated code search
+before migrating the owned VS Code `laplace-code` entry to this HTTP endpoint.
+The resulting entry has no `command`, `args` or `env`, preserves unrelated MCP
+servers, and reuses the existing same-origin credential. Publication refuses
+to redirect that credential to another origin.
+
+`health.reader` reports the native reader's PID, parent PID, start time and
+executable digest without returning its private token. Desktop client inventory
+matches those values against the deployed release and observed IIS parent.
+This distinguishes a verified service-owned reader from an interactive CLI or
+stdio client while retaining its native release. Unknown or mismatched process
+identity still leaves inventory unverifiable and retirement blocked.
 
 Verify the deployed IIS URL with:
 

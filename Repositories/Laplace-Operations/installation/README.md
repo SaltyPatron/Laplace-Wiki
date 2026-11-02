@@ -12,7 +12,20 @@ It uses the provisioned stable IIS host without elevation. The initial
 `Initialize-ModularWeb.ps1` provisions IIS, SSPI and ACL state as the elevated
 declared operator. Each immutable web package freezes its installed native
 resources; storage retention protects the active and previous package closures.
+The native code MCP is served at `https://dev.hartonomous.com/modular/mcp`.
+Publication verifies its catalog and an authenticated code search before
+migrating the owned editor client to HTTP. It does not configure a stdio
+launcher or create a runner on the development machine. Service-reader inventory
+uses the installed release's live PID, parent, start time and binary digest;
+unidentified processes remain a retention blocker.
 See [Modular browser application](../../Laplace-MCP/web/README.md).
+
+The desktop UCI connector also keeps a stable IIS host directory. Setup owns
+the physical path, pool, identities and permissions; ordinary publication
+selects an immutable connector release through the host's launch configuration,
+verifies HTTPS assembly identity and authenticated WebSocket engine behavior,
+and restores the previous launch configuration on failed activation. Existing
+installations retain their provisioned host path during routine deployment.
 
 From the updated Operations checkout on hart-server:
 

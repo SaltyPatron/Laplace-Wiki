@@ -4,20 +4,54 @@ Laplace-MCP is the HTTP service in front of Laplace. A caller sends content or a
 
 The process listens on `127.0.0.1:5188`. nginx `laplace-managed` proxies `POST https://hart-server:8443/mcp` to `http://127.0.0.1:5188/mcp`. The same bodies are served on `/v1/...` directly.
 
-`LAPLACE_CONNINFO` selects the database. Unset, the process uses `host=/tmp port=5432 user=laplace dbname=laplace`.
+`LAPLACE_CONNINFO` selects the database. Deployment supplies the selected connection and resource closure; callers must not depend on development-machine or libpq defaults.
 
 Nothing about the machine is compiled in but a default. The process reads, from its environment (the unit takes the machine's `/etc/laplace/machine.env` when there is one):
 
 | Name | What | Unset |
 |---|---|---|
 | `LAPLACE_MCP_HOST`, `LAPLACE_MCP_PORT` | the address and port `lpm serve` listens on; `lpm serve HOST PORT` still wins | `127.0.0.1`, `5188` |
-| `LAPLACE_CONNINFO` | the database | `host=/tmp port=5432 user=laplace dbname=laplace` |
+| `LAPLACE_CONNINFO` | the selected database connection | must be supplied by the owning installation |
 | `LAPLACE_ENGINE` | the engine program the routes run | `$LAPLACE_BUILD/Laplace-Engine/icx-release/laplace`, or `/repos/build/...` without `LAPLACE_BUILD` |
 | `LAPLACE_GRAMMARS` | the directory of compiled tree-sitter grammars | `/repos/build/grammars` |
 
 It is built as the engine is (`CMakeLists.txt`): Laplace-Native as part of it, with icx under the floating-point contract and laplace-math, and the engine's reader (`read.c`, `pg.c`) from `LAPLACE_ENGINE_SRC` (the engine's `src` beside this repository). The defaults in the table are what the build was configured with (`native/config.h.in`): the value in the environment at configure time, else the deployment target's.
 
 One process holds one database connection. `lpm serve` is that process. `laplace_mcp.py` is not.
+
+## Deployed clients
+
+Configured editor clients use the deployed authenticated HTTPS MCP endpoint,
+not an editor-launched native process. On the desktop installation:
+
+| Endpoint | Surface |
+|---|---|
+| `https://dev.hartonomous.com/modular/mcp` | native Laplace-MCP, including code search and substrate code reads |
+| `https://dev.hartonomous.com/mcp` | monorepo substrate tools; a different catalog |
+
+VS Code's native code client is:
+
+```json
+{
+  "laplace-code": {
+    "type": "http",
+    "url": "https://dev.hartonomous.com/modular/mcp",
+    "headers": { "Authorization": "Bearer <enrolled MCP credential>" }
+  }
+}
+```
+
+The placeholder is not a credential. Use the installation's existing MCP
+identity; do not put real credentials into repository examples. Other MCP
+clients, including Codex, should select the same deployed endpoint using their
+HTTP transport configuration. Do not substitute a build-tree executable.
+
+`laplace-ops deploy -Target desktop -Components modular-web` verifies the
+installed native tool catalog and a real authenticated code search before
+migrating the owned VS Code `laplace-code` entry from stdio to HTTP. It preserves
+unrelated client settings and the existing same-origin identity. Setup owns IIS
+topology, identities and permissions; ordinary deployment does not provision
+another host or CI runner. See the [modular browser and MCP host](../web/README.md).
 
 ## Who may call it
 
@@ -146,9 +180,10 @@ Specified past these routes, and not built as their own endpoints: turn, gaps, f
 
 ## MCP
 
-`POST /mcp` also speaks MCP JSON-RPC when the body contains `"jsonrpc"`. Tools: `embeddings`, `search`, `forward`, `shape`, `ingest`, `code_search`, `rerank`, `reindex`, `code_where`, `code_callers`, `code_callees`, `sources`, `ingest_status`, `file_outline`, `recipe_plan`, `hop`, `text`, `translate`, `pull`, `degrees`. `tools/list` gives each one's arguments.
+`POST /mcp` also speaks MCP JSON-RPC when the body contains `"jsonrpc"`. The native catalog exposes 24 tools: `library`, `catalog`, `provenance`, `code_search`, `code_where`, `code_callers`, `code_callees`, `ingest_status`, `sources`, `file_outline`, `recipe_plan`, `recipe_catalog`, `reindex`, `rerank`, `search`, `embeddings`, `shape`, `forward`, `ingest`, `hop`, `text`, `translate`, `degrees` and `pull`. `tools/list` is authoritative for each installed release's catalog and arguments. Database grants and installed resource access still constrain what a tool may execute.
 
-`~/.grok/config.toml` has:
+The following loopback configuration and handshake are historical direct-listener
+examples, not the current desktop editor configuration:
 
 ```toml
 [mcp_servers.laplace]
@@ -156,7 +191,7 @@ url = "http://127.0.0.1:5188/mcp"
 headers = { Authorization = "Bearer ${LAPLACE_MODULAR_MCP_TOKEN}" }
 ```
 
-`grok mcp doctor laplace` reported handshake OK, protocol 2025-11-25, 5 tools. A Grok process restricted to `laplace__search` called `search` on `Sherlock Holmes` and received the six containers and three claims. A session that was already open before `grok mcp add` does not gain the tool; `use_tool` in that session returns tool not found until a new session loads the config.
+An earlier `grok mcp doctor laplace` run reported handshake OK, protocol 2025-11-25, and 5 tools in that release. A Grok process restricted to `laplace__search` called `search` on `Sherlock Holmes` and received the six containers and three claims. These observations are not the current tool count or protocol contract. A session that was already open before `grok mcp add` does not gain the tool; `use_tool` in that session returns tool not found until a new session loads the config.
 
 ## nginx
 
@@ -189,7 +224,13 @@ Records (version 2) hold every entity with its constituents, every file with its
 
 `lpm index RECORDS PATH...` builds records from the command line, `lpm update RECORDS PATH...` brings them up to date, `lpm search RECORDS QUERY` queries them, and `lpm fetch RECORDS ID` shows an entity and its constituents.
 
-An agent on the same machine runs the server over stdio (`lpm mcp`, one JSON-RPC message per line). For example, in `~/.codex/config.toml`:
+### Optional local stdio
+
+`lpm mcp` remains available for an explicitly selected local CLI or test process,
+with one JSON-RPC message per line. It is not the configured editor integration
+and does not verify the deployed HTTP endpoint. The following Codex example
+illustrates that optional local mode only; configured editor clients use
+[deployed HTTP](#deployed-clients):
 
 ```toml
 [mcp_servers.laplace-code]
