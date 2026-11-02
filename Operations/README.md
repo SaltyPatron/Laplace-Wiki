@@ -34,7 +34,7 @@ Configured editor MCP clients use the deployed authenticated HTTP endpoints.
 Local CLI and stdio modes remain available for explicit local use and testing;
 they do not establish that the configured HTTP integration works. The native
 and monorepo MCP catalogs are separate surfaces; see the
-[native MCP client contract](../Repositories/Laplace-MCP/docs/API.md#deployed-clients).
+[native MCP client contract](https://github.com/SaltyPatron/Laplace-Wiki/blob/main/Repositories/Laplace-MCP/docs/API.md#deployed-clients).
 
 ## Completion evidence
 
