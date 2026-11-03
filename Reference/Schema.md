@@ -6,12 +6,12 @@
 
 | Table | Columns | Partitioned |
 | --- | --- | --- |
-| `entity` | `id blake3`, `tier smallint`, `coord geometry(PointZM)` (the real 4D coordinate), `hilbert bigint` | by tier: a partition for each of tiers 0 to 15 and a default one (`entity_tx`) for the tiers above; tiers 0, 2, 3, 4, 5 and 6 again 16 ways by the first hex digit of the ID |
-| `physicality` | `entity blake3`, `tier`, `hilbert`, `path geometry` (the constituents' IDs in X/Y/Z; each vertex's M its run, what it is, and, a claim in a record, how the record said it: [Physicality](../Storage/Physicality.md#physicality)), `mask bit(256)` | the same |
+| `entity` | `id blake3`, `tier smallint`, `lexical smallint`, `kind smallint`, `coord geometry(PointZM)` (the real 4D coordinate), `hilbert bigint` | 256 ways by the first byte of `id` (`entity_00`..`entity_ff`, `RANGE (id)`) |
+| `physicality` | `entity blake3`, `tier`, `hilbert`, `path geometry` (the constituents' IDs in X/Y/Z; each vertex's M its run, what it is, and, a claim in a record, how the record said it: [Physicality](../Storage/Physicality.md#physicality)), `mask bit(256)` | 256 ways by the first byte of `entity` (`physicality_00`..`physicality_ff`, `RANGE (entity)`) |
 | `witness` | `id blake3`, `lineage blake3`, `trust double precision` | |
-| `consensus` | `claim` (primary key), `rating`, `deviation`, `volatility`, `matches` | 16 ways by the first hex digit of the claim's ID, each with `fillfactor` 80 (updated in place) |
+| `consensus` | `claim` (primary key), `rating`, `deviation`, `volatility`, `matches` | 16 ways by the first hex digit of the claim's ID (`consensus_0`..`consensus_f`), each with `fillfactor` 80 (updated in place) |
 
-An ID is the extension's type `blake3`: 16 bytes, the BLAKE3 hash. Hilbert values are stored with the top bit flipped so `bigint` order is Hilbert order. The path's statistics target is 0 and the `physicality_t*` partitions take no parallel workers, as [Operations: Database](../Operations/Database.md) says.
+An ID is the extension's type `blake3`: 16 bytes, the BLAKE3 hash. Hilbert values are stored with the top bit flipped so `bigint` order is Hilbert order. The path's statistics target is 0 and the `physicality_*` partitions take no parallel workers, as [Operations: Database](../Operations/Database.md) says.
 
 ## The mask
 

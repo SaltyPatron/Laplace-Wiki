@@ -28,7 +28,7 @@ The coordinates of the bit-packed IDs in a physicality have no meaning as positi
 
 ## Partitions
 
-Partitions go by tier and by the ID hash, not by Hilbert value: remember the 4-ball against the 4-box. The Hilbert value is the 4-ball; it helps with ordering and indexing, not with partitioning. See [Research: Engine Measurements](../Research/Engine.md#partitions).
+Partitions go by the BLAKE3 ID (`entity_00`..`entity_ff` and `physicality_00`..`physicality_ff` by the first byte of the ID), not by Hilbert value and not by tier list with a default partition: remember the 4-ball against the 4-box. The Hilbert value covers only the 4-ball inside the 4-box and is used for ordering and clustering within each BLAKE3 ID partition, never for partitioning. See [Research: Engine Measurements](../Research/Engine.md#partitions).
 
 ## Centroids
 

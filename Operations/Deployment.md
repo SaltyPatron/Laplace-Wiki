@@ -9,8 +9,8 @@ A Laplace database is made, empty, by `deploy.sh` and filled by `ingest.sh`, bot
    - It holds a lock per database and leaves while an ingest of it runs. `./deploy.sh drop` drops the database first, through the role, and deploys it again, empty; the workflow does that when dispatched with `drop`.
 
 2. **Schema:** made by `CREATE EXTENSION laplace` itself (Laplace-postgres's install script).
-   - Entities and paths are list-partitioned by tier; the largest tiers are split again into 16 partitions by the first hex digit of their ID. An ID is a hash, so the partitions stay equal, and a lookup by ID prunes to one partition.
-   - Attestations and standings are partitioned 16 ways by the claim's ID.
+   - Entities and paths are range-partitioned 256 ways by the first byte of their BLAKE3 ID (`entity_00`..`entity_ff`, `physicality_00`..`physicality_ff`). An ID is a cryptographic hash, so the partitions stay equal, and a lookup by ID prunes to one partition.
+   - Standings (`consensus`) are partitioned 16 ways by the first hex digit of the claim's ID (`consensus_0`..`consensus_f`).
    - The schema also applies the planning settings for paths from [Database](Database.md#planning).
 
 3. **Ingest:** `./ingest.sh [source...]`, or the `Laplace-Ingest` workflow (dispatched, with the sources as its input).

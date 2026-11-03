@@ -75,8 +75,8 @@ PostgreSQL's defaults suit small general-purpose servers; Laplace tunes memory, 
 ### 8.10 Partition it
 
 - **In:** the tables of 8.9.
-- **Do:** list-partition entities, paths, and statistics by tier. Split the largest tiers again into 16 partitions by the first hex digit of their ID. Partitions go by the ID hash, not by Hilbert value: remember the 4-ball against the 4-box.
-- **Out:** partitions that stay equal and prune to one on a lookup by ID.
+- **Do:** range-partition `entity` and `physicality` 256 ways by the first byte of the BLAKE3 ID (`00`..`ff`), and `consensus` 16 ways by the first hex digit of the claim's ID (`0`..`f`). Partitions go by the BLAKE3 ID hash, not by Hilbert value and not by tier with a default partition: remember the 4-ball against the 4-box.
+- **Out:** partitions that stay equal and prune to one on a lookup by ID, with Hilbert ordering inside each partition.
 - **From:** [Physicality: Partitions](../Storage/Physicality.md#partitions), [Deployment](../Operations/Deployment.md), [Research: Engine Measurements: Partitions](../Research/Engine.md#partitions).
 
 ### 8.11 Make the semantics schema
