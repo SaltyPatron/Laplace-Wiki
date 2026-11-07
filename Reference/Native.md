@@ -115,12 +115,12 @@ Golden: `1500/200/0.06` against `1400/30` win, `1550/100` loss, `1700/300` loss,
 
 | Function | Contract |
 | --- | --- |
-| `lp_ref lp_ref_compose(const lp_ref *children, size_t n, uint8_t tier)` | ID from the children's, coordinate the exact average of theirs; one child is that child |
+| `lp_ref lp_ref_compose(const lp_ref *children, size_t n, uint8_t tier)` | ID from the children's, coordinate the exact average of theirs, and tier `1 + max(child.tier)` (`lp_tier_above`); one child (`n == 1`) is that child unchanged |
 | `typedef lp_ref (*lp_compose_fn)(void *sink, const lp_ref *children, uint32_t n, uint8_t tier)` | what receives every composition as it is made and returns it: the engine's node table, or NULL to compose without recording, as the database does |
 
 ## Text: text.c, laplace_text
 
-UAX #29 through ICU's break iterators: codepoint → grapheme → word segment → sentence → paragraph → text, tiers 0 to 5. Nothing is dropped, so the text recomposes byte for byte. A single line break inside a paragraph is read as a space for segmentation only; the bytes recorded are the original. One `lp_text` per thread. This is the one decomposition of text in Laplace: the engine records what it composes, the database composes without recording.
+UAX #29 through ICU's break iterators: codepoint → grapheme → word segment → sentence → paragraph → text, where `n == 1` collapses to its single child and every composition of `n >= 2` children has `tier = 1 + max(child.tier)`. Nothing is dropped, so the text recomposes byte for byte. A single line break inside a paragraph is read as a space for segmentation only; the bytes recorded are the original. One `lp_text` per thread. This is the one decomposition of text in Laplace: the engine records what it composes, the database composes without recording.
 
 | Function | Contract |
 | --- | --- |
@@ -128,7 +128,7 @@ UAX #29 through ICU's break iterators: codepoint → grapheme → word segment �
 | `lp_ref lp_text_decompose(lp_text *, const uint8_t *s, size_t n, lp_compose_fn compose, void *sink)` | the text's trunk |
 | `lp_ref lp_text_parts(lp_text *, const uint8_t *s, size_t n, lp_ref *parts, size_t cap, size_t *nparts)` | the same, also the trunk's own constituents in order, repeats included; a trunk that is one codepoint has itself as its only part |
 
-Golden: `[H,o,l,m,e,s]` is a tier-2 word of 6 parts; `Sherlock Holmes` is tier 3 with 3 parts, the space a codepoint, its coordinate the average of its constituents' and inside the wall; one codepoint is that codepoint.
+Golden: `[H,o,l,m,e,s]` is a tier-1 word of 6 parts; `Sherlock Holmes` is tier 2 with 3 parts, the space a codepoint, its coordinate the average of its constituents' and inside the wall; one codepoint is that codepoint.
 
 ## The pull's frontier: pull.c
 

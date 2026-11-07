@@ -20,19 +20,17 @@ A composition can reference any tier. Its constituents can be [atoms](Atoms.md),
 
 ## Tiers
 
-Codepoints are tier 0. Graphemes are tier 1, words tier 2, and so on. Tiers are dynamic across modalities.
+Codepoints are tier 0. Every composition of two or more children has tier `1 + max(child.tier)`, and a one-child composition collapses to its single child (`n == 1` returns `ch[0]` unchanged, with no wrapper entity and no tier inflation). Tiers are intrinsic Merkle DAG heights across all modalities.
 
-A tier is a floor. Only codepoints go in tier 0. Everything else sits at tier 1 or above, because it is an n-ary composition, and which tier it is recorded at does not matter as long as it is recorded properly.
+Only codepoints sit at tier 0. Everything else sits at tier 1 or above, determined strictly by its constituent height (`1 + max(child.tier)`).
 
-Every recipe has its own tiers: UAX #29 has its own, a wordnet file has its own, images have their own, chess games have their own, and PGN has its own.
+Every modality and grammar decomposes into the same Merkle DAG: UAX #29 text, XML/JSON/Turtle/CSV records, ASTs, images, audio, and chess games.
 
-The tier of a composition is always at least one more than the tier of its highest constituent.
+A single-codepoint grapheme or one-character word `"a"` is tier 0. A word composed of single-codepoint graphemes (`[H,e,l,l,o]`, `[k,i,n,g]`) has tier 1; a word containing a multi-codepoint grapheme cluster (`e + \u0301`) has tier 2.
 
-A word can go straight from tier 0 constituents to tier 2.
+For text content, the UAX #29 segmentation hierarchy is codepoint ↔ grapheme ↔ word ↔ sentence ↔ paragraph ↔ document ↔ file, where each level with two or more parts advances `tier = 1 + max(child.tier)` and any single-child level collapses to that child.
 
-For text content, the basic structure is codepoint ↔ grapheme ↔ word ↔ sentence ↔ document ↔ file. There is more besides: paragraphs, titles, and the various separators, including dedicated separator codepoints, some of them language-specific. Laplace speaks Unicode and renders language.
-
-A node can fill a higher tier, but never a lower one. `[H,e,l,l,o]` is always a tier 2 word. Because the same content has the same hash, "Hello" on its own is never really a separate tier 3 sentence: the word fills that tier. "Hello!" is a tier 3 sentence. A tier 2 node can be a tier 3; a tier 3 node cannot be a tier 2.
+Because the same content always has the same hash and tier (`1 + max(child.tier)`), `"Hello"` (`[H,e,l,l,o]`) is always tier 1, and a one-word sentence `"Hello"` is that tier 1 word itself, never a separate sentence wrapper entity. `"Hello!"` (`[[H,e,l,l,o], !]`) is tier 2 (`1 + max(1, 0)`).
 
 ## Types
 
