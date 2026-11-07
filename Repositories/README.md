@@ -6,10 +6,7 @@ The files retain their existing contents. Consolidation and editing follow the r
 
 ## Laplace
 
-- [.kilo/skills/agent-md-refactor/README.md](Laplace/.kilo/skills/agent-md-refactor/README.md)
-- [.kilo/skills/agent-md-refactor/SKILL.md](Laplace/.kilo/skills/agent-md-refactor/SKILL.md.txt)
 - [AGENTS.md](Laplace/AGENTS.md.txt)
-- [CLAUDE.md](Laplace/CLAUDE.md.txt)
 - [README.md](Laplace/README.md)
 - [agent-skills/laplace-invention/SKILL.md](Laplace/agent-skills/laplace-invention/SKILL.md.txt)
 - [deploy/README.md](Laplace/deploy/README.md)
@@ -183,7 +180,6 @@ The files retain their existing contents. Consolidation and editing follow the r
 
 ## Laplace-MCP
 
-- [AGENT-INSTRUCTIONS.md](Laplace-MCP/AGENT-INSTRUCTIONS.md.txt)
 - [README.md](Laplace-MCP/README.md)
 - [docs/API.md](Laplace-MCP/docs/API.md)
 - [web/README.md](Laplace-MCP/web/README.md)
@@ -201,7 +197,6 @@ The files retain their existing contents. Consolidation and editing follow the r
 ## Laplace-Operations
 
 - [AGENTS.md](Laplace-Operations/AGENTS.md.txt)
-- [CLAUDE.md](Laplace-Operations/CLAUDE.md.txt)
 - [README.md](Laplace-Operations/README.md)
 - [acceptance/README.md](Laplace-Operations/acceptance/README.md)
 - [audit/README.md](Laplace-Operations/audit/README.md)
@@ -380,7 +375,6 @@ The files retain their existing contents. Consolidation and editing follow the r
 
 - [README.md](Workspace/README.md)
 - [AGENTS.md](Workspace/AGENTS.md.txt)
-- [CLAUDE.md](Workspace/CLAUDE.md.txt)
 - [LAPLACE-DISCUSSION-SCRATCHPAD.txt](Workspace/LAPLACE-DISCUSSION-SCRATCHPAD.txt)
 
 [Browse all Workspace files](Workspace/).
@@ -388,13 +382,11 @@ The files retain their existing contents. Consolidation and editing follow the r
 ## code-search
 
 - [README.md](code-search/README.md)
-- [AGENT-INSTRUCTIONS.md](code-search/AGENT-INSTRUCTIONS.md.txt)
 
 [Browse all code-search files](code-search/).
 
 ## Laplace-Wiki
 
 - [AGENTS.md](Laplace-Wiki/AGENTS.md.txt)
-- [CLAUDE.md](Laplace-Wiki/CLAUDE.md.txt)
 
 [Browse all Laplace-Wiki files](Laplace-Wiki/).
