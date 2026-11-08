@@ -98,12 +98,15 @@ Golden: `1500/200/0.06` against `1400/30` win, `1550/100` loss, `1700/300` loss,
 | `void lp_tier0_fingerprint(const lp_tier0_record *t0, uint8_t out[32])` | BLAKE3-256 of the table |
 | `lp_ref lp_ref_atom(const lp_tier0_record *t0, uint32_t cp)` | the codepoint as a reference: its ID, coordinate, tier 0 |
 
+`tier0.bin` (68 MB) also shards into four branch files along non-overlapping codepoint ranges while preserving exact global BLAKE3 IDs and 4D Super-Fibonacci coordinates: `tier0.ascii.bin` (128 records, 8 KB), `tier0.utf.bin` (22,112 records, 1.35 MB), `tier0.cjk.bin` (115,920 records, 7.08 MB), and `tier0.ext.bin` (975,952 records, 59.57 MB). Profiles (`ascii`, `utf`, `cjk`, `bmp`, `full`) are selectable via `LAPLACE_TIER0_PROFILE`, `@profile` path suffixes, or `laplace_substrate.perfcache_profile` and `laplace.tier0_profile`.
+
 ## The flags: flags.c
 
 | Function | Contract |
 | --- | --- |
 | `const char *lp_flags_path(void)` | `$LAPLACE_FLAGS`, else tier 0's path with `.flags` in place of its ending |
 | `const lp_layout *lp_flags_map(const char *path)` | map the records and read `path.layout`; NULL if either is missing or the records are not `LP_NCP × 32` bytes |
+| `const lp_layout *lp_flags_map_branches(const char *path, uint32_t mask)` | map the requested branch shards (`tier0.flags.ascii.bin`, `tier0.flags.utf.bin`, `tier0.flags.cjk.bin`, `tier0.flags.ext.bin`) along the same four codepoint branches as tier 0 (`34 MB` full) |
 | `const lp_field *lp_flags_field(const lp_layout *, const char *property)` | a field by short or long name, by the standard's matching rule; NULL if none |
 | `uint32_t lp_flags_get(const lp_layout *, uint32_t cp, const lp_field *)` | 0 or 1 for a binary property; a value's place in its list for an enumerated one |
 | `int32_t lp_flags_value(const lp_layout *, const lp_field *, const char *value)` | a value's place by short or long name; −1 if the list does not hold it |
@@ -152,6 +155,7 @@ The third perf-cache: one record per type, in the form of a tier-0 record whose 
 | --- | --- |
 | `const char *lp_highway_path(void)` | `$LAPLACE_HIGHWAY`, or tier 0's path with `.highway` |
 | `const lp_highway *lp_highway_map(const char *path)` | memory-maps the highway and reads its layout; NULL when either is missing |
+| `const lp_highway *lp_highway_map_branches(const char *path, uint32_t mask)` | maps the highway (`54 MB` full) under domain and list profiles (`core`, `lexical`, `geo`, `full` via `LAPLACE_HIGHWAY_PROFILE`) |
 | `const lp_list *lp_highway_list(h, name)` | a list by name: its name, title, first record and count |
 | `const lp_tier0_record *lp_highway_at(h, list, slot)`, `int64_t lp_highway_slot(h, list, id)` | a slot's record; a type's slot by its content's ID, -1 when the list has none |
 | `int64_t lp_highway_key(h, list, key)` | the slot a resource's key names |
