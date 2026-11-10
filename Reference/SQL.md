@@ -146,7 +146,7 @@ Provenance by containment (`walk_up`, `down_from`, `tally_under`, `attested` in 
 | Function | Returns | Computes |
 | --- | --- | --- |
 | `laplace_attested(claims blake3[], scope blake3[] DEFAULT '{}')` | `SETOF (claim blake3, witness blake3, games bigint, tokens bigint, score float8, pos bigint, trust float8)` | containment walk up `physicality_paths` from `claims` to `witness` trunks (filtered by `scope` when non-empty), tallying exact `games`, `tokens`, `score`, and `pos` per `(claim, witness)` |
-| `laplace_attribution(claims blake3[], scope blake3[] DEFAULT '{}')` | `SETOF (witness blake3, claims_touched bigint, games bigint, fisher_weight float8, share_bp integer)` | aggregates `laplace_attested` joined to `consensus` and `witness`, weighting each witness trunk by Glicko-2 Fisher information ($I_{c,s} = g(\varphi_s)^2 E(1 - E)$ / $1/\varphi^2$) and normalizing deterministic basis points (`share_bp` summing to `10000`) for `WHY` receipts and royalty settlement |
+| `laplace_attribution(claims blake3[], scope blake3[] DEFAULT '{}')` | `SETOF (witness blake3, claims_touched bigint, games bigint, fisher_weight float8, share_bp integer)` | aggregates `laplace_attested` joined to `consensus` and `attestation`, weighting each witness trunk by Glicko-2 Fisher information ($I_{c,s} = g(\varphi_s)^2 E(1 - E)$ / $1/\varphi^2$) and normalizing deterministic basis points (`share_bp` summing to `10000`) for `WHY` receipts and royalty settlement |
 
 ## How the engine calls the database
 

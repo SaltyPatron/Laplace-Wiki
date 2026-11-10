@@ -72,8 +72,7 @@ Paths move only as EWKB and binary COPY; WKT at default precision changed 93.5% 
 | --- | --- |
 | `entity_t*` | `id` 16 B; `tier` int16; `coord` EWKB POINT ZM 37 B; `hilbert` int64, top bit flipped |
 | `physicality_t*` | `entity` 16 B; `tier` int16; `hilbert` int64; `path` EWKB; `mask` bit varying: its length in bits as int32 (256), then 32 bytes, bit *b* in byte *b* >> 3 under `0x80 >> (b & 7)` |
-| `witness` | `id` 16 B; `lineage` 16 B or NULL; `trust` float8 |
-| `attestation` | `claim` 16 B; `witness` 16 B; `score` float4; `position` int32 or NULL |
+| `attestation` | `claim` 16 B; `witness` 16 B; `lineage` 16 B or NULL; `games` int64; `tokens` int64; `score` float8; `position` int32 or NULL; `trust` float8 |
 | `consensus` | `claim` 16 B; `rating`, `deviation`, `volatility` float8; `matches` int32 |
 
 Results are requested in binary (`PQexecParams` with result format 1); `float8` columns are read as big-endian 8-byte values and `int` as big-endian 4-byte.

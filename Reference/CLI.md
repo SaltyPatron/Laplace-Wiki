@@ -22,7 +22,7 @@ Laplace is one program, `laplace`, with twenty-four commands: the generators of 
 
 ## laplace sources
 
-`laplace sources [-d conninfo]`. Every source there is a recipe directory for, in the order `recipes/order` gives: its number, name, how many recipes it has, whether it is in (a witness in `witness` is a trunk whose record is the source's name), where it is kept on this machine or that it is at none of its roots, and the sources it comes after.
+`laplace sources [-d conninfo]`. Every source there is a recipe directory for, in the order `recipes/order` gives: its number, name, how many recipes it has, whether it is in (a witness with attestations is a trunk whose record is the source's name), where it is kept on this machine or that it is at none of its roots, and the sources it comes after.
 
 ## laplace ingest
 
