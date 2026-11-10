@@ -42,7 +42,7 @@ Decomposers are pure content-to-change streams with no inline SQL, and they decl
 ### 11.4 Assign tiers
 
 - **In:** the DAG of 11.3.
-- **Do:** codepoints are tier 0, graphemes tier 1, words tier 2, and so on; tiers are dynamic across modalities and are compositional altitude within the selected recipe, not a global ontology. The tier of a composition is always at least one more than the tier of its highest constituent, so the DAG is acyclic by construction and needs no cycle hashing. A word can go straight from tier 0 constituents to tier 2. A node can fill a higher tier, but never a lower one: `[H,e,l,l,o]` is always a tier 2 word, "Hello" on its own is never a separate tier 3 sentence, and "Hello!" is a tier 3 sentence. Tier is an observation, never part of an ID, and never a proxy for role, source, or modality.
+- **Do:** codepoints are tier 0, and every other tier is a Merkle height: a composition of two or more constituents is one more than its highest constituent, `tier = 1 + max(child.tier)`, and a composition of one constituent is that constituent. Tiers are compositional altitude, not a global ontology, so the DAG is acyclic by construction and needs no cycle hashing. `[H,e,l,l,o]` is a tier 1 word, "Hello" on its own is that word and never a separate sentence node, and "Hello!" (`[Hello, !]`) is tier 2. A word with a multi-codepoint grapheme is tier 2. Tier is an observation, never part of an ID, and never a proxy for role, source, or modality.
 - **Out:** a tier on every node.
 - **From:** [Compositions: Tiers](../Storage/Compositions.md#tiers); `docs/specs/05_Substrate_Invariants.txt` Rule #1b; [Research: Prior Art: Content-addressed code and data](../Research/Prior-Art.md#content-addressed-code-and-data).
 

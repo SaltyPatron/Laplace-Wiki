@@ -42,7 +42,7 @@ A file has a trunk, with children for the file's metadata and for the file's con
 
 Every domain has its own natural tier ladder, and those tier ladders **nest recursively inside one another**:
 
-1. **Text ladder (UAX #29):** `codepoint (tier 0)` → `grapheme (tier 1)` → `word (tier 2)` → `phrase / clause / sentence`.
+1. **Text ladder (UAX #29):** `codepoint` → `grapheme` → `word` → `phrase / clause / sentence`, each a Merkle height (`1 + max(child.tier)`), not a fixed number: `[H,e,l,l,o]` is tier 1, a sentence of such words tier 2.
 2. **Document / Literary ladder:** sentences compose into `paragraphs` → `sections / scenes` → `chapters / articles` → `book / body`.
 3. **File / Container ladder:** the document body sits alongside format-specific `headers`, `metadata`, `tags`, or `records` (XML elements, JSON objects, TSV rows, CoNLL-U blocks, PGN games, ELF/PE sections) under a `File Trunk`, which itself sits under a `Directory / Repository / Corpus Trunk`.
 

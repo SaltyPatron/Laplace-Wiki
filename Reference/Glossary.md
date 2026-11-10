@@ -36,7 +36,7 @@ Every term the documentation uses, defined once, with the page that owns it.
 | record | what a source says of one part it speaks of: a path in its file's content tree over the part's thing and the claims it says, each claim a vertex with its run, outcome and position | [Ingest](Ingest.md) |
 | run | a vertex's repeat count, the low 30 bits of M | [Physicality](../Storage/Physicality.md) |
 | said | what a vertex is within its path: claim, record, tuple, metadata; the high bits of M | [Formats](Formats.md) |
-| segment | a UAX #29 word segment, tier 2; also a contiguous run of one trajectory | [Compositions](../Storage/Compositions.md) |
+| segment | a UAX #29 word segment (tier 1 when its graphemes are single codepoints); also a contiguous run of one trajectory | [Compositions](../Storage/Compositions.md) |
 | source | a body of content with one identity, however many files it comes in; the witness when it attests | [Recipes](Recipes.md) |
 | strand | a claim: a composition of the entities it connects, its path any geometry ZM | [Attestations](../Semantics/Attestations.md#strands) |
 | tier | an entity's level of composition: atoms 0, and a composition one above its highest constituent; never part of an ID | [Compositions](../Storage/Compositions.md) |

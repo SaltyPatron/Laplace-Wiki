@@ -24,7 +24,7 @@ System-wide verification is anchored on three real end-to-end proofs executed in
 | `shape` | identical sequences: Fréchet 0, DTW 0 over N steps, EDR 0; a stray vertex sets Fréchet above 4, skipping it gives 0, one EDR edit, DTW adds its distance once; a repeat is nothing to Fréchet and DTW and one EDR edit; `outliers 0` equals Fréchet |
 | `pull` | 5,000 entities reached; a dearer chain is not kept, a cheaper one is; the cheapest comes first; a closed entity stays closed; entities come out in cost order, every one once |
 | `flags` | `A` is `Uppercase_Letter`, `a` `Lowercase_Letter`; scripts Latin, Greek, Han; alef `Right_To_Left`; `Alphabetic`, `White_Space`, `Emoji`; `U+10FFFF` `Unassigned`, `U+D800` `Surrogate`; values by short and long name |
-| `text` | `[H,o,l,m,e,s]` a tier-2 word of 6 parts; `Sherlock Holmes` tier 3 of 3 parts in order, the space a codepoint, its coordinate the average and inside the wall; one codepoint is that codepoint; an ID that is no codepoint |
+| `text` | `[H,o,l,m,e,s]` a tier-1 word of 6 parts; `Sherlock Holmes` tier 2 of 3 parts in order, the space a codepoint, its coordinate the average and inside the wall; one codepoint is that codepoint; an ID that is no codepoint |
 | `confidence` (in `consensus`) | 1774.3 / 93.3 reads 0.624 at *k* = 2 and 0.829 at *k* = 0; cost 0.472; copies counted once, 1.986 |
 
 ## The prototype's verification
