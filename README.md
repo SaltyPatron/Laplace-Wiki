@@ -12,6 +12,9 @@ The page tree below covers the Wiki pages. [Repository documentation](Repositori
 
 - [Repository documentation](Repositories/README.md) — Documentation relocated from the implementation repositories is grouped here by its original repository and path.
 - [Architecture](Architecture.md) — Laplace is native C, with SQL and C# as orchestration.
+- [Engineering](Engineering/README.md) — the engineering standard and the architecture boundaries bind every implementation choice in every active repository.
+  - [Laplace engineering standards](Engineering/Standards.md) — these standards keep implementation choices subordinate to the complete invention.
+  - [Architecture boundaries](Engineering/Boundaries.md) — architecture boundaries state which layer owns which law: the native engine owns every semantic operation, and SQL and C# orchestrate generated typed bindings to it.
 - [Sequence](Sequence/README.md) — Laplace is built in one order, and each stage is impossible without the one before it: Unicode onto the S³, tier 0, the registries and perf-caches, the store, sources through recipes into content, attestations, consensus, indexes, the web, authority, the compute envelope, the firmware, the forward program, sessions, and only then a user, whose consequences feed the learning loop that models, export, code, chess, and games all run on.
   - [1. Unicode](Sequence/Unicode.md) — the first operations fix one Unicode version and read every file tier 0 and segmentation are built from.
   - [2. Toolchain](Sequence/Toolchain.md) — the machine, the drives, the source root, and every dependency built from source with one compiler and the flags that give the same bits everywhere.

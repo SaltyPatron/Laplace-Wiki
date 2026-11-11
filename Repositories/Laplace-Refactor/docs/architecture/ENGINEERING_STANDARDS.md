@@ -1,5 +1,7 @@
 # Laplace engineering standards
 
+> Promoted to the active Wiki: see [Engineering/Standards.md](../../../../Engineering/Standards.md). This copy is historical.
+
 These standards keep implementation choices subordinate to the complete invention.
 They apply to native code, PostgreSQL server integration, SQL, C#, generators, source
 recipes, tests, packages, and delivery automation. Passing formatting or compiling is

@@ -1,5 +1,7 @@
 # Architecture boundaries
 
+> Promoted to the active Wiki: see [Engineering/Boundaries.md](../../../../Engineering/Boundaries.md). This copy is historical.
+
 ## Authority flow
 
 ```text
