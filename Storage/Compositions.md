@@ -46,7 +46,7 @@ Every domain has its own natural tier ladder, and those tier ladders **nest recu
 2. **Document / Literary ladder:** sentences compose into `paragraphs` → `sections / scenes` → `chapters / articles` → `book / body`.
 3. **File / Container ladder:** the document body sits alongside format-specific `headers`, `metadata`, `tags`, or `records` (XML elements, JSON objects, TSV rows, CoNLL-U blocks, PGN games, ELF/PE sections) under a `File Trunk`, which itself sits under a `Directory / Repository / Corpus Trunk`.
 
-Because `entity.tier = max(child.tier) + 1`, tier is **structural altitude in the Merkle DAG**, not a fixed semantic label. When a sequence of >64 children is chunked into 64-child binary-tree spine nodes (`blocks_of`), those intermediate spine nodes are structural balance helpers; top-down (`Trunk → Leaf`) database deduplication skips synthetic `blocks_of` spine nodes and probes logical domain children directly so shared subtrees are amputated immediately.
+Because `entity.tier = max(child.tier) + 1`, tier is **structural altitude in the Merkle DAG**, not a fixed semantic label. A long sequence is held in content-defined blocks of up to 4096 parts, each cut where a part's own ID bits say to cut, so an edit moves only the blocks around it (Laplace-Engine `src/record_stream.c`, `src/file.c`); those blocks are structural balance helpers, and top-down (`Trunk → Leaf`) database deduplication probes logical domain children directly so shared subtrees are amputated immediately.
 
 ## Repeats
 
