@@ -34,6 +34,7 @@ A recipe of a source takes the source's witness, lineage, and trust unless it na
 | `match GLOB...` | files it applies to, by file name; a glob with a directory in it, `annotated/train-*`, by the end of the path; the most specific pattern wins |
 | `grammar text \| NAME` | UAX #29 text, or a tree-sitter grammar loaded as `$LAPLACE_GRAMMARS/libtree-sitter-NAME.so` |
 | `format NAME` | the grammar and what each kind of its nodes is, kept once for every recipe of that format in `recipes/formats/NAME.format` (`xml`, `json`, `turtle`) |
+| `input decode NAME` | the file is a format that is not text, and the Engine's decoder NAME writes its content out as text before the recipe's tiers part it, as zlib inflates a `.gz`; the decoder knows its format and nothing the recipe says of the parts. `syzygy` (`src/chess_syzygy.c`): a Syzygy endgame table, a line a legal position of its material, `FEN` tab verdict ([Syzygy](../Corpora/Syzygy.md)) |
 | `like RECIPE` | reads as that recipe does, its layout and dispositions, under its own name, witness, lineage, and trust |
 | `class NAME`, `witness NAME...`, `lineage NAME...` | as for the source, for this recipe alone |
 
@@ -111,7 +112,7 @@ Wherever a line names a part, it may name it by a path from the part being read:
 | `thing TIER span START END TEXT [inclusive]` | the stretch of the text TEXT between the characters START and END, counted as code points |
 | `thing TIER NAME... of` | the path of the things of its parts of these names, in the file's order (a sentence of its words) |
 | `thing TIER .` | the part itself, whole |
-| `thing TIER NAME product PRODUCT` | the thing a native grammar reads off the part, its product PRODUCT (the grammar lists its products; an unknown name fails the recipe load); the record still holds the content it was read from. Chess (`pgn`) has one product, `position`: the position the replayed line ends in, so an opening names its position and its line is the route ([Chess](../Sequence/Chess.md)) |
+| `thing TIER NAME product PRODUCT` | the thing a native grammar reads off the part, its product PRODUCT (the grammar lists its products; an unknown name fails the recipe load); the record still holds the content it was read from. Chess (`pgn`) has one product, `position`: the position the replayed line ends in, so an opening names its position and its line is the route ([Chess](../Sequence/Chess.md)). `part NAME grammar fen` reads a field that is a FEN as the position its first four fields give, the same position a game holds when it stands there |
 
 ### What a file attests
 

@@ -96,6 +96,7 @@ The page tree below covers the Wiki pages. [Repository documentation](Repositori
   - [Code authority](Corpora/Code-Authority.md) — The `cpython`, `docs`, `postgres`, and `runtime` checkouts have no recipe yet, so they are not ingested and attest nothing.
   - [Code corpus](Corpora/Code-Corpus.md) — The workspace-code source reads the active Laplace repositories with language grammars and extracts declarations through compiled semantic recipes.
   - [Games](Corpora/Games.md) — The Engine reads PGN collections through its compiled chess grammar and Lichess opening tables through a TSV recipe with injected PGN move text.
+  - [Syzygy](Corpora/Syzygy.md) — The Syzygy endgame tablebases attest every position of three to five pieces its win/draw/loss and its distance to zeroing, each a claim of the position a game holds when it stands there.
   - [NLTK](Corpora/NLTK.md) — The Brown Corpus's tagged text is read by a declarative grammar that preserves paragraphs, sentences, words and aligned part-of-speech annotations.
   - [Natural Earth](Corpora/Natural-Earth.md) — Natural Earth's shapefiles have no recipe yet, so they are not ingested and attest nothing.
   - [The Stack v2](Corpora/Stack-v2.md) — The Stack v2 has no recipe yet, so its Parquet rows are not ingested and attest nothing.

@@ -13,7 +13,7 @@ The Engine's [`recipes/order`](https://github.com/SaltyPatron/Laplace-Engine/blo
 | `lumbras-gigabase` | Lumbras Gigabase PGN | [Lumbras Gigabase](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/lumbras-gigabase) |
 | `openings` | Lichess TSV tables a.tsv through e.tsv | [Openings](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/openings) |
 
-Each source has one corpus witness trunk. Players, event names, tags and annotations are content under its records; they do not create additional corpus witnesses. FIDE snapshots and endgame-tablebase files need their own recipes; these four sources do not cover those formats.
+Each source has one corpus witness trunk. Players, event names, tags and annotations are content under its records; they do not create additional corpus witnesses. FIDE snapshots need their own recipe; endgame tablebases are the `syzygy` source ([Syzygy](Syzygy.md)).
 
 The compiled PGN grammar feeds the native chess reducer, which composes transitions from the before-position, move and after-position. Completed-game results supply the carriers' win, loss or draw outcomes. An unfinished result supplies no played outcome. Opening rows instead associate an ordered SAN line with its name and ECO code, using a chained PGN move-sequence grammar over the TSV field; no result marker or played-game outcome is invented.
 

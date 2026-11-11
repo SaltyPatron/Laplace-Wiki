@@ -87,6 +87,7 @@ Every source in the Engine's `recipes/order`, in that order, and the page that d
 | `twic` | [Games](Games.md) |
 | `lumbras-gigabase` | [Games](Games.md) |
 | `openings` | [Games](Games.md) |
+| `syzygy` | [Syzygy](Syzygy.md) |
 | `workspace-code` | [Code corpus](Code-Corpus.md) |
 
 ## Pages
@@ -127,6 +128,7 @@ Every source in the Engine's `recipes/order`, in that order, and the page that d
 - [Code authority](Code-Authority.md)
 - [Code corpus](Code-Corpus.md)
 - [Games](Games.md)
+- [Syzygy](Syzygy.md)
 - [NLTK](NLTK.md)
 - [Natural Earth](Natural-Earth.md)
 - [The Stack v2](Stack-v2.md)
