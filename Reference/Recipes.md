@@ -111,6 +111,7 @@ Wherever a line names a part, it may name it by a path from the part being read:
 | `thing TIER span START END TEXT [inclusive]` | the stretch of the text TEXT between the characters START and END, counted as code points |
 | `thing TIER NAME... of` | the path of the things of its parts of these names, in the file's order (a sentence of its words) |
 | `thing TIER .` | the part itself, whole |
+| `thing TIER NAME product PRODUCT` | the thing a native grammar reads off the part, its product PRODUCT (the grammar lists its products; an unknown name fails the recipe load); the record still holds the content it was read from. Chess (`pgn`) has one product, `position`: the position the replayed line ends in, so an opening names its position and its line is the route ([Chess](../Sequence/Chess.md)) |
 
 ### What a file attests
 
