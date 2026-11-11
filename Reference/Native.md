@@ -86,6 +86,10 @@ Measured: discrete Fréchet on 1,000 × 1,000 vertices, 3.8 ms; 4D squared dista
 | `double lp_confidence(const lp_rating *r, double k)` | `σ((rating − 1500)/173.7178 − k · deviation/173.7178)` |
 | `double lp_cost(const lp_rating *r, double k, double per_hop)` | `−ln(confidence) + per_hop`, computed as `log1p(e^−x) + per_hop` |
 
+| `bool lp_series_attested(lp_id root, double games, double wins, double trust, lp_series_entry *out)` | an attestation row as a series entry, the one reading every reader of `attestation` uses: games whole in [1, 2^53], wins in [0, games], signed trust in [−1, 1] (negative: outcomes reversed, weight abs(t)); false leaves `out` untouched |
+| `lp_tally`, `lp_tally_add`, `lp_tally_edge(t, count, times, record, outcome, spare, position)` | testimony under a trunk: an edge to a claim under a parent standing `count` times is games = count (count × times where the vertex is a record, a count the source states), tokens = count × times, wins = games × the outcome's score; the least positive position is kept |
+| `bool lp_dag_multiplicity(n, reader, ctx, top, counts)`, `lp_dag_order(n, reader, ctx, order)`, `lp_dag_count(n, reader, ctx, order, top, counts)`, `lp_dag_count_exact(…, uint64_t *counts)` | how many times each node stands under `top`, through an edge reader: order once (ELOOP on a cycle), then count per top allocating nothing; exact counts fail with EOVERFLOW past 2^64 − 1. The Engine's ingest series, the extension's contained series, attribution and testimony all count through these |
+
 Golden: `1500/200/0.06` against `1400/30` win, `1550/100` loss, `1700/300` loss, τ 0.5, gives `1464.06 / 151.52 / 0.05999`. Trust 0.9 plays at deviation 152.6, 0.669 at 350. A standing of 1774.3 with deviation 93.3 reads 0.829 at *k* = 0 and 0.624 at *k* = 2, cost 0.472 at *k* = 2. Measured 7.8 M matchups per second per core.
 
 ## Tier 0: tier0.c
@@ -130,6 +134,8 @@ UAX #29 through ICU's break iterators: codepoint → grapheme → word segment �
 | `lp_text *lp_text_new(const lp_tier0_record *t0)` | opens the sentence, word, and character break iterators once |
 | `lp_ref lp_text_decompose(lp_text *, const uint8_t *s, size_t n, lp_compose_fn compose, void *sink)` | the text's trunk |
 | `lp_ref lp_text_parts(lp_text *, const uint8_t *s, size_t n, lp_ref *parts, size_t cap, size_t *nparts)` | the same, also the trunk's own constituents in order, repeats included; a trunk that is one codepoint has itself as its only part |
+
+Realization is the inverse, one walk for every reader (`realize.c`): `lp_realize(w, t0, root, mode, reader, sink, ctx, &result)` walks a DAG the caller supplies through `lp_realize_reader` (an id answers KNOWN with its children `{id, run, said}` and flags TUPLE/OPAQUE/SCALAR, PENDING when not yet fetched, or ABSENT), writing tier-0 codepoints as UTF-8 to `lp_realize_sink`, which can stop the walk. `LP_REALIZE_TEXT` is the exact text: each child its run times, and a record reads as its thing, so CLAIM and VOICE vertices are left out. `LP_REALIZE_LABELS` is the display form: a run once with `× n`, children joined by ` · `, a non-text node as its hex ID. Iterative, no allocation per node; a reusable `lp_realizer` workspace keeps the active path and known surfaces; a cycle is ELOOP. Callers: `laplace_text`, `laplace_text_batch`, `laplace_labels`, `laplace_resolve_refs`, `laplace_claim_preview` (extension) and the Engine's `reader_text` (CLI and MCP).
 
 Golden: `[H,o,l,m,e,s]` is a tier-1 word of 6 parts; `Sherlock Holmes` is tier 2 with 3 parts, the space a codepoint, its coordinate the average of its constituents' and inside the wall; one codepoint is that codepoint.
 

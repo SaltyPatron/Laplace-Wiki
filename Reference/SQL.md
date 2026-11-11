@@ -34,7 +34,7 @@ The extension installs one type, `blake3`, its operators and operator classes, a
 | `laplace_vertex_ids(geometry)` | `blake3[]` | the distinct IDs a path holds, the GIN key; `COST 10000`, measured: at lower costs the planner scans the partition of whole books and decodes every one on every lookup, 90 ms of a 111 ms query | `lp_xyz_to_id` per vertex |
 | `laplace_path_times(geometry, blake3[]) → SETOF (id blake3, times bigint)` | rows | how many times a path holds each given ID, runs included, only the IDs it holds; `COST 1000 ROWS 4`; one pass over the path with a binary search per vertex | `lp_m_run` |
 | `laplace_follows(geometry, blake3[])` | `blake3[]` | the ID after every run of the phrase inside the path; `COST 1000` | `lp_follows` |
-| `laplace_text(blake3)` | `text` | the entity recomposed to its text, walking paths down to tier 0 through SPI, one prepared `SELECT entity, st_asewkb(path) FROM physicality WHERE entity = ANY($1)` per level of the DAG, an error past 64 levels; `STABLE` | `lp_tier0_codepoint`, `lp_ewkb_vertices` |
+| `laplace_text(blake3)` | `text` | the entity recomposed to its text: paths read through SPI one level of the DAG at a time, the walk Native `lp_realize` (exact text; a record reads as its thing, its claims and voices left out); `STABLE` | `lp_realize`, `lp_tier0_codepoint`, `lp_ewkb_vertices` |
 
 ### Containment and the GIN
 
