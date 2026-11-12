@@ -48,7 +48,7 @@ A running install: everything through [22. Users](Users.md).
 ### 29.6 Upgrade the extension in place
 
 - **In:** a new Laplace-postgres version.
-- **Do:** after an engine rebuild, rebuild and install the extensions before verification; then `ALTER EXTENSION laplace UPDATE` through versioned upgrade scripts, never a drop, because dropping the extension drops every index built on its functions. Validate the installed extension, not an edited template. PostgreSQL's lifecycle is service-managed.
+- **Do:** after an engine rebuild, rebuild and install the extensions before verification; until a release is deployed there are no update paths, so a database holding another version of the extension is recreated, and `laplace deploy` refuses it until it is. The extension is never dropped out of a database that is kept, because dropping the extension drops every index built on its functions. Validate the installed extension, not an edited template. PostgreSQL's lifecycle is service-managed.
 - **Out:** the extension at the new version, indexes intact.
 - **From:** [Builds: Laplace-postgres](../Operations/Builds.md#laplace-postgres); `docs/specs/06_Engineering_Ruleset.txt` §Operational constraints.
 

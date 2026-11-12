@@ -4,7 +4,7 @@ A Laplace database is made, empty, by `deploy.sh` and filled by `ingest.sh`, bot
 
 1. **Deploy:** `./deploy.sh` (Laplace-Operations), on a push by the Operations workflow, or by hand.
    - The build (`build.sh install`); tier 0 and its flags when missing; the highway, always, its slots frozen by Laplace-Native's manifest; the grammars when `$LAPLACE_GRAMMARS` is empty.
-   - `laplace deploy`: the database when missing, the extensions `postgis`, `laplace`, `pg_stat_statements` and `pg_buffercache`, `ALTER EXTENSION laplace UPDATE`, the settings `laplace.tier0`, `laplace.flags` and `laplace.highway` (each backend memory-maps the perf-caches on first use), the schema and every index (`CREATE EXTENSION laplace` and `laplace_schema_indexes()`), and the highway's own records.
+   - `laplace deploy`: the database when missing, the extensions `postgis`, `laplace`, `pg_stat_statements` and `pg_buffercache`, a refusal when the database holds another version of `laplace` than the installed one (it is recreated; there is no update path before release), the settings `laplace.tier0`, `laplace.flags` and `laplace.highway` (each backend memory-maps the perf-caches on first use), the schema and every index (`CREATE EXTENSION laplace` and `laplace_schema_indexes()`), and the highway's own records.
    - `laplace status`.
    - It holds a lock per database and leaves while an ingest of it runs. `./deploy.sh drop` drops the database first, through the role, and deploys it again, empty; the workflow does that when dispatched with `drop`.
 
