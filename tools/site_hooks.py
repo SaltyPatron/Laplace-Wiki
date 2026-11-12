@@ -108,17 +108,23 @@ def _list(paths_titles, here):
 
 def on_page_markdown(markdown, page, config, files):
     rel = Path(page.file.src_path)
-    if rel == Path("Repositories/README.md"):
-        def repository_link(match):
-            href = match.group(1)
-            if ":" in href or href.startswith("#"):
-                return match.group(0)
-            kind = "tree" if href.endswith("/") else "blob"
-            url = f"https://github.com/SaltyPatron/Laplace-Wiki/{kind}/main/Repositories/{quote(href)}"
-            start, end = match.start(1) - match.start(), match.end(1) - match.start()
-            return match.group(0)[:start] + url + match.group(0)[end:]
+    # The site publishes Repositories/ one level deep (_sources); a link from any page to a file below that is the
+    # repository's own copy on GitHub.
+    def repository_link(match):
+        href = match.group(1)
+        if ":" in href or href.startswith("#"):
+            return match.group(0)
+        path, _, anchor = href.partition("#")
+        target = Path(os.path.normpath(rel.parent / path)).as_posix()
+        parts = target.split("/")
+        if parts[0] != "Repositories" or len(parts) <= 2 and not path.endswith("/"):
+            return match.group(0)
+        kind = "tree" if path.endswith("/") else "blob"
+        url = f"https://github.com/SaltyPatron/Laplace-Wiki/{kind}/main/{quote(target)}" + (f"#{anchor}" if anchor else "")
+        start, end = match.start(1) - match.start(), match.end(1) - match.start()
+        return match.group(0)[:start] + url + match.group(0)[end:]
 
-        markdown = check_wiki.LINK_RE.sub(repository_link, markdown)
+    markdown = check_wiki.LINK_RE.sub(repository_link, markdown)
     extra = []
 
     # A section page lists its child pages, as the README.md catalog does.
