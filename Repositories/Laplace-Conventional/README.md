@@ -106,5 +106,7 @@ CPU runners carry `laplace-conventional`. Only a matching `LAPLACE_GPU_HOST` dec
 persists that authorization in the service environment. GPU workflows also recheck the declaration before probing hardware.
 Use the already installed runner where available; do not install a second runner to change its labels.
 
+`verify` (every push to main and every pull request from this repository, never a fork's) runs its CPU test jobs on the
+same runner; each job installs into a virtual environment under the runner's temp directory.
 `runner-smoke` verifies configured scratch write/read access and reports GPU eligibility without touching GPU hardware.
 `train` requires an explicitly eligible Linux GPU runner and caller-selected corpus, state and checkpoint paths.

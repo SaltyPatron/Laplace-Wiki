@@ -22,6 +22,20 @@ Development builds and tests may run locally. CI uses the existing designated
 runner hosts; routine cleanup or deployment must not provision replacement
 runners on the desktop.
 
+No Linux CI job runs on a GitHub-hosted image. Each repository's Linux jobs run
+on its own runner on hart-server (`agents.sh`), as the unprivileged runner
+account: no root, no container runtime, tools from the host or the runner's tool
+cache, fixtures under the runner's temp directory. The jobs still on
+GitHub-hosted images are the ones no existing runner can take:
+
+- Windows jobs, until a self-hosted Windows runner exists: in `Laplace`,
+  `ci-contract.yml` (Windows native package integrity and the Windows leg of the
+  authenticated CLI transport) and `windows-operations.yml`; in
+  `Laplace-Operations`, the `windows-backup` job of `deployment-contracts.yml`.
+- `Laplace-UCI` `build.yml` (Linux and Windows legs): the repository has no
+  runner. A person declares it in `LAPLACE_REPOS` (`laplace.env`) and runs
+  `sudo ./agents.sh Laplace-UCI` on hart-server before its Linux leg can move.
+
 Setup owns privileged prerequisites, users, permissions, packages, IIS topology,
 service installation and host configuration. The existing setup scripts compare
 the declared installation with the host and report missing prerequisites.
