@@ -172,4 +172,4 @@ The third perf-cache: one record per type, in the form of a tier-0 record whose 
 
 ## Helpers: ids.c
 
-`lp_idmap_new`, `_free`, `_put`, `_find`, `_count`, `_key`, `_value`: an open-addressing map from IDs to their places, growing as it fills. `lp_be(p, n)`, `lp_be_f64(p)`: big-endian integers and doubles as libpq's binary results write them. `lp_factor` (compose.c) factors a repeated block out of a run of children; `lp_text_free` frees a text context.
+`lp_idmap_new`, `_free`, `_put`, `_find`, `_count`, `_key`, `_value`: an open-addressing map from IDs to their places, growing as it fills. `lp_be(p, n)`, `lp_be_f64(p)`: big-endian integers and doubles as libpq's binary results write them. `lp_factor` (compose.c) factors repeated blocks out of a composition's children, leftmost, shortest period, recursive; text (`lp_text_decompose`) passes every composition, at every tier, through it, so `banana` is `[b, [a,n], [a,n], a]`; `lp_text_free` frees a text context.
