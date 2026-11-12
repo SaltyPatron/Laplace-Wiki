@@ -124,6 +124,7 @@ Golden: `1500/200/0.06` against `1400/30` win, `1550/100` loss, `1700/300` loss,
 | --- | --- |
 | `lp_ref lp_ref_compose(const lp_ref *children, size_t n, uint8_t tier)` | ID from the children's, coordinate the exact average of theirs, and tier `1 + max(child.tier)` (`lp_tier_above`); one child (`n == 1`) is that child unchanged |
 | `typedef lp_ref (*lp_compose_fn)(void *sink, const lp_ref *children, uint32_t n, uint8_t tier)` | what receives every composition as it is made and returns it: the engine's node table, or NULL to compose without recording, as the database does |
+| `size_t lp_factor(const lp_ref *children, size_t n, lp_ref *out, lp_compose_fn compose, void *sink)` | repeats within a composition, factored from the content alone: a block of two or more constituents repeated adjacently becomes one entity, composed through `compose`/`sink` one tier above its highest constituent, and stands in the sequence once per repeat, so the path writer makes the run. Leftmost, the shortest period, recursive, so the same content always factors the same way. A repeated single constituent is a run already and is left as it is. `out` holds at most `n`; the count written is returned |
 
 ## Text: text.c, laplace_text
 

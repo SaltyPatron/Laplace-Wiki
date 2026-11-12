@@ -52,6 +52,18 @@ Because `entity.tier = max(child.tier) + 1`, tier is **structural altitude in th
 
 Repeats are not recorded one by one. An all-white image does not record a billion white pixels: the white pixel is one entity, and repeats are run-length encoded. Pixels, patches, and regions are finite in space, while large, and deduplicate heavily.
 
+A repeated block is factored the same way a repeated constituent is run-length encoded. Within a composition, a block of two or more constituents that repeats adjacently is its own composition, content-addressed like any other, one tier above its highest constituent, and it stands in the sequence once per repeat, so the path carries it as a run. The factoring reads the content alone: leftmost first, the shortest period, and the block itself factored the same way, so the same content always factors the same way. Every UAX #29 composition (grapheme, word segment, sentence, paragraph, text) passes its constituents through it (Laplace-Native `lp_factor`, `src/compose.c`, called from `src/text.c`):
+
+| Content | Composition |
+| --- | --- |
+| `aaaa` | `[a]`×4: a run of one constituent, not a block |
+| `banana` | `b [an]×2 a` |
+| `abababab` | `[ab]×4`, the shortest period, not `[abab]×2` |
+| `abcabcx` | `[abc]×2 x` |
+| `mississippi` | `m [iss]×2 i p p i`, leftmost |
+| `cababcabab` | `[c [ab]×2]×2`, the block factored the same way |
+| `ha ha ha` | `[[ha] ' ']×2 [ha]`: segments factor as codepoints do |
+
 ## Segmentation
 
 UAX #29 breaks text down from its meaningful codepoints, using Unicode's character properties rather than any one language's rules; scripts written without spaces between words, such as Thai or Chinese, need tailoring. See [Research: Unicode](../Research/Unicode.md). Laplace applies the same kind of breakdown to every modality. For an image:
