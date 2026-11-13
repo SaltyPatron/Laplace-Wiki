@@ -1,6 +1,6 @@
 # Syzygy
 
-The Syzygy endgame tablebases attest every position of three to five pieces its win/draw/loss and its distance to zeroing, each a claim of the position a game holds when it stands there.
+The Syzygy endgame tablebases are read, not recorded: a position's verdict is a probe of the tables, and the source records only the endings they add, the best-play lines from the positions of up to five pieces that recorded games and openings reach.
 
 ## Source
 
@@ -8,7 +8,7 @@ The Syzygy endgame tablebases attest every position of three to five pieces its 
 | --- | --- | --- |
 | `syzygy` | Syzygy tables, `NAME.rtbw` (WDL) and `NAME.rtbz` (DTZ), the 3-4-5 piece set of the lichess mirror (`tablebase.lichess.ovh/tables/standard/3-4-5-wdl`, `3-4-5-dtz`; `files-345.txt` lists them) | [Syzygy](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/syzygy) |
 
-The witness is the tablebase, one trunk; its class is `StandardsDerived`, the class [`trust_classes.toml`](https://github.com/SaltyPatron/Laplace-Native/blob/main/manifest/trust_classes.toml) gives tablebases. The files are kept under `$LAPLACE_DATA/Games/Chess/syzygy/<set>/`. Every table a probe reaches must be in the same directory: a capture in KQvKR leaves KQvK, KRvK, KvKR or KvK.
+The witness is the tablebase, one trunk; its class is `StandardsDerived`, the class [`trust_classes.toml`](https://github.com/SaltyPatron/Laplace-Native/blob/main/manifest/trust_classes.toml) gives tablebases. The files are kept under `$LAPLACE_DATA/Games/Chess/syzygy/<set>/`. A table's `.rtbw` is the source's file. Its `.rtbz` beside it is read only by the probe. The source comes after the chess sources in `recipes/order` (`chess-com`, `twic`, `lumbras-gigabase`, `laplace-chess`, `openings`), because its lines begin where their records stand.
 
 ## Format
 
@@ -19,43 +19,66 @@ A table is not a list of positions. It is an index over the placements of its ma
 | `.rtbw` | its result for the side to move under the 50-move rule: win, cursed win (a win the 50-move rule draws), draw, blessed loss (a loss it saves), loss |
 | `.rtbz` | its distance to zeroing: the plies to the next capture or pawn move under best play, positive where the side to move wins, negative where it loses, beyond 100 where the 50-move rule turns the result. A probe's DTZ may be one ply more than the true distance where the table rounds |
 
-## Reading
+## A verdict is a read
 
-The recipe says `input decode syzygy` ([Recipes](../Reference/Recipes.md)). The Engine's decoder (`src/chess_syzygy.c`) carries over the format's own law from Fathom, its index encoding and pair decompression, and probes every position as the format requires: the captures searched through the tables they reach, then the table. Every move, check and position in that search is the Engine's one chess, `chess_rules.c`. The decoder writes a line per legal position of the material, either colouring, either side to move, the side not to move not in check, a pawn on neither back rank, with each en passant square a pawn of the side to move can take on:
+A table is a deterministic provider ([INVENTIONS](../Repositories/Laplace/docs/INVENTIONS.md) #101), so its verdicts are derived when asked and are never stored per position (#102). The Engine's prober is `src/chess_tablebase.c`, in `laplace_engine_reader`, the library Laplace-MCP links. It carries over Fathom's law: the index encoding, pair decompression, `probe_wdl`, `probe_dtz` and the ranking of a root's moves. Every move, check and position in it is the Engine's one chess, `chess_rules.c`.
+
+| Entry | What it gives |
+| --- | --- |
+| `lp_tablebase_open(root, max_open)` | the tables under `root/NAME.rtbw` and `root/DIR/NAME.rtbw`; root `NULL` is `$LAPLACE_SYZYGY`, else `$LAPLACE_DATA/Games/Chess/syzygy` |
+| `lp_tablebase_wdl`, `lp_tablebase_dtz` | the verdict for the side to move; 0 where the tables do not cover the position (more pieces than they hold, castling rights) |
+| `lp_tablebase_rank` | every legal move, best first: the mover's result, then a win's soonest zeroing and a loss's latest, then the position that zeroes again soonest |
+| `lp_tablebase_line` | the best-play line, rank's first move each ply, to mate, through each zeroing move into the smaller tables, with its result under the 50-move rule |
+| `lp_tablebase_probe_fen`, `lp_tablebase_line_fen` | the same from a FEN, each move and ply with its SAN, UCI, the IDs of the move and the position it makes, and the ID of its `[P, M, P']` claim |
+
+A table is mapped (`os_map_read`) when a probe first needs it and is never read whole. At most `max_open` tables are mapped at once (64 by default), and the least recently used one no probe holds is unmapped first. A 5-piece pawn position's line maps only the tables its probes reach: ten for `8/4k3/8/8/8/3PK3/8/2R2r2 w`, and the same line comes out with two mapped at most (`laplace tablebase -n 2`).
+
+`laplace tablebase [-T tables] [-n open] [--line | --pgn] FEN...` prints the read ([CLI](../Reference/CLI.md#laplace-tablebase)). Laplace-MCP answers its native read `/v1/chess_tablebase {fen}` and the web host's `GET /api/chess/tablebase?fen=` from the same probe:
 
 ```text
-8/8/8/8/8/8/1Q6/K6k w - -   win    (.rtbw; FEN, a tab, the verdict)
-7k/1Q6/8/8/8/8/8/K7 b - -   -12    (.rtbz; a draw writes no line)
+{position, tables, covered, wdl, dtz,
+ moves: [{san, uci, position, claim, wdl, dtz, value, zeroing, mate, recorded}],
+ line: {id, result, plies: [{san, uci, position, claim, recorded}]} | null,
+ claims, database}
 ```
 
-The recipe parts each line and reads the FEN as the position it names (`part fen grammar fen`), the same position a game, an opening or a FEN read anywhere else holds. Its first four fields are the position; no clock or move number is. Each line is one claim of that position, with a relation in the format's own terms:
+The database is read beside the probe, in one containment probe of the position and the line's positions: `recorded` is the standing of a move's or ply's transition where the database holds that claim, and `claims` counts the claims that hold the position. Without a database the read answers from the tables alone.
 
-| Claim | Example (IDs from the Engine's `tests/syzygy-tablebase.sh`) |
+## What is recorded: endings
+
+The recipe (`lines.recipe`) says `grammar pgn`, `records played` and `input decode syzygy` ([Recipes](../Reference/Recipes.md)). The decoder (`src/chess_syzygy.c`) works once a run, when the first table is opened:
+
+1. It reads the database the ingest loads into, through the Engine's reader. It takes the trunks of the sources whose recipes read chess (`grammar pgn`, or a part read by it) and walks down a level at a time to their records, the vertices said `RECORD`.
+2. From each record it finds the line the record holds, at most three levels down. A line is a composition of an odd number of constituents, at least three, whose first and last are positions. Only a path's ends and length cross the socket (`ends_of`).
+3. It decodes the last position of each line. For each line that ends within the tables' pieces, it decodes every position of the line. A position is decoded from its constituents by the IDs `chess_rules.c` composes, and each is checked by composing its ID again. A position with castling rights is in no table.
+4. From each reached position it probes the best-play line. A drawn position has none. A line another reached position's line holds from its start on, with the same result, is that line's tail and is not written again.
+5. Each table's file is then the lines that begin in its material, either colouring, in their positions' ID order.
+
+A line is written as the PGN a game of it is, its start a FEN tag of the position's four fields and its result under the 50-move rule, a cursed win or a blessed loss a draw:
+
+```text
+[FEN "7k/1Q6/8/8/8/8/8/K7 b - -"]
+
+1... Kg8 2. Kb2 Kh8 3. Kc3 Kg8 4. Kd4 Kh8 5. Ke5 Kg8 6. Kf6 Kh8 7. Qg7# 1-0
+```
+
+`chess.c` reads it as it reads every game ([Chess](../Sequence/Chess.md)): the record `[line, [FEN, text]]`, its line `[P0, M0, P1, …, P12]`, and for each move the `[P, M, P']` claim a game that plays it records, scored for the side that moves (1 for White's moves here, 0 for Black's), attested by the Syzygy trunk. The IDs, from the Engine's `tests/syzygy-tablebase.sh`:
+
+| | ID |
 | --- | --- |
-| `[P, "win/draw/loss", verdict]` | `8/8/8/8/8/8/1Q6/K6k w` is `23177bb0004139c5384d47fafc6f1061`, a win; Black to move there (`2908875bd2c911cdf96348c199b46476`) is a loss |
-| `[P, "distance to zeroing", plies]` | `7k/1Q6/8/8/8/8/8/K7 b` (`ba7239ecffb26a06aca87a451b8fea07`), the position after `1. Qxb7` in a game that takes Black's last pawn, is `-12` |
+| P0, `7k/1Q6/8/8/8/8/8/K7 b`, a loss in 12 | `ba7239ecffb26a06aca87a451b8fea07` |
+| the line `[P0, M0, …, P12]` | `6554c79ccee9acdcb4aa4adfa1b4a6d3` |
+| the first transition, `[P0, Kh8-g8, P1]` | `ac29dc80b021cf10a8981eff93aff99b` |
+| the last, `Qg7#` | `af54408d836efc56137dcc45c70a0f9e` |
 
-The record of a line is `[P, claim]`. No move is recorded, because the tables give none: a position's best move is a read. The legal moves come from the Engine's chess (`lp_chess_successors`), and the verdict of each position they make is read in the same batch. Laplace-MCP answers `GET /api/chess/tablebase?fen=` with `{position, wdl, dtz, moves: [{san, position, wdl, dtz}]}`, the moves best first.
+P0 is the position after `1. Qxb7` in the Engine's `reaches.pgn`, a game that takes Black's last pawn, and that game's `1... Kg8` is the tables' move: the game and the tablebase line claim one transition, by identity alone.
 
 ## What the substrate shares
 
-Content addressing shares whatever two lines hold in common, and nothing else. Measured on the 3-piece tables loaded into a local database:
+Content addressing shares whatever lines hold in common, and the source writes nothing but lines:
 
-- A position is recorded once for both of its files. KQvK's DTZ file found all 690,808 of its positions already recorded by its WDL file; it added only its claims and records, 1,381,798 entities, two per line.
-- A position's board is shared by its two sides to move, and every `[piece, square]`, verdict word, relation and number is one entity wherever it stands.
-- A smaller table's positions are not part of a larger table's. A position is `[board, side, castling, en passant]` and its board is the flat list of `[piece, square]` in square order ([Chess](../Sequence/Chess.md)), so KQvKR's board holds KQvK's pieces but no KQvK board. The verdicts a smaller table would predict are still recorded as the larger table's own claims. The board's layout is the Engine's chess identity, and changing it would change every recorded position's ID.
+- A tablebase transition is the same claim a game records when it plays that move, so the tables' lines converge with the games that stand on them, and each transition's standing gathers both kinds of witness.
+- Lines converge with one another. Best play from a position is a function of the position, so two lines that meet share every position, move and transition from there on. A line wholly the tail of another reached position's line is not written.
+- Positions, boards, `[piece, square]` pairs, squares and moves are one entity wherever they stand.
 
-| File | Lines | New entities | Already recorded |
-| --- | ---: | ---: | ---: |
-| KQvK.rtbw | 736,904 | 2,658,980 | 106 |
-| KQvK.rtbz | 690,808 | 1,381,798 | 690,838 |
-| KRvK.rtbw | 798,224 | 2,842,892 | 170 |
-| KRvK.rtbz | 753,736 | 1,507,709 | 753,777 |
-| KPvK.rtbw | 662,704 | 2,324,368 | 220 |
-| KPvK.rtbz | 445,128 | 890,387 | 445,156 |
-| KBvK.rtbw | 834,456 | 2,951,528 | 225 |
-| KNvK.rtbw | 858,880 | 3,024,803 | 217 |
-
-KBvK and KNvK are draws throughout, so their DTZ files write no lines. "Already recorded" counts the subtrees the load found in the database and did not write again. For a DTZ file these are its positions. For a WDL file they are the few shared pieces of other tables and of recorded games.
-
-Each position costs about 3.6 entities for its WDL line (position, board share, claim, record) and two for its DTZ line. That puts the whole 3-4-5 set beyond any one database. The five 3-piece tables hold 3,891,168 legal positions (counted by the decoder). Counting placements, with about 80% of them legal as in the 3-piece tables, the 30 4-piece tables hold about $1.1 \times 10^9$ positions and the 110 5-piece tables about $2 \times 10^{11}$.
+Eight lines from the positions the Engine's checks probe hold 161 plies. Read into an empty node table they make 866 compositions, about five a ply, with 240 reused within them. What the source adds therefore grows with the positions recorded games reach, not with the tables. The tables themselves hold 3,891,168 legal positions in the five 3-piece tables, counted by the former decoder that wrote them all, and about $1.1 \times 10^9$ in the 30 4-piece tables and $2 \times 10^{11}$ in the 110 5-piece tables, counting placements with about 80% legal as in the 3-piece tables. Every one of those verdicts is a read, and none is a row.
