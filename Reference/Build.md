@@ -89,3 +89,5 @@ It takes a lock per database in `$LAPLACE_LOCKS` and leaves with exit 3 while an
 ## Tests after a build
 
 `ctest` in Laplace-Native runs, each against the tier 0 at `LAPLACE_TIER0`: `identity`, `geometry`, `coord`, `follows`, `consensus`, `shape`, `pull`, `flags`, then `follows_scalar`, `follows_sse2`, `follows_avx2` with `LAPLACE_ISA` set to each level, and `text` when ICU is present. What each checks is in [Checks](Checks.md#the-native-tests). The `icx` and `gcc` builds must both pass; both reproduce the prototype's tier-0 IDs and Hilbert values.
+
+The extension's, the Engine's and the MCP's own CI build them and run only checks that need no database. Their database checks run after the deployment, against the deployed database: [Checks](Checks.md#the-database-checks).

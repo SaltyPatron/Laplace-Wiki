@@ -2,7 +2,7 @@
 
 The extension installs one type, `blake3`, its operators and operator classes, and 82 functions, 78 of them in C calling Laplace-Native, 3 in SQL over them and one in PL/pgSQL (`laplace_schema_indexes`), and one aggregate; every function is `IMMUTABLE STRICT PARALLEL SAFE` unless stated, so a constant argument folds at plan time and a lookup by computed ID becomes an index lookup.
 
-`laplace--1.12.sql` declares them; `laplace_pg.c` defines them. The extension's CI installs it fresh into a scratch database before every update, so a script that does not install fails there.
+`laplace--1.12.sql` declares them; `laplace_pg.c` defines them. The extension is installed by the deployment (`laplace deploy`), and its regression cases run against the deployed database afterwards ([Checks](Checks.md#the-database-checks)); a script that does not install fails the deployment.
 
 ## The type
 

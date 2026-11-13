@@ -137,7 +137,7 @@ collection, a snapshot cursor or a complete semantic discovery protocol.
 generation. This enumerates governed mask values; it does not declare global
 search predicates, facet counts or operators that the endpoint does not implement.
 
-`tests/read-snapshot.py` verifies this contract against a disposable database,
+`tests/deployed/read-snapshot.py` verifies this contract against the deployed database,
 including unrecorded phrase roots, recorded repeated members, cache-only
 content, bounded prefixes and HTTP/MCP parity.
 

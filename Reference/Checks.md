@@ -1,6 +1,6 @@
 # Checks
 
-Every check that proves the built machine: the native golden tests, the prototype's verification of a loaded database, the engine's own checks during ingest, the fingerprint comparison of `laplace status`, the operation benchmark, and the query benchmark.
+Every check that proves the built machine: the native golden tests, the prototype's verification of a loaded database, the engine's own checks during ingest, the fingerprint comparison of `laplace status`, the database checks run against the deployed database, the operation benchmark, and the query benchmark.
 
 ## The three core proofs
 
@@ -51,6 +51,25 @@ The prototype passed every one on 3,915,022 entities. The checks that read the p
 - **`laplace deploy`**: every statement's success, and `laplace status` after.
 - **`laplace ingest --no-load`**: the whole decomposition and the recompose check without writing.
 
+## The database checks
+
+A component's own CI (Laplace-postgres, Laplace-Engine, Laplace-MCP) builds it and runs only checks that need no database: no step starts a server, makes a database or connects to one. Every check that needs a database runs after Laplace-Operations has deployed the merged revisions onto hart-server's installed PostgreSQL, against the deployed database `laplace`, through the deployed `laplace` and `lpm` and the installed extension: the job `tests` of Operations' `laplace.yml`, after `checks` and beside `reads`, runs `verify.sh tests` with the component checkouts at the revisions `deploy` built. Cloud verification waits for it.
+
+| Component | Runner | What runs |
+| --- | --- | --- |
+| Laplace-postgres | `tests/deployed.sh` | the regression cases of `tests/regression_cases.txt` through `pg_regress --use-existing` (it neither makes nor drops a database or role), each case in a transaction it rolls back on content no source records; every extension C function bound to the installed module; the ingestion writer's privileges in a rolled-back transaction; `tests/stage-lifecycle.py` and the `stage_overlap` isolation spec on stage tables of their own |
+| Laplace-Engine | `tests/deployed/run.sh` | every `tests/deployed/*.py`; `reader_depth`, `presence_frontier` and `pg_plan_lifecycle` are built in the deployed build tree first |
+| Laplace-MCP | `tests/deployed/run.sh` | `code-where`, `read-snapshot`, `chess-games` through the release's `lpm` (`lpm mcp`, or `lpm serve` on a free loopback port with a token of its own) |
+
+The deployed database holds everything else ever ingested into it and keeps it, so a check never depends on it being empty and never damages it:
+
+- An Engine or MCP check ingests sources of its own (`tests/deployed/check.py`): named `check-*`, each with a witness whose name begins with the words "Laplace check", copies of real sources' recipes where it needs them. Content is content-addressed, so a rerun converges on the same IDs.
+- It asserts only on what is under its own witness trunks and on the IDs it composed: never a whole-table count or fingerprint.
+- `laplace forget` takes its witnesses out before it starts and after it ends. `check.py` refuses `deploy`, `sweep`, `replay`, `merge`, `projection`, `ingest --highway`, `forget --except`, an ingest that names no source, and any source or witness that is not the check's own.
+- A regression case runs in a transaction it rolls back.
+
+What only a fresh or private database could show is not checked: installing the extension into named schemas beside conflicting public objects, or into a database with a `laplace` schema of its own (the deployment installs it); `laplace deploy --prepare` and `--configure-server-cache` (the deployment runs `deploy --prepare`, and `verify.sh deployment` reads back that Engine and PostgreSQL use the same tier 0 and highway); partition renames, detaches and row-level security on the canonical tables; `laplace_recoordinate`, `laplace projection` and `laplace replay` over the whole database; an extension function replaced to stop publication part-way; counts written by hand into `consensus`; cluster-wide `pg_stat_*` counters.
+
 ## The operation benchmark
 
 `laplace bench`, one line per operation; the reference machine's values, one core:
@@ -88,4 +107,4 @@ The tenth query joins a table named `standing`; the built schema names it `conse
 
 ## What is not checked anywhere yet
 
-No test covers the engine's `load()` beyond its own recompose check and `laplace status`; the prototype's verification is the closest, against the prototype's schema. No check covers `forget` and `sweep` beyond `--dry`.
+No test covers the engine's `load()` beyond its own recompose check, `laplace status` and the database checks' fixtures; the prototype's verification is the closest, against the prototype's schema. `forget` is exercised by every database check; `sweep` is not, since it acts on the whole database.
