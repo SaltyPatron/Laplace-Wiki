@@ -34,7 +34,7 @@ A recipe of a source takes the source's witness, lineage, and trust unless it na
 | `match GLOB...` | files it applies to, by file name; a glob with a directory in it, `annotated/train-*`, by the end of the path; the most specific pattern wins |
 | `grammar text \| NAME` | UAX #29 text, or a tree-sitter grammar loaded as `$LAPLACE_GRAMMARS/libtree-sitter-NAME.so` |
 | `format NAME` | the grammar and what each kind of its nodes is, kept once for every recipe of that format in `recipes/formats/NAME.format` (`xml`, `json`, `turtle`) |
-| `input decode NAME` | the file is a format that is not text, and the Engine's decoder NAME writes its content out as text before the recipe's tiers part it, as zlib inflates a `.gz`; the decoder knows its format and nothing the recipe says of the parts. `syzygy` (`src/chess_syzygy.c`): a Syzygy endgame table, a line a legal position of its material, `FEN` tab verdict ([Syzygy](../Corpora/Syzygy.md)) |
+| `input decode NAME` | the file is a format that is not text, and the Engine's decoder NAME writes its content out as text before the recipe's tiers part it, as zlib inflates a `.gz`; the decoder knows its format and nothing the recipe says of the parts. `syzygy` (`src/chess_syzygy.c`): a Syzygy endgame table, the tables' best-play lines from the positions of its material that the database's recorded games reach, each the PGN a game of it is ([Syzygy](../Corpora/Syzygy.md)). A recipe of a native grammar (`grammar pgn`) says it too, and the grammar reads the text the decoder writes |
 | `like RECIPE` | reads as that recipe does, its layout and dispositions, under its own name, witness, lineage, and trust |
 | `class NAME`, `witness NAME...`, `lineage NAME...` | as for the source, for this recipe alone |
 
