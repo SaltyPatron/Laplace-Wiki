@@ -358,9 +358,7 @@ checked before reusing that binding. Existing-carrier updates always use the
 partition-routed copied ID set. There is no statistics-selected whole-table
 update alternative.
 
-Pull-request CI builds a candidate and runs `tests/extension-install.sh` against a private `DESTDIR` package and a newly created test database. PostgreSQL 18's `extension_control_path` selects that package. Only its private control file is rewritten to reference the candidate module; an assertion checks every extension C function's module binding. The test executes `laplace_isa()` and removes its database and package. Failed database cleanup preserves the package and fails the job.
-
-PR CI does not install into shared PostgreSQL directories or migrate the declared application database. Shared installation and extension upgrades belong to Operations deployment after merge. This boundary uses PostgreSQL's documented [extension search paths](https://www.postgresql.org/docs/18/runtime-config-client.html); the Windows installation path has not been qualified by this Linux test.
+Pull-request CI builds a candidate and runs only checks that need no database (`configure_incremental`, `module_install`, `tools/check-function-bindings.mjs`); it starts no server and makes no database. Installation belongs to Operations deployment after merge, and `tests/deployed.sh` then runs the regression cases with `pg_regress --use-existing` against the deployed database, each case in a transaction it rolls back, with the module-binding and writer-privilege checks, `tests/stage-lifecycle.py` and the `stage_overlap` isolation spec ([Checks](../../Reference/Checks.md#the-database-checks)).
 
 `laplace_ordered_pair_counts(vocab,lo,hi,roots,separators)` projects immediate
 ordered child occurrences from the canonical registered DAG at every tier.

@@ -52,15 +52,15 @@ in one read-committed transaction. Each window already recorded its changed
 claim IDs; the Native indexed upward provenance operator resolves those claims
 against all registered witnesses, including concurrently completed sources.
 Only pruned files need stored claim discovery. Newly ingested source contents
-are never walked downward again for publication. `tests/observation-windows.py`
-observes committed windows through a second connection, checks lock availability,
-rejects a repeated downward walk and compares final standings against complete
-Native evidence after concurrent publication and partial replay.
+are never walked downward again for publication. `tests/deployed/observation-windows.py`
+observes committed windows through a second connection, checks lock availability
+and compares final standings against complete Native evidence after concurrent
+publication, against the deployed database.
 
 The ingest phase report separates Native preparation, staging COPY and paired
-publication. `tests/publication-waves.py` uses real PostgreSQL databases to
-compare serial and parallel stored state, observe subtree closure during writes,
-kill and resume a writer, and verify unchanged replay. Native's DAG tests also
+publication. `tests/deployed/publication-waves.py` compares serial and parallel
+stored state under its own witness in the deployed database, observes subtree
+closure during writes, kills and resumes a writer, and verifies unchanged replay. Native's DAG tests also
 exercise shared/repeated edges, owner-local cohorts, cycles and a 200,000-node
 dependency chain without C recursion.
 
@@ -90,9 +90,9 @@ Reset reconnects and rebinds; finish releases bindings and rendered statements.
 Read scopes use the same connection owner for a read-only, repeatable-read
 transaction. Every containment, coordinate, path and standing read uses that
 connection; there is no second read pool or global snapshot owner.
-`tests/db-binding.py` installs both extensions in separate named schemas with
-conflicting public objects, then exercises ingestion, replay, reads, indexing
-and source removal through the production Engine.
+`tests/deployed/db-binding.py` exercises connection binding, ingestion, reads
+and source removal through the deployed Engine against the deployed database;
+installation into named schemas is the deployment's.
 
 `src/read_ids.c` owns client projection of exact-ID sets for the Engine and
 MCP. Tiers, coordinates and ordered physicalities use the shared PostgreSQL
@@ -128,7 +128,7 @@ fixed operand count. Sorting and filtering move descriptors while their operand
 arena stays owned by the returned result. Chain traversal returns an explicit
 standing summary and reads fallback subjects as a set. Positional provenance
 selectors also retain every supplied operand. First, last and any-part lookups
-share that reader, including translation. `tests/claim-width.py` reads a real
+share that reader, including translation. `tests/deployed/claim-width.py` reads a real
 80-operand PostgreSQL claim and follows the true endpoint of a 5,003-operand relation.
 Observation counts retain PostgreSQL's signed 64-bit representation through
 held rows, claim results, traversal summaries and CLI formatting.
@@ -166,7 +166,7 @@ limits remain authoritative, so batching does not fetch whole unselected trees.
 Metadata reads, selected text frontiers and COPY share the declared 4 MiB
 transport grain, with windows over complete inputs. Display byte limits unwind
 active branches safely for later reads. Claim and voice annotations retain their
-existing role outside the CLI's content text. `tests/reader-depth.py` qualifies
+existing role outside the CLI's content text. `tests/deployed/reader-depth.py` qualifies
 4,096 genuine nested tiers, repeated reads without another fetch, bounded
 projection of a 100,000-occurrence run, display limits, Unicode and cycle rejection.
 
