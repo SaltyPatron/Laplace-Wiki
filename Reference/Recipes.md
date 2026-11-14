@@ -127,6 +127,7 @@ Wherever a line names a part, it may name it by a path from the part being read:
 | `voice TIER NAME` | who says everything the part says |
 | `together TIER` | what the part and everything inside it say is one record, the thing first, witnessed once, its claims within it |
 | `score TIER NAME [from A to B]` | the score the part gives what it attests, on the scale the source writes it on: A a loss, B a win, halfway a draw |
+| `strict TIER` | a TIER read as a record is read whole or refused: one that attests nothing, or whose `score` part is written and is no number on its scale (not a number, more after it, or beyond either end), is said and counted, and the ingest exits 1 with no witness registered. For what a program states at run time (`statement`); a corpus's loose column is read as before, a win where it gives none and the nearest end beyond one |
 | `where NAME is VALUE \| is-not VALUE \| matches PATTERN` | the outermost parts the recipe speaks of; another is in the file's tree and attests nothing |
 | `when NAME is \| is-not \| matches ...`, `always` | the lines after it are said only of the parts that meet it, several met together, up to `always` |
 | `stem [FROM] TO` | what `{file}` stands for: the file's name after its last FROM, up to the TO after it |
@@ -170,6 +171,7 @@ Format recipes that belong to no source, which any source's `reads` may name and
 | `csv` | `*.csv` | comma-separated records and quoted fields (`tier row by \n`, `quoted`, `tier field by ,`) |
 | `turtle` | `*.ttl *.nt *.n3` | `format turtle`: a statement is its subject; its property is the relation to its objects; a literal says its language tag or datatype |
 | `wn-lmf` | | `format xml`: a lexical entry is the word its `Lemma` writes; a synset is the composition of the words its `members` are; a sense is the word with its synset; `ili` a type of the highway's interlingual index |
+| `statement` | `*.statement` | what a witness named at run time states (`laplace witness`): `tier row by \n`, `names subject relation object score`, `tier field by \t`; `[subject, relation, object]`, or `[subject, relation]` with no object, the score from 0 to 1 its outcome; `omit pathname filename`, so its trunk is its content alone; `strict row` |
 | `file` | | no layout: what the OS keeps of every file, `metadata pathname filename stx_mode stx_uid stx_gid stx_nlink stx_ino stx_size stx_blocks stx_blksize stx_attributes stx_dev_major stx_dev_minor stx_rdev_major stx_rdev_minor stx_btime stx_ctime stx_mtime`, `omit stx_atime` (reading the file changes it) |
 
 A worked example, `universal-dependencies/conllu.recipe`:

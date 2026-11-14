@@ -55,6 +55,21 @@ The series: before each batch is loaded, the files whose trunks are recorded are
 
 When every file was of one source, its trunk, `[record, its files' trunks]`, composed in an emptied node table and written by a load of its own, so it is recorded only after every file is; then merge; then the trunk is the witness, known once it has attestations, its trust and lineage the source's, carried on each attestation row. A part of a source (`-s`), or files of several sources, have no trunk: what they say is held by their files' trunks, and no witness holds them. The summary on stdout: decomposition (files, MB, recomposed or curated, mismatched), compositions and reused, the claims said by records; phases: decompose, recompose and compare, deduplication (IDs checked, rounds, subtrees recorded), COPY (entities, paths, rows per second), the series played once each (claims, standings new and updated: read, played, staged), the source's trunk and its ID, merge, the witness, total.
 
+## What a runtime witness states
+
+`laplace witness` is this pipeline with one difference: the source is named on the command line and not by a directory of recipes. `cmd_witness` resolves the files, takes the directory they share as the source's root, and calls `cmd_ingest` with the witness (`--as`), its class (`--class`) and its lineage (`--lineage`, by default its own name) held as a source of that run, which `source_runtime` appends to the loaded sources after the recipes are read; it is in no `order`, and its files are read as any format reads them. From there nothing is its own: recipes are bound, the files decompose through the record VM, trunks are probed, new nodes are staged and merged, the series are accumulated by `laplace_accumulate_series`, the source's trunk `[WITNESS, its files' trunks in path order]` is written last, `load_register` rewrites the provisional witness to that trunk, and `merge` writes the `attestation` rows and folds the standings with `laplace_attest_stage`.
+
+A `.statement` is read by the stock recipe `statement`: a row a line, `subject`, `relation`, `object` and `score` between tabs, each part the text it is, the claim `[subject, relation, object]`, or `[subject, relation]` where no object is written, the score its outcome. The recipe omits `pathname` and `filename`, so a statement's trunk is its content alone: the same lines written to another file are the same trunk, a file the database already holds, and the same witness trunk, so stating it again writes no entity, no attestation and no standing. Its row is `strict` ([Recipes](Recipes.md#what-a-file-attests)): a line that attests nothing, or whose score is no number from 0 to 1, is said (`refused: part N ...`), counted in `refused_parts` of the `ingest rejected` line, and the run exits 1 before the witness is registered, so nothing is attested.
+
+For the statement (`<tab>` a tab)
+
+```text
+Paris is the capital of France <tab> is <tab> true <tab> 1
+the earth is flat <tab> is <tab> true <tab> 0
+```
+
+stated by `--as alice --class UserPromptContent`, the record holds: the content `Paris is the capital of France`, `the earth is flat`, `is`, `true`, each the entity that text is anywhere; the claims `[Paris is the capital of France, is, true]` and `[the earth is flat, is, true]`, each its own record in the statement's content, the first a win and the second a loss in its vertex's M; the statement's trunk over them; the witness trunk `[alice, the statement's trunk]`; two `attestation` rows `(claim, the witness trunk, lineage alice)` with games 1, scores 1 and 0, and trust 0.3; and a `consensus` row for each claim. Another witness stating the same lines adds its own trunk and its own two rows, and the two claims keep one standing each.
+
 ## The statements
 
 Every statement the ingest issues, all parameters binary, all sets:
