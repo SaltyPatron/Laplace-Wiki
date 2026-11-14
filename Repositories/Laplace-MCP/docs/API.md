@@ -204,25 +204,35 @@ curl -skS --resolve hart-server:8443:127.0.0.1 \
 
 `op` is any route by its name (`search`, `code_where`, `file_outline`, ...), `embed` for `embeddings`, `frechet` for `shape`, or `surface`.
 
-## Code index
+## Code search
 
-`code_search`, `reindex` and `rerank` work on a local code index held by the process, not on the database. The index is built on the client the way content is admitted: a file whose suffix has a compiled tree-sitter grammar (`LAPLACE_GRAMMARS`) is its syntax tree, `.tsv`/`.csv` are records, anything else that is text is UAX #29. Documents are:
+`code_search`, `rerank` and `reindex` answer from the database (`LAPLACE_CONNINFO`), as the other code tools do: nothing is indexed by the process and nothing is read from a working tree. They read what a recipe source ingested, by default the `workspace-code` source of Laplace-Engine, whose witness is `Laplace Workspace`.
 
-- each declaration-sized grammar node (3 to 120 lines) with no ancestor that is already a document; a larger node, such as a namespace or a class, is not a document and its members are;
-- for text with no grammar and more than 48 lines, blocks of 8 to 48 lines cut at blank lines and before `#` headings;
-- every file as a whole.
+A query is decomposed as all text is (Native UAX #29). Its terms are its word segments that hold a letter or digit and each run of segments with no space between them (an identifier such as `lp_ref_compose`, a dotted or hyphenated name), each once, at most 64; each is the entity that content is wherever it was recorded. How common a term is comes from one capped read of the container index: the paths that hold it directly. A term held directly by more than `LAPLACE_CODE_HUB` paths of a kind is a hub and is not walked. Every other term is walked up the container index to the files of the source's witness in one call inside PostgreSQL (`laplace_held_files`), and each file comes back with its unit, the lowest node of its content that holds the terms it holds (their common ancestor, else the node holding the most of them), the unit's tier and each term's occurrences below it.
 
-A query is decomposed the same way. Documents are ranked by BM25 over the query constituents they hold (presence only, IDF `log(1 + N/df)`, `k1 = 1.2`, `b = 0.75` on document bytes), so a declaration that holds the query ranks above the file around it. A span that overlaps a better hit in the same file is not returned again. Paths are returned with `/` separators.
+Each file's unit is scored by BM25 over the terms' occurrences (IDF `log(1 + (N - df + 0.5) / (df + 0.5))` with N 64 times the hub cap, `k1 = 1.2`, `b = 0.75`), the unit's tier standing for its length against the mean of the units'. Over `scope` `all`, documentation and data files weigh 0.35, tests 0.25 and C headers 0.85. Text is read only for the hits returned: each unit's lines in its file's recorded text, and its first 60 lines.
+
+`code_search` takes `query` (required), `limit` (1 to 64, default 15), `path` (a substring the file's path must contain), `source` (the witness whose files are searched; default `LAPLACE_CODE_SOURCE`, else `Laplace Workspace`), `scope` (`all`, `code` or `docs`), `bridge` and `explain` (every candidate, not only the first `limit`). Each hit has `rank`, `path`, `line0`..`line1` (1-based, of the unit in the file's recorded text), `id` (the unit) and its `hilbert`, `shared` (terms the unit holds), `rerank` (the score as a share of what the query's terms could give, with the scope's weight) and `bm25` (the raw score), and `snippet`. The answer also has `docs` (the witness's files), `witnesses` (how many witnesses have that name), `entities` (files the walk reached), each term with its `holders`, `idf`, `hub` and `walked`, `candidates` (`reached`, `kept`), `levels`, `cut` (the walk stopped at `LAPLACE_CODE_NODES` nodes) and `phases_ms`.
+
+`bridge: true` (or `LAPLACE_CODE_BRIDGE=1`) adds words reached through the Engine's attested translation relations to the query. Engine execution failures are reported as errors. The added words are expansion candidates; they do not establish that a query's sense has been resolved.
+
+The [invention's query-relative coupling field](https://github.com/SaltyPatron/Laplace/blob/main/docs/INVENTION.md#7-the-query-relative-coupling-field) requires joint interpretation across the whole observation and permits ambiguity among surviving alternatives. Global usage frequency or a single overlap score does not establish a unique sense. Search expansion must retain that distinction; it cannot substitute for the required joint interpretation.
+
+`rerank` takes `query`, `documents` (up to 256 texts) and `top_n` (1 to the number of documents). Each document scores the IDF, over the database's containment, of the query's terms it holds, as a share of all the query's terms: a document holding none of them scores 0, one holding all scores 1. Ties go to the shorter document. Each result has `index`, `relevance_score` and `shared`.
+
+`reindex` runs `laplace ingest` of the code source again (`LAPLACE_CODE_INGEST`, default `workspace-code`, whose recipe supersedes what changed), or of one absolute file or directory given as `path`, and returns the engine's exit code and log.
 
 | Name | What |
 |---|---|
-| `LAPLACE_CODE_ROOTS` | directories indexed and kept up to date, separated by `;` (or `:` on Linux) |
-| `LAPLACE_CODE_RECORDS` | records file: loaded on the first call when it exists and is this version, else the index is built from the roots and saved; saved again whenever a refresh changes anything |
-| `LAPLACE_CODE_REFRESH_SECONDS` | how often a `code_search` call first brings the index up to date with its roots; `0` never (default `30`) |
+| `LAPLACE_CODE_SOURCE` | the witness `code_search` reads when a call names none (default `Laplace Workspace`) |
+| `LAPLACE_CODE_HUB` | paths of a kind holding a term directly past which it is a hub (default 4096) |
+| `LAPLACE_CODE_NODES` | nodes the walk up the container index reads before it stops (default 400000) |
+| `LAPLACE_CODE_INGEST` | the source `reindex` ingests (default `workspace-code`) |
+| `LAPLACE_CODE_BRIDGE`, `LAPLACE_CODE_BRIDGE_LANGUAGE`, `LAPLACE_CODE_BRIDGE_CONCEPTS` | `bridge` by default; the language it translates from (default `en`); concepts per word, 1 to 99 (default 2; any other value is an error) |
 
-Records (version 2) hold every entity with its constituents, every file with its size, modification time and content hash, every document, and the postings, so a loaded index answers as the one that was saved. A refresh, `reindex`, or `lpm update` stats each file under the roots: a file whose size and time agree is not read, one whose content hash agrees is not admitted again, a changed or new file is admitted, and a file no longer there is removed. Documents of changed and removed files stay in the records as stale and are never answers; when they pass 30% of all documents the index is built again from the roots. On the Laplace workspace (4014 files, 36457 documents) the records are 317 MB, a refresh with nothing changed takes 0.1 s, and loading them about 0.9 s.
+`LAPLACE_CODE_HUB` and `LAPLACE_CODE_NODES` are positive whole numbers; any other value is an error, not the default.
 
-`lpm index RECORDS PATH...` builds records from the command line, `lpm update RECORDS PATH...` brings them up to date, `lpm search RECORDS QUERY` queries them, and `lpm fetch RECORDS ID` shows an entity and its constituents.
+`tests/code-search-eval.py LPM [--scope all,code] [--min-mrr X]` asks ten questions about the Laplace repositories through `lpm mcp` and reports where each scope puts the file that answers each (hit@1, @5, @10, mean reciprocal rank at 10, median latency). Run it against a database holding the `workspace-code` ingest; it fails where `LAPLACE_CONNINFO` names none or the witness is absent.
 
 ### Optional local stdio
 
@@ -236,46 +246,12 @@ illustrates that optional local mode only; configured editor clients use
 [mcp_servers.laplace-code]
 command = "D:/Libraries/build/Laplace/Laplace-MCP/icx-release/lpm.exe"
 args = ["mcp"]
-env = { LAPLACE_CODE_RECORDS = "E:/Data/Laplace/work/code-index/workspace.lpm" }
+env = { LAPLACE_CONNINFO = "host=HART-DESKTOP dbname=laplace" }
 ```
-
-`code_search` takes `query` (required), `limit` (1 to 64, default 15) and `path` (a file or directory to add before searching). Each hit has `path`, `line0`, `line1`, `id`, `hilbert`, `shared` (query constituents held), `frechet` (4D Fréchet of the query and snippet word trajectories), `rerank` (the `rerank` tool's score of the snippet, 0 to 1) and `snippet` (up to 60 lines read from the file).
-
-`bridge: true` (or `LAPLACE_CODE_BRIDGE=1`) adds words reached through the Engine's attested translation relations to the lexical and reranking query. Embedding requests retain the original query. Engine execution failures are reported as errors. The added words are expansion candidates; they do not establish that a query's sense has been resolved.
-
-The [invention's query-relative coupling field](https://github.com/SaltyPatron/Laplace/blob/main/docs/INVENTION.md#7-the-query-relative-coupling-field) requires joint interpretation across the whole observation and permits ambiguity among surviving alternatives. Global usage frequency or a single overlap score does not establish a unique sense. Search expansion must retain that distinction; it cannot substitute for the required joint interpretation.
-
-`rerank` scores a candidate text against the query in [0, 1]. Each query constituent the candidate holds counts with its IDF weight times the chance that holding it is not an accident of length: in a text of L bytes, a constituent found in a fraction r of the index's documents (mean length A) is present by chance with probability 1 - (1 - r)^(L/A), so the match is worth its weight times (1 - that). The lexical evidence is the sum over the weight of all query constituents; the 4D Fréchet shape of the query inside the candidate and the centroid distance scale it (`lexical * (0.55 + 0.35 shape + 0.10 centroid)`), so text with none of the query scores 0 and the same evidence in a longer text scores lower. `lpm rerank RECORDS QUERY FILE[:L0-L1]...` prints the score and its terms.
-
-`reindex` takes `path` (optional: one file or directory; otherwise every root) and returns `unchanged`, `changed`, `added`, `removed`, `rebuilt`, `files`, `docs`, `stale`, `entities` and `ms`.
-### Semantic candidates
-
-With `LAPLACE_CODE_SEMANTIC=1`, `code_search` also embeds the query with an OpenAI-compatible `/v1/embeddings` endpoint and takes the nearest chunks from Qdrant collections built from the same trees (code-search's collections: payload `path` is the repository label then the path inside it, with `start`, `end` and `text`). A label resolves to the root in `LAPLACE_CODE_ROOTS` with that directory name. The lexical candidates (three times `limit`) and the semantic ones are joined; a semantic chunk that overlaps a lexical document is that document, with the chunk's cosine. Each candidate's text is scored by Laplace `rerank` against the query. The union is ordered by weighted reciprocal rank fusion: a candidate scores the sum of weight/(60 + rank) over the rankings that hold it. Those rankings are each collection's own order (one model's cosines are not compared with another's) and the rerank's order. A code collection weighs 1; the rerank and a prose collection (`LAPLACE_CODE_TEXT_COLLECTIONS`) weigh 0.5 each unless `LAPLACE_CODE_RERANK_WEIGHT` or `LAPLACE_CODE_PROSE_WEIGHT` (0 to 1; 0 drops that ranking) say otherwise. `scope` (or `LAPLACE_CODE_SCOPE`) chooses which collections are asked: `code` (the default when code collections are configured; otherwise `all`), `docs` (the prose ones), or `all`; asking a scope with no collection configured is an error. Prose is opt-in because this is a code search: on the eval the prose collection never held an answer and took about half the first ten places (MRR 0.600 with `code`, 0.553 with `all`). Documentation is still found through the lexical retrieval, and through `docs` or `all` when asked. The response names its `scope` and the `weights` it used. The lexical retrieval contributes candidates, and the rerank already weighs what they share. `fusion: "rerank"` (or `LAPLACE_CODE_FUSION=rerank`) orders the union by the rerank alone, as before. Each hit has `fused` and `ranks` (`rerank`, `lexical` when lexical retrieval found it, and the rank in each collection that returned it). `explain: true` returns every candidate, not only the first `limit`.
-
-`tests/code-search-eval.py` asks ten questions about the Laplace repositories through `lpm mcp` and reports where each order puts the file that answers them (hit@1, @5, @10, mean reciprocal rank). It runs wherever the semantic configuration is set, and says it skipped otherwise.
-
-| Name | What |
-|---|---|
-| `LAPLACE_CODE_SEMANTIC` | `1` to use semantic candidates; unset or `0` lexical only |
-| `LAPLACE_CODE_QDRANT` | Qdrant base URL, for example `http://192.168.1.2:6333` |
-| `LAPLACE_CODE_QDRANT_KEY` | sent as `api-key` when set |
-| `LAPLACE_CODE_EMBED_URL`, `LAPLACE_CODE_EMBED_KEY` | code embedding endpoint and its bearer key |
-| `LAPLACE_CODE_COLLECTIONS` | comma-separated collections whose vectors that endpoint made |
-| `LAPLACE_CODE_QUERY_PREFIX` | text before the query (default `Find the most relevant code snippet given the following query:` and a newline, for jina-code-embeddings) |
-| `LAPLACE_CODE_TEXT_EMBED_URL`, `LAPLACE_CODE_TEXT_EMBED_KEY` | optional second endpoint for prose collections (key defaults to `LAPLACE_CODE_EMBED_KEY`) |
-| `LAPLACE_CODE_TEXT_COLLECTIONS` | collections for the second endpoint |
-| `LAPLACE_CODE_TEXT_QUERY_PREFIX` | default `Instruct: Given a question, retrieve passages that answer it` then a newline and `Query: `, for Qwen3-Embedding |
-| `LAPLACE_CODE_SCOPE` | `code` (default when `LAPLACE_CODE_COLLECTIONS` is set, else `all`), `docs` or `all`: the collections asked when a call does not say |
-| `LAPLACE_CODE_RERANK_WEIGHT`, `LAPLACE_CODE_PROSE_WEIGHT` | the weight of the rerank's ranking and of each prose collection's in the fusion, 0 to 1 (default 0.5 each; a code collection weighs 1) |
-| `LAPLACE_CODE_SEMANTIC_CANDIDATES` | nearest chunks taken per collection (default three times `limit`) |
-
-Only `http://` URLs are supported. When semantic candidates are configured and an endpoint is unreachable, refuses the key, or a collection does not exist, `code_search` is an error naming the URL and the response; it does not answer from the lexical index alone. The result reports `semantic`, `semantic_ms` and `candidates` (`lexical`, `semantic`, `union`); each hit has `source` (`lexical`, `semantic` or `both`), and a hit with a semantic source has `cosine` and `collection`. A semantic-only hit whose file is under a root shows those lines from the file; otherwise it shows the chunk text.
-
-On HART-DESKTOP the services are the llama.cpp servers on `127.0.0.1:8711` (code) and `:8713` (prose) and the collections `laplace-desktop-code` and `laplace-desktop-text` on hart-server's Qdrant.
 
 ## Code from the database
 
-`code_where`, `code_callers`, `code_callees`, `sources`, `ingest_status` and `file_outline` read the database (`LAPLACE_CONNINFO`), not the local index: they answer for code a recipe source ingested, such as Laplace-Engine's `workspace-code`. Nothing is read from a working tree.
+`code_where`, `code_callers`, `code_callees`, `sources`, `ingest_status` and `file_outline` read the database (`LAPLACE_CONNINFO`) too: they answer for code a recipe source ingested, such as Laplace-Engine's `workspace-code`. Nothing is read from a working tree.
 
 `code_where` takes `query` (required: a name, or any exact span of code), `path` (a substring the file's path must contain), `defines` (true: only files that define it), `limit` (files, default 20), `occurrences` (per file, default 3, at most 16) and `context` (bytes, default 120). It walks up the container index from the query's entity through every path that holds it to the files: a file is a trunk over its metadata and its content, and the walk stops there. Each hit has `path` (the file's pathname record), `file` (its trunk ID), `defines` (the declaration kinds the code recipe said of the name in that file, such as `function_definition` or `class_declaration`; files that define it come first), `occurrences` (how many places in its syntax tree hold it) and `at`: for each place, `line`, `context` (the innermost enclosing node of at least `context` bytes), `enclosing` (the first line of the outermost enclosing node under 8 KiB below the file, usually the declaration) with its span `line0`..`line1`, and `depth`. Lines are counted in the file's recorded content. The answer also has `files`, `nodes` and `levels` walked, and `cut` when the walk reached 400,000 nodes and stopped (a name as common as `return`).
 

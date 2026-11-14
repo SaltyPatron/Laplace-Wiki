@@ -53,11 +53,10 @@ Observation counts retain their PostgreSQL 64-bit value in JSON responses.
 Text display resolves scalars through Native's indexed floor,
 with no codepoint-offset assumption or 256-scalar selection limit.
 
-`code_search` searches all indexed roots. Its optional `path` refreshes a local
-file or directory using the existing incremental updater: unchanged files keep
-their records, changed files are replaced, and removed files leave the index.
-A missing requested root fails explicitly. `LAPLACE_CODE_ROOTS` declares the
-regular workspace roots; `reindex` refreshes them on demand.
+`code_search` reads the database's ingest of the workspace (Laplace-Engine
+`workspace-code`): the query's terms walked up the container index to the
+witness's files, each file's unit scored by BM25. Nothing is indexed by the
+process. `reindex` ingests the source again; its recipe supersedes what changed.
 
 Packaging serializes access to its build cache and retains the current build plus
 the two most recent other builds. It removes only marked cache entries whose Git
