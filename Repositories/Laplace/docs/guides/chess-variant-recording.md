@@ -6,14 +6,26 @@ occupancy alone is insufficient for reserves, castling, en passant, or check-cou
 objectives. Source PGN remains source testimony; legal replay and analysis are
 calculations over it.
 
-The monorepo recording path executes standard chess, Chess960, Crazyhouse,
-three-check, and King of the Hill. Chess960 changes the initial arrangement and
-designated castling rooks. Crazyhouse adds pockets, drop actions, and promoted-piece
-provenance. Three-check adds the checks delivered by each side. King of the Hill
-adds the king's winning squares. Other named descriptors do not imply executable
-rules: unsupported source rules fail explicitly with the game and source location.
+The monorepo recording path executes every law the Engine's
+`firmware/chess.firmware` declares: standard chess, Chess960, From Position,
+Crazyhouse, King of the Hill, Three-check, Atomic, Antichess, Horde and Racing
+Kings. Chess960 changes the initial arrangement and designated castling rooks.
+Crazyhouse adds pockets, drop actions, and promoted-piece provenance. Three-check
+adds the checks delivered by each side. King of the Hill and Racing Kings add the
+king's goal squares. Atomic explodes captures, Antichess makes captures compulsory
+and the king a piece like any other, and Horde starts White with pawns that step two
+from the first rank. A variant name no law declares does not imply executable rules:
+the game fails explicitly with its game and source location.
 
-Native `chess_rules.c` resolves and replays nonstandard-rule games in one batch.
+The rules have one implementation, the Engine's `src/chess_rules.c`. `laplace_core`
+compiles it from the canonical Engine checkout, and `engine/core/src/chess_board.c`
+only carries the managed board's state into it. The firmware names each law as every
+source writes it: the PGN Variant tag, Lichess's API key, and the `UCI_Variant`
+value. The Lichess bot accepts every variant the firmware declares and tells its
+engine the variant through `UCI_Variant`, which Laplace's UCI engine offers as the
+conventional combo.
+
+The Engine resolves and replays nonstandard-rule games in one batch.
 The existing composition owners emit their state atoms, moves, trajectories and
 observations. Stored reconstruction restores rules and state before generating SAN,
 FEN, or later analysis. Ordinary-chess tablebases cannot answer other rule sets.
@@ -50,5 +62,7 @@ May 2016 Chess.com archive. They cover composition, analysis and typed reconstru
 the complete 663-game archive is the installed-client ingestion verification input.
 
 Rule references: [Crazyhouse](https://lichess.org/variant/crazyhouse),
-[three-check](https://lichess.org/variant/threeCheck), and
-[King of the Hill](https://lichess.org/variant/kingOfTheHill).
+[three-check](https://lichess.org/variant/threeCheck),
+[King of the Hill](https://lichess.org/variant/kingOfTheHill), [Atomic](https://lichess.org/variant/atomic),
+[Antichess](https://lichess.org/variant/antichess), [Horde](https://lichess.org/variant/horde) and
+[Racing Kings](https://lichess.org/variant/racingKings).
