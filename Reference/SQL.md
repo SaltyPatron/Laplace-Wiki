@@ -1,8 +1,8 @@
 # SQL
 
-The extension installs one type, `blake3`, its operators and operator classes, and 82 functions, 78 of them in C calling Laplace-Native, 3 in SQL over them and one in PL/pgSQL (`laplace_schema_indexes`), and one aggregate; every function is `IMMUTABLE STRICT PARALLEL SAFE` unless stated, so a constant argument folds at plan time and a lookup by computed ID becomes an index lookup.
+The extension installs one type, `blake3`, its operators and operator classes, and 246 extension routines: 236 C functions calling Laplace-Native, 6 SQL functions, 2 PL/pgSQL functions (`laplace_schema_indexes`, `laplace_ensure_stage`), one PL/pgSQL procedure (`laplace_measure_attestations`), and one aggregate; every pure function is `IMMUTABLE STRICT PARALLEL SAFE` unless stated, so a constant argument folds at plan time and a lookup by computed ID becomes an index lookup.
 
-`laplace--1.12.sql` declares them; `laplace_pg.c` defines them. The extension is installed by the deployment (`laplace deploy`), and its regression cases run against the deployed database afterwards ([Checks](Checks.md#the-database-checks)); a script that does not install fails the deployment.
+`sql/laplace.sql.in`, `sql/api.sql`, and `sql/operations.sql` declare them under the content-addressed extension version; `src/*.c` defines them. The extension is installed by the deployment (`laplace deploy`), and its regression cases run against the deployed database afterwards ([Checks](Checks.md#the-database-checks)); a script that does not install fails the deployment.
 
 ## The type
 
@@ -113,7 +113,29 @@ Each plans its statement once per backend and keeps the plan; each call is one e
 | `laplace_paths(ids blake3[])` | `SETOF (entity, path)` | the paths of a set of entities: one level of the DAG a call |
 | `laplace_middle_any(geometry, blake3[])` | `boolean` | whether any of the IDs is held between a path's first vertex and its last: a refused predicate |
 | `laplace_couple(occ blake3[], fan bigint, refuse blake3[], shape smallint, shape_n float8, keep integer)` | `SETOF (entity, occ, route, rating, deviation, volatility, via, rel, tier, distance, vertices)` | COUPLE as one native operator: route 0, every claim holding an occurrence (its other end); route 1, every observation holding an occurrence, at most `fan` each; route 2, the `keep` observed curves nearest the observation's own, nominated by the GIN and the GiST and measured natively (`shape` -1 none, 0 Fréchet, 1 Fréchet with `shape_n` outliers, 2 DTW, 3 EDR within `shape_n`). `occ` in a row is the occurrence it answers, 1-based, 0 for shape |
+| `laplace_roles_of(left_ids blake3[], right_ids blake3[], fan bigint DEFAULT NULL)` | `SETOF (ordinal bigint, entity blake3, path geometry)` | role-bearing compositions matching `left_ids` / `right_ids` |
+| `laplace_roles_of(left_ids blake3[], right_ids blake3[], fan bigint, kinds smallint)` | `SETOF (ordinal bigint, entity blake3, path geometry)` | role-bearing compositions filtered by bitmask `kinds` (bit `0`: records, bit `1`: claims; default `3` = both); `STABLE PARALLEL SAFE` |
 | `laplace_schema_indexes()` | `void` | every index of [Schema](Schema.md#the-indexes), each `IF NOT EXISTS`; PL/pgSQL |
+
+## Direct-AM substrate reads and realization
+
+Zero-SPI Direct-AM C functions inspect partitioned `entity`, `physicality`, `attestation`, and `consensus` partitions without SQL 256-partition `Append` planning or per-row round trips (`STABLE PARALLEL SAFE`):
+
+| Function | Returns | Computes |
+| --- | --- | --- |
+| `laplace_present_mask(ids blake3[])` | `boolean[]` | presence boolean per ID via single-partition primary-key probe on `entity` |
+| `laplace_known_files(ids blake3[])` | `SETOF (ordinal bigint, id blake3)` | subset of `ids` present in `entity`, with 1-based input ordinal |
+| `laplace_attestation_games(ids blake3[])` | `SETOF (ordinal bigint, games bigint)` | witness game counts from `attestation` by trunk ID (`id`) |
+| `laplace_standing_counts(ids blake3[])` | `(matched bigint, orphaned bigint)` | counts matched `consensus` standings and orphaned IDs across partitions |
+| `laplace_attestation_count(target_witness blake3 DEFAULT NULL)` | `bigint` | total or per-witness `attestation` row count across `0..f` partitions |
+| `laplace_nonempty()` | `(has_entities boolean, has_standings boolean)` | early-exit partition scan indicating whether any `entity` or `consensus` rows exist |
+| `laplace_entity_tier_sample()` | `SETOF (tier smallint, estimated bigint)` | sampled tier distribution from non-empty `entity` partitions |
+| `laplace_entity_tier_count(target_tier smallint)` | `bigint` | exact entity count at `target_tier` across non-empty partitions |
+| `laplace_replay_export(include_files boolean DEFAULT false)` | `SETOF (claim blake3, trunk blake3, games float8, tokens float8, score float8, "position" integer)` | streams non-file (or all) `attestation` rows across `0..f` partitions for offline replay/evaluation |
+| `laplace_label_text(id bytea, null_if_hex boolean DEFAULT false)` | `text` | single-entity realized label, returning `NULL` instead of hex fallback when `null_if_hex = true` |
+| `laplace_label_array(ids bytea[], null_if_hex boolean DEFAULT false)` | `text[]` | batch realized labels matching `ids` order, returning `NULL` entries instead of hex fallback when `null_if_hex = true` |
+| `laplace_hilbert_neighbors(anchor geometry, exclude_id blake3 DEFAULT NULL, k integer DEFAULT 16, target_tier smallint DEFAULT 0)` | `SETOF (id blake3, hilbert bigint, anchor_hilbert bigint)` | nearest entities by signed Hilbert distance on `entity_tier_hilbert` at `target_tier` |
+| `laplace_constellation_sample(buckets integer DEFAULT 64)` | `SETOF (ord integer, id blake3, x float8, y float8, z float8, m float8, radius float8, path_len integer, hilbert bigint)` | stratified `entity` sample across Hilbert/partition buckets with realized 4D coordinates and radius |
 
 ## The highway and the banks
 
@@ -138,6 +160,7 @@ Each plans its statement once per backend and keeps the plan; each call is one e
 | Function | Returns | Computes |
 | --- | --- | --- |
 | `laplace_isa()` | `text` | `cpu: …; dispatch: …`, the CPU's features and the level the dispatcher uses; `STABLE` |
+| `laplace_estate_summary(exact boolean DEFAULT false)` | `jsonb` | substrate estate summary (`database`, `extversion`, partition/index counts, sizes, entity/physicality/attestation/standing counts); `exact = false` reads `pg_class` / syscache metadata with zero partition `table_open` or OS `stat()`, and `exact = true` skips 0-block partitions; `STABLE PARALLEL SAFE` |
 
 ## Provenance, scoped consensus, and attribution
 
