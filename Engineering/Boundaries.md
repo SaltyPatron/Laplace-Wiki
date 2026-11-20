@@ -31,6 +31,12 @@ Architecture boundaries state which layer owns which law: the native engine owns
 SQL and C# are peer orchestrators. Neither is a semantic layer above the other and
 neither becomes the engine. Both reach the same generated native instruction contract.
 
+## Client-determinism collapse and compounding snap-in modularity
+
+Because `tier0.bin`, `tier0.flags`, `highway.bin`, and `chess.bin` are deterministic, fingerprinted ROMs memory-mapped identically on both client and server, client callers (`Laplace-Engine`, `Laplace-MCP`, and C# via `Laplace.Native.Interop`) execute deterministic operations — BLAKE3-128 IDs, UAX #29 segmentation, `tier0.flags` variant expansion, exact 4D integer centroids, 4D Hilbert keys, mantissa pack/unpack, 64-bit `banks.tsv` masks, highway crosswalks, Syzygy probes, in-memory Fréchet/DTW/EDR curve comparison, Glicko-2 series updates, Fisher `share_bp = 10000` royalty math, and UTF-8 realization — **in-process in `Laplace-Native` C with zero database round-trips**. PostgreSQL (`Laplace-postgres`) strictly stores the four substrate tables and executes indexed set probes, binary `stage.lp_*` merges, and $O(\text{tier})$ frontier reads using the exact same `Laplace-Native` C functions. Pre-modular SQL catalogs (`extension/laplace_substrate`, `sql_catalog.def`) collapse into this split rather than being ported one-for-one.
+
+Modularity in Laplace is **compounding overlap, never vertical feature silos**: new corpora, code repositories, `.git` histories, compiler symbol graphs, chess archives, media streams, and Safetensors/GGUF checkpoints snap in via generic codecs/grammars + declarative `.recipe` files onto the same 16-byte BLAKE3 IDs, and one shared C `Forward + Highway A* + Gödel` loop (`program.c`) steered by detached `.firmware` programs serves conversation, code construction, chess, and discovery without domain-specific engine forks.
+
 ## Substrate state layering
 
 ```text

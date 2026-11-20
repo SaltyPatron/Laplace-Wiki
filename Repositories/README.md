@@ -2,7 +2,11 @@
 
 Documentation relocated from the implementation repositories is grouped here by its original repository and path.
 
-The files retain their existing contents. Consolidation and editing follow the relocation. The links below open the files in this Wiki repository.
+> [!CAUTION]
+> **Historical Archive vs. Canonical Authority:**
+>
+> - **Authoritative Inventor Documents:** [Laplace/docs/INVENTOR_RECORD.md](Laplace/docs/INVENTOR_RECORD.md), [Laplace/docs/INVENTION.md](Laplace/docs/INVENTION.md), and [Laplace/docs/INVENTIONS.md](Laplace/docs/INVENTIONS.md) hold the inventor's primary thesis and verbatim design record.
+> - **Superseded Pre-Convergence Plans & Snapshots (DO NOT EXECUTE AS ACTIVE WORK):** Other relocated files below — including `Laplace/docs/sql-refactor-tasklist.md`, `Laplace/docs/plan/*`, `*/AGENTS.md.txt`, `Laplace/agent-skills/*`, `cutechess-*.md`, and the entire `Laplace-Refactor/*` tree — are preserved historical artifacts from earlier phases. Active architecture, boundaries, and reference specifications live in the top-level [Laplace-Wiki](../README.md) pages (`Architecture.md`, `Engineering/`, `Sequence/`, `Reference/`), and active agent rules live in `Laplace-Operations/agents/AGENTS.md`.
 
 ## Laplace
 

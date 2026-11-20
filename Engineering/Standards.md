@@ -24,7 +24,7 @@ Component compilation is not product completion. A capability is done when its c
 
 ## 2. One semantic implementation
 
-Native C and the PostgreSQL 4D integration (`Laplace-Native` and `Laplace-postgres`, driven by `Laplace-Engine`) own every semantic operation. SQL and C# only orchestrate typed surfaces (`pg_contract.c`, `sql_catalog.def`). A transport, source adapter, parser binding, cache, database serializer, test helper, CLI, HTTP endpoint, script, or target exporter must never contain a second implementation of identity, AST lowering, composition, physicality, mantissa packing, Hilbert encoding, Glicko-2 standing, cognition, realization, or model semantics.
+Native C and the PostgreSQL 4D integration (`Laplace-Native` and `Laplace-postgres`, driven by `Laplace-Engine`) own every semantic operation. Client processes execute deterministic operations in-process via `Laplace-Native` (`Laplace.Native.Interop` in C#) over memory-mapped ROMs with zero DB round-trips, while SQL and C# orchestrate indexed binary set probes (`pg_contract.h`, `LaplaceEngine` `reader.h`, `Laplace.Data`). A transport, source adapter, parser binding, cache, database serializer, test helper, CLI, HTTP endpoint, script, or target exporter must never contain a second implementation of identity, AST lowering, composition, physicality, mantissa packing, Hilbert encoding, Glicko-2 standing, cognition, realization, or model semantics.
 
 Scalar operations lower to the deterministic vector-first implementation. Serial, partitioned, parallel, direct-native, PostgreSQL, SQL, and managed routes produce identical logical results and bit-exact canonical identities across supported x86-64 ISA levels (`scalar`, `sse2`, `avx2`, `avx512`).
 
@@ -57,7 +57,7 @@ For indexed cognition and retrieval, push containment (`laplace_path_ops`), 64-b
 
 ## 7. Managed orchestration
 
-C# owns service hosting, HTTP/OpenAI/MCP/UCI transport, authentication, workspace tenancy, billing/entitlement orchestration, and Web UI delivery. All managed database access runs through `sql_catalog.def` and `NpgsqlCatalog` with zero handwritten SQL strings in `.cs` files. C# never computes substrate identities, case-folds or normalizes content, chunks text or code, blends heuristic ranking weights, or maintains a private substrate copy.
+C# owns service hosting (`Laplace.Hosting`), HTTP/OpenAI/MCP/UCI transport (`Laplace.Mcp`), authentication, workspace tenancy, billing/entitlement orchestration, and Web UI delivery. Deterministic client operations run in-process through auto-generated `Laplace.Native.Interop` bindings over memory-mapped ROMs, and database access runs through `LaplaceEngine` (`reader.h`) and `Laplace.Data` binary prepared commands over the four canonical `Laplace-postgres` tables plus `app.*` operational tables (retiring pre-modular `sql_catalog.def` and `extension/laplace_substrate`). C# never computes substrate identities, case-folds or normalizes content, chunks text or code, blends heuristic ranking weights, or maintains a private substrate copy.
 
 ## 8. Persistence, perf-caches, and in-place lifecycle
 
@@ -71,8 +71,8 @@ Verify against the real installed PostgreSQL 18 server and deployed services (`l
 
 Measure both correctness and physical execution (`EXPLAIN (ANALYZE, BUFFERS)`, `laplace bench`, `laplace status --joins`, phase timings, buffer hits, partition pruning) on real inputs so O(rows) regressions, hub blowups, or plan defects are caught immediately.
 
-## 10. Package, worktree, and repository discipline
+## 10. Package, batch execution, and repository discipline
 
-Shared contracts (`manifest/banks.tsv`, `manifest/slots/*.tsv`, `manifest/trust_classes.toml`, `manifest/function_bindings.tsv`, `sql_catalog.def`, `components.lock.tsv`) are defined once and consumed or generated deterministically rather than hand-copied.
+Shared contracts (`manifest/banks.tsv`, `manifest/slots/*.tsv`, `manifest/trust_classes.toml`, `manifest/function_bindings.tsv`, `pg_contract.h`, `Laplace.Native.Interop`, `components.lock.tsv`) are defined once and consumed or generated deterministically rather than hand-copied.
 
-Builds run out of tree (`$LAPLACE_BUILD`). Keep `main` cohesive across repositories: fold worktree branches promptly instead of stranding partial branches, evaluate leftover agent WIP critically against the invention rather than preserving broken state, and synchronize `Laplace-Wiki` and `Laplace-Operations/agents/` (`sync.ps1`) whenever architecture, commands, or schemas change.
+Builds run out of tree (`$LAPLACE_BUILD`). Develop cross-repository changes in coherent horizontal batches against local prefixes (`ninja` / `dotnet build`), executing one unified deployment, behavioral verification against populated data, and `components.lock.tsv` update per batch rather than per-ticket waterfall ceremonies. Keep `main` cohesive across repositories, evaluate leftover agent WIP critically against the invention rather than preserving broken state, never commit progress diaries or status-report prose into repositories, and synchronize `Laplace-Wiki` and `Laplace-Operations/agents/` (`sync.ps1`) whenever architecture, commands, or schemas change.

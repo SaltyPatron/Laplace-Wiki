@@ -1,8 +1,13 @@
 # Laplace-Wiki
 
-Laplace documentation lives in this repository. Start at [README.md](README.md).
+Laplace documentation lives in this repository. Start at [README.md](README.md). Global agent operational rules and the active 4-Batch finish program live in `Laplace-Operations/agents/AGENTS.md`.
 
-Relocated repository documentation lives under `Repositories/` with its original paths. Keep active operational guides aligned with their owning code and verified installations; preserve invention documents, research and historical reports, and label superseded setup examples rather than presenting them as current instructions.
+> [!IMPORTANT]
+> **Truth order when reading this repository:**
+>
+> 1. **Canonical Inventor Record & Thesis:** [Repositories/Laplace/docs/INVENTOR_RECORD.md](Repositories/Laplace/docs/INVENTOR_RECORD.md), [INVENTION.md](Repositories/Laplace/docs/INVENTION.md), [INVENTIONS.md](Repositories/Laplace/docs/INVENTIONS.md), and decided entries in [Sequence/Conflicts.md](Sequence/Conflicts.md).
+> 2. **Canonical Specification & Reference:** Top-level Wiki sections (`Architecture.md`, `Engineering/`, `Sequence/`, `Storage/`, `Semantics/`, `Corpora/`, `Operations/`, `Reference/`, `Research/`).
+> 3. **Historical Relocated Archives (`Repositories/*`):** Files relocated from implementation repositories under `Repositories/` (such as `Repositories/Laplace/docs/plan/*`, `sql-refactor-tasklist.md`, `*.txt` snapshots of older `AGENTS.md`/`SKILL.md`, `cutechess-*.md`, and `Repositories/Laplace-Refactor/*`) are preserved historical records — **never** treat them as active task lists, never port `extension/laplace_substrate` SQL 1-for-1, and never dump progress diaries or audit logs into repositories.
 
 ## Page format
 
