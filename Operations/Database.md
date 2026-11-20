@@ -41,13 +41,13 @@ The stress test drops the operating system's page cache and PostgreSQL's buffers
 
 Every page a checkpoint has not yet seen modified goes into the log whole the first time it changes (a full-page image), and each is compressed by the backend that writes it. **Measured** over the first four hours of a full ingest at 32 GB, 30 min and `zstd`: 273 GB of log, 999,307,239 records, 47,175,989 full-page images (about 377 GB before compression), and the log's buffers full 2,616,329 times; client backends wrote 10,051,406 relation pages themselves. Fewer checkpoints mean fewer full-page images, and larger buffers keep backends from writing the log themselves. That run used `max_wal_size` 32 GB and a 30-minute `checkpoint_timeout`; the settings are now the table's.
 
-Bulk ingestion sessions set `synchronous_commit = off`.
+Bulk ingestion sessions set `synchronous_commit = off` under `wal_level = minimal` (`max_wal_senders = 0` on the substrate profile).
 
-A batch's witnesses, attestations and standings are one transaction written in parts, one a connection, a partition at a time on every connection, and committed together by two-phase commit: every part is prepared, the part that holds the witnesses and the files' trunks last; that part is committed first, and its commit decides the rest. A part left prepared by a load that stopped is committed or rolled back by the next load, as its batch's first part was.
+Each batch streams novel entities and paths via binary `COPY` into per-run, per-lane `UNLOGGED` `stage.lp_*` tables (`stage.lp_entity_*`, `stage.lp_physicality_*`) and merges them set-wise in Hilbert order into the partitioned `public.*` tables (`laplace_merge_stage`, `laplace_enrich_stage`), while per-witness `(claim, games, score)` series fold into `public.attestation` and `public.consensus` through `laplace_attest_series` once the source trunk is written. Two-phase commit (`PREPARE TRANSACTION`) across per-partition connections is retired:
 
 | Setting | Rule | Example |
 | --- | --- | --- |
-| `max_prepared_transactions` | at least the 16 parts a batch is written in; *restart* | 32 |
+| `max_prepared_transactions` | `0`: bulk staging uses `UNLOGGED` `stage.lp_*` binary `COPY` and set-wise merge rather than cross-connection `PREPARE TRANSACTION`; *restart* | `0` |
 
 ## Planning
 
@@ -57,7 +57,7 @@ PostgreSQL and PostGIS assume that a geometry's coordinates are positions and th
 | --- | --- | --- |
 | Cost of `laplace_vertex_ids` | 10,000 | At lower costs the planner scans the partition of whole books and decodes every one on every lookup. |
 | Statistics on `physicality.path` | 0 | Histograms of packed IDs mean nothing: `ANALYZE` took 332 s with them and 2.5 s without. |
-| `enable_parallel_append` in the Laplace database | on | A scan of the parent is many leaves. GIN itself does not scan in parallel; Gather splits the leaves across workers. **Measured** on `laplace_containers` of Sherlock Holmes, 101 rows: 3780 ms off, 573 ms on. |
+| `enable_parallel_append` in the `laplace` database | `off` (database default set by `laplace deploy`) | Single-key and small-set lookups take ~1 ms, whereas starting parallel workers costs ~15 ms. Server-level `tune-pg.sh` leaves `enable_parallel_append = on` for general cluster defaults, and large analytical scans across parent partitions can opt in locally (`SET LOCAL enable_parallel_append = on`; **measured** on `laplace_containers` of Sherlock Holmes, 101 rows: 3780 ms off, 573 ms on). |
 | `parallel_workers` on physicality partitions | 0 | A statement that names one leaf does not start workers. |
 | `gin_pending_list_limit` on the container index (each partition) | 32 MB | A search reads the pending list. At the default 4 MB the list spilled every few thousand paths and the container index was 45% of a load's full-page images. At 256 MB one containment read 4,731 buffers and took 22.8 ms; emptied, 9 buffers and 0.17 ms. 32 MB spills around a batch on one partition. |
 | `jit` | off | Compiling a short lookup costs more than it saves. |
@@ -74,7 +74,7 @@ PostgreSQL's autovacuum defaults do not drain a GIN pending list during a load. 
 | `autovacuum_vacuum_cost_delay` | 0 | The heap is on NVMe. Manual `VACUUM` is already unthrottled. |
 | `autovacuum_vacuum_cost_limit` | 2000 | The default 200 is the whole budget, split across the workers. |
 | `autovacuum_max_workers` | half the cores | Same width as index builds. `autovacuum_worker_slots` is already 16, so this does not restart. |
-| `autovacuum_naptime` | 10 s | 107 partitions are not visited on a 60 s nap during a load. |
+| `autovacuum_naptime` | 10 s | The 50 substrate partitions (`9 + 9` tier range partitions on `entity` and `physicality`, `16 + 16` hex range partitions on `attestation` and `consensus`) are not visited promptly on a 60 s nap during a load. |
 | `autovacuum_vacuum_scale_factor` | 0.05 | The default 0.2 waits for a fifth of a large partition to die. |
 | `autovacuum_analyze_scale_factor` | 0.02 | |
 | `autovacuum_vacuum_insert_scale_factor` | 0.01 | Insert-only vacuum is what reaches a GIN pending list. The default waits for 20% growth. |

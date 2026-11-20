@@ -54,7 +54,12 @@ The layout file, the flags path plus `.layout`, is tab-separated, one field per 
 A path is a POINT ZM or LINESTRING ZM whose vertices are not positions. Each vertex is 32 bytes: X, Y, Z, M as doubles.
 
 - **X, Y, Z carry the constituent's ID** (`lp_id_to_xyz`): the 16 bytes read as one little-endian 128-bit integer *v*; `part0 = v & (2^43 − 1)`, `part1 = (v >> 43) & (2^43 − 1)`, `part2 = v >> 86` (42 bits); each part is placed in the low mantissa bits of a double whose exponent field is 1021 (`EXP_BITS = 1021 << 52`), sign 0, so every value lies in `[0.25, 0.5)`. `lp_xyz_to_id` reads only the ID's own bits of each, 43, 43 and 42 (`lp_xyz_id_mask`), and reassembles *v*. The 28 bits the ID leaves, 9, 9 and 10, are the vertex's spare bits (`lp_xyz_spare`, `lp_xyz_spare_set`): bits 0 to 3 a tag saying which layout they are in, 4 to 27 its payload, 0 for none; a value there never changes which entity the vertex is, and the scans compare through the ID's bits only. Round-trip is exact for every ID; measured 104 M per second per core.
-- **M carries the vertex's metadata** as an integer in a double: the low 30 bits (`LP_M_RUN_BITS`) are the run length, how many times the child is repeated, 1 or more; above them, what the vertex is: `LP_SAID_CLAIM` = 1, `LP_SAID_RECORD` = 2, `LP_SAID_TUPLE` = 3, `LP_SAID_METADATA` = 4; `lp_m_run(m)`, `lp_m_said(m)`. A run of identical children is one vertex.
+- **M carries the vertex's metadata** as an exact 53-bit integer in a double (`lp_m_bits`, `lp_m_full`):
+  - bits `0..29` (`30` bits, `LP_M_RUN_BITS`): run length, how many times the child is repeated, `1` or more (`lp_m_run`);
+  - bits `30..32` (`3` bits, `LP_M_SAID_BITS`): what the vertex is said to be within the path (`0` ordinary constituent, `LP_SAID_CLAIM = 1`, `LP_SAID_RECORD = 2`, `LP_SAID_TUPLE = 3`, `LP_SAID_METADATA = 4`, `LP_SAID_HOLDS = 5`, `LP_SAID_VOICE = 6`, `LP_SAID_DEPENDENCE = 7`, `lp_m_said`);
+  - bits `33..34` (`2` bits, `LP_M_OUTCOME_BITS`): how a record's claim vertex was said (`LP_OUTCOME_WIN = 0`, `LP_OUTCOME_DRAW = 1`, `LP_OUTCOME_LOSS = 2`, `LP_OUTCOME_SCORE = 3` whose continuous score in `(0, 1)` is carried in the vertex's spare bits as `score × 2^24` under tag `LP_SPARE_SCORE = 1`, `lp_m_outcome`, `lp_outcome_of`, `lp_outcome_score`);
+  - bits `35..52` (`18` bits, `LP_M_POSITION_BITS`): 1-based ordinal position among claims said together (`0` = none, saturating at `262,143`, `lp_m_position`).
+  A run of identical children is one vertex.
 - **Atoms**: a POINT ZM holding the codepoint's own ID with run 1.
 
 ### EWKB
@@ -65,33 +70,33 @@ Paths move only as EWKB and binary COPY; WKT at default precision changed 93.5% 
 
 ## Binary wire formats
 
-- **A `blake3[]` parameter** (`ids_param`): a 20-byte array header of big-endian `int32`s, `ndim = 1`, `flags = 0`, `elem oid = id_oid` (the type's OID, read once with `SELECT 'blake3'::regtype::oid`), `n`, `lbound = 1`; then per element a 4-byte length 16 and the 16 bytes. `20 + 20 n` bytes, sent in binary with `PQexecParams`.
-- **Binary COPY** (`db.c`): the 19-byte header `PGCOPY\n\xff\r\n\0` + flags 0 + extension length 0; per row a big-endian `int16` field count, then per field a big-endian `int32` length and the bytes; NULL is length `0xFFFFFFFF`; the trailer is `int16` −1. Rows:
+- **A `blake3[]` parameter** (`ids_param` / `lp_pg_ids`): a 20-byte array header of big-endian `int32`s, `ndim = 1`, `flags = 0`, `elem oid = id_oid` (the type's OID, read once with `SELECT 'blake3'::regtype::oid`), `n`, `lbound = 1`; then per element a 4-byte length 16 and the 16 bytes. `20 + 20 n` bytes, sent in binary with `PQexecParams`.
+- **Binary COPY** (`db.c`, `lp_copy_*`): the 19-byte header `PGCOPY\n\xff\r\n\0` + flags 0 + extension length 0; per row a big-endian `int16` field count, then per field a big-endian `int32` length and the bytes; NULL is length `0xFFFFFFFF`; the trailer is `int16` −1. Rows:
 
 | Table | Fields |
 | --- | --- |
-| `entity_t*` | `id` 16 B; `tier` int16; `coord` EWKB POINT ZM 37 B; `hilbert` int64, top bit flipped |
-| `physicality_t*` | `entity` 16 B; `tier` int16; `hilbert` int64; `path` EWKB; `mask` bit varying: its length in bits as int32 (256), then 32 bytes, bit *b* in byte *b* >> 3 under `0x80 >> (b & 7)` |
+| `entity` / `stage.lp_entity_*` | `id` 16 B; `tier` int16; `coord` EWKB POINT ZM 37 B; `hilbert` int64, top bit flipped; `mask` `bit(64)`: bit length as big-endian `int32` (`64`), then `8` bytes, bit *b* in byte `b >> 3` under `0x80 >> (b & 7)` |
+| `physicality` / `stage.lp_physicality_*` | `entity` 16 B; `tier` int16; `hilbert` int64; `path` EWKB; `mask` `bit(64)`: bit length as big-endian `int32` (`64`), then `8` bytes, bit *b* in byte `b >> 3` under `0x80 >> (b & 7)` |
 | `attestation` | `claim` 16 B; `witness` 16 B; `lineage` 16 B or NULL; `games` int64; `tokens` int64; `score` float8; `position` int32 or NULL; `trust` float8 |
-| `consensus` | `claim` 16 B; `rating`, `deviation`, `volatility` float8; `matches` int32 |
+| `consensus` | `claim` 16 B; `rating`, `deviation`, `volatility` float8; `matches` int64 (`bigint`) |
 
-Results are requested in binary (`PQexecParams` with result format 1); `float8` columns are read as big-endian 8-byte values and `int` as big-endian 4-byte.
+Results are requested in binary (`PQexecParams` with result format 1); `float8` and `bigint` columns are read as big-endian 8-byte values and `int4` as big-endian 4-byte.
 
 ## The engine's node table
 
-In memory during an ingest (`table.c`): one flat table of slots shared by every thread without a lock, open addressing by linear probing; a slot is empty, or the ID's tag over the node's index, claimed by compare-and-swap. `Node { id; int64_t m[4]; uint64_t voff; uint32_t nv, len; uint8_t tier, keep, kind, live; }` (`kind`: the bits of what whatever holds it says it is; `live`: a node, not an unused place) and the vertex array `Vtx { id; uint64_t m; }` packed, where `m` is M as it will be written, run length and said bits together. `keep` states during a load: 0 not looked for, 1 new and to be written, 2 recorded already, 3 in the frontier, 5 a file trunk held back to be written last.
+In memory during an ingest (`table.c`): one flat table of slots shared by every thread without a lock, open addressing by linear probing; a slot is empty, or the ID's tag over the node's index, claimed by compare-and-swap. `Node { id; int64_t m[4]; uint64_t voff; uint32_t nv, len; uint8_t tier, keep, kind, live; }` (`kind`: the bits of what whatever holds it says it is; `live`: a node, not an unused place) and the vertex array `Vtx { id; uint64_t m; }` packed, where `m` is M as it will be written (`lp_m_full`). `keep` states during a load: 0 not looked for, 1 new and to be written, 2 recorded already, 3 in the frontier, 5 a file trunk held back to be written last.
 
 ## The highway's files
 
-`laplace highway` writes the highway beside tier 0 (`$LAPLACE_HIGHWAY`):
+`laplace highway` writes the single-file, versioned, checksummed highway beside tier 0 (`$LAPLACE_HIGHWAY`, `lp_highway_write` in `highway.h`):
 
-| File | What |
+| Part | What |
 | --- | --- |
-| `tier0.highway` | one record per type in the form of a tier-0 record, its rank the type's slot and its pad the content's tier; then the edges, each a pair of 32-bit slots, grouped by the pair of lists |
-| `.layout` | text, a line each: `records N`; `edges-count N`; `list NAME TITLE FIRST COUNT`, the lists in order with the record each begins at; `edges A B FIRST COUNT`; `bank NAME LIST GROUP CARRIER WIDTH`, copied from `banks.tsv` |
-| `.keys` | `LIST KEY SLOT` a line: the identifiers the resources point at their types with, each to its slot. Every highway node is the canonical Tier-0 composition of its own identifier string (`oewn-00001740-n`, `abandon.01`, `va:0001f`, `leave-51.2`, `NOUN`, `i46360`), deterministic from `tier0.bin` alone without a `.nodes` sidecar |
+| records & edges | one `lp_tier0_record` per type, its rank the type's slot and its `pad` the content's tier; then the edges, each a pair of 32-bit slots (`lp_edge`), grouped by the pair of lists |
+| `layout` | tab-separated descriptor rows: `records N`; `edges-count N`; `list NAME TITLE FIRST COUNT`; `edges A B FIRST COUNT`; `bank NAME LIST GROUP CARRIER WIDTH OFFSET ENCODING`, copied from `banks.tsv` |
+| `keys` & `identifiers` | `LIST KEY SLOT` local keys and cross-list pointer resolutions (such as release-local WordNet offsets resolved to canonical targets and recorded nowhere in the DAG), plus ordered UTF-8 identifier components per slot. Every highway node is the canonical Tier-0 composition of its own shared identifier (`i46360`, `eng`, `abandon.01`, `give-13.1`, `va:0001f`, `NOUN`), deterministic from `tier0.bin` alone without sidecar files |
 
-Laplace-Native's manifest keeps what must not move between builds: `manifest/banks.tsv` (`bank list group carrier width`, a line a bank), `manifest/slots/LIST.tsv` (`slot id status key`, `status` `live` or `retired`), and `manifest/maps/*.tsv` (cross-list slot edges), written back by `laplace highway` and never by hand.
+Laplace-Native's manifest keeps what must not move between builds: `manifest/banks.tsv` (`bank list group carrier width offset encoding`), `manifest/slots/LIST.tsv` (`slot id status key`, `status` `live` or `retired`), and `manifest/maps/*.tsv` (cross-list slot edges), written back by `laplace highway` and never by hand.
 
 ## The recipe, firmware, and layout text files
 

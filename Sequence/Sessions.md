@@ -24,25 +24,32 @@ A conversation is like a chess game: each turn is its own entity and a point on 
 - **Out:** the session's trajectory.
 - **From:** `docs/specs/34_Conversational_Provenance.md` §Identity hierarchy.
 
-### 21.3 Admit the prompt as a turn
+### 21.3 Decompose the prompt in memory and bind prior-turn discourse referents
 
-- **In:** the request.
-- **Do:** the prompt is content, [11. Content](Content.md) on the client, under the prompt source at its declared class. A prompt with text, a photo, and a video is one trunk, `[metadata, content]`, whose content is `[text, image, video]`, each a tree down to codepoints; a photo of a sentence is pixels, not the sentence, and an OCR or ASR link between them is a calculation with its analyzer and receipt. The turn is one act. It records its session and ordinal as position, never hashed into the turn's or the message's ID, so the same prompt text in two turns is one content entity occurring twice; and it records role, participant, and source; the exact content entity and its trajectory; reply and dependency edges to prior turns or tool results; request parameters and the declared source and context scope. Prior turn and content identities enter the program as ordered discourse state with the `DISCOURSE` operand role, never rendered to a transcript and reparsed, and never merged into the prompt's semantic seed frontier.
-- **Out:** the turn, and the discourse operand of [20. Forward](Forward.md) operation 20.1.
+- **In:** the request and the session's prior turn trajectory (or `messages[]` history).
+- **Do:** decompose the prompt **in C memory from mapped `tier0.bin` in microseconds**—never blocking the response on a synchronous database `COPY` of the prompt before answering. A multimodal prompt with text, an image, and audio is one trunk, `[metadata, content]`, whose content is `[text, image, audio]`, each decomposed down to Tier-0 codepoints; OCR or ASR links are explicit calculations with their analyzer receipts. Session and turn ordinal remain trajectory position, never hashed into content `lp_id`s, so identical prompt text across two turns is one entity occurring twice. **Resolved entities, topics, and open obligations from prior turns enter `RESOLVE` and seed `COUPLE` / `SCAN` with the `DISCOURSE` operand role** (weighted below explicit new content anchors when the user switches topic, and promoted directly when pronouns, demonstratives, definite descriptions, or elliptical follow-ups such as `"Where was he born?"`, `"What about its memory usage?"`, or `"Why?"` refer back), while keeping prior-turn and current-turn provenance distinct.
+- **Out:** the in-memory turn observation and resolved prior-turn discourse seeds for [20. Forward](Forward.md) operations 20.1 and 20.2.
 - **From:** `docs/specs/34_Conversational_Provenance.md` §Turn contract; `docs/read-path.md` §4.
 
-### 21.4 Run the one program
+### 21.4 Run the one program (with drop-in `/v1/chat/completions` compatibility)
 
-- **In:** the turn of 21.3.
-- **Do:** [20. Forward](Forward.md), under the caller's firmware, authority, and envelope. Roles, parameters, tools, streaming, and non-streaming alter declared inputs and transport only; they never select a weaker template path. The OpenAI-compatible surface binds roles, parameters, and tools to Laplace semantics and reports unsupported or translated behaviour honestly, without leaking transformer ontology. An MCP agent reads, witnesses, gives feedback, ingests, inspects traces, and invokes the same operation surfaces under governance. Equivalent requests over MCP, HTTP, CLI, and SQL produce equivalent semantic traces.
-- **Out:** the response, its trace, and its receipt.
-- **From:** `docs/OPERATING_SEQUENCE.md` §4; `docs/specs/34_Conversational_Provenance.md` §API parity; `docs/INVENTIONS.md` #78, #79, #80.
+- **In:** the turn and discourse context of 21.3.
+- **Do:** run [20. Forward](Forward.md) in-process under the caller's `.firmware`, authority, and envelope. Every surface—Web UI, OpenAI-compatible `/v1/chat/completions`, MCP, CLI `laplace turn`, SQL, and Chess Lab—drives the exact same C forward loop without template fallbacks. For drop-in compatibility with unmodified OpenAI SDKs, IDE clients, and agent harnesses, `/v1/chat/completions` maps standard fields cleanly instead of rejecting them with HTTP 400:
+  - `messages[]` (`system`, `developer`, `user`, `assistant`, `tool`) → ordered discourse context, turn-level format/language/verbosity/persona instructions ([18. Firmware](Firmware.md) operation 18.3), and the active turn observation;
+  - `max_tokens` / `max_completion_tokens` → compute envelope output cap ([17. Envelope](Envelope.md) operation 17.1);
+  - `temperature` → firmware near-tie selection spread (`0` = deterministic top election; `> 0` = bounded seeded near-tie spread, [18. Firmware](Firmware.md) operation 18.10);
+  - `seed` → deterministic selection and replay seed ([18. Firmware](Firmware.md) operation 18.10);
+  - `stop` → realization stop sequence(s) ([20. Forward](Forward.md) operation 20.10);
+  - `stream` → SSE incremental realization over the same pass;
+  - `tools`, `tool_choice`, and `response_format` → typed action proposals and structured output constraints; standard sampling hints (`top_p`, `presence_penalty`, `frequency_penalty`) map to firmware diversity/anti-repetition bounds or are accepted gracefully.
+- **Out:** the response, its provenance/attribution receipt (`SUM(share_bp) = 10000`), and its semantic trace.
+- **From:** `docs/OPERATING_SEQUENCE.md` §4; `docs/specs/34_Conversational_Provenance.md` §API parity; `docs/INVENTOR_RECORD.md` §Product.
 
-### 21.5 Witness the turn
+### 21.5 Witness the turn at completion
 
-- **In:** the response of 21.4.
-- **Do:** the turn's response content, outcome, and provenance receipt, the selected operation program, the semantic trace, and `firmware_id` are appended through the governed write lane. The reply attests its dependency on the prompt under the response source; tool calls and results remain ordered and attributable. Prompt, reply, tool, and feedback witnesses use the same lane; replaying a read manufactures no testimony; the same write retried carries an idempotency key. An effect proposal is canonicalized with its firmware identity, and the executor verifies the approved envelope before execution. As built, Laplace-Engine has two entries to this lane and one writer behind both (`turn_witness` in `src/program.c`): `laplace turn` witnesses the turn it answered, and `laplace said` witnesses a turn another program answered, the prompt and the response given to it; the turn `[prompt, response]` is content, so the same turn retried in its session is the claim the session already holds and is witnessed once, with no separate idempotency key. Feedback and any other runtime testimony go through `laplace witness`, a witness named at run time whose statement is ingested as a source is ([Reference: Ingest](../Reference/Ingest.md#what-a-runtime-witness-states)).
-- **Out:** the durable turn.
+- **In:** the completed response of 21.4.
+- **Do:** commit the episodic turn (`[prompt, response]`), provenance receipt, `firmware_id`, and any tool calls/results at turn completion (or asynchronously off the streaming critical path; omitted on stateless ephemeral read-only requests). Because `[prompt, response]` is content-addressed, retrying the same turn in a session deduplicates naturally without multiplying observations (`turn_witness` in `src/program.c`, `laplace turn`, and `laplace said`). Explicit user feedback and runtime statements enter through `laplace witness` ([Reference: Ingest](../Reference/Ingest.md#what-a-runtime-witness-states)).
+- **Out:** the durable episodic turn on the session trajectory.
 - **From:** `docs/specs/34_Conversational_Provenance.md` §Turn contract; `docs/specs/39_Personality_Firmware.md` §5.
 
 ### 21.6 Correct, refer back, and return

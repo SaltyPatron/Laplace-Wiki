@@ -1,39 +1,35 @@
 # FrameBase
 
-FrameBase attests every statement of its three Turtle schema files as written, an identifier without its angle brackets and a text with its language tag or datatype, and statements of blank nodes and collections are not read.
+FrameBase 2.0 attests RDFS/Lemon frame schema statements and `owl:sameAs` crosswalks bridging FrameNet frames, frame elements, and lexical units (`fnframe`, `fnfe`, `fnlu`) with WordNet 3.0 synsets resolved onto `ILI` highway nodes.
 
-One source reads FrameBase 2.0, "the schema (core), its lemon annotations, and its links to WordNet 3.0, in Turtle". The three files are read as Turtle, "one statement on every line, every identifier written in full between angle brackets", through the shared Turtle recipe. The publisher describes the files at [FrameBase data](https://www.framebase.org/data) and the schema at [FrameBase schema](https://www.framebase.org/schema). FrameBase is a hop between lexicons, as [Hops](Hops.md) lists it, and it is not FrameNet: its files hold the schema, not FrameNet's sentences.
+One source reads FrameBase 2.0 ("the RDFS+ core schema, Lemon lexical annotations, and `owl:sameAs` links to WordNet 3.0 RDF", [FrameBase data](https://www.framebase.org/data), [FrameBase schema](https://www.framebase.org/schema)). FrameBase is a cross-lexicon interchange source under [Hops](Hops.md), linking FrameNet frame structures and WordNet synsets without duplicating FrameNet's full-text sentence corpus.
 
 ## Source
 
 | Source | Witness | Trust class | After | Files | Recipe |
 | --- | --- | --- | --- | --- | --- |
-| `framebase` | `FrameBase` | class `AcademicCurated` | `unicode`, `iso-639` | `FrameBase_schema_*.ttl.gz` under `FrameBase-2.0` | [`schema.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/framebase/schema.recipe), which reads like [`turtle.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/turtle.recipe) |
+| `framebase` | `FrameBase` source trunk | class `AcademicCurated` | `unicode`, `iso-639`, `framenet`, `cili` | `FrameBase_schema_*.ttl.gz` under `FrameBase-2.0` | [`schema.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/framebase/schema.recipe) (currently `like turtle`) |
 
-The witness is named as the source says: "The set has no README on this machine. The name is the one its files carry (FrameBase_schema_*.ttl.gz) and the one of the host of its identifiers (`http://framebase.org/`)." The class is the witness's trust class, one of those [6. Registries](../Sequence/Registries.md#65-declare-the-trust-classes) declares; its prior is the trust every attestation of the source plays at, and [9. Sources](../Sequence/Sources.md#the-estate-and-why-each-source-is-in-it) gives the class of each source.
+The class is the witness's trust class, one of those [6. Registries](../Sequence/Registries.md#65-declare-the-trust-classes) declares; its prior bounds the trust every attestation of the source plays at, and [9. Sources](../Sequence/Sources.md#the-estate-and-why-each-source-is-in-it) gives the class of each source.
 
-## The schema files
+## URI decomposition and highway alignment
 
-"Every statement is recorded as written: [subject, predicate, object]." The three files are the core schema, "RDFS+ schema for representing frame-based knowledge"; the "Lemon annotations for the schema"; and the WordNet links, "owl:sameAs links with the RDF version of WordNet".
+FrameBase encodes structured lexical and synset references directly inside its HTTP IRIs ([FrameBase schema](https://www.framebase.org/schema)):
 
-| Piece | Written as | Laplace reads it as | Claim recorded | Specification |
+- `http://framebase.org/frame/<Frame>` and LuMicroframes `http://framebase.org/frame/<Frame>.<lemma>.<pos>` name FrameNet frames (`fnframe`, e.g., `Closure`) and frame-scoped lexical units (`fnlu`, e.g., `[Closure, button.v]`).
+- `http://framebase.org/fe/<Frame>.<FE>` names FrameNet frame elements (`fnfe`, e.g., `[Closure, Agent]`).
+- `http://framebase.org/frame/Synset<offset>.<lemma>.<pos>` and `http://wordnet-rdf.princeton.edu/wn30/<offset>-<pos>` carry Princeton WordNet 3.0 `(offset, pos)` pointers (`01895612-v`).
+
+Under the Recording Law ([30. Conflicts](../Sequence/Conflicts.md) S1, I5), structured URI syntax is packaging around highway identifiers and edition offsets: chained URI sub-grammars decompose FrameBase frame/FE/LU paths onto FrameNet's `fnframe`, `fnfe`, and `fnlu` highway nodes and resolve `wn30/<offset>-<pos>` offsets through `highway.bin` (`cili` PWN 3.0 map) onto canonical `ILI` highway nodes (`i46360`) and `[lemma, eng, ILI]` lexicalization strands—so FrameBase's `owl:sameAs`, `rdfs:subClassOf`, and Lemon lexical sense links join the linguistic superhighway directly instead of stranding isolated `http://...` strings (`Batch 2` recipe gap: `schema.recipe` currently inherits generic `turtle.recipe`, recording unsplit URI strings and skipping Turtle blank nodes `[ ... ]` and RDF collections `( ... )`).
+
+| Piece | Written as | Laplace reads it as | Target attestation & current recipe state | Specification |
 | --- | --- | --- | --- | --- |
-| a statement | `<subject> <predicate> <object> .` | the claim of its three terms, each as what it stands for | `[http://wordnet-rdf.princeton.edu/wn30/01895612-v, http://www.w3.org/2002/07/owl#sameAs, http://framebase.org/frame/Synset01895612.waltz.verb]` | "`owl:sameAs` links with the RDF version of WordNet." [FrameBase data](https://www.framebase.org/data) |
-| an identifier between angle brackets | `<http://framebase.org/frame/Closure.button.verb>` | the identifier without its brackets, in whichever of the three places it stands; it is recorded whole, never parted into the path the schema page's encoding describes | a part of the claim | "FrameBase's RDFS schema declares classes for each frame in FrameNet." "Outgoing properties for each frame element." [FrameBase schema](https://www.framebase.org/schema): `http://framebase.org/frame/`, `http://framebase.org/fe/`, `http://framebase.org/meta/` |
-| a name written with a prefix, and `a` | `owl:sameAs`, `a` | as written: a prefixed name keeps its prefix, and `a` is recorded as the `a` the file writes | a part of the claim | the schema files write every identifier in full |
-| a quoted text | `"..."` | the text without its quotes, with its escapes resolved | `[subject, predicate, text]` | |
-| a language tag on a text | `"..."@en` | the pair of the text and its tag, a claim of its own | `[text, en]` | |
-| a datatype on a text | `"..."^^<type>` | the pair of the text and its datatype | `[text, type]` | |
-| a number, a boolean | `1`, `true` | as written | a part of the claim | |
-| the statements of a blank node | `[ ... ]`, `_:name` | not read: "statements of a node the file does not name" | nothing | |
-| a collection | `( ... )` | not read | nothing | |
-
-Each statement is a claim of its own, witnessed once. Nothing is renamed, reordered, or filled in: a predicate of the lemon file under `http://lemon-model.net/lemon#` or `http://www.lexinfo.net/ontology/2.0/lexinfo#` is recorded as that identifier, and a class under `http://framebase.org/meta/`, such as `LuMicroframe`, `SynsetMicroframe`, or `Miniframe`, is what the file says of a subject, not a kind Laplace gives it.
+| FrameBase frame / LU / FE IRI | `<http://framebase.org/frame/Closure.button.verb>`, `<http://framebase.org/fe/Closure.Agent>` | decomposed by URI sub-grammar onto `fnframe` (`Closure`), `fnlu` (`[Closure, button.v]`), or `fnfe` (`[Closure, Agent]`), retaining FrameBase microframe hierarchy (`LuMicroframe`, `SynsetMicroframe`, `Miniframe`) | highway-linked frame, LU, and FE claims + `maps` edges (`Batch 2` gap: `schema.recipe` currently records the unsplit IRI text) | [FrameBase schema](https://www.framebase.org/schema) |
+| WordNet 3.0 RDF IRI | `<http://wordnet-rdf.princeton.edu/wn30/01895612-v>` | decomposed to PWN 3.0 offset `01895612-v`, resolved via `highway.bin` to its `ILI` node, with the raw byte-offset URI recorded nowhere | `[ILI, owl:sameAs, microframe]` + `ili`↔`fnframe`/`fnlu` highway edge (`Batch 2` gap: currently unsplit IRI string) | "`owl:sameAs` links with the RDF version of WordNet" ([FrameBase data](https://www.framebase.org/data)) |
+| RDF/RDFS/OWL/Lemon predicate | `owl:sameAs`, `rdfs:subClassOf`, `a`, `lemon:lexicalForm`, `lexinfo:...` | vocabulary property from the RDFS, OWL, W3C Lemon, or LexInfo ontology | semantic predicate of the statement | FrameBase core & Lemon schemas |
+| Language-tagged or typed literal | `"..."@en`, `"..."^^<xsd:...>` | decoded UTF-8 literal paired with its ISO 639 language node or XSD datatype | `[literal, en]`, `[subject, predicate, [literal, en]]` | RDF 1.1 Turtle literals |
+| Blank nodes & RDF collections | `[ ... ]`, `_:b0`, `( ... )` | anonymous property bundles and ordered RDF lists in the schema | target: resolved inline onto their enclosing subject/list composition (`Batch 2` gap: currently skipped by `turtle.recipe`) | RDF 1.1 Turtle blank-node and collection syntax |
 
 ## Relations
 
-As built, a statement's relation is its RDF predicate, as written, `http://www.w3.org/2002/07/owl#sameAs`: a vocabulary's property, whose meaning the vocabulary that defines it documents, not the name of a markup field. A relation is what the source means, never the name of a field, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field); the target is the property's meaning, reached through the vocabulary that defines it.
-
-## Not read
-
-Nothing under the root but the three schema files matches a recipe, and the source names no `reads`: no other file is read. The schema page's own encoding of an identifier's path is not applied: an identifier is one entity, as written.
+Unlike tabular CSV headers, FrameBase's predicates (`owl:sameAs`, `rdfs:subClassOf`, `lemon:*`, `lexinfo:*`) are already formal ontology relations rather than markup column names. Replacing `like turtle` in `schema.recipe` with FrameBase's URI sub-grammar, blank-node/collection folding, and `highway` `maps` lines in `Batch 2` connects every FrameBase microframe and `wn30` link directly onto `ILI` and `FrameNet`.

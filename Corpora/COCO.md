@@ -1,16 +1,21 @@
 # COCO
 
-COCO has no recipe yet, so its annotation JSON and images are not ingested and attest nothing.
+COCO is a multi-modal image, object-detection, segmentation, and captioning corpus queued for declarative `.recipe` and lossless image codec admission (`Batch 2`, `Laplace#1134`), pairing 2D image decompositions with grounded object instances, category hierarchies, and natural-language caption trajectories.
 
-## Source
+## Source & `Batch 2` admission queue
 
-No directory under [`recipes/`](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes) reads this collection, and `recipes/order` does not name it. Until a recipe exists, nothing in it is decomposed, recorded, or attested; see [Attestations](../Semantics/Attestations.md#observations). The format below is the publisher's, kept so that a recipe can be written from it.
+COCO ([Common Objects in Context](https://cocodataset.org/)) is queued for `Batch 2` multi-modal admission (`Laplace#1134`). Once its image codec and JSON `.recipe` land in [`recipes/`](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes) and `recipes/order`, every image file decomposes into its canonical 2D spatial/pixel hierarchy while the companion annotation JSON files bind captions, categories, bounding boxes, and segmentation polygons/RLE masks onto that exact image content entity under one `COCO` witness trunk (`class AcademicCurated`).
 
-## Format
+Under the Recording Law ([Corpora](README.md#page-shape)):
 
-| Record | Fields in order | What a record is | Specification |
+- **Internal pointers resolved via `key`/`refer`:** `image.id`, `category.id`, and annotation `id` are COCO-internal integer pointers: `image_id` resolves directly to the decomposed image trunk (matched via `file_name`), `category_id` resolves to the category's canonical `name`, and raw numeric IDs are recorded nowhere.
+- **Cross-modal collision:** Every natural-language `caption` decomposes by UAX #29 to sentences, words, graphemes, and Tier-0 codepoints, colliding directly with lexical, WordNet, Wiktionary, and Wikipedia entities on the same `lp_id`s, while `category` → `supercategory` attests taxonomic hierarchy (`[dog, supercategory, animal]`).
+
+## Publisher record format
+
+| Record | Fields | Target Laplace semantics | Specification |
 | --- | --- | --- | --- |
-| image | id, width, height, file_name, license, flickr_url, coco_url, date_captured | The image record in the annotation JSON. The JPEG files in this drop are the pictures, not that JSON record. | [Data format](https://github.com/cocodataset/cocodataset.github.io/blob/master/dataset/format-data.htm) |
-| object annotation | id, image_id, category_id, segmentation, area, bbox, iscrowd | One object instance: category id, segmentation mask, area, enclosing box, and whether the instance is a crowd. | [Data format, object detection](https://github.com/cocodataset/cocodataset.github.io/blob/master/dataset/format-data.htm) |
-| category | id, name, supercategory | The mapping of a category id to its name and supercategory. | [Data format, object detection](https://github.com/cocodataset/cocodataset.github.io/blob/master/dataset/format-data.htm) |
-| caption annotation | id, image_id, caption | One caption that describes the image named by image_id. | [Data format, image captioning](https://github.com/cocodataset/cocodataset.github.io/blob/master/dataset/format-data.htm) |
+| `images[]` | `id`, `width`, `height`, `file_name`, `license`, `flickr_url`, `coco_url`, `date_captured` | `id` (`key`) binds `file_name`'s decomposed image entity (`[width, height]` intrinsic dimensions; `date_captured` and mirror URLs are capture/hosting metadata) | [COCO Data Format](https://github.com/cocodataset/cocodataset.github.io/blob/master/dataset/format-data.htm) |
+| `categories[]` | `id`, `name`, `supercategory` | `id` (`key`) resolves to category `name`, attesting `[name, supercategory]` taxonomic link | [COCO Object Detection](https://github.com/cocodataset/cocodataset.github.io/blob/master/dataset/format-data.htm) |
+| `annotations[]` (instances) | `id`, `image_id`, `category_id`, `segmentation`, `area`, `bbox`, `iscrowd` | `id` omitted (`key`); `image_id` → image entity (`refer`); `category_id` → category `name` (`refer`); attests grounded region `[image, bbox / segmentation]` labeled with `category` (`iscrowd` qualifier, `area` observation) | [COCO Object Detection](https://github.com/cocodataset/cocodataset.github.io/blob/master/dataset/format-data.htm) |
+| `annotations[]` (captions) | `id`, `image_id`, `caption` | `id` omitted (`key`); `image_id` → image entity (`refer`); attests `[image, caption_sentence]` linking visual structure to UAX #29 text | [COCO Image Captioning](https://github.com/cocodataset/cocodataset.github.io/blob/master/dataset/format-data.htm) |

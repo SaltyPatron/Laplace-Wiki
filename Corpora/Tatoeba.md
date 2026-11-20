@@ -2,46 +2,37 @@
 
 Tatoeba attests what it and its members say of a whole sentence, which is its text: its language, owner, translations, tags, audio, transcriptions and reviews; a sentence's id is Tatoeba's internal pointer to it, recorded nowhere, by which the other files point at the sentence; and nothing is attested of the words inside it.
 
-One source, `tatoeba`, reads Tatoeba's weekly exports: tables of tab-separated fields, without a header row. Tatoeba's page ["Download sentences"](https://tatoeba.org/en/downloads) names every file's fields under "Fields and structure", and each recipe names its columns as the page does.
+One source, `tatoeba`, reads Tatoeba's weekly tab-separated exports ([Download sentences](https://tatoeba.org/en/downloads), "Fields and structure") under one `Tatoeba` corpus witness trunk.
 
 ## Source
 
-| Source | Witness | Trust | After | Files | Recipes |
+| Source | Witness | Trust class | After | Files | Recipes |
 | --- | --- | --- | --- | --- | --- |
-| `tatoeba` | `Tatoeba`; as built, a row that names a member as its witness is witnessed by that member, `[Tatoeba, Username, name]` (`own Username`) | class `UserCuratedResource` | `iso-639`, `wiktionary`, `conceptnet` | the nine files the recipes name below | [`recipes/tatoeba`](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/tatoeba) |
+| `tatoeba` | `Tatoeba` source trunk | class `UserCuratedResource` | `iso-639`, `wiktionary`, `conceptnet` | Nine exported CSV/TSV tables + associated Tatoeba spoken audio recordings (`Batch 2`, `Laplace#1134`) | [`recipes/tatoeba/`](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/tatoeba) |
+
+The class is the witness's trust class, one of those [6. Registries](../Sequence/Registries.md#65-declare-the-trust-classes) declares; its prior bounds the trust every attestation of the source plays at, and [9. Sources](../Sequence/Sources.md#the-estate-and-why-each-source-is-in-it) gives the class of each source.
 
 ## The record
 
-A record is one row of one file. A field is what stands between two tabs; a tab, a line break or a backslash inside a field is written after `\`; a field written `\N` is one Tatoeba leaves empty and attests nothing. A sentence is its text. `sentences.csv` defines each sentence under its id (`key "Sentence id"`), and every file that points at a sentence by that id reads it as the sentence (`refer "Sentence id" tatoeba-sentences`): the files of `sentences.csv` are read first, and a row that points at an id no sentence has says nothing. The id is resolved to the sentence and recorded nowhere. A member is named as Tatoeba names them, `[Tatoeba, Username, name]`. A member is content, never a witness: Tatoeba is the witness, and what it reports of a member, that this member added this sentence, reviewed it, recorded its audio, or speaks this language at this level, are relations Tatoeba attests, added to the web explicitly. As built, the member is the witness of what a row with `witness in Username` says (`own Username`), which is what "by the member" means in the rows below; the target is Tatoeba's relations.
+Each row is tab-separated with `\` escapes and `\N` for empty/unknown fields. Every sentence is its decoded UTF-8 `Text`, keyed by `Sentence id` (`key row "Sentence id"`) so companion tables resolve `Sentence id` directly to that sentence entity (`refer "Sentence id" tatoeba-sentences-detailed tatoeba-sentences tatoeba-sentences-cc0`) and record the numeric ID nowhere. Community contributors (`Username`) are participant content inside Tatoeba's records, never separate corpus witnesses ([30. Conflicts](../Sequence/Conflicts.md) I3).
 
-| File | Piece | Laplace reads it as | Claim recorded |
+Two Recording Law rules govern timestamps and multi-modal spoken audio:
+
+- **Timestamp bookkeeping is omitted (`omit`)**: `Date added` and `Date last modified` in `sentences_CC0.csv`, `sentences_detailed.csv`, and `users_sentences.csv` are export-database timestamps (`omit "Date last modified"`, `omit "Date added"`), never semantic claims on a sentence.
+- **Multi-modal spoken audio linkage (`sentences_with_audio.csv`, `Batch 2` `Laplace#1134`)**: `sentences_with_audio.csv` links each spoken `Sentence id` via `Audio id` to its actual Tatoeba audio recording (`<audio_id>.mp3`/`.opus`/`.wav` decomposed into its lossless audio trajectory trunk `audio_track`), attesting the grounded multi-modal tuple `[sentence, audio_track, speaker, license]` (with `Attribution URL` where required by CC-BY) while resolving and discarding the numeric `Audio id` pointer (`Batch 2` gap: `sentences-with-audio.recipe` currently attests `[sentence, who recorded the audio, Username]` and keys `Audio id` locally until Tatoeba audio streams are admitted alongside it in `Laplace#1134`).
+
+| File | Fields | Laplace reads it as | Target attestation & current recipe state |
 | --- | --- | --- | --- |
-| `sentences.csv` | Sentence id; Lang; Text | the sentence is its text; its language said of it; the id a pointer | `[Let's try it., Lang, eng]` |
-| `sentences_CC0.csv` | Sentence id; Lang; Text; Date last modified | the same, with the date | `[text, Date last modified, value]` |
-| `sentences_detailed.csv` | Sentence id; Lang; Text; Username; Date added; Date last modified | the same, witnessed by the member named: "The owner is who wrote the sentence" | `[text, Lang, eng]` by `[Tatoeba, Username, name]` |
-| `links.csv` | Sentence id; Translation id | both read as the sentences they point at: one says of the other that it is its translation; the reciprocal row says the reverse | `[我們試試看！, Translation id, Versuchen wir es.]` |
-| `tags.csv` | Sentence id; Tag name | the sentence, and its tag | `[Let's try it., Tag name, proverb]` |
-| `sentences_with_audio.csv` | Sentence id; Audio id; Username; License; Attribution URL | the sentence; the audio's id a pointer, recorded nowhere; who recorded it, its licence and attribution said of the sentence | `[text, License, value]` |
-| `transcriptions.csv` | Sentence id; Lang; Script name; Username; Transcription | the sentence; the transcription said of it under the script's name, witnessed by the member who reviewed it; its language by Tatoeba | `[text, Hrkt, transcription]` by the member |
-| `user_languages.csv` | Lang; Skill level; Username; Details | the member in that language, `[[Tatoeba, Username, name], eng]`; the skill level and details said of it, by the member | `[[member, eng], Skill level, 5]` by the member |
-| `users_sentences.csv` | Username; Sentence id; Review; Date added; Date last modified | the member attests the sentence itself, the review its outcome (`-1` a loss, `1` a win); what else the row says, of the member's review of the sentence | the sentence, by the member, at the score; `[[member, text], Review, 1]` |
-
-Each thing a row says is a claim, a tuple as [Claims](../Semantics/Claims.md#tuples) defines it.
+| `sentences.csv` | `Sentence id`; `Lang`; `Text` | canonical sentence `Text`, keyed by `Sentence id`; `Lang` resolved onto ISO 639-3 highway node | `[sentence, ISO 639-3 language code, eng]` |
+| `sentences_CC0.csv` | `Sentence id`; `Lang`; `Text`; `Date last modified` | same as `sentences.csv`, with `Date last modified` omitted (`omit "Date last modified"`) | `[sentence, ISO 639-3 language code, eng]` (zero timestamp claims) |
+| `sentences_detailed.csv` | `Sentence id`; `Lang`; `Text`; `Username`; `Date added`; `Date last modified` | sentence `Text`, language `Lang`, contributor `Username` as participant content, and both dates omitted (`omit`) | `[sentence, ISO 639-3 language code, eng]` + author relation `[sentence, owner, Username]` |
+| `links.csv` | `Sentence id`; `Translation id` | both IDs resolved via `refer` to their sentences | sentence-tier translation strand `[sentence_a, translated, sentence_b]` (with zero `"Translation id"` column name in the claim) |
+| `tags.csv` | `Sentence id`; `Tag name` | resolved sentence and Tatoeba tag (`proverb`, `idiom`, ...) | `[sentence, tag, proverb]` |
+| `sentences_with_audio.csv` | `Sentence id`; `Audio id`; `Username`; `License`; `Attribution URL` | `Sentence id` → `sentence`; `Audio id` → `audio_track` media trunk (`key`/`refer`, numeric ID discarded); `Username` → speaker; `License` (`CC0`, `CC-BY`, ...) retained for reusable audio authority | target: `[sentence, audio_track, speaker, license]` multi-modal alignment (`Batch 2` `Laplace#1134`; currently `[sentence, who recorded the audio, Username]` until audio tracks are staged) |
+| `transcriptions.csv` | `Sentence id`; `Lang`; `Script name`; `Username`; `Transcription` | resolved sentence, ISO 15924 `Script name` (`Hrkt`, `Latn`), `Transcription`, and reviewer `Username` | `[sentence, Hrkt, transcription]` qualified with `Username` |
+| `user_languages.csv` | `Lang`; `Skill level`; `Username`; `Details` | speaker-language proficiency observation | `[[Username, eng], skill level, 5]` (observation) |
+| `users_sentences.csv` | `Username`; `Sentence id`; `Review`; `Date added`; `Date last modified` | member review verdict (`-1` loss, `0` neutral, `+1` win) on `sentence`, with `Date added` and `Date last modified` omitted (`omit`) | scored review series on `sentence` qualified with `Username` |
 
 ## Relations
 
-As built, the relation of a claim above is the name of the field that carries its value: the column's name in the file's documented header, or a script's name. That is markup, not meaning. A relation is what the source means, resolved through the road classes, never the name of a field, column, attribute, or layer: a tagset value is a value of its tagset with its attested equivalence, a per-span label belongs in the sentence's annotation layer, and a pointer's attribute name is in no claim, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field).
-
-| Claim, as built | Its relation, as built | What it means: the target |
-| --- | --- | --- |
-| `[Let's try it., Lang, eng]` | the column's name, `Lang` | the sentence's language, an ISO 639 highway node |
-| `[我們試試看！, Translation id, Versuchen wir es.]` | the name of a pointer's column, `Translation id` | the one sentence translates the other: a sentence-tier translation strand, as OpenSubtitles' are; the column's name is in no claim |
-| `[Let's try it., Tag name, proverb]` | the column's name | the tag Tatoeba gives the sentence |
-| `[text, Date last modified, value]`, `[text, License, value]` | the column's name | bookkeeping and licence: the file's metadata, not testimony |
-| `[text, Hrkt, transcription]` | the script's name | the sentence's transcription in that script |
-| `[[member, eng], Skill level, 5]` | the column's name | the skill the member states in the language: an observation |
-| `[[member, text], Review, 1]`, `[Tatoeba, Username, name]` | the column's name | the member's review of the sentence, a relation Tatoeba attests; the member, content |
-
-## Not read
-
-`sentences_in_lists.csv` names lists only by an id no file names, and `tags_detailed.csv` and `tag_metadata.csv` have no documented fields: nothing in them is content, and they are not read. `sentences_base.csv` and every other file under the root are not read. Nothing is read of a sentence's words.
+Tatoeba's recipes resolve `Sentence id` across all nine tables, omit `Date last modified` / `Date added` bookkeeping, keep contributors under the single `Tatoeba` witness trunk, and align `links.csv` with OpenSubtitles' sentence-tier translation strands. Admitting Tatoeba's audio archive in `Batch 2` (`Laplace#1134`) completes `Audio id` → `audio_track` cross-modal binding in `sentences_with_audio.csv`.

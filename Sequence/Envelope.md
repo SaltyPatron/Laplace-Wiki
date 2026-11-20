@@ -17,19 +17,19 @@ Hops and fanout are first-class work coordinates. The work of a pull is shaped b
 - **Out:** the envelope of this request.
 - **From:** `docs/INVENTION.md` §9 and §16; `docs/CAPABILITIES.md` §Compute depth is the product tier; `docs/specs/39_Personality_Firmware.md` §3.
 
-### 17.2 Plan and EXPLAIN
+### 17.2 Plan the work bounds
 
-- **In:** the program and the envelope.
-- **Do:** the routed program exposes the same hop, fanout, provider, index, and operator dimensions that execution will consume; there is no separate billing model. Estimate the semantic work: roots and occurrences, hops, fanout and frontier widths, families, expected index probes and rows and physicalities touched, trajectory expansion, calculation work, standing cells, realization work. `EXPLAIN` over the physical plan is part of execution, not billing decoration; plan cost and executor cost are measured independently where planning a large partition tree is itself material.
-- **Out:** the semantic work estimate.
+- **In:** the routed program and the caller's envelope.
+- **Do:** the routed program exposes the exact hop, fanout, frontier, binary-probe, trajectory-vertex, provider, and output dimensions execution will consume; there is no separate token-only billing guess. Compute the deterministic preflight upper bound directly in native C from those bounded dimensions (`H` hops, `F_h` fanout, max batched DB probes, max candidate/frontier cells, max unpacked trajectory vertices/bytes, max output bytes) and calibrated unit weights—**never running a live PostgreSQL `EXPLAIN` query per chat or API turn** (query-plan shape is verified offline by `laplace bench` and monitored out-of-band by `auto_explain` in [8. Database](Database.md) operation 8.5).
+- **Out:** the bounded preflight work ceiling, in microseconds.
 - **From:** `docs/specs/36_Laplace_Forward_Pass.md` §Compute envelope and preflight; `docs/read-path.md` §5 and §9; `docs/INVENTIONS.md` #92.
 
-### 17.3 Derive the machine cost
+### 17.3 Meter deterministic counters and post-turn telemetry
 
-- **In:** the estimate of 17.2 and the target machine.
-- **Do:** lower the artifact or program through the chain: source → grammar AST → compiler and linker artifacts → bytecode, object, or executable container → functions, symbols, basic blocks → decoded machine instructions → control-flow graph → data and dependency graph → execution-count variables → target ISA → microarchitecture and scheduling model → memory and initial-state assumptions → clock → resource-constrained cycles → machine time. A JAR has its own boundary through the selected JVM, its mode, and its JIT before the target processor, and no "opcode = N cycles" shortcut is invented. Unknown loop counts, cache state, branch history, I/O service time, and scheduler interference stay symbolic, conditional, or distributional: `cycles(N) = setup + N·body + branch/cache terms`. Two independently scheduled instructions do not cost the sum of their latencies; the dependency DAG and the resource model own the result. A measured run validates or calibrates the model and does not replace derivable work with "it took N ms on my box".
-- **Out:** an exact, symbolic, or conditional cycle expression and a time.
-- **From:** `docs/guides/machine-cost-analysis.md`; `docs/CAPABILITIES.md` §Deterministic machine-cost derivation; `docs/INVENTIONS.md` #120, #121.
+- **In:** the preflight bound of 17.2 and the execution run on the host.
+- **Do:** meter actual machine work through lightweight, deterministic runtime counters inside the C pass plus post-turn OS/DB telemetry: memory-mapped ROM lookups, batched binary database probes (`2–3` per conversational pass), index rows and packed trajectory vertices scanned, 4D spatial/curve kernel evaluations, candidate and frontier cells expanded, realized output bytes, wall/CPU thread time, memory high-water mark, and buffer hits/reads, normalized against the host's calibrated ISA profile. Static binary disassembly, CFG/dependency-graph lifting, and microarchitectural cycle modelling ([26. Code](Code.md) operation 26.13) are optional software-engineering analysis tools for compiled code artifacts—**never** a per-request chat or forward-pass preflight gate.
+- **Out:** deterministic operation, probe, vertex, and byte counts plus post-turn machine telemetry.
+- **From:** `docs/CAPABILITIES.md` §Compute depth is the product tier; `docs/INVENTIONS.md` #94, #96.
 
 ### 17.4 Reserve a hard ceiling
 

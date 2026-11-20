@@ -54,37 +54,41 @@ PostgreSQL's defaults suit small general-purpose servers; Laplace tunes memory, 
 ### 8.7 Create the role, the database, and the extensions
 
 - **In:** the running server.
-- **Do:** `CREATE ROLE laplace LOGIN SUPERUSER`; `CREATE DATABASE laplace OWNER laplace`; then in it `CREATE EXTENSION postgis`, `CREATE EXTENSION laplace`, `CREATE EXTENSION pg_stat_statements`, `CREATE EXTENSION pg_buffercache`. The Laplace content database holds entities, physicalities, and sources; operational data such as logs, authentication, and billing stays conventional, in a separate database.
-- **Out:** the Laplace database with its four extensions.
-- **From:** [Deployment](../Operations/Deployment.md), [Architecture: Databases](../Architecture.md#databases).
+- **Do:** create a dedicated non-superuser owner/runtime role (`laplace` / `laplace-runner`, `LOGIN NOSUPERUSER`; bootstrap superuser privileges are used only where PostgreSQL requires them to install C extensions initially, never by serving runtime connections); `CREATE DATABASE laplace OWNER laplace`; then install `postgis`, `laplace`, `pg_stat_statements`, and `pg_buffercache`. `CREATE EXTENSION laplace` creates the `blake3` type and the four persistent substrate tables. Conventional operational tables—authentication, sessions, compute-envelope reservations, Patreon entitlement state, and `app.billing_royalties` (`SUM(share_bp) = 10000`)—live strictly in the separate `app.*` schema inside the **same** `laplace` PostgreSQL database, keeping the four substrate tables completely clean while enabling single-transaction ACID settlement of compute reservations and Knowledge Seeder royalties ([17. Envelope](Envelope.md) operation 17.7).
+- **Out:** the `laplace` database with its extensions, non-superuser runtime role, four substrate tables, and `app.*` operational schema.
+- **From:** [Deployment](../Operations/Deployment.md), [Reference: Schema](../Reference/Schema.md), [Architecture: Databases](../Architecture.md#databases).
 
-### 8.8 Tell the database its tier 0
+### 8.8 Tell the database its tier 0, flags, and highway
 
-- **In:** the tier-0 file and its fingerprint from [5. Tier 0](Tier-0.md).
-- **Do:** set the extension's setting to the path of the tier-0 perf-cache, the setting for the flags that go with it, and the settings for each other ROM the database serves, the vocabulary and the chess floors. Each backend memory-maps it on first use. The perf-cache is thereby available inside the database as native functions, so queries can compute IDs and coordinates in place instead of scanning tables; such a function is evaluated once when the query is planned, and the query becomes an index lookup on the result.
-- **Out:** a database that computes the same IDs and coordinates the client does.
-- **From:** [Deployment](../Operations/Deployment.md), [Query: Functions in queries](../Query.md#functions-in-queries), [Atoms: Generation](../Storage/Atoms.md#generation).
+- **In:** `tier0.bin`, `tier0.flags`, and `highway.bin` with their fingerprints from [5. Tier 0](Tier-0.md) and [7. Perfcaches](Perfcaches.md).
+- **Do:** set `laplace.tier0`, `laplace.flags`, `laplace.highway`, and any enabled domain ROM settings (`chess.bin`) to their perf-cache paths. Each backend memory-maps them read-only on first use. The perf-caches are thereby available inside PostgreSQL as `IMMUTABLE` native C functions, so constant ID, coordinate, Hilbert, and mask-bit expressions fold once at plan time and turn into direct index probes, while client processes map the exact same files to run deterministic decomposition and realization in-process with zero database round trips.
+- **Out:** a database and client fleet that compute bit-identical IDs, coordinates, and mask descriptors.
+- **From:** [Deployment](../Operations/Deployment.md), [Reference: Schema](../Reference/Schema.md), [Query: Functions in queries](../Query.md#functions-in-queries), [Atoms: Generation](../Storage/Atoms.md#generation).
 
-### 8.9 Make the content schema
+### 8.9 Make the four persistent substrate tables
 
-- **In:** the database of 8.7.
-- **Do:** every entity is its own record, with its ID as the key and its real coordinate as a normal POINT ZM with M as the fourth coordinate, its tier as a query aid, and its Hilbert value. Every entity also has a physicality, related to it by foreign key, holding the path geometry ZM. A source records its trunk, origin, format, size, content hash, and normalization form. Statistics hold each entity's containers and occurrences. The few text columns, such as a source's origin, use UTF-8 with a deterministic, operating-system-independent collation.
-- **Out:** the entity, physicality, source, and statistics tables. Four families persist the world: entities, canonical identity; physicalities, typed realization with coordinate, Hilbert address, and packed trajectory; attestations, source-attributed typed testimony; consensus, folded standing. Identity, physicality, occurrence, testimony, consensus, and calculation never collapse into one another, and the inventor's list of core tables is entity, physicality, attestation, consensus, witness, with no fake lookup tables beside them, [30. Conflicts](Conflicts.md) T1.
-- **From:** [Physicality: Entity and physicality](../Storage/Physicality.md#entity-and-physicality), [Physicality: Real coordinates](../Storage/Physicality.md#real-coordinates), [Architecture: Databases](../Architecture.md#databases), [Research: Prototype: Store](../Research/Prototype.md#store).
+- **In:** `CREATE EXTENSION laplace` in the database of 8.7.
+- **Do:** persist the entire world in exactly **four** substrate tables (`Laplace-postgres/sql/laplace.sql.in`), with zero fake `source`, `witness`, `claim`, or `statistics` lookup tables beside them ([30. Conflicts](Conflicts.md) T1):
+  - `entity(id blake3, tier smallint, coord geometry(PointZM), hilbert bigint, mask bit(64))` — canonical identity, compositional tier, real 4D fixed-point coordinate inside the S³ ball, sign-flipped 4D Hilbert key (`h ^ 0x8000000000000000` so signed `bigint` order matches unsigned Hilbert order), and the 64-bit `mask` validated by `laplace_mask_valid` (`manifest/banks.tsv`).
+  - `physicality(entity blake3, tier smallint, hilbert bigint, path geometry, mask bit(64))` — foreign key `(tier, entity) → entity(tier, id) ON UPDATE CASCADE`, holding the binary EWKB `POINT ZM` / `LINESTRING ZM` trajectory packing 128-bit constituent IDs (`43/43/42 + 28 spare`) in X/Y/Z and `run30/said3/outcome2/pos18` in M, plus the row's 64-bit `mask` (`CLAIM`, `RECORD`, `TUPLE`, `FILE`, and grammatical/lexical banks). Sources, files, records, collections, and claims are all entities + physicalities; containment and occurrence queries resolve directly from `physicality.path`.
+  - `attestation(claim blake3, witness blake3, lineage blake3, games bigint, tokens bigint, score double precision, "position" integer, trust double precision)` — `UNIQUE NULLS NOT DISTINCT (claim, witness, lineage)`, recording each witness trunk's folded game series, empirical token count, score, position, causal lineage, and trust on a claim alongside containment provenance in `physicality.path`.
+  - `consensus(claim blake3 PRIMARY KEY, rating double precision, deviation double precision, volatility double precision, matches bigint)` — folded Glicko-2 standing updated in place off the GIN-indexed `physicality` heap so standing updates never trigger GIN re-insertions. Reading a claim's standing takes 0.1 ms versus 115 ms to re-aggregate 474,628 raw attestations on the fly.
+- **Out:** `entity`, `physicality`, `attestation`, and `consensus`.
+- **From:** [Reference: Schema](../Reference/Schema.md#the-four-tables), [Physicality: Entity and physicality](../Storage/Physicality.md#entity-and-physicality), [Consensus](../Semantics/Consensus.md), [30. Conflicts](Conflicts.md) T1, T2, I3.
 
-### 8.10 Partition it
+### 8.10 Partition by tier on content and by hex prefix on claims
 
-- **In:** the tables of 8.9.
-- **Do:** range-partition `entity` and `physicality` 256 ways by the first byte of the BLAKE3 ID (`00`..`ff`), and `consensus` 16 ways by the first hex digit of the claim's ID (`0`..`f`). Partitions go by the BLAKE3 ID hash, not by Hilbert value and not by tier with a default partition: remember the 4-ball against the 4-box.
-- **Out:** partitions that stay equal and prune to one on a lookup by ID, with Hilbert ordering inside each partition.
-- **From:** [Physicality: Partitions](../Storage/Physicality.md#partitions), [Deployment](../Operations/Deployment.md), [Research: Engine Measurements: Partitions](../Research/Engine.md#partitions).
+- **In:** the four tables of 8.9.
+- **Do:** range-partition `entity` and `physicality` into **9 tier partitions (`t0`..`t8plus`, `RANGE (tier)`)** with primary keys `(tier, id)` and `(tier, entity)` plus per-partition `UNIQUE (id)` / `UNIQUE (entity)`, and range-partition `attestation` and `consensus` **16 ways by the first hex digit of `claim` (`_0`..`_f`, `RANGE (claim)`)** with `fillfactor = 80` ([30. Conflicts](Conflicts.md) P4). Why tier partitioning on `entity` and `physicality`: because every parent composition sits strictly above its constituents (`tier = 1 + max(child.tier)`), upward containment lookups (`tier > child.tier`) prune lower and equal tier partitions immediately instead of fanning across 256 hash partitions on every probe, while Hilbert ordering preserves 4D locality inside each tier. Why 16 hex partitions with `fillfactor = 80` on `attestation` and `consensus`: lookups by `claim` prune to one partition, and in-place Glicko-2 updates find free space on the same heap page (HOT updates).
+- **Out:** 9 tier partitions on `entity` and `physicality`, and 16 hex partitions on `attestation` and `consensus`.
+- **From:** [Reference: Schema](../Reference/Schema.md#the-four-tables), [30. Conflicts](Conflicts.md) P4.
 
-### 8.11 Make the semantics schema
+### 8.11 Register the highway entities and reconcile bindings
 
-- **In:** the database of 8.7.
-- **Do:** the tables for claims and their standing, filled in [12. Attestations](Attestations.md) and [13. Consensus](Consensus.md): a claim as a tuple of entity IDs with its own ID hashed like a composition's; the bitmask columns, such as 256-bit masks, that denote which part of speech, sense, dependency relation, and so on apply; provenance, an `attestation` table with a row per claim and witness, its outcome, score, games, and position, and the qualifier mask of [12. Attestations](Attestations.md) operation 12.7, beside a `witness` table; trust and lineage keyed by the trunk ID; and the standing, one metadata table keyed by the strand ID with rating, deviation, and volatility, beside the path and never on the GIN-indexed path row, where a non-HOT update would re-insert GIN entries for every vertex. The target is provenance by containment, each record a path over the claims it asserts inside its file's content tree under the source trunk, which is the witness, with the outcome in each vertex's M, so a claim's witnesses are the trunks that hold it, found through the GIN; the per-claim-and-witness attestation table stayed until a working prototype on real data showed that containment answers everything the table answered, who said a claim, its games, score, and position, its qualifiers, forgetting and replay, with nothing lost, and is retired (Laplace-Engine#47). Consensus is the standing updated in place, not an aggregate over the attestations: reading the hottest claim's standing took 0.1 ms against 115 ms to aggregate its 474,628 attestations.
-- **Out:** the semantics tables, empty.
-- **From:** [Claims: IDs](../Semantics/Claims.md#ids), [Claims: Masks](../Semantics/Claims.md#masks), [Consensus](../Semantics/Consensus.md), [Research: Engine Measurements: Consensus writes](../Research/Engine.md#consensus-writes).
+- **In:** the partitioned schema of 8.10 and mapped `highway.bin` of 8.8.
+- **Do:** `laplace deploy` registers the highway's identifier entities directly from mapped `highway.bin` and restores all replaceable C/SQL routines, casts, operators, and operator classes via `laplace.reconcile.sql`. Because `Laplace-postgres` hashes the persistent storage DDL (`laplace-storage:<16-hex>`) separately from replaceable functions and indexes, code upgrades run `ALTER EXTENSION laplace UPDATE TO ...` in place without dropping loaded data.
+- **Out:** the schema reconciled and ready for bulk ingestion or incremental updates.
+- **From:** [Reference: Schema](../Reference/Schema.md#versions), [3. Builds](Builds.md) operation 3.4.
 
 ### 8.12 Apply the planning settings
 
@@ -95,7 +99,7 @@ PostgreSQL's defaults suit small general-purpose servers; Laplace tunes memory, 
 
 ## What this stage leaves behind
 
-A tuned server, a database that knows its tier 0 and computes IDs in place, the content tables partitioned by tier and by ID hash, the semantics tables, and a planner that knows what the columns really are.
+A tuned server, a database with non-superuser runtime access that maps `tier0.bin`, `tier0.flags`, and `highway.bin`, the four persistent substrate tables (`entity` and `physicality` partitioned by tier, `attestation` and `consensus` partitioned 16 ways by claim ID) alongside `app.*` operational tables in the same database, and a planner that knows what the columns really are.
 
 ## Without this stage
 

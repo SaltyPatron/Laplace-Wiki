@@ -27,7 +27,7 @@ Laplace is native C, with SQL and C# as orchestration. Bit-perfect determinism a
 ### 2.3 Lay out the source root
 
 - **In:** the repositories.
-- **Do:** put all repositories, Laplace's and its dependencies' alike, under one source root, such as `/repos/src`, with build trees kept outside it, such as `/repos/build` and `/repos/work`: build trees under `/repos/build`, installed dependencies under `/repos/deps`, generated data and logs and root scripts under `/repos/work`, and the corpora and Unicode data on the bulk storage. Laplace's own repositories are Laplace-Native, Laplace-postgres, Laplace-Engine, Laplace-Prototype, and Laplace-Wiki.
+- **Do:** put all repositories, Laplace's and its dependencies' alike, under one source root, such as `/repos/src`, with build trees kept outside it, such as `/repos/build` and `/repos/work`: build trees under `/repos/build`, installed dependencies under `/repos/deps`, generated data and logs and root scripts under `/repos/work`, and the corpora and Unicode data on the bulk storage. Laplace's own repositories are Laplace-Native, Laplace-postgres, Laplace-Engine, Laplace-MCP, Laplace-UCI, Laplace-Operations, Laplace-Prototype, Laplace-Wiki, and Laplace.
 - **Out:** one source root, one build root, one work root.
 - **From:** [Setup: Repositories](../Operations/Setup.md#repositories).
 
@@ -52,8 +52,7 @@ Laplace is native C, with SQL and C# as orchestration. Bit-perfect determinism a
   - **ICU 78** or newer, into `/repos/deps/icu78`: the Unicode 17 segmentation, at the version fixed in [1. Unicode](Unicode.md).
   - **BLAKE3**: the identity hash. Its CMake recognizes gcc, clang, and MSVC but not `icx`, so Laplace-Native supplies BLAKE3's assembly sources itself.
   - **CORE-MATH**: correctly rounded `sin` and `cos`. libm `sin` and `cos` are not required to be correctly rounded, and glibc, musl, MSVC, and CUDA differ in the last bits, so without this the same codepoint gets different points on different machines. Its binary64 `sin` and `cos` hard-to-round cases have been fully solved.
-  - **Eigen 3.4** and **Spectra**: the 4D math in the extension functions.
-  - **hnswlib**.
+  - **Eigen 3.4** and **Spectra**: exact 4D linear algebra and spectral solvers used alongside Laplace-Native's deterministic SIMD spatial and curve kernels (no approximate-nearest-neighbor index library is used, because Laplace indexes exact 4D coordinates in PostGIS GiST and evaluates exact distances and curve metrics in Laplace-Native).
   - **GEOS, PROJ, GDAL**: PostGIS's own dependencies.
   - **PostGIS 3.6**: built against the PostgreSQL of [3. Builds](Builds.md).
   - **tree-sitter**: the runtime and the grammars that code recipes read in [10. Recipes](Recipes.md).

@@ -1,37 +1,33 @@
 # OpenSubtitles
 
-OpenSubtitles attests, of each Japanese sentence of its English-Japanese pair, the English sentence on the same line of the other file, as built `[the Japanese sentence, en, the English sentence]`, at the sentence tier and of nothing inside it; both languages belong in the claim, and the Japanese side's own language is not yet recorded, and no other pair of languages is matched.
+OpenSubtitles attests sentence-tier parallel translations (`[lang1, sent1, lang2, sent2]`) across aligned OPUS Moses bitext files for all admitted ISO 639 language pairs (11 language pairs currently wired in `recipes/opensubtitles/`, extensible to any ISO 639 pair), resolving aligned line numbers at ingest and recording them nowhere.
 
-The source is OpenSubtitles v2024 as OPUS packages it "in Moses format": for each pair of languages two files of plain text, one sentence on a line, and a README and a LICENSE. The README's first line is "Corpus Name: OpenSubtitles", and it says "This package is part of OPUS - the open collection of parallel corpora". OPUS's [data formats](https://opus.nlpl.eu/legacy/trac/wiki/DataFormats.html) page describes the Moses format: a plain-text bitext is two files whose corresponding lines are aligned, named with file extensions that correspond to the language ID. Only the Moses package is read; OPUS's XML, TMX, and alignment files are not among its files.
+The source is OpenSubtitles v2024 as packaged by OPUS in Moses bitext format ([OPUS data formats](https://opus.nlpl.eu/legacy/trac/wiki/DataFormats.html)): for each language pair `<l1>-<l2>`, two plain-text files (`OpenSubtitles.<l1>-<l2>.<l1>` and `OpenSubtitles.<l1>-<l2>.<l2>`) whose corresponding lines are aligned subtitle translations, accompanied by `README` and `LICENSE`. Only one canonical representation (the Moses bitext) is needed; redundant XML/TMX packagings of the same sentences are not duplicated.
 
 ## Source
 
-| Source | Witness | Trust | After | Files | Recipes |
+| Source | Witness | Trust class | After | Files | Recipes |
 | --- | --- | --- | --- | --- | --- |
-| `opensubtitles` | `OpenSubtitles`, lineage `OPUS` | class `StructuredCorpus` | `unicode`, `iso-639` | `OpenSubtitles.en-ja.en`, `OpenSubtitles.en-ja.ja`, `README`, `LICENSE` | [`en.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/opensubtitles/en.recipe), [`ja.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/opensubtitles/ja.recipe), [`readme.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/opensubtitles/readme.recipe) |
+| `opensubtitles` | `OpenSubtitles` source trunk, lineage `OPUS` | class `StructuredCorpus` | `unicode`, `iso-639` | `OpenSubtitles.<pair>.<lang>` across all locally extracted OPUS bitext directories (`ar-en`, `de-en`, `el-en`, `en-es`, `en-fr`, `en-hi`, `en-ja`, `en-ko`, `en-ru`, `en-zh_cn`, `en-zh_tw`, extensible to any ISO 639 pair), plus `README`, `LICENSE` | Pair recipes under [`recipes/opensubtitles/`](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/opensubtitles) (`ar-en-*.recipe`, `de-en-*.recipe`, `el-en-*.recipe`, `en-es-*.recipe`, `en-fr-*.recipe`, `en-hi-*.recipe`, `en.recipe`/`ja.recipe`, `en-ko-*.recipe`, `en-ru-*.recipe`, `en-zh_cn-*.recipe`, `en-zh_tw-*.recipe`, `readme.recipe`) |
 
-The class is the witness's trust class, one of those [6. Registries](../Sequence/Registries.md#65-declare-the-trust-classes) declares; its prior is the trust every attestation of the source plays at, and [9. Sources](../Sequence/Sources.md#the-estate-and-why-each-source-is-in-it) gives the class of each source.
+The class is the witness's trust class, one of those [6. Registries](../Sequence/Registries.md#65-declare-the-trust-classes) declares; its prior bounds the trust every attestation of the source plays at, and [9. Sources](../Sequence/Sources.md#the-estate-and-why-each-source-is-in-it) gives the class of each source.
 
-## The sentences
+## Parameterized OPUS bitext contract
 
-A file such as `OpenSubtitles.en-ja.en` is sentences, one on a line, nothing else: no header, no column, no identifier. Line N of `OpenSubtitles.en-ja.ja` is the same subtitle as line N of `OpenSubtitles.en-ja.en`, in the other language. What OpenSubtitles says is that this sentence was translated to that sentence, by one or more people, from one language to the other: the translation of the whole sentence, not of its words, so it is attested at the sentence tier, the highest the source asserts.
+Every OPUS Moses language pair obeys one uniform semantic contract:
 
-| Piece | Written as | Laplace reads it as | Claim recorded | Specification |
+1. Line `N` of `OpenSubtitles.<l1>-<l2>.<l1>` and line `N` of `OpenSubtitles.<l1>-<l2>.<l2>` are aligned subtitle sentences in ISO 639 languages `lang1` and `lang2` (including script/region distinctions such as `zh_cn` vs. `zh_tw` mapped onto their ISO 639 / BCP-47 highway identifiers).
+2. Each sentence is decomposed losslessly to UAX #29 words, graphemes, and Tier-0 codepoints for its content `lp_id`, paired with its own ISO 639 language node (`[sent1, lang1]` and `[sent2, lang2]`, e.g., `thing sentence text literal ara` and `thing sentence text literal eng` in `ar-en`).
+3. Line number `N` is pair-local alignment plumbing (`numbered line`, `key sentence line` / `refer aligned opensubtitles-<pair>-<l1>`), resolved in memory at ingest and **recorded nowhere**.
+4. The aligned pair attests a symmetric sentence-tier translation strand binding both sentences and both languages (`[[sent2, lang2], translated, [sent1, lang1]]` / `[lang1, sent1, lang2, sent2]`) at the sentence tier—never claiming word-by-word alignment where the source asserts only whole-subtitle equivalence.
+
+| Piece | Written as | Laplace reads it as | Target attestation & current recipe state | Specification |
 | --- | --- | --- | --- | --- |
-| a line of the `.en` file | one sentence | the English sentence, content, decomposed to its codepoints for its identity (`thing row en`, `content en`) | none of its own | "Corpus Name: OpenSubtitles" (the README's first line) |
-| a line of the `.ja` file | one sentence | the Japanese sentence, content, the same way (`thing row ja`, `content ja`) | the subject of the pair | |
-| line N against line N of the paired file | the same line number in the other file | how the two files are joined: the `.en` file numbers its lines (`numbered line`, `key row line`), and the `.ja` file's line N is read with the English sentence of the same number (`numbered en`, `refer en opensubtitles-en`). The line number is a position, written nowhere | as built `[the Japanese sentence, en, the English sentence]` (`attest row en`), with only one language where both belong | "corresponding lines are aligned" ([data formats](https://opus.nlpl.eu/legacy/trac/wiki/DataFormats.html)) |
-| the file's name after its last dot | `en` in `OpenSubtitles.en-ja.en`, `ja` in `OpenSubtitles.en-ja.ja` | the language of the sentences, written only there. The English side's `en` is the name under which the pair is said; the Japanese side's `ja` is not recorded | in the pair, `en` only | the Moses files are named with "file extensions that correspond to the language ID" ([data formats](https://opus.nlpl.eu/legacy/trac/wiki/DataFormats.html)) |
-| `README`, `LICENSE` | ordinary text | observed (`grammar text`) | none | |
-
-Each line pair is one attestation, witnessed once by OpenSubtitles. Nothing is attested of the words inside a sentence: the source says nothing of them.
+| line `N` of `OpenSubtitles.<pair>.<l1>` | one UTF-8 subtitle sentence | `[sent1, lang1]` sentence-in-language entity, keyed by pair-local line `N` (`key sentence line`) | first side of the aligned translation strand, with its ISO 639 language bound | "Corpus Name: OpenSubtitles" (`README`) |
+| line `N` of `OpenSubtitles.<pair>.<l2>` | aligned UTF-8 subtitle sentence | `[sent2, lang2]` sentence-in-language entity, resolving line `N` via `refer aligned` | `[[sent2, lang2], translated, [sent1, lang1]]` across all 11 active pairs (`en.recipe`/`ja.recipe` is slated to match the two-language `literal jpn`/`literal eng` pattern used by the other 10 pairs, and parameterized pair matching generalizes to any newly staged OPUS directory without cloning two recipe files per pair) | "corresponding lines are aligned"; file extensions name the language ID ([OPUS data formats](https://opus.nlpl.eu/legacy/trac/wiki/DataFormats.html)) |
+| line number `N` | implicit 1-based line ordinal | pair-local join key (`numbered`), discarded after resolution | none | Moses parallel line alignment |
+| `README`, `LICENSE` | plain text | observed file content (`readme.recipe`) | none | |
 
 ## Relations
 
-As built, `[the Japanese sentence, en, the English sentence]` takes its relation from the paired file's language suffix, `en`: markup, not meaning, with only one of the two languages. A relation is what the source means, never the name of a field, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field): the two sentences translate each other, both languages, at the sentence tier.
-
-## Not yet recorded
-
-- The Japanese sentence's own language. Both languages belong in what is attested, the language translated from and the language translated to; the shape of the claim that carries both is not yet decided.
-- Any pair but English and Japanese: only `OpenSubtitles.en-ja.*` is matched.
-- [Attestations](../Semantics/Attestations.md#attestations) says a sentence from OpenSubtitles is attested to be English, or whichever language it is, and that OpenSubtitles gives the language of sentences, not of words. That a sentence is in its language is not yet recorded of either side on its own.
+In `ar-en`, `de-en`, `el-en`, `en-es`, `en-fr`, `en-hi`, `en-ko`, `en-ru`, `en-zh_cn`, and `en-zh_tw`, the recipes already bind both ISO 639-3 language highway nodes (`ara`/`eng`, `deu`/`eng`, `ell`/`eng`, `spa`/`eng`, `fra`/`eng`, `hin`/`eng`, `kor`/`eng`, `rus`/`eng`, `cmn`/`zho`/`eng`) and attest `relation "translated"` rather than a file-extension field name. Unifying `en-ja` onto the same two-language strand and parameterizing OPUS pair discovery in the recipe loader lets any ISO 639 OPUS bitext snap in automatically.

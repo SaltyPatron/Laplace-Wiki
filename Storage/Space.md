@@ -30,6 +30,6 @@ Knowledge can occupy the same space; matter cannot.
 
 ## Four dimensions
 
-Everything in Laplace is 4D. See [Physicality](Physicality.md) for real coordinates and [Identity](Identity.md) for the 3D visualization of the 4D representation.
+Everything in Laplace is 4D. Every entity's geometric position is its real 4D coordinate on `entity.coord` (unpacked for 3D Glome projection and realized 4D curve metrics), while [Identity](Identity.md#the-id-in-geometry) and [Physicality](Physicality.md) bit-pack 128-bit constituent IDs and vertex metadata into PostGIS `geometry` ZM mantissas in `[0.25, 0.5)` strictly as an indexed storage and containment carrier.
 
 This creates the structure, shape, and form of knowledge: its physical manifestation within a finite space.

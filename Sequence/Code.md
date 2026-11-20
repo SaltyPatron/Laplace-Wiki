@@ -10,11 +10,11 @@ Everything is an AST, and the substrate is a Merkle DAG AST; that is why the tre
 
 ## Operations, per task
 
-### 26.1 Bind the exact target
+### 26.1 Bind the exact target (and construct cleanly even without a local toolchain)
 
 - **In:** a requirement or obligation.
-- **Do:** bind the exact target language, grammar generation, runtime, toolchain, version, dialect, framework, ABI, and platform contract. A request for Bash is bound to the admitted Bash grammar and runtime; a request for Zsh requires a qualified Zsh provider, and if none exists the correct result is explicit missing capability, never Bash as a probabilistic substitute.
-- **Out:** the bound target.
+- **Do:** bind the exact target language, grammar generation, runtime, toolchain, version, dialect, framework, ABI, and platform contract. Never silently substitute one language for another (never emit `Bash` pretending it is `Zsh`), **and never refuse to construct code merely because a local execution toolchain or specialized parser binary is not installed on the serving host**: when a compiled Tree-sitter grammar and local compiler/test toolchain are present, Laplace constructs under the grammar, runs verification (26.7), and repairs any failing subtree (26.9); when no local execution toolchain is available for the requested language, Laplace constructs the code from its structural, corpus, and lexical knowledge, realizes the source cleanly (26.6), and marks the receipt `unverified_by_toolchain` (naming which verifier was absent) rather than refusing to answer.
+- **Out:** the bound target and verification contract (`toolchain_verified` or `unverified_by_toolchain`).
 - **From:** `docs/guides/software-construction.md` §Exact language means exact language; `docs/CAPABILITIES.md` §Software construction.
 
 ### 26.2 Resolve the repository root
@@ -52,11 +52,11 @@ Everything is an AST, and the substrate is a Merkle DAG AST; that is why the tre
 - **Out:** the files.
 - **From:** `docs/guides/software-construction.md` §Full-repository realization.
 
-### 26.7 Compile, link, test, analyze, simulate, run
+### 26.7 Compile, link, test, analyze, run (when toolchain is available)
 
 - **In:** the realization.
-- **Do:** run the declared toolchain and verification providers. A valid AST is not correctness; type, link, runtime, behavioural, and toolchain evidence are separate.
-- **Out:** diagnostics, exceptions, test results, analysis, simulation, and runtime observations.
+- **Do:** when a local compiler, typechecker, linter, or test runner is installed and authorized for the target of 26.1, run those verification providers. A valid AST is not proof of runtime correctness; type, link, runtime, behavioural, and test evidence are distinct. When no local toolchain is installed for the target language, skip execution cleanly and emit `unverified_by_toolchain` in the receipt rather than blocking delivery.
+- **Out:** compiler/LSP diagnostics, test results, and runtime observations—or an explicit `unverified_by_toolchain` receipt.
 - **From:** `docs/CAPABILITIES.md` §Software construction.
 
 ### 26.8 Witness every outcome
@@ -94,11 +94,11 @@ Everything is an AST, and the substrate is a Merkle DAG AST; that is why the tre
 - **Out:** the deployment, witnessed.
 - **From:** `docs/CAPABILITIES.md` §Patch/deployment as a proven root transition.
 
-### 26.13 Derive the machine cost of what was built
+### 26.13 Optionally analyze static machine cost of a built binary
 
-- **In:** the built artifact.
-- **Do:** [17. Envelope](Envelope.md) operation 17.3, over the artifact: decoded instructions, control and data flow, execution-count variables, target ISA and microarchitecture, cycles, time, with unknowns symbolic and benchmarks as calibration witnesses.
-- **Out:** the calculated cost, beside the measured one.
+- **In:** a compiled binary or object artifact, when static performance analysis is explicitly requested.
+- **Do:** as an optional, on-demand software-engineering analysis tool—**never a preflight blocker on conversational turns or ordinary code generation** ([17. Envelope](Envelope.md) operation 17.3)—lift the built binary's functions, basic blocks, control-flow graph, instruction dependencies, and loop-count variables against the target ISA profile, comparing symbolic cycle bounds with measured benchmark runs as calibration witnesses.
+- **Out:** optional static cycle/latency analysis beside measured benchmark telemetry.
 - **From:** `docs/guides/machine-cost-analysis.md`.
 
 ## What this stage leaves behind

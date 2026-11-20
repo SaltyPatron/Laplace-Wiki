@@ -1,36 +1,35 @@
 # Word sense disambiguation
 
-The WSD evaluation framework attests the words of each sentence, their lemma and part of speech, as one witness whose datasets are directories of files under its trunk; the ids the data files write (`d000.s000.t000`) are the framework's internal pointers, recorded nowhere, and the gold keys and the systems' answers, which name instances only by those ids, are not read; the README files, schema and candidate list attest nothing.
+The WSD evaluation framework (`SemCor`, `semcor+omsti`, and the five evaluation benchmarks) attests sentences, token lemmas and parts of speech, and gold sense bindings resolved from `*.gold.key.txt` across `d000.s000.t000` internal pointers onto `[lemma, eng, ILI]` lexicalizations under one corpus witness trunk.
 
-The source is the unified evaluation framework of Raganato, Camacho-Collados and Navigli (2017) at [lcl.uniroma1.it/wsdeval](http://lcl.uniroma1.it/wsdeval/). The framework is one source trunk and one witness: every dataset, `SemCor`, `senseval2`, `ALL`, is a directory of files under that trunk, each file with its path, and never a witness of its own. The Engine is built otherwise: it names a witness per dataset, as the framework names its directory (`witness {dir}`), and the target is the one trunk.
+The source is the unified WSD evaluation and training framework of Raganato, Camacho-Collados, and Navigli (2017) at [lcl.uniroma1.it/wsdeval](http://lcl.uniroma1.it/wsdeval/): `Training_Corpora` (`SemCor` and `SemCor+OMSTI`) and `Evaluation_Datasets` (`senseval2`, `senseval3`, `semeval2007`, `semeval2013`, `semeval2015`, and `ALL`). The entire framework is one source trunk and one witness (`Word Sense Disambiguation: A Unified Evaluation Framework`); individual datasets are directories of files under that trunk (`Data_Validation/sample-dataset` is excluded only because it duplicates `semeval2015` byte for byte).
 
 ## Sources
 
-| Source | Witness | Trust class | After | Files | Recipe |
+| Source | Witness | Trust class | After | Files | Recipes |
 | --- | --- | --- | --- | --- | --- |
-| `wsd-evaluation-framework` | the framework, the source trunk; as built, the dataset's directory name, `SemCor`, `senseval2`, `ALL` (`witness {dir}`) | class `AcademicCurated` | `princeton-wordnet`, `cili` | `*.data.xml` | [`data.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/wsd-evaluation-framework/data.recipe) |
-| `wsd-evaluation-framework` | the framework, the source trunk; as built, the directory the file is in | class `AcademicCurated` | | `schema.xsd` | [`schema.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/wsd-evaluation-framework/schema.recipe) |
-| `wsd-evaluation-framework` | none: read as text | | | `README`, `PROVENANCE.md` | [`documentation.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/wsd-evaluation-framework/documentation.recipe) |
+| `wsd-evaluation-framework` | `Word Sense Disambiguation: A Unified Evaluation Framework` source trunk | class `AcademicCurated` | `princeton-wordnet`, `cili` | `*.data.xml` (including `semcor.data.xml` and `semcor+omsti.data.xml`), `*.gold.key.txt`, `schema.xsd`, `README`, `PROVENANCE.md` | [`data.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/wsd-evaluation-framework/data.recipe), [`gold.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/wsd-evaluation-framework/gold.recipe), [`schema.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/wsd-evaluation-framework/schema.recipe), [`documentation.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/wsd-evaluation-framework/documentation.recipe) |
 
-`Data_Validation/sample-dataset` repeats `semeval2015` byte for byte and is read there; `semcor+omsti.data.xml` is not read, as the source says.
+The class is the witness's trust class, one of those [6. Registries](../Sequence/Registries.md#65-declare-the-trust-classes) declares; its prior bounds the trust every attestation of the source plays at, and [9. Sources](../Sequence/Sources.md#the-estate-and-why-each-source-is-in-it) gives the class of each source.
 
-## The data files
+## The XML sentence files (`*.data.xml`) and gold keys (`*.gold.key.txt`)
 
-A record is one sentence: the path of its words, in order (`words sentence wf instance`). What is said of a word is said of the word within its sentence, every name and value as the file writes it.
+Each `<sentence>` in `*.data.xml` is composed in order from its `<wf>` and `<instance>` word elements, including full `SemCor` and `SemCor+OMSTI` training corpora via streaming grammar-bounded XML records. Each `<instance id="d000.s000.t000" lemma="document" pos="NOUN">document</instance>` registers `d000.s000.t000` as a cross-file internal pointer (`key instance id`).
 
-| Piece | Written as | Laplace reads it as | Claim recorded | Specification |
+`*.gold.key.txt` pairs each `d000.s000.t000` instance ID with one or more WordNet 3.0 sense keys (`document%1:10:00::`). At ingest, `gold.recipe` resolves `instance id` via `refer "instance id" wsd-data` directly to the word-in-sentence occurrence in `*.data.xml`, resolves the WordNet sense key through `highway.bin`, attests the disambiguated sense binding on that contextualized word instance, and **discards both `d000.s000.t000` and the raw sense-key pointer string afterward** ([30. Conflicts](../Sequence/Conflicts.md) S1, I7).
+
+| Piece | Written as | Laplace reads it as | Target attestation & current recipe state | Specification |
 | --- | --- | --- | --- | --- |
-| `<corpus lang="en" source="senseval2">` | the root | nothing: no thing is inside none | none | |
-| `<text id="d000">` | an element | not a thing; its `id` a pointer (`key id`) | none | "corpus -> text -> sentence" |
-| `<sentence id="d000.s000">` | inside a text | the record of its words; its `id` a pointer | the record `[[This, document, is, …], [This, lemma, this], …]` | |
-| `<wf lemma="this" pos="DET">This</wf>`, `<instance id="…" lemma="document" pos="NOUN">document</instance>` | word elements | the word, its text; `lemma` and `pos` said of it as it stands in its sentence; an instance's `id` a pointer | `[This, lemma, this]`, `[This, pos, DET]` | "Both types should contain two mandatory attributes ("lemma" and "pos")." |
+| `<text id="d000">`, `<sentence id="d000.s000">` | XML containers with `id` | document and ordered sentence trajectory of `<wf>` and `<instance>` tokens; `id` attributes resolved as internal pointers (`key`) and recorded nowhere | sentence trajectory `[[This, document, is, …], …]` | "corpus -> text -> sentence" (`schema.xsd`) |
+| `<wf lemma="this" pos="DET">This</wf>` | context token | token text within its sentence, with `lemma` and `pos` (`upos`) attested in the sentence's annotation layer | contextual `[token, lemma]` and `[token, UPOS]` | "mandatory attributes (`lemma` and `pos`)" |
+| `<instance id="d000.s000.t000" lemma="document" pos="NOUN">document</instance>` | disambiguated target token | token occurrence in its sentence, keyed by `id` (`key instance id`) so `*.gold.key.txt` binds to it; `d000.s000.t000` is recorded nowhere | contextual token occurrence + lemma + `UPOS` | target word instance (`schema.xsd`) |
+| `d000.s000.t000 document%1:10:00::` in `*.gold.key.txt` | space-separated `instance_id` and WordNet 3.0 sense key(s) | `refer "instance id" wsd-data` resolves the contextual token; sense key resolves via `highway.bin` to the lexicalization `[lemma, eng, ILI]` | target: contextual word-in-sentence → `[lemma, eng, ILI]` lexicalization binding (`gold.recipe` already resolves `instance id` and maps sense keys to `ILI` via `type "gold key" ili`; refining the target from bare `ILI` to `[lemma, eng, ILI]` closes in `Batch 2`) | `Data_Validation/README`: "first column corresponds to the instance id and the remaining columns correspond to the gold key/s" |
+| `schema.xsd`, `README`, `PROVENANCE.md` | XML schema and documentation | observed file syntax trees and text under the corpus trunk | none | |
 
-The record is witnessed once, as one attestation, by the framework, the one witness; as built, by the dataset whose directory the file is in (`witness {dir}`).
+## System outputs and derived tables
+
+Baseline system output files (`Output_Systems/*.key`), `candidatesWN30.txt`, and local `ili_mapped` convenience tables are either non-gold model predictions or redundant projections of WordNet 3.0 + CILI that `highway.bin` already resolves natively, so gold testimony comes strictly from `*.data.xml` + `*.gold.key.txt`.
 
 ## Relations
 
-As built, `[This, lemma, this]` and `[This, pos, DET]` take their relations from the attributes' names: markup, not meaning. A relation is what the source means, never the name of a field, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field): `DET` is a value of the UPOS road class, the word's part of speech as it stands in its sentence, and `this` its lemma, each in the sentence's annotation layer.
-
-## Not read
-
-The gold keys (`*.gold.key.txt`), the systems' answers (`*.key`), `candidatesWN30.txt` and the `ili_mapped` tables point at instances by the framework's ids and nothing else: with the ids pointers, the row would say its sense key of nothing, so they are not read. The sense keys themselves are WordNet's internal pointers to lexicalizations, resolved through the highway perf-cache and recorded nowhere. When a pointer points at a word across files of one source ([Recipes](../Reference/Recipes.md#what-each-named-part-is): `refer`), the gold keys can say of each instance's word the concept it is annotated with; that is not yet written for XML words. `schema.xsd` is recorded as its syntax tree; the READMEs and `PROVENANCE.md` are read as text: observed content that attests nothing.
+`data.recipe` and `gold.recipe` resolve `d000.s000.t000` pointers across XML and gold key files without leaking internal IDs into claims. Closing the remaining `Batch 2` items binds sense keys onto `[lemma, eng, ILI]` lexicalization strands ([30. Conflicts](../Sequence/Conflicts.md) I7) rather than bare `ILI` concept nodes and composes sentence-aligned `LEMMA`/`UPOS`/sense layers under the single `wsd-evaluation-framework` witness trunk.

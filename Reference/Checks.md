@@ -7,8 +7,8 @@ Every check that proves the built machine: the native golden tests, the prototyp
 System-wide verification is anchored on three real end-to-end proofs executed in order (with [Laplace-Prototype](../Research/Prototype.md) serving as the cleanroom proving ground rather than running multi-corpus ingests on every build in active development CI):
 
 1. **Proof 1 — `db-roundtrip` (Decomposition → PostgreSQL → Byte-Exact Recomposition):** Decompose real multi-domain inputs (UTF-8 text, XML, TSV/CSV, JSON/JSONL, Turtle, CoNLL-U, PGN) bottom-up (**Leaf → Trunk**) on the client using `tier0.bin` and `highway.bin`, deduplicate top-down (**Trunk → Leaf**) against PostgreSQL, stage whole files in `UNLOGGED` `stage.*` tables, merge into `public.*`, and recompose 100% byte-for-byte from PostgreSQL alone while asserting all structural and geometric invariants.
-2. **Proof 2 — The Linguistic Super Highway (`highway.bin` Perf-Cache & Crosswalk Hops):** Build the self-contained `highway.bin` perf-cache alongside `tier0.bin` without requiring raw corpus definitions on disk or a `.nodes` sidecar dump, and verify $O(1)$ bit-banger masks (`upos`, `lexfile`, `deprel`, `vnrole`, `kind`) and cross-source identifier indexing, filtering, and interchange hops (`ili` ↔ `Synset` ↔ `vaframe` ↔ `pbroleset` ↔ `vnclass` ↔ `fnframe`).
-3. **Proof 3 — Full Multi-Corpus Ingestion (`recipes/order`):** Ingest the full corpus suite on top of Proofs 1 and 2 with one source trunk and one witness per corpus, verifying cross-corpus convergence on highway identifier nodes, database-side `laplace_attest_series` folding into `consensus`, multi-hop translation, and containment provenance (`laplace_witnesses_of` → Fisher-information `share_bp` summing to `10000` basis points).
+2. **Proof 2 — The Linguistic Super Highway (`highway.bin` Perf-Cache & Crosswalk Hops):** Build the self-contained `highway.bin` perf-cache alongside `tier0.bin` without requiring raw corpus definitions on disk or a `.nodes` sidecar dump, and verify $O(1)$ 64-bit mask banks (`kind`, `upos`, `lexfile`, `deprel`, `vnrole`, `wnframe`) and cross-source identifier indexing, filtering, and interchange hops (`ili` ↔ `Synset` ↔ `vaframe` ↔ `pbroleset` ↔ `vnclass` ↔ `fnframe`).
+3. **Proof 3 — Full Multi-Corpus Ingestion (`recipes/order`):** Ingest the full corpus suite on top of Proofs 1 and 2 with one source trunk and one witness per corpus, verifying cross-corpus convergence on highway identifier nodes, database-side `laplace_attest_series` folding into `consensus`, multi-hop translation, and containment provenance (`laplace_attested` / `laplace_attribution` / `laplace_source_attribution` → Fisher-information `share_bp` summing to `10000` basis points).
 
 ## The native tests
 
@@ -19,12 +19,13 @@ System-wide verification is anchored on three real end-to-end proofs executed in
 | `identity` | every codepoint's ID equals tier 0's; no duplicate codepoint IDs; `A` is `32684bfa28c0c84d6f210511aace0efc`; `Holmes` is `5b7e40e9a23ae55eaccd45646934977d` and equals the composition of its codepoints; one-child collapse; invalid UTF-8 rejected |
 | `coord` | no tier-0 point outside the wall; every tier-0 Hilbert value recomputes; truncation toward zero; no overflow in the sum; the wall exact at its edge |
 | `geometry` | every ID round-trips through the mantissas; every packed value in `[0.25, 0.5)`; a three-run path is `9 + 32·3` bytes with three vertices and run lengths 3, 1, 1; a pure repeat is one POINT ZM of 37 bytes with the run in M and type `0xC0000001` |
-| `follows` | over random paths and phrases, the continuations found equal the expected, count and content; run at `LAPLACE_ISA=scalar`, `sse2`, `avx2` |
-| `consensus` | Glickman's example gives `1464.06 / 151.52 / 0.05999`; trust 1 plays at deviation 0, 0.9 at 152.6, 0.669 at 350, 0 carries no information; negative trust equals flipping the outcome; trust 0 changes nothing; a win raises; low trust moves less |
+| `follows` | over random paths and phrases, the continuations found equal the expected, count and content; run across `LAPLACE_ISA` levels (`scalar`, `sse2`, `avx2`, `avxvnni`, `avx512`, `avx512vnni`) |
+| `consensus` | Glickman's example gives `1464.06 / 151.52 / 0.05999`; trust 1 plays at deviation 0, 0.9 at 152.6, 0.669 at 350, 0 carries no information; negative trust equals flipping the outcome; `lp_attest_series` bounds single-witness ratings by `s_eff = 0.5 + \|t\|(score − 0.5)` and certainty by `lp_series_floor` |
 | `shape` | identical sequences: Fréchet 0, DTW 0 over N steps, EDR 0; a stray vertex sets Fréchet above 4, skipping it gives 0, one EDR edit, DTW adds its distance once; a repeat is nothing to Fréchet and DTW and one EDR edit; `outliers 0` equals Fréchet |
 | `pull` | 5,000 entities reached; a dearer chain is not kept, a cheaper one is; the cheapest comes first; a closed entity stays closed; entities come out in cost order, every one once |
 | `flags` | `A` is `Uppercase_Letter`, `a` `Lowercase_Letter`; scripts Latin, Greek, Han; alef `Right_To_Left`; `Alphabetic`, `White_Space`, `Emoji`; `U+10FFFF` `Unassigned`, `U+D800` `Surrogate`; values by short and long name |
 | `text` | `[H,o,l,m,e,s]` a tier-1 word of 6 parts; `Sherlock Holmes` tier 2 of 3 parts in order, the space a codepoint, its coordinate the average and inside the wall; one codepoint is that codepoint; an ID that is no codepoint |
+| `csharp_abi` | generated `Laplace.Native.Interop` P/Invoke signatures, struct sizes/offsets, and calls match the compiled `liblaplace` binary |
 | `confidence` (in `consensus`) | 1774.3 / 93.3 reads 0.624 at *k* = 2 and 0.829 at *k* = 0; cost 0.472; copies counted once, 1.986 |
 
 ## The prototype's verification
@@ -103,7 +104,7 @@ What only a fresh or private database could show is not checked: installing the 
 | the 16 word segments nearest `king` in 4D, GiST | 7.7 ms | 16 |
 | everything attested about `dog` with its confidence | | |
 
-The tenth query joins a table named `standing`; the built schema names it `consensus`, so the benchmark's last query needs that name corrected before it runs.
+The current `CREATE EXTENSION laplace` schema has **50** partitions (`9 + 9` tier range partitions `t0`..`t8plus` on `entity` and `physicality`, `16 + 16` hex range partitions `0`..`f` on `attestation` and `consensus`); the reference numbers in the table above (`14` / `52` / `16` partitions) were measured on the earlier 52-partition prototype layout, and the tenth query in `bench_queries.py` still references `standing` rather than `consensus`.
 
 ## What is not checked anywhere yet
 

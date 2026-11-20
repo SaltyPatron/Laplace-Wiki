@@ -3,266 +3,72 @@
 Architecture boundaries state which layer owns which law: the native engine owns every semantic operation, and SQL and C# orchestrate generated typed bindings to it.
 
 > [!IMPORTANT]
-> These boundaries apply across every active Laplace repository (`Laplace-Native`, `Laplace-postgres`, `Laplace-Engine`, `Laplace-MCP`, `Laplace-UCI`, and `Laplace`). `Laplace` (the product application) is completing its `one-substrate` convergence onto the modular `Laplace-Native` + `Laplace-postgres` + `Laplace-Engine` packages so every semantic law has exactly one native implementation.
+> These boundaries apply across every active Laplace repository (`Laplace-Native`, `Laplace-postgres`, `Laplace-Engine`, `Laplace-MCP`, `Laplace-UCI`, `Laplace-Operations`, and `Laplace`). `Laplace` (the product application) converges onto the modular `Laplace-Native` + `Laplace-postgres` + `Laplace-Engine` packages (`one-substrate`) so every semantic law has one native implementation.
 
 ## Authority flow
 
 ```text
- external content and services          direct SQL callers
-               |                               |
-               v                               v
- C# lifecycle/transport orchestration   SQL transaction/set orchestration
-               |                               |
-               +------------+------------------+
-                            |
-                            v
-             generated typed ISA bindings
-                            |
-                            v
-       PostgreSQL native extension/server integration
-                            |
-                            v
-              C/C++ substrate instruction engine
-                            |
-                            v
-        universal persistent state, indexes, and receipts
+ External callers (OpenAI /v1/*, Web/Glome, Chess Lab, Foundry, Arena, MCP, UCI, CLI)
+               |                                      |
+               v                                      v
+ C# thin hosts (Laplace.Hosting/Data/Mcp)    Native CLI/HTTP/UCI (Laplace-Engine, lpm)
+               |                                      |
+               +-------------------+------------------+
+                                   |
+          +------------------------+------------------------+
+          | (0 DB round-trips)                              | (indexed binary probes & stage COPY)
+          v                                                 v
+ In-process Laplace-Native C                       PostgreSQL 18 + PostGIS + Laplace-postgres
+ + mmap'd ROMs (tier0, flags, highway, chess)      + same Laplace-Native C beside GIN/GiST/B-tree
+                                                            |
+                                                            v
+                                                   4 canonical substrate tables
+                                                   (entity, physicality, attestation, consensus)
+                                                   + app.* operational/billing tables
 ```
 
-SQL and C# are peer orchestrators. Neither is a semantic layer above the other and
-neither becomes the engine. Both reach the same generated native instruction contract.
+SQL and C# are peer orchestrators. Neither is a semantic layer above the other and neither becomes a second engine. Modularity in Laplace is **compounding overlap in one shared space, never vertical feature silos**: every corpus, lexicon, repository, `.git` history, compiler symbol graph, PGN archive, media stream, and Safetensors/GGUF checkpoint decomposes into the same 16-byte BLAKE3 IDs across the same four tables, and one C `Forward + Highway A* + Gödel` program (`program.c`) steered by detached `.firmware` profiles serves conversation, code construction, chess, and discovery without domain-specific engine forks.
 
-## Client-determinism collapse and compounding snap-in modularity
+## Pure C17 core (`Laplace-Native`)
 
-Because `tier0.bin`, `tier0.flags`, `highway.bin`, and `chess.bin` are deterministic, fingerprinted ROMs memory-mapped identically on both client and server, client callers (`Laplace-Engine`, `Laplace-MCP`, and C# via `Laplace.Native.Interop`) execute deterministic operations — BLAKE3-128 IDs, UAX #29 segmentation, `tier0.flags` variant expansion, exact 4D integer centroids, 4D Hilbert keys, mantissa pack/unpack, 64-bit `banks.tsv` masks, highway crosswalks, Syzygy probes, in-memory Fréchet/DTW/EDR curve comparison, Glicko-2 series updates, Fisher `share_bp = 10000` royalty math, and UTF-8 realization — **in-process in `Laplace-Native` C with zero database round-trips**. PostgreSQL (`Laplace-postgres`) strictly stores the four substrate tables and executes indexed set probes, binary `stage.lp_*` merges, and $O(\text{tier})$ frontier reads using the exact same `Laplace-Native` C functions. Pre-modular SQL catalogs (`extension/laplace_substrate`, `sql_catalog.def`) collapse into this split rather than being ported one-for-one.
+`Laplace-Native` is pure C17 compiled with `icx` (`-fp-model=precise`, `-ffp-contract=off`), plus `src/linalg.cpp` wrapping scalar Eigen and Spectra (`lp_eigenmap`, `lp_procrustes`, and Householder QR Gram-Schmidt) behind a pure `extern "C"` ABI (`include/laplace/linalg.h`, compiled with `EIGEN_DONT_VECTORIZE`, `EIGEN_NO_CPUID`, and `EIGEN_DONT_PARALLELIZE`). It owns:
 
-Modularity in Laplace is **compounding overlap, never vertical feature silos**: new corpora, code repositories, `.git` histories, compiler symbol graphs, chess archives, media streams, and Safetensors/GGUF checkpoints snap in via generic codecs/grammars + declarative `.recipe` files onto the same 16-byte BLAKE3 IDs, and one shared C `Forward + Highway A* + Gödel` loop (`program.c`) steered by detached `.firmware` programs serves conversation, code construction, chess, and discovery without domain-specific engine forks.
+- **Content identity (`lp_id`):** 16-byte BLAKE3-128 hashes (`uint8_t b[16]`) with zero domain byte, salt, tier prefix, or case folding; codepoint UTF-8 leaf hashing (`lp_id_codepoint`), singleton collapse (`n == 1` returns child `0`), ordered $16n$-byte child composition (`lp_id_compose`, `lp_ref_compose`), and intrinsic Merkle height (`tier = 1 + max(child.tier)`).
+- **Memory-mapped fingerprinted ROMs:** `tier0.bin` (all 1,114,112 Unicode codepoints on the $S^3$ surface in DUCET/Super-Fibonacci order), `tier0.flags` (256-bit Unicode Character Database property records + `.layout`), `highway.bin` (shared concept/frame/bank slots and crosswalk edges generated from `manifest/` + `tier0.bin`), and `chess.bin` (canonical chess board, position, and transition tables).
+- **Segmentation and compositional scalars:** Tailored UAX #29 grapheme/word/sentence/paragraph breakdown (`src/text.c`), deterministic leftmost shortest-period block factoring (`lp_factor` in `src/compose.c`), and universal compositional scalars (`255` $\rightarrow$ `['2','5','5']`) shared across prose, code literals, IPv4 octets, RGB(A) channels, PCM samples, and mathematical constants.
+- **4D geometry and Hilbert locality:** Exact `__int128`-accumulated integer centroids ($m / 2^{53}$, truncated toward zero) strictly inside the 4-ball ($\sum_{d=0}^3 m_d^2 \le 2^{106}$, `lp_coord_inside`) and 64-bit 4D Skilling/BMI2 `pdep` Hilbert keys (`lp_hilbert4`, `lp_hilbert_key`).
+- **Mantissa trajectory carriers and 64-bit bank masks:** Binary EWKB `POINT ZM` / `LINESTRING ZM` packing (`src/geometry.c`), placing `43 + 43 + 42 = 128` child-ID bits plus `9 + 9 + 10 = 28` tagged spare bits (`4-bit tag + 24-bit payload`, such as `LP_SPARE_SCORE`) into IEEE-754 `binary64` X/Y/Z mantissas in `[0.25, 0.5)`, `53` exact integer metadata bits into `M` (`run30 / said3 / outcome2 / pos18`), and frozen 64-bit `manifest/banks.tsv` bitmasks (`kind`, `upos`, `lexfile`, `deprel`, `vnrole`, `wnframe`).
+- **Realized-curve 4D shape metrics:** Euclidean 4-ball chord distance, $S^3$ angular separation, discrete Fréchet (`lp_frechet4d` and outlier-tolerant Fréchet), Dynamic Time Warping (`lp_dtw4d`), Edit Distance on Real sequence (`lp_edr4d`), and Hausdorff distance (`lp_hausdorff4d`) over unpacked real `entity.coord` curves.
+- **Consensus, lineage trust, and Fisher attribution:** Concave log-posterior Glicko-2 series solving (`lp_series`, `lp_series_update`, `lp_series_evaluate`, `lp_attest_series`) with bounded signed witness trust ($s_{\text{eff}} = 0.5 + t(s - 0.5)$), shared `dependence_root` precision saturation ($1/\omega_r^2$), and rooted Fisher information royalty attribution (`share_bp = 10000` integer conservation).
+- **Realization, search, shared primitives, and SIMD dispatch:** Deterministic UTF-8 realization (`lp_realize`), best-first A* search frontier (`lp_frontier`), OS/buffer/JSON helpers (`Laplace::os`, `lp_buf_*`, `laplace/json.h`), reproducible MKL pinning (`lp_mkl_reproducible()`), and one-time `cpuid`/`xgetbv` SIMD kernel selection (`src/cpu.c` over `scalar`, `sse2`, `avx2`, `avxvnni`, `avx512`, `avx512vnni`, capped by `LAPLACE_ISA` for parity testing).
 
-## Substrate state layering
+## Client-determinism vs. in-database C split
 
-```text
-Entity
-  exact canonical content identity
-    |
-    v
-Physicality
-  immutable calculated realization under a recipe and epoch
-    |
-    v
-Occurrence and attestation
-  observed use, source claims, calculated claims, relations, context, lineage
-    |
-    v
-Consensus epoch
-  immutable adjudicated view over an exact testimony boundary
-    |
-    v
-Inference
-  derived claim with a provenance DAG and root-observation set
-```
+Every semantic calculation lives once in `Laplace-Native` C, while execution splits cleanly between client RAM and PostgreSQL shared buffers according to **where the bytes already sit**:
 
-The arrows describe dependency, not mutation. Attestations can address any prior layer
-or another attestation. Inference can produce a new derived attestation, but it cannot
-become an independent observation or rewrite entity content or physicality.
+- **In-process on the client (`0` DB round-trips):** `Laplace-Engine`, `Laplace-MCP`, `Laplace-UCI`, and C# (`Laplace.Native.Interop`) map `tier0.bin`, `tier0.flags`, `highway.bin`, and `chess.bin` directly into process memory and run pure deterministic operations locally — computing `lp_id`s, segmenting UAX #29 text, expanding `tier0.flags` case/property variants, computing 4D centroids and Hilbert keys, packing/unpacking EWKB path mantissas, encoding 64-bit `banks.tsv` masks, resolving highway slots and Syzygy tablebases, evaluating Fréchet/DTW/EDR on already-fetched curves, solving local Glicko-2 / Fisher math, and realizing UTF-8 (`lp_realize`) over cached paths. **Why:** because the ROMs are immutable and fingerprinted identically on client and server, crossing TCP, `libpq` framing, and the SQL executor for pure CPU/ROM math wastes round-trip latency and server cores while producing the exact same bits.
+- **In-database in C (`Laplace-postgres`):** PostgreSQL (`laplace` DB) stores only the four canonical substrate tables (`entity`, `physicality`, `attestation`, `consensus`) plus `app.*` operational schemas, and exposes ~40 C-backed set probes and bulk stage routines: B-tree frontier presence and batch fetches (`laplace_present_ids`, `laplace_entities`, `laplace_physicalities`, `laplace_standings`), GIN containment, role, and mask scans (`laplace_path_ops`, `laplace_mask_ops`, `laplace_holders`, `laplace_held_files`, `laplace_claims_each`, `laplace_couple`, `laplace_pull`), 4D GiST box/angular k-NN and Hilbert ball pruning (`laplace_point4d_ops`, `laplace_angular4d_ops`, `laplace_hilbert_ball_ranges`), staged binary `COPY` merges and GIN pending-list cleanup (`laplace_merge_stage`, `laplace_enrich_stage`, `laplace_clean_stage`), cumulative series folding (`laplace_attest_series`), and containment royalty attribution (`laplace_attribution`, `laplace_source_attribution`). **Why:** these routines intersect posting lists, prune partitions, fold witness series, or walk upward containment across millions of index and heap pages; executing the C predicate next to the index keeps intermediate rows inside PostgreSQL shared buffers rather than shipping gigabytes of raw tuples over TCP. Pre-modular SQL catalogs (`extension/laplace_substrate`, `sql_catalog.def`) collapse into this split rather than being ported one-for-one.
 
-## Native engine
+## Engine, HTTP, and MCP (`Laplace-Engine`, `Laplace-MCP`, `Laplace-UCI`)
 
-The native engine owns:
+- **`Laplace-Engine` (`laplace` CLI and `LaplaceEngine` `reader.h`):** Owns ROM generation (`tier0`, `flags`, `highway`, `chess`), in-place database deployment and extension reconciliation (`src/deploy.c` + `laplace.reconcile.sql`), the generic Tree-sitter + compiled `.recipe` ingest VM (`src/recipe*.c`, `src/structure_*.c`, `src/say.c`, lock-free `src/table.c`, single-pass `stage.lp_*` binary `COPY`, per-witness `forget` and `sweep`), the single C `Forward + Highway A* + Gödel` loop (`src/program.c`, `src/pull.c`, `src/forward.c`) steered by detached `.firmware` files (`program.firmware`, `deductive.firmware`..`adversarial.firmware`, `chess.firmware`), shape-driven Safetensors/GGUF model assimilation (`raw_weight_bytes_retained = 0`) and native CPU Mold-a-Model `laplace-blake3-v1` checkpoint synthesis (`src/model.c`), and PGN/Syzygy chess pipelines (`src/chess.c`).
+- **`Laplace-MCP` (`lpm` + `Laplace::http`) and `Laplace-UCI`:** Thin native HTTP/MCP and UCI protocol shells calling `Laplace-Native` and `LaplaceEngine` directly without duplicating substrate, retrieval, or search logic.
 
-- canonical content encoding and identity;
-- complete Unicode/DUCET ordering and universal atom resolution;
-- typed composition and trajectory construction;
-- run-span expansion semantics, sparse deposition, and Merkle DAG reuse;
-- arithmetic-centroid physical representation, S3 placement, Hilbert locality,
-  packed trajectories, realized curves, and typed distance calculations;
-- relation and trust calculations;
-- occurrence and testimony construction, derivation lineage, evidence-dependence
-  calculation, and immutable consensus-epoch adjudication;
-- instruction validation, scheduling, and execution;
-- indexed traversal, correlation, selection, and composition;
-- logical cognition-program compilation, physical plan costing, typed operator
-  generation, evidence-metric calculation, matrix-free field solution, and numerical
-  certification;
-- typed relation, boundary, motif, contradiction, innovation, and counterfactual defect
-  calculation;
-- AImap spectral generation, gauge-invariant comparison, epoch alignment, and coherent
-  derived-artifact publication;
-- modality-independent result construction;
-- model decomposition and execution-target construction;
-- induced-model-operator comparison under basis, scale, head, and neuron symmetries;
-- canonical deposition, derived-state calculation, and coherent epoch publication;
-- deterministic receipts;
-- bulk memory layouts, algorithms, and concurrency;
-- audience-scoped entity-world selection, entitlement calculation, typed connection
-  search, answerability, and why-not dispositions;
-- authenticated content-addressed federation semantics and logical placement planning.
+## C# product orchestration (`Laplace`)
 
-The native engine also owns the common perfcache mapper, typed module registry,
-dependency graph, integrity checks, coherent activation epoch, batch lookup ABI, and
-loaded-artifact report. A perfcache module supplies derived acceleration data to a
-canonical engine operation. It cannot define identity, geometry, relation semantics,
-or private mutable product state.
+Managed code in `Laplace` consists of thin host and transport assemblies (`Laplace.Hosting`, `Laplace.Data`, `Laplace.Mcp`, `Laplace.Native.Interop`) that own:
 
-## Common execution abstractions
+- **HTTP and OpenAI-compatible API (`/v1/*`):** Cleanly maps standard request fields (`messages[]`, `system`, `max_tokens`, `temperature`, `stop`, and `seed`) onto typed session/turn trajectories, `.firmware` selection, and compute envelopes executed by the native Forward loop, returning response text alongside proof/attribution metadata without C# prompt concatenation or managed token sampling.
+- **Interactive product surfaces:** Web UI and 4D Glome explorer (always unpacking real `entity.coord` positions, never plotting raw `physicality.path` carrier mantissas), Chess Lab and Lichess bot streaming, Foundry / Recipe Studio, and the Knowledge Arena.
+- **Tenancy, auth, and royalty accounting (`app.*`):** OIDC and API-key authentication, Knowledge Authority Package scoping, machine-cost Compute Envelopes, Patreon external entitlement witnessing, and `app.*` operational/billing tables (`app.billing_royalties` enforcing exact integer `SUM(share_bp) = 10000` conservation).
 
-The native engine is organized around one reusable execution spine rather than
-feature-owned loops. The spine owns complete-program validation, typed buffer views,
-resource estimation, chunk selection, bounded arenas, parallel scheduling, error
-translation, atomic effect admission, and receipt construction. An operation kernel
-supplies its typed preconditions, shape law, calculation, and result contract; it does
-not reimplement the spine.
-
-The stable cross-language boundary is a generated C ABI with opaque handles, typed
-vectors, descriptors, and provider function tables. Internal C++ uses templates,
-concepts, abstract interfaces, and reusable base implementations where they preserve
-one semantic operation while permitting specialized storage, index, numerical, or
-hardware providers. Provider substitution cannot change logical results, evidence
-kind, ordering law, completion, or receipt meaning.
-
-Generated C# bindings expose generic interfaces for sessions, sources, batches,
-program submission, result streams, and receipts. Abstract base implementations own
-common lifecycle, cancellation, telemetry, bounded retry, and transport behavior;
-dependency injection selects concrete transports and services. No derived class may
-own a private identity, relation, trust, ranking, cognition, or realization algorithm.
-
-SQL uses generated domains, composite types, functions, procedures, operators, and
-set-returning bindings from the same contract. SQL has no handwritten semantic copy of
-the native interfaces. Single-item calls are one-element vectors through the batch
-path, and parallelism or chunk size is a physical-plan decision below the logical ISA.
-
-The PostgreSQL integration layer supplies typed datum conversion, memory-context
-ownership, transaction integration, planned server access, set-returning execution,
-catalog registration, and error translation. Server queries are schema-qualified,
-parameterized, planned, and set-based.
-
-The framework also owns the generated machine-exception lifecycle. Modules and
-providers report typed observed conditions and recovery capabilities; they do not
-invent route-local error meaning. The common executor resolves priority, invalidates
-uncommitted outputs, selects permitted retry, reroute, or replay, binds the last
-durable receipt, and prevents failed or indeterminate effects from publication. SQL,
-C#, HTTP, UI, and diagnostics translate the same exception identity without
-recategorizing hardware fault, resource exhaustion, authority denial, contradiction,
-or unknown.
-
-## Hardware topology and resource authority
-
-One native topology service inventories processors, cores, hardware threads, NUMA
-nodes, cache hierarchy, memory capacity, affinity constraints, vector ISA, and selected
-accelerator capabilities. It publishes an immutable topology snapshot and derives a
-resource plan for each execution receipt. SQL, C#, kernels, and external tools consume
-that plan; they do not probe the host independently or invent unrelated thread and
-memory limits.
-
-The physical plan declares worker arenas, CPU sets, NUMA placement, memory domains,
-batch width, chunk shape, I/O concurrency, PostgreSQL connection and worker ownership,
-and nested-library thread budgets. TBB arenas, MKL kernels, PostgreSQL workers, managed
-workers, and tool processes share one accounted budget. A parallel region that invokes
-another parallel provider must transfer or subdivide its grant so work cannot multiply
-the host thread count invisibly.
-
-Exact operations preserve bit-identical results across lawful worker counts, chunks,
-routes, and restarts. Floating-point operations declare their reproducibility class,
-compiler and ISA profile, contraction and reduction rules, MKL compatibility controls,
-thread count, and accepted comparison contract. Faster hardware execution is a
-physical-plan choice and cannot change identity, evidence kind, ordering, completion,
-or semantic results.
-
-The same law applies across form factors and operating systems. A node is supported
-only after its exact ABI, package, durability, semantic-parity, and product tests pass.
-ARM, Raspberry Pi, and any future target remain explicit unsupported targets until
-that evidence exists; they do not receive a reduced engine.
-
-Execution, PostgreSQL, canonical storage, archival storage, source access, perfcaches,
-and federation peers are independent placement dimensions. The planner names each
-physical provider and network boundary. PostgreSQL server instructions execute on the
-host running PostgreSQL even when another node orchestrates them. Storage underneath
-PostgreSQL is admitted only after locking, atomicity, `fsync`, crash, and recovery
-semantics pass its provider contract.
-
-## SQL orchestration
-
-SQL owns:
-
-- schemas, types, tables, indexes, constraints, and extension declarations;
-- transaction and statement composition;
-- typed native bindings;
-- relational restriction and indexed set routing;
-- program submission and result projection;
-- installation and upgrade declarations.
-- append-oriented canonical and testimony storage plus transactional publication of
-  validated derived epochs.
-
-SQL does not implement identity, ranking, traversal algorithms, trust mathematics,
-conversation, modality behavior, model behavior, or any second copy of an instruction.
-SQL functions used for composition have parsed bodies, explicit namespaces, and
-measured plans.
-
-SQL iteration uses bounded affected-row set operations when iteration is semantically
-required. It does not use cursors or recursive row execution to replace a native bulk
-kernel.
-
-## C# orchestration
-
-C# owns:
-
-- process and service lifecycle;
-- source discovery and bounded work scheduling;
-- streaming encoded source blocks to native execution;
-- sessions, API protocols, authentication, authorization, billing, and UI services;
-- progress, cancellation requests, telemetry, and product diagnostics;
-- package and service commands where managed code is the product entry point.
-
-C# does not calculate substrate identities, relations, trust, trajectories,
-adjudication, candidate ranking, model operations, or conversation semantics. It uses
-generated typed bindings rather than handwritten semantic SQL.
-
-User, profile, billing, résumé, achievement, and federation services are orchestrators
-under the same boundary. They authenticate principals, carry authority and visibility
-envelopes, and transport typed programs and results. They cannot store an opaque
-canonical profile, calculate entitlement privately, flatten professional evidence,
-decide referential identity, or implement synchronization semantics outside the native
-ISA and PostgreSQL persistence contracts.
-
-Progress reported by C# is derived from reconciled run, file, segment, batch, record,
-database, and receipt state. A later successful sub-run cannot replace the incomplete
-status of its parent source.
-
-## Edge codecs
-
-Media libraries decode and encode format containers. The engine converts decoded data
-to universal content, composition, physicality, relations, testimony, and receipts.
-A codec does not define a modality-specific substrate.
-
-## Product realization and federation providers
-
-A profile, feed, résumé, portfolio, personal web, entitlement display, or achievement
-display is a materialization of a pinned native semantic result. Web, mobile, API, and
-document renderers own presentation encoding only. The materialization receipt binds
-the subject referential epoch, audience, authority, visibility, selected and withheld
-state, evidence boundary, governance recipe, and output modality.
-
-Identity, account, billing, repository, employer, school, service, certification, and
-achievement systems are external witnesses. Their adapters authenticate and preserve
-exact assertions, scope, time, provenance, and dependence; they cannot decide identity,
-truth, standing, capability, or disclosure.
-
-Federation transports authenticate peers and move content-addressed structures,
-testimony, recipes, epochs, and receipts under an accepted world-scope program.
-Discovery, relay, backup, availability, billing, hosting, and synchronization services
-remain replaceable physical or witness providers. A provider cannot own user identity,
-private world state, firmware, or semantic law merely because it makes the exchange
-available.
+C# never computes BLAKE3 content IDs, segments or chunks text/code, case-folds strings, maintains per-format C# decomposers, blends heuristic search scores, or holds handwritten P/Invoke copies.
 
 ## Generated contracts
 
-One versioned contract source generates:
+Cross-layer interfaces are generated deterministically from `Laplace-Native` headers and manifests and checked in CI so layers cannot drift:
 
-- C and C++ public types;
-- PostgreSQL types and native declarations;
-- C# transport types and SQL bindings;
-- instruction documentation;
-- identity, Unicode, geometry, trajectory, and perfcache test vectors;
-- typed perfcache module descriptors and activation manifests;
-- ABI compatibility tests;
-- package manifests.
-
-Generated output is reproducible and checked against its source contract.
+- **Canonical C headers and manifests:** `Laplace-Native/include/laplace/*.h` and `Laplace-Native/manifest/{banks.tsv, slots/*.tsv, trust_classes.toml}` define all fixed-width ABI structs, `LP_API` entry points, 64-bit mask banks, highway slot vocabularies, and append-only witness trust priors.
+- **PostgreSQL extension bindings:** `Laplace-postgres/manifest/function_bindings.tsv` (verified against `sql/*.sql*` and C exports by `Laplace-postgres/tools/check-function-bindings.mjs`) binds SQL functions and operator classes to `Laplace-Native` symbols and emits `laplace.reconcile.sql`.
+- **Engine SQL contract:** `Laplace-Engine/src/pg_contract.h` and `pg_contract.c` (verified against `Laplace-postgres` by `Laplace-Engine/tests/sql-contract-gate.py`) bind every `libpq` binary prepared call to the extension's exact signature.
+- **C# native interop (`Laplace.Native.Interop`):** `Laplace-Native/tools/csharp/generate.mjs` parses Clang's JSON AST (`-Xclang -ast-dump=json`) of the public headers to generate `LaplaceNative.g.cs` (`[LibraryImport("laplace")]` declarations, structs, and enum constants) plus `abi.g.c` and `Abi.g.cs` (verified by `csharp_abi` for exact struct size and field-offset parity on `win-x64` and `linux-x64`, rejecting platform-varying C types such as `long`, unions, or bit-fields), while `ReadPathArchitectureGateTests` enforces one-substrate read/write routing in `Laplace`.

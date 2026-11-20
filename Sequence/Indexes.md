@@ -10,47 +10,47 @@ Laplace exploits GiST and GIN indexing for novel mechanisms, measured end to end
 
 ## Operations
 
-### 14.1 B-tree on IDs
+### 14.1 Primary and unique B-trees on `entity` and `physicality`
 
-- **In:** the entity and physicality tables.
-- **Do:** the primary keys on the ID, and the physicality → entity foreign key.
-- **Out:** a lookup by ID that prunes to one partition and hits one index.
-- **From:** [Deployment](../Operations/Deployment.md), [Research: Engine Measurements: Queries](../Research/Engine.md#queries).
+- **In:** `entity` and `physicality`, each range-partitioned 9 ways by `tier` (`t0`..`t8plus`).
+- **Do:** build primary keys `(tier, id)` on `entity` and `(tier, entity)` on `physicality`, per-partition `UNIQUE (id)` / `UNIQUE (entity)` indexes, and the foreign key `(tier, entity) → entity(tier, id) ON UPDATE CASCADE` (`laplace_schema_indexes()`).
+- **Out:** point lookups by `(tier, id)` that prune to one tier partition and hit one B-tree, and point lookups by `id` alone that probe at most the 9 tier partitions.
+- **From:** [Reference: Schema](../Reference/Schema.md#the-four-tables), [Deployment](../Operations/Deployment.md), [Research: Engine Measurements: Queries](../Research/Engine.md#queries).
 
-### 14.2 B-tree on Hilbert values
+### 14.2 B-trees on Hilbert values
 
-- **In:** the entity table.
-- **Do:** index the Hilbert value. It is derived from the real coordinate deterministically, so a range of space is a set of Hilbert intervals, and loading in key order keeps pages spatially coherent.
-- **Out:** locality, ordering, and indexing by Hilbert value. Partitions do not go by it.
-- **From:** [Atoms: Placement](../Storage/Atoms.md#placement), [Research: Geometry: Hilbert curves](../Research/Geometry.md#hilbert-curves).
+- **In:** the `entity` table.
+- **Do:** build `entity_hilbert` on `entity (hilbert)` and `entity_tier_hilbert` on `entity (tier, hilbert, id)`, where `hilbert` is stored sign-flipped (`h ^ 0x8000000000000000`) so signed `bigint` B-tree order equals unsigned 4D Hilbert order. Because the Hilbert key derives deterministically from the 4D coordinate, spatial neighborhoods map to compact Hilbert intervals and bulk loads in Hilbert order keep heap pages spatially coherent.
+- **Out:** locality, range scans, and tier-scoped Hilbert ordering.
+- **From:** [Reference: Schema](../Reference/Schema.md#the-indexes), [Atoms: Placement](../Storage/Atoms.md#placement), [Research: Geometry: Hilbert curves](../Research/Geometry.md#hilbert-curves).
 
 ### 14.3 4D GiST on real coordinates
 
-- **In:** the entity table's real coordinate.
-- **Do:** the n-dimensional GiST operator class, which stores float32 boxes that round outward so the float box is larger than the double box, and supports n-D overlap and n-D distance for KNN ordering. A float32 box keeps 24 of a double's 53 significand bits, so the index is a conservative candidate filter and an exact lookup rechecks the exact doubles.
-- **Out:** nearest neighbors in 4D, and shape searches with a candidate stage ahead of the exact recheck in C.
-- **From:** [Physicality: Indexes](../Storage/Physicality.md#indexes), [Research: Geometry: GiST](../Research/Geometry.md#gist), [Research: Prototype: Store](../Research/Prototype.md#store).
+- **In:** `entity.coord` (`geometry(PointZM)`).
+- **Do:** build `entity_coord USING gist (coord laplace_point4d_ops)` and `entity_angular USING gist (coord laplace_angular4d_ops)`. GiST bounding boxes conservatively bound the 4D fixed-point coordinates and support exact 4D Euclidean and angular k-NN candidate ordering ahead of exact fixed-point / binary64 recheck in C.
+- **Out:** 4D spatial and angular nearest neighbors, plus fast endpoint candidate pruning for Fréchet, DTW, and EDR curve queries.
+- **From:** [Reference: Schema](../Reference/Schema.md#the-indexes), [Physicality: Indexes](../Storage/Physicality.md#indexes), [Research: Geometry: GiST](../Research/Geometry.md#gist).
 
-### 14.4 GIN on the IDs decoded from paths
+### 14.4 Composite GIN on `physicality.path` and `physicality.mask`
 
-- **In:** the physicality table's path.
-- **Do:** GIN indexes each trajectory's constituents, read from the IDs in its geometry, to find every container of any node, such as every sentence that contains a word. It indexes the path geometry directly; no array column exists. The operator class Laplace-postgres provides supplies `extractValue`, which returns the constituents of a trajectory; `extractQuery`, which returns the keys in a query value; `consistent`, which decides whether a row matches given which query keys it contains; and `compare`. A posting list records presence, so order and multiplicity are rechecked on the row, where the trajectory holds both. The key function's cost is 10,000, from [8. Database](Database.md) operation 8.12.
-- **Out:** every container of any node. The GIN, the first-id B-tree, and the trajectory probe are partial on the text-trajectory physicality type; a set trajectory of [12. Attestations](Attestations.md) operation 12.8 gets its own type value and its own partial GIN, so a collection membership probe, forms that are nominative and singular and masculine, is one `@>` probe on the bundle rather than an N-way self-join.
-- **From:** [Physicality: Indexes](../Storage/Physicality.md#indexes), [Query: Containers and occurrences](../Query.md#containers-and-occurrences), `docs/specs/38_Collections_Are_Compositions.md` §2 and §4, [Research: Geometry: GIN](../Research/Geometry.md#gin).
+- **In:** `physicality.path` (`geometry`) and `physicality.mask` (`bit(64)`).
+- **Do:** build `physicality_paths USING gin (path laplace_path_ops, mask laplace_mask_ops) WITH (gin_pending_list_limit = 32768)` and the partial assertion index `physicality_assertions USING gin (path laplace_path_ops) WITH (gin_pending_list_limit = 32768) WHERE laplace_path_has_roles(path, 6)`. `laplace_path_ops` extracts the 128-bit constituent `lp_id`s directly from the packed EWKB mantissas with zero array side-columns, while `laplace_mask_ops` indexes the 64-bit `mask` bank descriptors (`kind`, `upos`, `lexfile`, `deprel`, `vnrole`, `wnframe` from `manifest/banks.tsv`). Because `physicality` is partitioned by `tier` (`t0`..`t8plus`), upward containment probes (`tier > child.tier`) automatically prune lower and equal tier partitions, and intersecting constituent IDs with `mask` bits happens inside one composite GIN scan before exact SIMD vertex-order recheck on matching rows.
+- **Out:** microsecond-to-millisecond containment, phrase, gap, collection-membership, and mask-filtered claim lookups with zero `contains` or `precedes` edge tables.
+- **From:** [Reference: Schema](../Reference/Schema.md#the-indexes), [Physicality: Indexes](../Storage/Physicality.md#indexes), [Query: Containers and occurrences](../Query.md#containers-and-occurrences), [Research: Geometry: GIN](../Research/Geometry.md#gin).
 
-### 14.5 B-tree on occurrences
+### 14.5 Indexes on `attestation` and `consensus`
 
-- **In:** the statistics table.
-- **Do:** index the occurrence and container counts.
-- **Out:** the most frequent word segments, 0.15 ms.
-- **From:** [Deployment](../Operations/Deployment.md), [Research: Engine Measurements: Queries](../Research/Engine.md#queries).
+- **In:** `attestation` and `consensus`, each range-partitioned 16 ways by the first hex digit of `claim` (`_0`..`_f`) with `fillfactor = 80`.
+- **Do:** build primary key `(claim)` on `consensus`, `UNIQUE NULLS NOT DISTINCT (claim, witness, lineage)` on `attestation`, and `attestation_witness_lineage` on `attestation (witness, lineage NULLS FIRST) INCLUDE (trust)` (`laplace_schema_indexes()`).
+- **Out:** single-partition point and batch lookups for claim standing and witness series, HOT in-place Glicko-2 updates on `consensus`, and fast per-witness scans for `laplace forget` and Fisher-information royalty attribution (`share_bp = 10000`).
+- **From:** [Reference: Schema](../Reference/Schema.md#the-indexes), [Research: Engine Measurements: Consensus writes](../Research/Engine.md#consensus-writes).
 
-### 14.6 Indexes on the semantics tables
+### 14.6 Combined claim and occurrence probes (zero side tables)
 
-- **In:** the claim, attestation, and standing tables.
-- **Do:** the claim's consensus ID and each of its parts, so a claim can be found by any part left open; `attestation` by claim; the standing by claim.
-- **Out:** `[dog, eng, ?]` in 3.3 ms and `[?, language, i46360]` for eight languages in 1.2 ms.
-- **From:** [Research: Semantics Experiments: Translation through the ILI](../Research/Semantics-Experiments.md#translation-through-the-ili), [Research: Engine Measurements: Consensus writes](../Research/Engine.md#consensus-writes).
+- **In:** `physicality_paths`, `physicality_assertions`, `consensus`, and `attestation`.
+- **Do:** verify that open-slot claim queries (`[dog, eng, ?]`, `[?, language, i46360]`, `[word, NOUN]`) and occurrence/container counts resolve directly by intersecting constituent IDs and `mask` bits in `physicality_paths` and joining `consensus(claim)` / `attestation(claim)`—requiring no separate `claim` or `statistics` table.
+- **Out:** `[dog, eng, ?]` and cross-language `[?, language, i46360]` probes in milliseconds from the four core tables alone.
+- **From:** [Reference: Schema](../Reference/Schema.md), [Research: Semantics Experiments: Translation through the ILI](../Research/Semantics-Experiments.md#translation-through-the-ili).
 
 ### 14.7 `ANALYZE`
 
@@ -69,7 +69,7 @@ Laplace exploits GiST and GIN indexing for novel mechanisms, measured end to end
 
 - **In:** the loaded database.
 - **Do:** run each query cold and warm, and report execution and round-trip time, buffers read and hit, and the partitions the plan touched.
-- **Out:** this install's numbers beside the reference: a word by computed ID and tier 0.02 ms in 1 partition; by ID alone 0.08 ms in 14; a word never recorded 0.01 ms; every container of `Holmes` 0.80 ms in 52; the run `Sherlock Holmes` 1.76 ms; what fills `[Captain, ' ', ?]` 9.2 ms; what follows "the capital of " 24.7 ms; the 16 nearest `king` in 4D 7.7 ms in 16; the 20 most frequent word segments 0.15 ms. Queries that start from an ID prune to one partition; queries that search for containers, or by position, visit every partition's index.
+- **Out:** this install's numbers beside the reference: an entity by `(tier, id)` 0.02 ms in 1 tier partition; by `id` across the 9 tier partitions <0.1 ms; every container of `Holmes` (`tier > word.tier`) pruning lower/equal tiers in <1 ms; the run `Sherlock Holmes` 1.76 ms; what fills `[Captain, ' ', ?]` 9.2 ms; what follows "the capital of " 24.7 ms; the 16 nearest `king` in 4D 7.7 ms. Lookups on `consensus` and `attestation` prune to 1 of 16 hex partitions by `claim`; upward containment queries on `physicality` prune to strictly higher tier partitions.
 - **From:** [Deployment](../Operations/Deployment.md), [Research: Engine Measurements: Queries](../Research/Engine.md#queries).
 
 ### 14.10 Check the install against itself

@@ -24,8 +24,8 @@ PostgreSQL, Laplace-Native, Laplace-postgres, and Laplace-Engine are built in th
 
 ### 3.3 Build Laplace-Native, twice
 
-- **In:** the Laplace-Native source, BLAKE3's sources, ICU, libpq, and both compilers.
-- **Do:** `cmake --preset icx-release && cmake --build --preset icx-release`, then the same with the `gcc-release` preset. Outputs: `liblaplace`, static and shared; `laplace-bench`, which measures every operation with each SIMD kernel beside its scalar form; `laplace-ingest`, which needs ICU and libpq. The baseline is x86-64-v2; kernels are compiled per ISA level in their own translation units and chosen at run time, so one binary runs everywhere and uses everything, and `LAPLACE_ISA=scalar|sse2|avx2` lowers the level to compare kernels. Every summation has one fixed order in every code path, so scalar and SIMD kernels agree bit for bit. IDs and coordinates are exact integers or fixed point. The model tools need MKL and OpenMP and build only when the oneAPI environment is set; the core library and the extension do not depend on them.
+- **In:** the Laplace-Native source, BLAKE3's sources, ICU, and both compilers.
+- **Do:** `cmake --preset icx-release && cmake --build --preset icx-release`, then the same with the `gcc-release` preset. Outputs: `liblaplace`, static and shared; `laplace-bench`, which measures every operation with each SIMD kernel beside its scalar form; native parity tests; and the generated `Laplace.Native.Interop` bindings so managed callers run the exact same C kernels in-process over memory-mapped ROMs with zero database round trips. The baseline is x86-64-v2; kernels are compiled per ISA level in their own translation units and chosen at run time, so one binary runs everywhere and uses everything, and `LAPLACE_ISA=scalar|sse2|avx2` lowers the level to compare kernels. Every summation has one fixed order in every code path, so scalar and SIMD kernels agree bit for bit. IDs and coordinates are exact integers or fixed point. The spectral and model kernels use MKL/Eigen/Spectra and OpenMP when enabled; the core library and the extension keep deterministic scalar and SIMD parity everywhere.
 - **Out:** two builds of the shared library.
 - **From:** [Builds: Laplace-Native](../Operations/Builds.md#laplace-native).
 
@@ -52,8 +52,8 @@ PostgreSQL, Laplace-Native, Laplace-postgres, and Laplace-Engine are built in th
 
 ### 3.7 Build Laplace-Engine
 
-- **In:** the Laplace-Engine source, the library of 3.3, libpq, the grammars of 3.6.
-- **Do:** build Laplace itself against Laplace-Native, working against a database extended by Laplace-postgres. Every build has a fingerprint.
+- **In:** the Laplace-Engine source, the library of 3.3, ICU, libpq, the grammars of 3.6.
+- **Do:** build `laplace` itself against Laplace-Native (`deploy`, `ingest`, `forget`, `sweep`, `pull`, `turn`, `model`, `pgn`, `tablebase`, `status`, and the reader library `reader.h`), working against a database extended by Laplace-postgres. Every build has a fingerprint.
 - **Out:** the engine.
 - **From:** [Architecture: Repositories](../Architecture.md#repositories).
 

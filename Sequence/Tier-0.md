@@ -48,7 +48,7 @@ Codepoints are tier 0, the absolute floor: every Unicode codepoint has a determi
 ### 5.6 Write the table
 
 - **In:** everything from 5.1 to 5.5.
-- **Do:** write all 1,114,112 records into one file under the blob law of [7. Perfcaches](Perfcaches.md) operation 7.1: magic, version, byte order, record layout, bounds, the generation it derives from, a whole-file checksum, and a loader that refuses any other format. The prototype's record is 64 bytes: BLAKE3-128 ID, fixed-point coordinate, Hilbert value, DUCET rank; the whole table is 68 MiB. The monorepo's format v4 record holds the id, UCA order, PointZM, Hilbert value, UAX flags, and NFC compose and decomposition data. Tier 0 is generated native C that is marshalled into PostgreSQL.
+- **Do:** write all 1,114,112 records into `tier0.bin` under the blob law of [7. Perfcaches](Perfcaches.md) operation 7.1: magic, version, byte order, record layout, bounds, the generation it derives from, a whole-file checksum, and a loader that refuses any other format. Each `lp_tier0_record` is 64 bytes: 16-byte BLAKE3-128 ID, four 64-bit signed fixed-point coordinates (`m / 2^53`), 64-bit Hilbert key, 32-bit DUCET rank, and 32 bits of padding; the full table is 68 MiB. Beside it, write `tier0.flags` (32 bytes / 256 bits of Unicode properties per codepoint) and its `.layout` descriptor. Both are mapped directly in native C by client processes and PostgreSQL backends alike.
 - **Out:** the tier-0 file, and the flags file that goes with it.
 - **From:** [Atoms: Generation](../Storage/Atoms.md#generation), [Research: Prototype: Tier 0](../Research/Prototype.md#tier-0).
 
@@ -69,7 +69,7 @@ Codepoints are tier 0, the absolute floor: every Unicode codepoint has a determi
 ### 5.9 Make it modular
 
 - **In:** the table of 5.6.
-- **Do:** the perf-cache is modular: ASCII, UTF, CJK, emoji, and so on, each a selector-scoped profile under [7. Perfcaches](Perfcaches.md) operation 7.4 whose local slots are acceleration addresses only and whose members keep their global identity and placement. The same applies to other modalities, such as 8-bit, 16-bit, and 32-bit color for images. That enables deployment to lesser hardware; the full tier 0 is small enough for a Raspberry Pi. Tier 0 is the anchor cache: what everything boils down to in all cases.
+- **Do:** the perf-cache is modular: `ascii` (128), `utf` (22,112), `cjk` (115,920), `ext` (975,952), and `full` (1,114,112), each a selector-scoped shard profile under [7. Perfcaches](Perfcaches.md) operation 7.4 whose local slots are acceleration addresses only and whose members keep their identical global `lp_id` and S³ placement across every profile. Higher-tier modalities compose above Tier-0 codepoints and ship their own modular ROMs (such as the highway, number, pixel, or chess ROMs) under the same law. That enables deployment to constrained hardware; even the full tier 0 is 68 MiB, small enough for a Raspberry Pi. Tier 0 is the anchor cache: what everything boils down to in all cases.
 - **Out:** the modules an install can choose to map.
 - **From:** [Atoms: Generation](../Storage/Atoms.md#generation).
 

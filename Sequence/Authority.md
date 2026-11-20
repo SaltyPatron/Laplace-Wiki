@@ -34,7 +34,7 @@ One knowledge world does not mean every principal has authority to use every par
 ### 16.4 Resolve the effective scope
 
 - **In:** the principal, and the request.
-- **Do:** the effective operation boundary is the intersection of the tenant and world boundary, the principal's identity, its role and relationship authority, its knowledge-package grants, the active caller-selected scope, its capability grants, and kernel, organization, and user governance. The boundary is part of execution state and of every receipt. Tenant scope is authorization and isolation; it is not semantic source trust, and participant, model, tool, corpus, analyzer, and feedback sources retain distinct source identities inside a tenant.
+- **Do:** the effective operation boundary is the intersection of the tenant and world boundary, the principal's identity, its role and relationship authority, its knowledge-package grants, the active caller-selected scope, its capability grants, Sybil write/feedback governance (bounding unverified or newly created accounts so Sybil feedback cannot move shared `consensus`), and kernel, organization, and user governance. The boundary is part of execution state and of every receipt. Tenant scope is authorization and isolation; it is not semantic source trust, and participant, model, tool, corpus, analyzer, and feedback sources retain distinct source identities inside a tenant.
 - **Out:** one effective scope for this operation.
 - **From:** `docs/guides/knowledge-authority.md` §Effective authority; `docs/specs/37_Substrate_Operation_ISA.md` §Authority / knowledge-scope contract; `docs/specs/34_Conversational_Provenance.md` §Identity hierarchy.
 
@@ -75,7 +75,7 @@ One knowledge world does not mean every principal has authority to use every par
 
 ### 16.10 Gate and license witness trunks as Knowledge Seeders
 
-- **In:** a witness trunk `[source record, file trunks]` ([11. Sources](Sources.md)) and its owner's visibility/licensing declaration.
+- **In:** a witness trunk `[source record, file trunks]` ([9. Sources](Sources.md)) and its owner's visibility/licensing declaration.
 - **Do:** every ingested corpus, repository, or user dataset is a witness trunk. Its owner sets its authority scope (`private`, `tenant`, `public`, or `licensed` as a Content Package of 16.2). When an authorized principal's effective scope (16.4) includes that witness trunk during [20. Forward](Forward.md) or [25. Export](Export.md), the canonical native C + SQL attribution walk (`laplace_attested` / `laplace_attribution`) measures the trunk's exact Fisher-weighted contribution (`share_bp`, summing to `10000` basis points across contributing trunks) so the trunk owner earns deterministic royalties whenever their knowledge is coupled and realized.
 - **Out:** the witness trunk's visibility/licensing grant and its attribution eligibility.
 - **From:** `docs/guides/content-authority.md` §Billing is orthogonal; `docs/BILLING_PLACEHOLDER_MIGRATION.md` §Provider model and two-sided Seeder/Royalty settlement.

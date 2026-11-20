@@ -1,49 +1,30 @@
 # PropBank
 
-PropBank attests what a frame file says of each predicate and roleset: a predicate is its lemma, a roleset is a highway node whose id (`abandon.01`) is PropBank's identifier of it, a highway ID, content as written on which every source that cites it lands, and as built the roleset is the predicate's lemma and the name PropBank writes for it; the aliases, roles, links, notes and examples of a roleset speak of it, an example being its text; and the DTD and guidelines attest nothing.
+PropBank attests what each frame file says of its predicates, highway rolesets (`abandon.01`), roleset-scoped argument slots (`[abandon.01, 0]`), multi-word predications, VerbNet and FrameNet links, and annotated example sentences, while the DTD and usage bookkeeping attest nothing.
 
-One source reads PropBank: its frame files, "every predicate's rolesets, their roles, and their links to VerbNet and FrameNet", by [`frames.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/propbank/frames.recipe). The rolesets are the highway's `pbroleset` list (11,208; [Types](../Reference/Types.md)), each, as built, the content `[lemma, name]`, as a frame element is its frame and name; a roleset is a highway node exactly as an ILI is, a concept node of the linguistic superhighway, and the target is the roleset as the content of its highway ID, `abandon.01`, on which every source that cites it lands; the links to VerbNet and FrameNet are the highway's edges ([Hops](Hops.md)).
+One source reads Unified PropBank frame files ("every predicate's rolesets, their numbered and adjunct roles, and their links to VerbNet and FrameNet") via [`frames.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/propbank/frames.recipe). Rolesets populate the highway's `pbroleset` road class (`11,208` highway nodes anchored directly on their PropBank ID `abandon.01`, [Types](../Reference/Types.md)), and `<rolelink>` / `<lexlink>` elements supply `pbroleset`↔`vnclass` and `pbroleset`↔`fnframe` edges ([Hops](Hops.md)).
 
 ## Source
 
 | Source | Witness | Trust class | After | Files | Recipe |
 | --- | --- | --- | --- | --- | --- |
-| `propbank` | `PropBank` | class `AcademicCurated` | `unicode`, `iso-639` | `*.xml` under `frames` | [`frames.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/propbank/frames.recipe) |
+| `propbank` | `PropBank` source trunk | class `AcademicCurated` | `unicode`, `iso-639` | `*.xml` under `frames` | [`frames.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/propbank/frames.recipe) |
 
-## The frame file
+## The frame file (`frames.recipe`)
 
-| Piece | Written as | Laplace reads it as | Claim recorded | Specification |
+[`frames.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/propbank/frames.recipe) anchors rolesets directly on `id` (`thing roleset id`, e.g., `abandon.01`), scopes numbered roles strictly to their parent roleset (`thing role resolved ^roleset/id required n required`, so `ARG0` of `abandon.01` never collides with `ARG0` of `eat.01`), and omits release-usage and character-offset bookkeeping (`omit usagenotes inuse version confidence src start end relloc note`):
+
+| Piece | Written as | Laplace reads it as | Attestation recorded | Specification |
 | --- | --- | --- | --- | --- |
-| `<frameset>` | the root | structure: nothing | nothing | `frameset.dtd` |
-| `<predicate lemma="abandon">` | inside the frameset | the predicate, its lemma | `[abandon, roleset, [abandon, leave behind]]` | "Each file will contain a set of predicates associated with a particular lemma" |
-| `<roleset id="abandon.01" name="leave behind">` | inside a predicate | the roleset, a highway node; as built its content is `[abandon, leave behind]`, a type of the highway's `pbroleset` list (`types pbroleset`, `keyed pbroleset roleset id`), with `name` said of it; the `id` is PropBank's identifier of the roleset, a highway ID, content as written, which as built the recipe resolves and records nothing of (`key roleset id`), and the target is the roleset as that highway node | `[[abandon, leave behind], name, leave behind]` | "The rolesets give mneumonics of the argument labels for each different set of arguments." |
-| `<alias pos="v">abandon</alias>` | under `aliases` | of the roleset: `pos` and the text under `alias` | `[[abandon, leave behind], pos, v]`, `[…, alias, abandon]` | |
-| `<role n="0" f="PPT" descr="abandoner">` | under `roles` | of the roleset: `n`, `f`, `descr` under their names; the role and its links one record | `[…, n, 0]`, `[…, f, PPT]`, `[…, descr, abandoner]` | "Roles have a number…" |
-| `<rolelink class="leave-51.2" resource="VerbNet">theme</rolelink>`, `<lexlink class="Departing" resource="FrameNet" .../>` | under a role, or a roleset | `class` is the VerbNet class's or the FrameNet frame's identifier, content as written, and the link says the roleset or role maps to what it names (`type rolelink.class vnclass`, `type rolelink.class fnframe`); `resource`, `version`, `confidence`, `src` and the text under their names | `[…, class, leave-51.2]`, `[…, class, Departing]`, `[…, rolelink, theme]` | "their links to VerbNet and FrameNet" |
-| `<usage resource="PropBank" version="3.4" inuse="+"/>` | under `usagenotes` | of the roleset | `[…, inuse, +]` | |
-| `<example name="..." src="..."><text>And they believe…</text>` | inside a roleset | the example is its text (`thing example text`); its place in the roleset; `name` and `src` said of it | `[[abandon, leave behind], example, And they believe …]`, `[And they believe …, name, abandon-v: typical transitive]` | `frameset.dtd`: example (name, src) |
-| `<rel relloc="12">abandoned</rel>`, `<arg type="ARG0" start="3" end="5">the Big Board</arg>` | under the example's `propbank` | of the example: each attribute and text under its name; the example one record | `[And they believe …, type, ARG0]`, `[…, arg, the Big Board]`, `[…, rel, abandoned]` | `type` is ARG0 to ARG7, the ARGM- forms |
-| `<note>` | text inside a roleset or a predicate | of the thing it is inside | `[…, note, text]` | |
-| `id` | on a roleset | PropBank's identifier of the roleset, a highway ID, content: in the target the roleset is the highway node `abandon.01`; as built the recipe resolves it and records nothing of it | nothing | |
-
-A thing's own attributes are one record, witnessed once; an element that is no thing is one record of what it says. Nothing is renamed, reordered, or filled in.
+| `<predicate lemma="abandon">` | inside `<frameset>` | predicate lemma (`thing predicate lemma`) holding its rolesets | `[abandon, sense, abandon.01]` | `frameset.dtd` |
+| `<roleset id="abandon.01" name="leave behind">` | inside `<predicate>` | `pbroleset` highway node `abandon.01` (`thing roleset id`, `types pbroleset`, `keyed pbroleset roleset id`), with `name` attested as its gloss | `[abandon.01, sense description, leave behind]` | "Multiple rolesets per predicate are necessary for the accommodation of different senses" |
+| `<alias pos="v">abandon</alias>`, `<argalias>` | under `<aliases>` | evoking word and POS (`propbank-pos` crosswalked to `upos` for `r`/`p`/`v`/`n`/`j`, preserving undocumented `l`/`x`/`m`/`d`/`f` source codes without fabricating UPOS tags) | `[abandon.01, abandon]`, `upos` slot | `frameset.dtd` |
+| `<role n="0" f="PPT" descr="abandoner">` | under `<roles>` | roleset-scoped argument slot `[abandon.01, 0]` (`thing role resolved ^roleset/id required n required`) with function tag `f` and mnemonic `descr` | `[abandon.01, argument slot, [abandon.01, 0]]`, `[[abandon.01, 0], mneumonic, abandoner]`, `f` (`PPT`, `PAG`, `LOC`, ...) | "Roles have a number … labeled with the function tags" |
+| `<rolelink class="leave-51.2" resource="VerbNet">theme</rolelink>`, `<lexlink class="Departing" resource="FrameNet"/>` | under `<role>` or `<roleset>` | VerbNet `vnclass` (`leave-51.2`) and `vnrole` (`theme`), or FrameNet `fnframe` (`Departing`) highway links | `[role_or_roleset, leave-51.2]`, `[role, theme]`, `[roleset, Departing]` + `maps` highway edges | VerbNet and FrameNet crosswalks |
+| `<mwp-descriptions>` (`<syntaxdesc>`, `<token>`, `<mapping>`) | multi-word predications | roleset-scoped multi-word predication syntax and source/target slot mappings | `multi-word predication`, `syntactic description`, `source representation`, `target representation` | Unified PropBank MWP |
+| `<example name="..."><text>And they believe…</text><propbank><rel>abandoned</rel><arg type="ARG0">the Big Board</arg></propbank></example>` | inside `<roleset>` | canonical sentence `text` (`thing example text`), predicate `rel`, and `ARG0..ARG7`/`ARGM-*` spans resolved onto `[roleset, n]` (`refer arg.type role under ^roleset/id`) | `[example, predicate, abandoned]`, `[example, [abandon.01, 0], the Big Board]` (with sentence-aligned span layer refinement in `Batch 2`) | `frameset.dtd` |
+| `<usagenotes>`, `inuse`, `version`, `confidence`, `src`, `start`, `end`, `relloc` | XML packaging & token offsets | omitted (`omit`) | none | release bookkeeping and local offsets |
 
 ## Relations
 
-As built, the relation of a claim above is the name of the field that carries its value: the element's or attribute's name. That is markup, not meaning. A relation is what the source means, resolved through the road classes, never the name of a field, column, attribute, or layer: a tagset value is a value of its tagset with its attested equivalence, a per-span label belongs in the sentence's annotation layer, and a pointer's attribute name is in no claim, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field).
-
-| Claim, as built | Its relation, as built | What it means: the target |
-| --- | --- | --- |
-| `[abandon, roleset, [abandon, leave behind]]` | the element's name | the predicate's lemma has this roleset |
-| `[[abandon, leave behind], name, leave behind]` | the attribute's name | the roleset's name as PropBank writes it |
-| `[[abandon, leave behind], pos, v]`, `[…, alias, abandon]` | the attribute's or element's name | an alias of the roleset, the word and part of speech that evoke it, `v` a value of PropBank's list with its attested equivalence |
-| `[…, n, 0]`, `[…, f, PPT]`, `[…, descr, abandoner]` | the attributes' names | one role of the roleset: its number, its function tag and its description together, a role inside a roleset, never three claims |
-| `[…, class, leave-51.2]`, `[…, class, Departing]`, `[…, rolelink, theme]` | the attribute's or element's name | the roleset's or role's link to that VerbNet class or FrameNet frame and its role: one interchange strand |
-| `[…, inuse, +]` | the attribute's name | a usage note: bookkeeping the rules of [Corpora](README.md) read by nothing |
-| `[[abandon, leave behind], example, …]`, `[…, name, abandon-v: typical transitive]` | the element's or attribute's name | an example of the roleset, and its name as PropBank writes it |
-| `[And they believe …, type, ARG0]`, `[…, arg, the Big Board]`, `[…, rel, abandoned]` | the element's or attribute's name | the example's annotation: the span `the Big Board` is `ARG0` of the predicate `abandoned` in that sentence, in the sentence's annotation layer |
-| `[…, note, text]` | the element's name | a note on the roleset or predicate, as PropBank writes it |
-
-## Not read
-
-`frameset.dtd` matches no recipe. The source names no `reads`, so no README of the release is read.
+`frames.recipe` already anchors `roleset` on `abandon.01`, scopes `role` to `[^roleset/id, n]`, resolves `ARG0..9` onto those roleset-scoped slots rather than a universal Agent/Patient, crosswalks `alias.pos` to `upos`, and maps XML elements onto `frameset.dtd` semantic relations (`sense`, `sense description`, `argument slot`, `mneumonic`, `predicate`). `frameset.dtd` and release guidelines are schema/documentation files outside the frame XML stream.

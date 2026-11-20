@@ -38,26 +38,26 @@ All of [1. Unicode](Unicode.md) through [21. Sessions](Sessions.md).
 - **Out:** the ceiling.
 - **From:** `docs/CAPABILITIES.md` §Compute depth is the product tier.
 
-### 22.5 Admit the prompt as content
+### 22.5 Decompose the prompt in memory and admit uploads losslessly
 
-- **In:** the user's prompt.
-- **Do:** [21. Sessions](Sessions.md) operation 21.3. The prompt lands on the same nodes as any other content with the same words: a prompt that repeats a recorded sentence is that sentence, and deduplicates against it. Uploads are ordinary digital content through their format's decomposer, with exact reconstruction declared, because a document the user asked Laplace to keep must be handed back byte for byte. Nothing in the prompt is normalized, lower-cased, or stripped.
-- **Out:** the prompt's trunk and the upload's trunks.
+- **In:** the user's prompt and any attached files.
+- **Do:** [21. Sessions](Sessions.md) operation 21.3. The prompt decomposes in C memory from `tier0.bin` in microseconds, landing on the exact same `lp_id`s as every recorded word, phrase, or sentence in the substrate with zero synchronous database `COPY` blocking the answer. Attached user documents or media decompose losslessly through their format recipes, and nothing in the prompt is normalized, lower-cased, or stripped.
+- **Out:** the in-memory prompt DAG and trunk `lp_id`, plus any uploaded artifact trunks.
 - **From:** [Identity: Same content, same hash](../Storage/Identity.md#same-content-same-hash); `docs/INVENTION.md` §15; `docs/INVENTOR_RECORD.md` §Identity.
 
-### 22.6 Record what the user gave as observation
+### 22.6 Keep prompts as observations; honor presentation instructions without escalating authority
 
 - **In:** the prompt and anything the user uploads.
-- **Do:** normal digital content, such as what users upload during normal usage, does not give attestations. It gives observations: the physicality trajectory alone gives precedes, contains, co-occurrences, and more, and the seeded higher-trust facts are what the prompt's words are then read against. A prompt creates exact observation and trajectory state and zero semantic attestations merely by being said; where any of it is played as an attestation at all, it enters under `UserPromptContent` at 0.30, below user-curated corpora and above social media, and Laplace's own response at `ResponseContent` 0.20 is lower still, by design; such voices sharing a trust class or a dependence root count as one root, capped, so a million prompts saying the earth is flat never drown out the evidence that it is round, [13. Consensus](Consensus.md) operation 13.2. Laplace records that people say a thing, a fact about discourse, without its standing moving. A user's explicit `attest confirm` or `attest refute` is feedback; whether it is testimony by the user as a witness or an assertion that becomes a matchup only after independent adjudication is part of conflict C1. A prompt asking for a personality or an unauthorized effect installs no policy value and grants no capability.
-- **Out:** observations, and feedback into the lanes of [23. Learning](Learning.md).
-- **From:** [Attestations: Observations](../Semantics/Attestations.md#observations); `docs/INVENTOR_RECORD.md` §Attestations; `docs/specs/39_Personality_Firmware.md` §9 C1 and §11.
+- **Do:** normal user prompts and uploads create observation and trajectory state and **zero semantic attestations merely by being said**: the seeded higher-trust facts are what the prompt's words are read against, so a million prompts asserting the earth is flat move `consensus` standing by zero, while unverified feedback accounts are bounded by causal-lineage and Sybil governance ([13. Consensus](Consensus.md) operations 13.2 and 13.3; [16. Authority](Authority.md) operation 16.4)—never by capping independent witnesses across an entire trust class. Explicit user feedback (`confirm` / `refute`) enters the governed feedback lane of [23. Learning](Learning.md). Turn-level `system`, `developer`, and user instructions asking for an output format, target language, verbosity, or persona (`"Reply in concise JSON"`, `"Explain like a pirate"`, `"Answer in Spanish"`) steer `ORIENT`, `STEER`, and `REALIZE` for that turn or session ([18. Firmware](Firmware.md) operations 18.3 and 18.13), whereas prompt instructions asking for unauthorized capabilities, restricted scopes, or standing mutations grant zero privileges and alter zero truth.
+- **Out:** in-memory observation state, turn-level presentation framing, and governed feedback where explicitly submitted.
+- **From:** [Attestations: Observations](../Semantics/Attestations.md#observations); [18. Firmware](Firmware.md) operation 18.3; `docs/INVENTOR_RECORD.md` §Attestations.
 
-### 22.7 Pull, and answer
+### 22.7 Pull, answer, and witness at turn end
 
-- **In:** the trunk of 22.5 and the firmware of 22.2.
-- **Do:** [20. Forward](Forward.md), the whole program, and [21. Sessions](Sessions.md) operation 21.5 to witness it. Querying picks the records with higher scores and does not change scores: no standing changes because of a pull. The answer comes back in the user's language with its receipt, and an honest abstention comes back as one when the world does not support an answer, the evidence is ambiguous, the envelope ran out, or the user lacks authority to be told.
-- **Out:** the answer.
-- **From:** [Pull](../Semantics/Pull.md); [Consensus: Matchups](../Semantics/Consensus.md#matchups); `docs/guides/knowledge-authority.md` §Honest abstention.
+- **In:** the prompt DAG of 22.5 and the firmware of 22.2.
+- **Do:** execute [20. Forward](Forward.md) in `2–3` batched binary probes (`<100–200ms`), then commit episodic witnessing at turn completion ([21. Sessions](Sessions.md) operation 21.5). Querying reads standing and never mutates it. Coherent multi-clause answers are realized in the target language with witness attribution (`SUM(share_bp) = 10000`); polysemous or genuinely disputed questions answer from the strongest/shared attested structure, surface contested views with provenance, or ask a concise clarifying question, while honest `ABSTAIN` is reserved strictly for when zero relevant witnessed evidence exists or authority denies disclosure.
+- **Out:** the answer and its provenance receipt.
+- **From:** [Pull](../Semantics/Pull.md); [20. Forward](Forward.md) operations 20.8 to 20.11; `docs/guides/knowledge-authority.md` §Honest abstention.
 
 ## What this stage leaves behind
 

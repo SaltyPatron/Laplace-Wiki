@@ -6,7 +6,7 @@ Laplace speaks Unicode and renders language. Everything stored is Unicode conten
 
 Users have an operating language, while Laplace can speak any. Language is a filter on the claims, applied when querying.
 
-Semantics are the relations we create to show, for example, that `dog` is a noun: part of speech, sense, dependency relation, and more. Laplace uses ISO codes, ILIs, synsets, frames, and the like to link concepts and languages, as a universal translator.
+Semantics are the relations we create to show, for example, that `dog` is a noun: part of speech, sense, dependency relation, and more. Laplace uses shared highway identifiers — ISO language codes (`eng`, `deu`), CILI interlingual concepts (`i46360`, which every WordNet synset resolves to), PropBank rolesets (`abandon.01`), VerbNet classes (`give-13.1`), FrameNet and VerbAtlas frames (`va:0001f`), and Wikidata items (`Q937`) — to link concepts and languages as a universal translator.
 
 There is no record ballooning. Laplace does not record that `dog` translates to `Hund`, that `dog` translates to `chien`, and so on for every pair. The word `dog` has an ILI: bubble up to it, change the language, and bubble down, and there is `Hund`. The same holds for sentences and any other tier.
 

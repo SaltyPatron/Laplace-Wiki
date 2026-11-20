@@ -1,17 +1,23 @@
 # NLTK
 
-The Brown Corpus's tagged text is read by a declarative grammar that preserves paragraphs, sentences, words and aligned part-of-speech annotations.
+The Brown Corpus attests paragraphs, sentences, words, and sentence-aligned Brown part-of-speech annotations crosswalked to `upos`, together with `cats.txt` and `CONTENTS` document-to-genre classifications under one corpus witness trunk.
 
 ## Source
 
-The [brown](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/brown) source names one Brown Corpus witness and reads `c[a-z][0-9][0-9]` files under `$LAPLACE_DATA/Brown/brown`, after Unicode. Its [tagged.recipe](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/brown/tagged.recipe) uses the compiled `brown_tagged` grammar.
+| Source | Witness | Trust class | After | Files | Recipes |
+| --- | --- | --- | --- | --- | --- |
+| `brown` | `Brown Corpus` source trunk | class `AcademicCurated` | `unicode`, `iso-639` | `c[a-z][0-9][0-9]`, plus `cats.txt` and `CONTENTS` under `$LAPLACE_DATA/Brown/brown` | [`tagged.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/brown/tagged.recipe) (`cats.txt` and `CONTENTS` genre recipes queued for `Batch 2`) |
 
-## Format
+## Tagged text (`c[a-z][0-9][0-9]`) & genre catalogs (`cats.txt`, `CONTENTS`)
 
-Blank lines separate paragraphs; newlines separate sentences; whitespace separates `word/tag` tokens. The final slash separates the word from its tag, so `and/or/CC` retains `and/or` as its word. This is the tagged-text structure documented by [NLTK's TaggedCorpusReader](https://www.nltk.org/api/nltk.corpus.reader.TaggedCorpusReader.html).
+[`tagged.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/brown/tagged.recipe) parses the 500 Brown Corpus documents (`ca01`..`cr09`) with the compiled `brown_tagged` grammar ([NLTK `TaggedCorpusReader`](https://www.nltk.org/api/nltk.corpus.reader.TaggedCorpusReader.html)): blank lines separate paragraphs, newlines separate sentences, whitespace separates `word/tag` tokens, and the final `/` splits the word from its tag so `and/or/CC` retains `and/or` as its canonical word entity.
 
-Words have canonical content identities. Sentence records retain the ordered word and tag layers, and the recipe attests the source's written POS annotations. It preserves the original tag spelling rather than silently translating Brown tags into UPOS.
+Each Brown POS tag (`nn-tl`, `vbd`, `jj`, 472 tags in `manifest/slots/brown.tsv`) retains its exact fine-grained Brown tag identity while reaching Universal Dependencies' `upos` bank (`5` bits at offset `8`) through the frozen NLTK universal tagset crosswalk in `manifest/slots/edges-tagsets.tsv` (`type ... upos crosswalk brown`, [Types](../Reference/Types.md#perf-caches)), preserving both empirical token POS counts and sentence-aligned POS layer trajectories.
 
-## Not read
+Alongside the 500 tagged files, `cats.txt` (mapping each `ca01`..`cr09` file ID to its genre category such as `news`, `editorial`, `reviews`, `religion`, `hobbies`, `lore`, `belles_lettres`, `government`, `learned`, `fiction`, `mystery`, `science_fiction`, `adventure`, `romance`, `humor`) and `CONTENTS` (bibliographic source titles, authors, and genre hierarchy) bind each document's file trunk (`refer` by file stem `ca01`, discarding the bare `ca01` pointer where resolved) to its genre and bibliographic provenance (`Batch 2` recipe gap: `cats.txt` and `CONTENTS` do not yet have recipes under `recipes/brown/`).
 
-`cats.txt` and `CONTENTS` do not match the tagged-text recipe; their genre metadata is not currently attested. Local development acceptance uses a labeled format fixture because the raw Brown distribution is absent; recipe coverage does not claim a complete Brown ingest.
+| Piece | Written as | Laplace reads it as | Target attestation & current recipe state |
+| --- | --- | --- | --- |
+| `c[a-z][0-9][0-9]` paragraph / sentence / `word/tag` | `The/at Fulton/np-tl County/nn-tl ...` | paragraph → sentence → word trajectory + aligned Brown POS layer crosswalked via `brown` → `upos` | empirical `[word, brown_tag]` → `upos` series + sentence POS layer (`tagged.recipe` active) |
+| `cats.txt` (`file_id category`) | `ca01 news` | `ca01` resolved (`refer`) to document trunk `ca01`; genre category attested of that document | target: `[doc_trunk, genre, news]` (`Batch 2` gap: `cats.txt` recipe queued) |
+| `CONTENTS` | section headings & per-file bibliographic citations | genre taxonomy and source publication provenance on each `c[a-z][0-9][0-9]` document | target: document bibliographic provenance (`Batch 2` gap: `CONTENTS` recipe queued) |

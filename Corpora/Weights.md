@@ -1,20 +1,23 @@
 # Weights
 
-The Engine's dedicated `laplace model` command reads local model weights and reports native tensor analysis, while database assimilation and model export remain separate roadmap work.
+Conventional AI checkpoints (`Safetensors` and `GGUF`) assimilate into Laplace by shape-driven operator recognition, transiently reducing tensor weights into circuit trajectories and Glicko-2-scored token, head, and layer attestations with zero raw weight bytes retained (`raw_weight_bytes_retained = 0`), and powering CPU Mold-a-Model `laplace-blake3-v1` export.
 
-## Source
+Under the Recording Law ([INVENTOR_RECORD](../Repositories/Laplace/docs/INVENTOR_RECORD.md), [24. Models](../Sequence/Models.md), [25. Export](../Sequence/Export.md)), an AI model is admitted as one source trunk and one witness (`class AIModel`) in native C ([`Laplace-Engine/src/model.c`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/src/model.c) + `Laplace-Native` SIMD/MKL/Eigen/Spectra kernels)—never stored as opaque binary weight blobs and never decomposed through legacy C# walkers.
 
-Models use a dedicated binary reader rather than text corpus recipes. The Engine's [model.c](https://github.com/SaltyPatron/Laplace-Engine/blob/main/src/model.c) reads a local model directory, its configuration and vocabulary, and its safetensors weights. It analyzes attention and feed-forward projections through Native/MKL and reports the results; this command currently does not load those reports into PostgreSQL.
+## Shape-driven assimilation & zero retained weights
 
-The monorepo also has an existing [ModelDecomposer](https://github.com/SaltyPatron/Laplace/blob/main/app/Laplace.Decomposers/Model/ModelDecomposer.cs) route. Its existence is distinct from convergence on the Native owner, complete model admission, `laplace-blake3-v1` export and royalty attribution. Those are tracked by [Native#6](https://github.com/SaltyPatron/Laplace-Native/issues/6) and [Laplace#1719](https://github.com/SaltyPatron/Laplace/issues/1719). A successful diagnostic run is not evidence of completed model assimilation.
+Whether a checkpoint comes from a dense transformer, Mixture-of-Experts (MoE), encoder/reranker, or diffusion/vision-language family, container parsing separates format framing (`Safetensors` JSON header + mmap'd tensor buffers, preferred lossless fp16/bf16/fp32 source; `GGUF` metadata KV + quantized blocks) from **shape-driven operator classification**:
 
-Use existing model files under `LAPLACE_MODELS`; HART-DESKTOP must not download large checkpoints for verification.
+1. **Vocabulary grounding onto canonical UTF-8 text (`laplace-blake3-v1`):** Every vocabulary row index `0..V-1` resolves via [Tokenizers](Tokenizers.md) onto its decoded UTF-8 text `lp_id` (`"King"` in Qwen == `"King"` in Llama == `"King"` in WordNet), never minting model-private integer token IDs.
+2. **Shape-first operator recognition:** Tensor dimensions `(V, d_model)`, `(n_heads * d_head, d_model)`, `(n_kv * d_head, d_model)`, `(d_ff, d_model)`, `(n_experts, ...)`, and `(d_model,)` classify token embeddings, `Q`/`K`/`V`/`O` attention projections, `gate`/`up`/`down` MLP projections, norms, RoPE frequencies, and routers from `config.json` / GGUF hyper-parameters and tensor shapes—using tensor names as corroborating provenance rather than hardcoded provider regexes.
+3. **Transient spectral/significance contraction (`raw_weight_bytes_retained = 0`):** Native CPU kernels project embedding/unembedding couplings, `Q`/`K` interaction and `V`/`O` value-routing circuits, and MLP feature activations over the canonical text vocabulary, detecting each operator's intrinsic noise/Lottery-Ticket significance floor rather than applying an arbitrary fixed top-`k` cutoff. Significant couplings emit ordered circuit trajectories (`physicality`) and calibrated game-series claims (`attestation` → Glicko-2 `consensus`) under the model's witness trunk; raw floating-point/quantized weight arrays are discarded once reduced (`raw_weight_bytes_retained = 0`).
+4. **Round-table consensus & CPU Mold-a-Model export:** Multiple assimilated checkpoints meet curatorial corpora on the **same** 4 tables without a separate judge (`round-table` consensus), and CPU Mold-a-Model synthesis ([25. Export](../Sequence/Export.md)) exports clean `laplace-blake3-v1` `Safetensors` and `GGUF` checkpoints from attested standing and trajectories without gradient descent, preserving exact Fisher `SUM(share_bp) = 10000` witness attribution.
 
-## Format
+## Current Engine state vs. `Batch 3` (`Laplace#1719`)
 
-| Artifact | Current Engine reader | Companion content |
+| Artifact | Target specification | Current `Laplace-Engine` state & `Batch 3` closure |
 | --- | --- | --- |
-| safetensors weights | dedicated native model command | configuration and tokenizer/vocabulary files from the same model directory |
-| GGUF, PyTorch checkpoints and exported cartridges | support must be established by the corresponding model/export implementation | the model's format metadata and tokenizer contract |
+| `*.safetensors` + `config.json` + `tokenizer.json` | Shape-driven assimilation of embeddings, `Q`/`K`/`V`/`O` heads, MLP/MoE circuits, and norms into `entity`, `physicality`, `attestation`, and `consensus` (`raw_weight_bytes_retained = 0`) | `src/model.c` (`laplace model`) maps `Safetensors` + vocabulary and runs native MKL/SVD operator analysis; full database stage/merge assimilation and CPU Mold-a-Model synthesis close in `Batch 3` (`Laplace#1719`) |
+| `*.gguf` checkpoints | Native `GGUF` header/KV + dequantized block reader feeding the identical shape-driven assimilation pipeline; clean `laplace-blake3-v1` `GGUF` / `Safetensors` export validated in `llama.cpp` | Native `GGUF` assimilation + `laplace-blake3-v1` export proven end-to-end in `llama.cpp` with `share_bp = 10000` attribution in `Batch 3` (`Laplace#1719`) |
 
-The presence of a model card or file extension does not establish reader support or a populated substrate.
+Existing local checkpoints under `$LAPLACE_MODELS` (`E:\Data\Ingest` / `/vault/models`) are used for verification; `HART-DESKTOP` never bulk-downloads checkpoints over metered links.

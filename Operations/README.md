@@ -13,9 +13,10 @@ Measurements quoted on these pages come from [Engine Measurements](../Research/E
 
 Laplace is one product across its active repositories. `Laplace-MCP` supersedes
 the old `code-search` service; its repository and relocated documentation remain
-historical references. `Laplace-Refactor` is a separate, lowest-priority workstream
-unless explicitly selected. Preserve invention documents, specifications and
-research when updating operational guidance.
+historical references. `Laplace-Refactor` is a frozen historical archive, not an
+active workstream — never edit it or read its files as current instructions.
+Preserve invention documents, specifications and research when updating
+operational guidance.
 
 HART-DESKTOP is the development machine, not a GitHub Actions runner host.
 Development builds and tests may run locally. CI uses the existing designated

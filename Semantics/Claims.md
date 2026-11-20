@@ -24,16 +24,13 @@ A claim's relation, like every other part of it, is what the source means, never
 
 ## IDs
 
-Deterministic content determines a claim's ID. A claim is a limited path trajectory, so its hash is computed the same way as a composition's: from the IDs along its path. Its physicality is geometry ZM and does not have to be a line.
+Deterministic content determines a claim's ID. A claim is an n-ary composition of entity IDs (`lp_id_compose`), computed from the ordered 16-byte BLAKE3 IDs along its `physicality.path` (`POINT ZM` or `LINESTRING ZM`) identically to any other composition.
 
-Witnessing and consensus are two different beasts:
-
-- For witnessing, the hash covers the claim's specifics.
-- For consensus, the hash covers only the main components that make the claim unique.
+There is **one** `blake3` claim composition ID shared across all four canonical tables — `entity.id`, `physicality.entity`, `attestation.claim`, and `consensus.claim` — never separate hashes for witnessing and consensus. Two witnesses asserting the exact same proposition collide on that single `claim` ID in `consensus`, while per-witness specifics (`witness`, `lineage`, `games`, `tokens`, `score`, `position`, `trust`) live as columns on `attestation` (keyed by `(claim, witness, lineage)`) and as `M` / spare-bit metadata on the asserting record's `physicality.path` vertex.
 
 ## Masks
 
-Separate columns hold bitmasks, such as 256-bit masks, that denote which part of speech, sense, dependency relation, and so on apply. These are enums: fixed in scope, and perf-cachable.
+Both `entity.mask` and `physicality.mask` carry a single fixed `bit(64)` (`uint64_t`) bitmask defined by `Laplace-Native/manifest/banks.tsv` and indexed by GIN (`laplace_mask_ops`): `kind` (`8`-bit row-role flags at bit `0`: `CLAIM`, `RECORD`, `TUPLE`, `FILE`), `upos` (`5` bits at offset `8`), `lexfile` (`6` bits at offset `13`), `deprel` (`6` bits at offset `19`), `vnrole` (`6` bits at offset `25`), and `wnframe` (`6` bits at offset `31`), where enum banks store `slot + 1` (`0` = absent). (By contrast, the 256-bit Unicode Character Database property bitmap per codepoint lives in the separate `tier0.flags` ROM perf-cache, never as 256-bit SQL columns.)
 
 Masks are made for enums, and the enums are flagged too, enumerated as completely as possible at once. Identifiers are not masked: an ILI is an identifier, and there is no mask for 116,000 ILI concepts. The question a mask answers is asked across all of the sources: does this source say this is a noun? Does it say it is this? Is it that?
 

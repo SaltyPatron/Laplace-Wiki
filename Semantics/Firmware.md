@@ -94,11 +94,9 @@ The operations include the ones a conventional forward pass uses to fetch: atten
 
 ## Modification
 
-The engine does not modify the personality firmware, unless it is wired up to the GitHub repository and allowed to deploy to itself.
+Personality profiles are clean, detached plain-text `.firmware` files (`Laplace-Engine/firmware/program.firmware`, `deductive.firmware`..`adversarial.firmware`, `chess.firmware`) loaded once per pass by `firmware.c` (`--firmware FILE` or `$LAPLACE_FIRMWARE`) with zero C recompilation and zero database schema change.
 
-A running engine can update itself without shutting off only partially, by patches, and only maybe.
-
-That prohibition is about the firmware. It does not specify changes to records.
+Executing a pass never modifies the `.firmware` file, and editing or switching a `.firmware` profile never modifies stored `entity`, `physicality`, `attestation`, or `consensus` records. Candidate policy changes proposed by the Gödel loop remain detached `.firmware` configurations rated by observed consequences until explicitly selected.
 
 ## How the control was separated
 

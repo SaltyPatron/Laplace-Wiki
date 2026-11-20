@@ -61,7 +61,7 @@ flowchart TD
 - [3. Builds](Builds.md): the server, the library, the extension, the engine, one deployed revision.
 - [4. Projection](Projection.md): every codepoint onto the S³.
 - [5. Tier 0](Tier-0.md): the anchor perf-cache and its fingerprint.
-- [6. Registries](Registries.md): relations, qualifiers, trust classes, entity types, vocabularies, firmware policy kinds: governed, append-only perf-caches whose stable bits index content entities.
+- [6. Registries](Registries.md): 64-bit mask banks, highway vocabularies, trust classes, model operator templates, firmware policy kinds: governed, append-only perf-caches whose stable bits and slots index content entities while predicates stay open content.
 - [7. Perfcaches](Perfcaches.md): the derived ROM lattice above tier 0.
 - [8. Database](Database.md): the tuned server and the four families of durable state.
 - [9. Sources](Sources.md): a source is its trunk over its files and a release is its files, staged with its artifact graph, provider, and recipe and activated together.

@@ -62,7 +62,7 @@ Nothing. This is the start of the chain.
 ### 1.8 Bind the generation as a source
 
 - **In:** the files of 1.2 to 1.7.
-- **Do:** the Unicode release is the first source generation of [9. Sources](Sources.md): authority Unicode, this release, the exact artifact graph of the files above with a disposition for each, the UAX #42 streaming reader as its provider, the UCD recipe as its semantic recipe, and the witness `[Unicode, 17.0.0]` at trust class StandardsDerived, 0.95. The same decomposer that will populate the database's tier 0 emits the tier-0 perf-cache, so the two are bit-identical.
+- **Do:** the Unicode release is the first source generation of [9. Sources](Sources.md): authority Unicode, this release, the exact artifact graph of the files above with a disposition for each, the UAX #42 streaming reader as its provider, the UCD recipe as its semantic recipe, and its source trunk `[source record, its files' trunks in path order]` as the witness at trust class `StandardsDerived`, 0.95. The same decomposer that populates the database's tier 0 emits the tier-0 perf-cache, so the two are bit-identical.
 - **Out:** the generation every later stage is fingerprinted against.
 - **From:** `docs/plan/ASSIMILATION_ROADMAP.md` laws 1 and 8; [Atoms: Generation](../Storage/Atoms.md#generation).
 

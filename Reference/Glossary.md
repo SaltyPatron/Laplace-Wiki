@@ -27,15 +27,15 @@ Every term the documentation uses, defined once, with the page that owns it.
 | lineage | the witness a witness derives from; copies of one lineage play one matchup | [Attestations](../Semantics/Attestations.md) |
 | matchup | one Glicko-2 update of a standing by one attestation, the witness playing at the deviation its trust gives | [Consensus](../Semantics/Consensus.md) |
 | metadata | of a file: what is said of it that is not its content, beginning with its name | [Compositions](../Storage/Compositions.md) |
-| node table | the engine's in-memory table of every composition of a run, sharded by ID | [Ingest](Ingest.md) |
+| node table | the engine's in-memory lock-free open-addressed CAS table of every composition of a batch | [Ingest](Ingest.md) |
 | observation | what a trajectory gives without anyone attesting: precedes, contains, co-occurrence | [Attestations](../Semantics/Attestations.md) |
-| path, trajectory, physicality | the geometry that records an entity's constituents in order, one vertex per run, the ID packed in X, Y, Z and the run and kind in M | [Physicality](../Storage/Physicality.md) |
+| path, trajectory, physicality | the geometry that records an entity's constituents in order, one vertex per run, the ID and 28 spare bits packed in X, Y, Z and the run, role, outcome, and position in M | [Physicality](../Storage/Physicality.md) |
 | perf-cache | a memory-mapped, fingerprinted, rebuildable file of deterministic records; tier 0 is the anchor | [Atoms](../Storage/Atoms.md) |
 | pull | a read of the web under a firmware; the forward pass | [Pull](../Semantics/Pull.md) |
 | recipe | how a kind of file decomposes and what it attests | [Ingestion](../Storage/Ingestion.md) |
 | record | what a source says of one part it speaks of: a path in its file's content tree over the part's thing and the claims it says, each claim a vertex with its run, outcome and position | [Ingest](Ingest.md) |
 | run | a vertex's repeat count, the low 30 bits of M | [Physicality](../Storage/Physicality.md) |
-| said | what a vertex is within its path: claim, record, tuple, metadata; the high bits of M | [Formats](Formats.md) |
+| said | what a vertex is within its path (`claim`, `record`, `tuple`, `metadata`, `holds`, `voice`, `dependence`), bits `30..32` of M | [Formats](Formats.md) |
 | segment | a UAX #29 word segment (tier 1 when its graphemes are single codepoints); also a contiguous run of one trajectory | [Compositions](../Storage/Compositions.md) |
 | source | a body of content with one identity, however many files it comes in; the witness when it attests | [Recipes](Recipes.md) |
 | strand | a claim: a composition of the entities it connects, its path any geometry ZM | [Attestations](../Semantics/Attestations.md#strands) |

@@ -4,50 +4,42 @@ Tree-sitter grammars are what the Engine parses files with, named by a recipe's 
 
 ## Source
 
-A recipe's `grammar NAME` line, or the `format NAME` file it names, loads a tree-sitter grammar from `$LAPLACE_GRAMMARS`; the recipe's `node` lines say what each kind of the grammar's nodes is in the file's tree, and its dispositions what each named part of that tree is ([Recipes](../Reference/Recipes.md)). A grammar is a tool of the ingest, not a source in `recipes/order`: no witness is named for it and no claim is recorded from it. Its `node-types.json` is the format below, which is what `laplace tree file` prints the node names of.
+A recipe's `grammar NAME` directive, or the shared `format NAME` file it includes (`recipes/formats/NAME.format`), loads a compiled Tree-sitter shared library from `$LAPLACE_GRAMMARS` (`Laplace-Engine/src/grammars.c`); the recipe's `node` rules specify what each syntax node kind represents in the file's tree, and its semantic directives specify what each recovered part attests ([Recipes](../Reference/Recipes.md)). A grammar is a parser used during ingest and realization, not a corpus in `recipes/order`: zero witnesses or claims are minted from the grammar library itself. Its `node-types.json` defines the grammar's static symbol and field inventory inspected by `laplace tree FILE`.
 
-## Format
+## Format (`node-types.json`)
 
 | Record | Fields in order | What a record is | Specification |
 | --- | --- | --- | --- |
-| node type | type, named, then fields, children, or subtypes when present | One object in the node-types.json array. type and named together identify the node type. fields and children describe child nodes. subtypes lists the nodes a supertype can wrap. | [Static Node Types](https://tree-sitter.github.io/tree-sitter/using-parsers/6-static-node-types.html) |
+| `node-types.json` entry | `type`, `named`, plus `fields`, `children`, or `subtypes` when present | Static grammar node specification: `(type, named)` identifies the symbol, `fields` and `children` constrain child slots, and `subtypes` enumerates wrapped supertypes | [Tree-sitter Static Node Types](https://tree-sitter.github.io/tree-sitter/using-parsers/6-static-node-types.html) |
 
-## What is compiled on this machine
+## Compiled grammar estate (`$LAPLACE_GRAMMARS`)
 
-`/vault/Data/TreeSitter` holds 303 grammar checkouts and 325 `grammar.js` files. `Laplace-Engine/tools/build_grammars.sh` compiles every `src/parser.c` there into `$LAPLACE_GRAMMARS/libtree-sitter-<name>.so`. 316 of those libraries are built. One checkout can export more than one language (`csv` and `tsv` from `tree-sitter-csv`).
-
-The monorepo's `engine/core/grammars` wires 35 of them into `grammar_registry.c` and describes the rest as dormant until someone writes a decomposer. That wait is the wrong gate. A recipe that names a grammar and nothing else already admits the file.
+`Laplace-Engine` compiles both upstream grammars from `/vault/Data/TreeSitter` (300+ languages and data formats) and Laplace-authored grammars under [`Laplace-Engine/recipes/formats/grammars/`](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/formats/grammars) (`conllu`, `wndb`, `pgn`, `turtle`, `concept_uri`, `emoji_palette`, `brown_tagged`, `webster`, `britannica`, `c_laplace`, `cpp_laplace`, `sql_laplace`, plus parameterized CSV/TSV/PSV scanners) directly into `$LAPLACE_GRAMMARS` shared libraries. No per-language C or C# decomposer registration exists: naming `grammar <name>` in a declarative `.recipe` immediately admits any language or container format through the one generic C pipeline.
 
 ## Where UAX #29 applies
 
-UAX #29 is the rule for text. It applies in two places, and both of them are normal.
+UAX #29 (with Laplace's word-tier separator rule, [Types](../Reference/Types.md#segmentation)) is the universal leaf segmentation law. It applies in two places:
 
-- The whole file, when nothing else names its parts. A Gutenberg book is this case: no book recipe has been written, so the file is basic text.
-- Every span another recipe has already decided is text. A TSV field, an XML text node, a PDF text run, a Word text run, a source leaf. The container recipe does not replace UAX #29. It decides which spans are text, and those spans are decomposed by it.
+- **Plain-text prose spans or files** when the content itself is natural-language prose (such as the body of a novel after wrapper metadata is separated, or a plain `.txt` note).
+- **Every text leaf inside a structured grammar tree:** a TSV/CSV cell, an XML character-data span, a JSON string literal, a source-code comment or docstring, or an XHTML/OOXML/PDF text run. The outer container grammar never replaces UAX #29—it isolates exact structural nodes so leaf text spans decompose cleanly down to Tier-0 codepoints without mixing markup delimiters into words.
 
-A `.tsv` is not one text. IANA `text/tab-separated-values` says a header line, then one record per line, fields separated by a tab, no tab inside a field, the same count on every record. RFC 4180 is the CSV memo. The row is the composition of its fields. The file is the composition of its rows. The field is the text.
-
-XML has a grammar here: `libtree-sitter-xml.so`, and the stock recipe is `grammar xml` with the note that leaves are text. HTML and Markdown are the same shape. The element tree is the grammar. The character data in a leaf is UAX #29.
-
-A language or format that has a built `libtree-sitter-*.so` and no record standard uses that grammar for the tree, and UAX #29 for the leaves. Sending the whole file through `grammar text` drops the tree.
+Sending a structured `.tsv`, `.xml`, `.json`, or source-code file blindly through `grammar text` destroys its AST hierarchy and is forbidden.
 
 ## A recipe is Laplace's grammar of a format
 
-The question a recipe answers is: how is this file parsed, whatever the standardized format is. Every file is the **packaging** we open to extract the raw **product** (canonical content and source-attested claims) while retaining the packaging hierarchy as provenance trunks (`[metadata, content]`). Because Laplace's Merkle DAG *is* an AST, Tree-sitter and Laplace recipes form a single, bidirectional grammar pipeline (`Bytes -> Chained Tree-sitter AST -> Laplace Merkle DAG + Claims` on ingest, and `Laplace Merkle DAG -> AST -> Formatted Bytes` on export and realization):
+Every file is **packaging** opened to extract canonical **product** (content entities and source-attested claims) while retaining the packaging hierarchy as `[metadata, content]` provenance trunks. Because Laplace's Merkle DAG *is* an AST, Tree-sitter and `.recipe` files form one bidirectional grammar pipeline (`Bytes → Chained Tree-sitter AST → Laplace Merkle DAG + Claims` on ingest, and `Laplace Merkle DAG → AST → Formatted Bytes` on realization):
 
-1. **Multi-level grammar chaining (`ts_parser_set_included_ranges`)**:
-   - **Outer packaging grammar**: Every standardized container format is parsed by its compiled Tree-sitter grammar (`tree-sitter-xml` for WN-LMF, FrameNet, PropBank, and UCD; `tree-sitter-json` for Wiktextract and JSONL; `tree-sitter-turtle` for CILI and FrameBase; `tree-sitter-csv`/`tsv`/`psv` for Tatoeba, ATOMIC, HateSpeech, GeoNames, and ConceptNet; `tree-sitter-conllu` for Universal Dependencies; `tree-sitter-wndb` for Princeton WordNet; `tree-sitter-pgn` for chess; plus 300+ code grammars).
-   - **Inner injected sub-grammars**: Whenever an outer grammar field contains structured sub-syntax (CoNLL-U `FEATS` `Key=Val|Key=Val`, `DEPS`, `MISC`, JSON or delimited cells inside TSV, or structured identifier notation like `drop%2:38:00::` / `mcr:ili-30-01976841-v`), the child parser runs directly on the parent `TSNode` byte range via `ts_parser_set_included_ranges`, chaining down to UAX #29 text leaves and the `tier0.bin` / `highway.bin` perf-caches.
-2. **Compiled integer symbol dispatch**:
-   - `.format` and `.recipe` files compile once at recipe load time against `ts_language_symbol_for_name()` and `ts_language_field_id_for_name()` into flat $O(1)$ integer jump tables (`uint16_t TSSymbol` / `TSFieldId` $\rightarrow$ disposition and composition instructions). Worker threads walk the `TSTree` directly over the input buffer using `TSTreeCursor` + compiled integer jump tables and thread-local arenas—never materializing intermediate `STree`/`SNode` heap DOMs (`s_grammar_split` / `copy_around`) and never building runtime string paths (`child_path`).
+1. **Multi-level grammar chaining (`ts_parser_set_included_ranges`):**
+   - **Outer packaging grammar:** Standardized containers parse through their compiled Tree-sitter grammar (`tree-sitter-xml` for WN-LMF, FrameNet, PropBank, and UCD; `tree-sitter-json` for Wiktextract, Tokenizers, and JSONL; `tree-sitter-turtle` for CILI and FrameBase; compiled CSV/TSV/PSV grammars for Tatoeba, ATOMIC, safety datasets, GeoNames, and ConceptNet; `tree-sitter-conllu` for Universal Dependencies; `tree-sitter-wndb` for Princeton WordNet; `tree-sitter-pgn` for chess; `webster` and `britannica` for structured Gutenberg reference works; plus 300+ programming-language grammars).
+   - **Inner injected sub-grammars:** Whenever an outer field carries internal structured syntax (CoNLL-U `FEATS` `Key=Val|Key=Val`, `DEPS`, `MISC`, ConceptNet `/c/en/ice_cream/n` URIs, PGN moves inside TSV cells, or structured sense keys `drop%2:38:00::` / `mcr:ili-30-01976841-v`), the child grammar runs directly over the parent `TSNode` byte range via `ts_parser_set_included_ranges`, chaining down to UAX #29 text leaves and `tier0.bin` / `highway.bin`.
+2. **Compiled integer symbol dispatch (`structure_compile.c`):**
+   - `.format` and `.recipe` rules compile once at recipe load time against `ts_language_symbol_for_name()` and `ts_language_field_id_for_name()` into flat $O(1)$ integer jump tables (`TSSymbol` / `TSFieldId` → disposition and composition instructions). Worker threads stream the `TSTree` directly over input buffers with `TSTreeCursor` and thread-local arenas—with zero intermediate heap DOM materialization.
 
-PDF and Word have no tree-sitter grammar in the vault, and they have no recipe either. That is a missing recipe, not a reason to admit them as basic text. ISO 32000 names PDF's objects and content streams. ECMA-376 names a `.docx` as a package of XML parts, of which `word/document.xml` is XML the XML grammar already reads. Each of those needs a recipe that says those parts, and UAX #29 on the text the parts hold. The decomposer today opens gzip before the recipe sees the bytes. It does not yet open a PDF or an OOXML package. The recipe is still what has to be written.
+Binary container formats (`.gz` already decoded transparently before parsing; `.epub`/OOXML ZIP packages, Parquet columnar pages, PDF object streams, and PNG/WAV/video containers in `Batch 2`) unpack through generic format decoders before handing structured streams and text spans to declarative recipes and Tree-sitter grammars.
 
-## What the grammar contributes, and what records the file
+## Grammar-only vs. curated semantic recipes
 
-Tree-sitter is a parser generator. It builds a concrete syntax tree: every token, a grammar-rule name, and a byte span ([Introduction](https://tree-sitter.github.io/)). That tree is the cut list. It is not the record, and it is not a vector.
-
-The record is the composition the engine already performs for a grammar-only recipe ([Recipes](../Reference/Recipes.md)): each node is the composition of its children, the bytes between children stay as text, and a leaf is UAX #29 text, so the file recomposes byte for byte. The trunk is one entity id. The coordinates are the physicality on the record you fetch with that id. The caller keeps the id.
+Tree-sitter produces the concrete syntax tree—every token, rule symbol, and byte span ([Tree-sitter Introduction](https://tree-sitter.github.io/)). For a grammar-only recipe:
 
 ```text
 name ada
@@ -55,8 +47,4 @@ match *.adb *.ads
 grammar ada
 ```
 
-`grammar ada` loads `/repos/build/grammars/libtree-sitter-ada.so`. No `node` lines. That is a complete admission.
-
-A curated recipe comes after, when a node kind is a key, a skip, or a reference: `node` lines, or a `format` file. Write those when you know them. Do not hold the file in basic text until the `node` lines exist, and do not hold the grammar unwired until a decomposer is designed.
-
-`laplace tree FILE` prints the cuts before you trust them. A grammar that does not recompose the file, or that errors across the corpus, is not yet usable. Repair the grammar or write the record reader. Falling back to `grammar text` hides the miss and mints the wrong trunk.
+`Laplace-Engine` loads `ada` from `$LAPLACE_GRAMMARS`, composes every AST node from its children while retaining inter-token trivia so the file recomposes byte for byte, and segments leaves by UAX #29. Adding curated `node`, `key`, `refer`, `type`, and `attest` directives upgrades a syntax-tree recipe to extract semantic declarations and cross-file attestations without writing a single line of format-specific C code. `laplace tree FILE` and `laplace ingest --no-load` verify lossless recomposition before admission.

@@ -5,7 +5,7 @@ Research into rating models, evidence counts, search over rated relations, truth
 > [!NOTE]
 > This page was written before the inventor specified [Semantics](../Semantics/README.md), and it is kept as background. Where it differs from the specification, the specification holds:
 >
-> - Consensus is updated inline as content is observed, witnesses first in, first out. There are no global or delayed rating periods, ingest epochs, or batch folds of evidence counts; one witness's repeats of one claim are one attestation with that many games, a series solved on the client as one update, the rating where the prior standing and the series' score agree, rather than by one linearised period step.
+> - Consensus is updated inline as content is observed, witnesses first in, first out. There are no global or delayed rating periods, ingest epochs, or batch folds of evidence counts; one witness's repeats of one claim form one attestation game series (`s_eff = 0.5 + |t|(score − 0.5)` bounded by `lp_series_floor` / `lp_series`), folded in C inside `Laplace-postgres` (`laplace_attest_series`) to the rating where the prior standing and the series' bounded score agree, rather than by a linearised rating-period step.
 > - A new witness or claim enters at a stock default for its level of attestation, not at a fixed 1500 ± 350 or a fixed anchor.
 > - Normal content gives observations only; curated corpora give attestations.
 >

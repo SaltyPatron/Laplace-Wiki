@@ -2,6 +2,9 @@
 
 The first shared components of the real implementation, Laplace-Native and Laplace-postgres, were measured on a tuned PostgreSQL server with the Gutenberg corpus, and every number on this page comes from their benchmarks.
 
+> [!NOTE]
+> The measurements on this page were recorded on the earlier 52-partition prototype layout prior to the 4-table, 50-partition `CREATE EXTENSION laplace` schema (`9 + 9` tier range partitions on `entity` and `physicality`, `16 + 16` hex range partitions on `attestation` and `consensus`).
+
 ## Setup
 
 - Intel Core i7-6850K (AVX2, FMA, BMI2; no AVX-512), 125 GB RAM.

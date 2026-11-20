@@ -1,34 +1,31 @@
 # MapNet
 
-MapNet's lexical-unit file attests of each FrameNet frame the lexical units it lists for it, as written; its synset column is a WordNet 1.6 offset, a pointer into an edition no source here has, and is recorded nowhere; its frame-to-synset file holds nothing else and is not read; and the README attests nothing.
+MapNet attests interchange mappings joining FrameNet frames and `[frame, lu]` lexical units (`fnframe`, `fnlu`) to WordNet synsets across `mapping_lus_synsets.txt` and `mapping_frame_synsets.txt`, resolving WordNet 1.6 offsets through the WordNet 1.6→3.0→`ILI` crosswalk onto `ILI` highway nodes.
 
-MapNet is "FrameNet 1.3 frames and lexical units mapped to WordNet 1.6 synsets". The README says "All frames and lexical units included in the resource are described in FrameNet v. 1.3." and "All synsets refer to WordNet version 1.6, compatible with MultiWordNet." It is listed under [Hops](Hops.md), but its synset offsets cannot be resolved: the highway's `ili` list knows WordNet 3.0 offsets and sense keys, not 1.6 offsets, so MapNet is not on the highway.
+MapNet v0.1 ("FrameNet 1.3 frames and lexical units mapped to WordNet 1.6 synsets", Tonelli & Pianta) bridges FrameNet and WordNet/MultiWordNet. It is an interchange source under [Hops](Hops.md), read by two recipes under one `MAPNET v.0.1` witness trunk.
 
 ## Source
 
 | Source | Witness | Trust class | After | Files | Recipes |
 | --- | --- | --- | --- | --- | --- |
-| `mapnet` | `MAPNET v.0.1`, "named as the README's title names it" | class `AcademicCurated` | `unicode`, `iso-639` | `mapping_lus_synsets.txt` under `MapNet-0.1` | [`lus-synsets.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/mapnet/lus-synsets.recipe) |
+| `mapnet` | `MAPNET v.0.1` source trunk | class `AcademicCurated` | `unicode`, `iso-639`, `framenet`, `cili` | `mapping_lus_synsets.txt`, `mapping_frame_synsets.txt` under `MapNet-0.1` | [`lus-synsets.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/mapnet/lus-synsets.recipe), [`frame-synsets.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/mapnet/frame-synsets.recipe) |
 
-The class is the witness's trust class, one of those [6. Registries](../Sequence/Registries.md#65-declare-the-trust-classes) declares; its prior is the trust every attestation of the source plays at, and [9. Sources](../Sequence/Sources.md#the-estate-and-why-each-source-is-in-it) gives the class of each source. The README says of the resource: "The resource was automatically generated." and "The evaluated precision of the mapping 0.794." It gives no score to a row.
+The class is the witness's trust class, one of those [6. Registries](../Sequence/Registries.md#65-declare-the-trust-classes) declares. The publisher's README notes an evaluated mapping precision of `0.794` over automatic alignment, which informs witness/edge calibration without inventing per-row scores where the file states none.
 
-## The lexical units
+## Target highway resolution vs. current recipes
 
-`mapping_lus_synsets.txt` is a tab-separated table with no header row: "mapping between FrameNet frames, lus and WordNet synsets (5,162 mappings)". The recipe names the columns `frames`, `lus`, `synsets` to point at them.
+A WordNet 1.6 offset (`a#00057580`, `n#05593650`) is an edition-local byte offset in WordNet 1.6 (`pos#offset`). Under the Recording Law ([30. Conflicts](../Sequence/Conflicts.md) S1, I5), edition byte offsets are internal pointers: `highway.bin` resolves WordNet 1.6 `(pos, offset)` pairs through the published WordNet 1.6 → WordNet 3.0 → CILI crosswalk (e.g., UPC/MCR WordNet version mappings) directly onto canonical `ILI` highway nodes (`i46360`), while composing FrameNet lexical units as `[frame, lu]` (`fnlu`, e.g., `[Abounding_with, bejewelled.a]`) so every MapNet row forms a clean `[fnframe, fnlu, ILI]` or `[fnframe, ILI]` interchange strand and contributes `fnlu`↔`ili` and `fnframe`↔`ili` edges to `highway.bin`.
 
-| Piece | Written as | Laplace reads it as | Claim recorded | Specification |
+`Batch 2` recipe gap: `lus-synsets.recipe` and `frame-synsets.recipe` already read both files and type `frames` onto `fnframe`, but retain the raw `a#00057580` string as `content synsets` until the WN 1.6 → `ILI` alias table is wired into `highway` and `lus` is composed as `[frames, lus]` (`fnlu`).
+
+| File & Piece | Written as | Laplace reads it as | Target attestation & current recipe state | Specification |
 | --- | --- | --- | --- | --- |
-| the first field | `Abounding_with` | the frame, as FrameNet names it: the same entity as the highway's frame and [FrameNet](FrameNet.md)'s | the subject | "- file 'mapping_lus_synsets.txt': mapping between FrameNet frames, lus and WordNet synsets" README |
-| the second field | `bejewelled.a` | the lexical unit as written, said of the frame under `lus` | `[Abounding_with, lus, bejewelled.a]` | |
-| the third field | `a#00057580` | a WordNet 1.6 offset: a pointer (`key synsets`), recorded nowhere | nothing | "All synsets refer to WordNet version 1.6" |
-| an empty field | | what the file leaves empty | nothing | |
-
-Each claim stands alone, witnessed once. That is as built: a claim of the frame and the lexical unit, and nothing of the synset; the target is a row as one mapping, one interchange strand of the frame, the lexical unit and the synset, never a claim per column. How the synset is named in it while its WordNet 1.6 offset resolves to nothing is not decided.
+| `mapping_lus_synsets.txt` col 1 (`frames`) | `Abounding_with` | FrameNet frame highway node (`type frames fnframe node`) | first element of the interchange strand | "`mapping_lus_synsets.txt`: mapping between FrameNet frames, lus and WordNet synsets (5,162 mappings)" |
+| `mapping_lus_synsets.txt` col 2 (`lus`) | `bejewelled.a` | FrameNet lexical unit `[Abounding_with, bejewelled.a]` (`fnlu`) | `[fnframe, fnlu, ILI]` interchange strand + `fnlu`→`ili` highway edge (`Batch 2` gap: compose `[frames, lus]` onto `fnlu`) | FrameNet v1.3 lexical unit |
+| `mapping_lus_synsets.txt` col 3 (`synsets`) | `a#00057580` | WordNet 1.6 `(pos, offset)` pointer resolved via WN 1.6→3.0→`ILI` crosswalk to `ILI`, recorded nowhere | `ILI` highway node (`Batch 2` gap: currently retained as raw `a#00057580` content until WN 1.6 crosswalk lands in `highway`) | "All synsets refer to WordNet version 1.6, compatible with MultiWordNet" |
+| `mapping_frame_synsets.txt` cols 1–2 (`frames`, `synsets`) | `Abounding_with`, `a#00057580` | FrameNet `fnframe` paired with `ILI` resolved from the WN 1.6 offset | `[fnframe, ILI]` interchange strand + `fnframe`→`ili` highway edge (`Batch 2` gap: `frame-synsets.recipe` currently pairs `fnframe` with raw `synsets` text) | frame-to-synset mappings |
+| empty field | | attests nothing | none | |
 
 ## Relations
 
-As built, `[Abounding_with, lus, bejewelled.a]` takes its relation, `lus`, from the file's name for the field, `mapping_lus_synsets.txt`: markup, not meaning. A relation is what the source means, never the name of a field, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field): the target is the row as one mapping of the frame, the lexical unit and the synset, as above.
-
-## Not read
-
-`mapping_frame_synsets.txt` pairs a frame with a WordNet 1.6 offset and nothing else: with the offset a pointer that resolves to nothing, a row would say nothing, so the file is not read. `README` is not read: there is no recipe for it, and the source has no `reads` line.
+Both MapNet tables express cross-lexicon equivalence/evocation interchanges rather than field-name predicates (`pair` / interchange strands). Wiring the WordNet 1.6 → `ILI` alias map into `Laplace-Native/manifest/` and `laplace highway` in `Batch 2` puts all of MapNet directly onto the linguistic superhighway.

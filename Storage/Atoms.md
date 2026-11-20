@@ -29,7 +29,7 @@ Tier 0 is generated native C that is marshalled into PostgreSQL. It is memory-ma
 
 Tier 0 is still recorded to the database, but function calls never need to read it from there. That eliminates at least half of the database calls and round trips.
 
-The perf-cache is modular: ASCII, UTF, CJK, emoji, and so on. The same applies to other modalities, such as 8-bit, 16-bit, and 32-bit color for images. That enables deployment to lesser hardware; the full tier 0 is small enough for a Raspberry Pi.
+Tier 0 is one universal 1,114,112-codepoint Unicode floor (`tier0.bin`, 71.3 MB at 64 bytes per record), never separate per-modality atom floors: numbers, RGB(A) channel intensities, pixels, and audio samples are compositions above Tier-0 digit codepoints (`255` is `['2','5','5']`), where higher-tier [physicality](Physicality.md) trajectories give each modality its form. Optional profile shards (`ascii`, `utf`, `cjk`, `ext`, selected via `LAPLACE_TIER0_PROFILE` up to `full`) only bound mapped RAM on constrained development hosts while preserving the exact same 16-byte IDs and S³ coordinates.
 
 Every build has a checksum, a fingerprint, so an install knows which tier 0 it has. Two installs with the same fingerprint produce the same coordinates for the same content, so they sync perfectly.
 

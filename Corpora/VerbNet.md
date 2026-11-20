@@ -1,46 +1,32 @@
 # VerbNet
 
-VerbNet attests what a class file says of each class, subclass, thematic role and member; a class is its ID as VerbNet writes it, a role its type, a member the verb it names; a member's `verbnet_key` is VerbNet's pointer to the member, read by nothing (`omit`, with `xtag` and `descriptionNumber`); its `grouping` and `fn_mapping` are PropBank rolesets and a FrameNet frame by their highway IDs, content as written, and its `wn` WordNet senses by their sense keys, each attested of the member in its class; the schema and README attest nothing.
+VerbNet attests what each class file says of its verb classes and subclasses (`leave-51.2`), class-scoped thematic roles (`[vnclass, role]`) and selectional restrictions, verb members (`grouping` PropBank rolesets, `fn_mapping` FrameNet frames, and `wn` WordNet sense keys), and syntactic-semantic frames.
 
-The `verbnet` source reads the class files of VerbNet 3.4, "their members, thematic roles and frames", by [`classes.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/verbnet/classes.recipe). The classes and roles are the highway's `vnclass` (609) and `vnrole` (39, a mask field) lists ([Types](../Reference/Types.md)), a class a highway node exactly as an ILI is, a concept node of the linguistic superhighway; the members' mappings are its edges ([Hops](Hops.md)).
+Two sources in [`recipes/order`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/order) read VerbNet XML class hierarchies via [`classes.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/verbnet/classes.recipe): `verbnet` (VerbNet 3.4) and `verbnet-gl` (VerbNet Generative Lexicon subcategorizations). VerbNet classes and thematic roles populate the highway's `vnclass` (609 classes) and `vnrole` (39 roles, mapped to the `vnrole` `bit(64)` bank: `6` bits at offset `25`, [Types](../Reference/Types.md)), while member mappings supply highway edges ([Hops](Hops.md)).
 
-## Source
+## Sources
 
 | Source | Witness | Trust class | After | Files | Recipe |
 | --- | --- | --- | --- | --- | --- |
-| `verbnet` | `VerbNet` | class `AcademicCurated` | `unicode`, `iso-639` | `*.xml` under `verbnet3.4` | [`classes.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/verbnet/classes.recipe) |
-| `verbnet-gl` | `VerbNet Generative Lexicon` | class `AcademicCurated` | `verbnet` | `vn-gl/*.xml` | [Inherited class recipe](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/verbnet-gl) |
+| `verbnet` | `VerbNet` source trunk | class `AcademicCurated` | `unicode`, `iso-639` | `*.xml` under `verbnet3.4` | [`classes.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/verbnet/classes.recipe) |
+| `verbnet-gl` | `VerbNet Generative Lexicon` source trunk | class `AcademicCurated` | `verbnet` | `vn-gl/*.xml` | [`classes.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/verbnet-gl/classes.recipe) (`like verbnet-classes`) |
 
-The Generative Lexicon source reuses the class-file semantic recipe and has its own corpus trunk. Its presence in the recipe estate does not imply that every file has been admitted into a database.
+The class is the witness's trust class, one of those [6. Registries](../Sequence/Registries.md#65-declare-the-trust-classes) declares; its prior bounds the trust every attestation of the source plays at, and [9. Sources](../Sequence/Sources.md#the-estate-and-why-each-source-is-in-it) gives the class of each source.
 
 ## The class file
 
-| Piece | Written as | Laplace reads it as | Claim recorded | Specification |
-| --- | --- | --- | --- | --- |
-| `<VNCLASS ID="leave-51.2">` | the root | the class, its ID as written: the highway's type; the subject of what the file says | | `vn_schema-3.xsd` |
-| `<VNSUBCLASS ID="leave-51.2-1">` | under `SUBCLASSES` | the subclass, the same way; its place in the class | `[leave-51.2, VNSUBCLASS, leave-51.2-1]` | "VerbNet subclasses inherit features from the top class" |
-| `<MEMBER name="abandon" wn="abandon%2:40:00 abandon%2:38:00" grouping="abandon.01" fn_mapping="None" verbnet_key="abandon#1">` | under `MEMBERS` | the member is the verb its `name` writes; its place in the class; `wn`, `grouping` and `fn_mapping` said of the member in this class, never of the verb wherever it occurs: the rolesets and frame by their highway IDs, content as written, each a highway node the highway holds a slot for (`type grouping pbroleset`, `type fn_mapping fnframe`; `None` names no frame and says nothing); the sense keys, WordNet's internal pointers to lexicalizations, resolved through the highway perf-cache and recorded nowhere (as built, read as the concepts they resolve to, `type wn ili`); `verbnet_key` a pointer, read by nothing | `[leave-51.2, MEMBER, abandon]`, as built `[[leave-51.2, abandon], wn, concept]`, in the target the lexicalization strand in place of the concept, `[[leave-51.2, abandon], grouping, abandon.01]` | "Contains the list of verbs belonging to a specific class or subclass." |
-| `<THEMROLE type="Theme">` | under `THEMROLES` | the role, its type: the highway's `vnrole`; its place in the class; its restrictions said of it | `[leave-51.2, THEMROLE, Theme]`, `[Theme, Value, +]`, `[Theme, type, animate]` | "Thematic roles refer to the semantic relationship between a predicate and its arguments." |
-| `<FRAME>` with `DESCRIPTION`, `EXAMPLES`, `SYNTAX`, `SEMANTICS` | under `FRAMES` | of the class: each attribute under its name, each example's text under `EXAMPLE`; the frame one record | `[leave-51.2, primary, NP V NP.initial_location]`, `[leave-51.2, EXAMPLE, He deserted his post.]`, `[leave-51.2, value, has_location]` | "The syntactic frames in VerbNet provide a description of the different surface realizations…" |
-| `xmlns:xsi`, `xsi:noNamespaceSchemaLocation` | on the root | XML's own plumbing: nothing | nothing | |
-| an empty attribute value | | nothing | nothing | |
+> [!IMPORTANT]
+> **Class-scoped thematic role restrictions (`[vnclass, role]`):** In VerbNet XML, `<THEMROLE type="Theme">` appears inside a specific `<VNCLASS>` or `<VNSUBCLASS>` with selectional restrictions (`<SELRESTRS logic="or"><SELRESTR Value="+" type="animate"/>...`) that apply **only to `Theme` in that class or subclass** (whereas another class restricts `Theme` to `-animate` or `+concrete`). Selectional restrictions **must** attach to the class-scoped role `[vnclass, role]` (e.g., `[[leave-51.2, Theme], +animate]`), **never** to bare global `Theme` (`Batch 2` recipe fix: `classes.recipe` currently declares `thing THEMROLE type` without `within`, attaching `<SELRESTR>` attributes globally onto bare `Theme`).
 
-A thing's own attributes are one record, witnessed once; an element that is no thing is one record of what it says. Nothing is renamed, reordered, or filled in: what the file says of a frame is said of the class, under the attribute's name, because the recipe names no other thing for it to be said of.
+| Piece | Written as | Laplace reads it as | Target attestation & current recipe state | Specification |
+| --- | --- | --- | --- | --- |
+| `<VNCLASS ID="leave-51.2">` | root element | VerbNet class highway node (`thing VNCLASS ID`, `types vnclass`), keyed both by `leave-51.2` and numeric suffix `51.2` | class subject `leave-51.2` | `vn_schema-3.xsd` |
+| `<VNSUBCLASS ID="leave-51.2-1">` | under `SUBCLASSES` | subclass highway node (`thing VNSUBCLASS ID`), inheriting parent features | `[leave-51.2, subclass, leave-51.2-1]` | "VerbNet subclasses inherit features from the top class" |
+| `<MEMBER name="abandon" wn="abandon%2:40:00 ..." grouping="abandon.01" fn_mapping="Departing" verbnet_key="abandon#1">` | under `MEMBERS` | verb lemma scoped to its class/subclass (`[leave-51.2, abandon]`); `grouping` → `pbroleset`, `fn_mapping` → `fnframe` (`None` omitted), `wn` sense keys → `[lemma, eng, ILI]` lexicalization via `highway.bin` (`verbnet_key`, `xtag`, `descriptionNumber` omitted as pointers/bookkeeping) | `[leave-51.2, verb member, abandon]`, class-member links to `abandon.01`, `Departing`, and `[abandon, eng, ILI]` (`classes.recipe` currently resolves `wn` to `ILI` via `type wn ili` and attaches member attributes; scoping member sense links cleanly to `[vnclass, member]` + lexicalization closes in `Batch 2`) | "Contains the list of verbs belonging to a specific class or subclass." |
+| `<THEMROLE type="Theme">` with `<SELRESTRS>` / `<SELRESTR Value="+" type="animate"/>` | under `THEMROLES` | thematic role `Theme` (`vnrole` slot) **scoped to its enclosing `VNCLASS`/`VNSUBCLASS`** (`[leave-51.2, Theme]`), with boolean selectional restriction expressions (`+animate`, `logic="or"`) attested of `[vnclass, Theme]` | `[leave-51.2, Theme]` (`vnrole`), `[[leave-51.2, Theme], [+animate]]` (`Batch 2` recipe gap: `classes.recipe` currently uses `thing THEMROLE type` without `within`, colliding selectional restrictions onto global `Theme`) | "Selectional restrictions further specify semantic roles ... within each class" (`VerbNet_Guidelines.pdf`) |
+| `<FRAME>` (`DESCRIPTION`, `EXAMPLES`, `SYNTAX`, `SEMANTICS`) | under `FRAMES` | syntactic-semantic frame (`thing FRAME .`), holding `primary`/`secondary` phrase patterns, `EXAMPLE` sentences, `SYNTAX` (`NP` → `vnrole`), and `SEMANTICS` (`PRED` value/negation `bool="!"` and typed `ARG` tuples) | `[leave-51.2, syntactic frame, frame]`, `[frame, primary frame name, …]`, `[frame, example sentence, …]`, structured `PRED(ARG...)` semantics | "The syntactic frames in VerbNet provide a description of the different surface realizations…" |
+| `xmlns:xsi`, `xsi:noNamespaceSchemaLocation`, `verbnet_key`, `xtag`, `descriptionNumber` | XML schema & internal pointers | omitted (`omit`) | none | XML plumbing and internal cross-references |
 
 ## Relations
 
-As built, the relation of a claim above is the name of the field that carries its value: the element's or attribute's name. That is markup, not meaning. A relation is what the source means, resolved through the road classes, never the name of a field, column, attribute, or layer: a tagset value is a value of its tagset with its attested equivalence, a per-span label belongs in the sentence's annotation layer, and a pointer's attribute name is in no claim, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field).
-
-| Claim, as built | Its relation, as built | What it means: the target |
-| --- | --- | --- |
-| `[leave-51.2, VNSUBCLASS, leave-51.2-1]` | the element's name | the subclass of the class, which inherits its features, "VerbNet subclasses inherit features from the top class" |
-| `[leave-51.2, MEMBER, abandon]` | the element's name | the verb is a member of the class |
-| `[[leave-51.2, abandon], wn, concept]` | the attribute's name, `wn` | the WordNet sense the member has in the class: the lexicalization its sense key points at, the key resolved and in no claim |
-| `[[leave-51.2, abandon], grouping, abandon.01]`, `fn_mapping` | the attribute's name | a highway mapping of the member in its class to that PropBank roleset or FrameNet frame: an interchange strand |
-| `[leave-51.2, THEMROLE, Theme]` | the element's name | the class has the thematic role, "the semantic relationship between a predicate and its arguments" |
-| `[Theme, Value, +]`, `[Theme, type, animate]` | the attributes' names | one selectional restriction on the role in that class, `+animate`, the two values together |
-| `[leave-51.2, primary, NP V NP.initial_location]`, `[leave-51.2, EXAMPLE, …]`, `[leave-51.2, value, has_location]` | the attribute's or element's name | of the frame, not the class: its primary description, its example, and a predicate of its semantics, as VerbNet documents its frames |
-
-## Not read
-
-`vn_schema-3.xsd` and the README match no recipe and are not read.
+`classes.recipe` already maps `VNSUBCLASS`, `MEMBER`, `FRAME`, `DESCRIPTION.primary`, `DESCRIPTION.secondary`, and `EXAMPLE` onto documented VerbNet relations (`subclass`, `verb member`, `syntactic frame`, `primary frame name`, `example sentence`) and registers `vnclass` and `vnrole` slots plus `vnclass`→`ili` and `vnclass`→`fnframe` highway edges. Closing the `Batch 2` gaps scopes `THEMROLE` and `MEMBER` via `within` (`[vnclass, role]` and `[vnclass, verb]`), groups each `<SELRESTR Value="+" type="animate"/>` and `<PRED>`/`<ARG>` tuple intact, and resolves `wn` sense keys to `[lemma, eng, ILI]` lexicalization strands.

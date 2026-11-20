@@ -24,12 +24,12 @@ The world is the tool; firmware is the hand that uses it. Knowledge records what
 - **Out:** the declared policy values.
 - **From:** `docs/specs/39_Personality_Firmware.md` §1.
 
-### 18.3 Give it a content identity
+### 18.3 Give it a content identity (and allow turn-level prompt framing without privilege escalation)
 
-- **In:** the declaration of 18.2.
-- **Do:** the image is a Laplace composition like any other content: its identity is the content address of its composition, its class and every policy value in the registry's order; its parent is attested lineage and never hashed; a set-valued policy is one collection of [12. Attestations](Attestations.md) operation 12.8. Images are immutable: changing any value mints a new identity, with the previous one recorded as its parent, and historical versions stay addressable and replayable. An image that names an unregistered kind is rejected. Text never installs firmware: "be aggressive" or "you are a pirate" in a prompt is content, observed like any prompt, and installs no policy value, decision rule, resource, or privilege.
-- **Out:** `firmware_id`.
-- **From:** `docs/specs/39_Personality_Firmware.md` §1.1; `engine/manifest/firmware.toml`.
+- **In:** the declaration of 18.2, plus any `system`, `developer`, or user instructions on the active turn.
+- **Do:** the `.firmware` image is a Laplace composition like any other content: its identity is the content address of its policy declarations; its parent is attested lineage and never hashed; changing any stored policy mints a new `firmware_id` while historical versions stay addressable and replayable. Distinguish **turn-level presentation and framing instructions** from **immutable firmware safety and authority boundaries**: `system`, `developer`, and user prompt instructions legitimately steer turn-level output format (JSON, Markdown, code-only, bullet list), target language, verbosity/conciseness, register, and conversational persona within `ORIENT`, `STEER`, and `REALIZE` for that request or session without mutating the stored `.firmware` image on disk. What prompt text can **never** do is escalate capabilities or authority ([16. Authority](Authority.md)), widen the compute envelope ([17. Envelope](Envelope.md)), bypass governance boundaries, or alter `consensus` standing.
+- **Out:** `firmware_id`, plus turn-scoped presentation/framing bindings.
+- **From:** `docs/specs/39_Personality_Firmware.md` §1.1; [Reference: Firmware](../Reference/Firmware.md).
 
 ### 18.4 Decide which operation runs
 
@@ -48,23 +48,25 @@ The world is the tool; firmware is the hand that uses it. Knowledge records what
 ### 18.6 Set the work: *k*, λ, hops, fanout, steps, stride
 
 - **In:** the reading of [15. Web](Web.md) operations 15.3 to 15.5 and the envelope of [17. Envelope](Envelope.md).
-- **Do:** *k*, how far below the rating a standing must still hold; λ, the tax on another hop; the fan on a hop and on a search, and which entities are fan-limited nodes, reached and not crossed; how many coupling rounds and semantic hops; the meeting hops, fanout, and frontier for a joint meeting of constituents; the beam and depth of a walk; the emission steps and the ordinal-continuation stride; the salience floor below which a relation is a filter. One firmware carries *k* = 2, always the top, fan 4,096 on a hop and 512 on a search, 8 hops, λ = 0.05. The default image carries salience floor 0.3, semantic hops 2, fanout 8, meeting hops 2, meeting fanout 256, meeting frontier 4,096, steps 128, max stride 5. The compute envelope is the ceiling, and firmware chooses how much of it to spend; it can never spend more.
+- **Do:** *k*, how far below the rating a standing must still hold; λ, the tax on another hop; the top-standing `fanout` kept on a hop and on a search (filtering unconstrained enum nodes via `mask` while crossing high-degree content hubs via top-standing scans, [15. Web](Web.md) operation 15.5); how many coupling rounds and semantic hops; the meeting hops, fanout, and frontier for a joint meeting of constituents; the beam and depth of a walk or lookahead search; and the emission steps and ordinal-continuation stride. The compute envelope is the hard ceiling, and firmware chooses how much of it to spend; it can never spend more.
 - **Out:** the work numbers.
-- **From:** [Personality firmware: How a standing is read](../Semantics/Firmware.md#how-a-standing-is-read); [Personality firmware: One set of decisions](../Semantics/Firmware.md#one-set-of-decisions); `docs/specs/39_Personality_Firmware.md` §3 and §10; `engine/manifest/firmware.toml`.
+- **From:** [Personality firmware: How a standing is read](../Semantics/Firmware.md#how-a-standing-is-read); [Personality firmware: One set of decisions](../Semantics/Firmware.md#one-set-of-decisions); `docs/specs/39_Personality_Firmware.md` §3 and §10; [Reference: Firmware](../Reference/Firmware.md).
 
-### 18.7 Set the refusals and the exploration
+### 18.7 Set domain/plane scope, exclusions, and exploration
 
-- **In:** the kinds of strand.
-- **Do:** which kinds of strand are refused before they are scored: layout, punctuation, a part of speech, a witness, a language. A firmware that does not navigate through layout and punctuation drops `SpaceAfter` and `punct` out of the list; the standings stay, and another human's firmware keeps them. How aggressively gaps are explored: extra routing rounds toward unresolved obligations. How aggressively contradictions are sought: routing refutation readers, not only support. Firmware never supplies a relation or provider mask before the query-relative field is computed; a caller's hard scope is a caller contract beside firmware, not firmware.
-- **Out:** the restriction and the exploration policy.
-- **From:** [Research: Semantics Experiments: What was measured on one entity](../Research/Semantics-Experiments.md#what-was-measured-on-one-entity); `docs/specs/39_Personality_Firmware.md` §3, ROUTE row, and §4 item 5.
+- **In:** the eligible planes, mask banks, providers, and strand kinds.
+- **Do:** declare which domain planes, `mask` banks, and calculation providers this firmware engages (`chess.firmware` scoping `COUPLE` and `SCAN` directly to chess board, transition, opening, Syzygy, and engine planes without scanning unrelated corpora; `code.firmware` engaging AST, symbol, and toolchain planes; `deductive`..`adversarial` weighting deductive, taxonomic, causal, or refutation channels), always intersected with—and never widening—the caller's hard authority scope ([16. Authority](Authority.md) operation 16.4). Likewise declare which noisy strand kinds are excluded (such as raw punctuation or layout edges in semantic hops), how aggressively unresolved obligations are pursued across extra routing rounds, and whether refutation channels are actively probed alongside support.
+- **Out:** the firmware's domain/plane scope, exclusions, and exploration policy.
+- **From:** [Reference: Firmware](../Reference/Firmware.md); `docs/specs/39_Personality_Firmware.md` §3.
 
-### 18.8 Set the role weights
+### 18.8 Set contextual and lexical-fallback role weights
 
-- **In:** the parts of speech and syntactic links of context words.
-- **Do:** role trust is a weight on which kind of word is allowed to pull, when a context word is doing the pulling. It is not a column of the claim. Hand-drafted weights: nouns, adjectives, and numerals 1.0; proper nouns 0.75; verbs, adverbs, adpositions, and particles 0.5; pronouns, determiners, coordinating conjunctions, and punctuation 0.25; subordinating conjunctions 0.05; auxiliaries 0. The target's head or dependent 1.0; another dependent of the same head 0.5; anywhere else in the sentence 0.25. Those weights are a personality; fitting them is a different personality; neither is a change to the records. Whether firmware may re-weight relation salience or only read the registry's rank is open, question Q3 in [30. Conflicts](Conflicts.md). As built, the part of speech the weight applies to is the word's reading where it stands in the observation, read from the treebank layers aligned with the observations that hold the word and its neighbour, never the word's strongest claim anywhere; with no such reading the word stays an obligation ([30. Conflicts](Conflicts.md) S3). The syntactic-link weights are not built.
-- **Out:** the role weights.
-- **From:** [Personality firmware: Weights that are not standings](../Semantics/Firmware.md#weights-that-are-not-standings); [Research: Trust: Role trust in word sense disambiguation](../Research/Trust.md#role-trust-in-word-sense-disambiguation).
+- **In:** the occurrences of a prompt or context window, aligned parse layers, and word-level lexical/UD POS claims.
+- **Do:** role weight governs how hard each occurrence pulls as a content obligation versus grammatical framing; it is a `.firmware` decision, never a column of `consensus`. Typical conversational weights assign content nouns, adjectives, and numerals `1.0`, proper nouns `0.75–1.0`, lexical verbs and adverbs `0.5–0.75`, pronouns, determiners, conjunctions, adpositions, and punctuation `0.05–0.25`, and grammatical auxiliaries `0.0–0.1`. Determine each occurrence's part of speech in two tiers so stop-words **never** default to `1.0` obligations when an exact word pair has not been seen in a treebank:
+  1. **Contextual alignment first:** where aligned sentence/phrase parse layers or local syntactic context disambiguate the occurrence in place (distinguishing `"can"` as `NOUN` after `"a"` from `"can"` as `AUX` before a bare verb, or `"work"` as `VERB` after `"does ..."`), use that contextual POS reading;
+  2. **Word-level lexical/UD POS fallback:** whenever no exact local bigram or span parse matches (`"does lightning"` in `"How does lightning work?"`), fall back immediately to attested word-level lexical and UD POS standings (`[lightning, NOUN]`, `[does, AUX]`, `[How, ADV]`, `[a, DET]`, including single-codepoint Tier-0 words from [12. Attestations](Attestations.md) operation 12.1). Content words (`lightning`) therefore keep full obligation weight while interrogative and auxiliary frame words (`How`, `does`, `is`, `the`, `of`) drop to frame weight instead of matching unrelated sentences like `"How does this shirt fit?"`. Only genuinely unknown out-of-vocabulary identifiers or proper names with zero lexical POS claims default to content weight (`0.75–1.0`).
+- **Out:** context-sensitive role weights with guaranteed word-level lexical POS fallback.
+- **From:** [Personality firmware: Weights that are not standings](../Semantics/Firmware.md#weights-that-are-not-standings); [Research: Trust: Role trust in word sense disambiguation](../Research/Trust.md#role-trust-in-word-sense-disambiguation); [30. Conflicts](Conflicts.md) S3.
 
 ### 18.9 Set the election order and the sufficiency bound
 
@@ -87,18 +89,23 @@ The world is the tool; firmware is the hand that uses it. Knowledge records what
 - **Out:** the measure and its tolerance.
 - **From:** [Personality firmware: The decision tree](../Semantics/Firmware.md#the-decision-tree); [Query: Shape](../Query.md#shape); [Research: Numerics: Trajectory measures](../Research/Numerics.md#trajectory-measures).
 
-### 18.12 Set the fact branch and the dispositions
+### 18.12 Set the fact branch and non-silent ambiguity dispositions
 
-- **In:** the set of strands.
-- **Do:** whether a high-trust curation in the set is returned as one fact, the rest of the set held back. One branch returns a single member as a fact when that member was curated by a mandate-class witness rather than merely observed: on the claims that hold `Paris`, the head at *k* = 2 is `[Paris, UPOS, PROPN]` at 0.991 from 1,180 matches, while a claim that starts at stock and receives one attestation at trust 1.0 reads as 0.138 at *k* = 2 and five such attestations as 0.505, so usage outranks a new curated fact on the sort and returning the fact is a decision of the tree. The disposition policy says what to do with an ambiguous, impossible, exhausted, or unauthorized orientation: abstain, ask, retain the alternatives, or spend more coupling. Today an ambiguous orientation finalizes with that disposition and emits nothing; whether the default should ask a clarifying question is open, Q5.
-- **Out:** the fact rule and the disposition rules.
-- **From:** [Personality firmware: The decision tree](../Semantics/Firmware.md#the-decision-tree); `docs/specs/39_Personality_Firmware.md` §3, ORIENT and REALIZE rows, §9 Q5.
+- **In:** the set of strands and candidate interpretations.
+- **Do:** decide when a curated fact leads directly and how polysemy, partial obligation coverage, or contested evidence is expressed—**never aborting silently with `budget = 0` or empty output merely because multiple valid senses tie or a multi-part prompt spans several claims**:
+  1. When one interpretation or sense leads clearly by joint contextual fit, empirical usage (`tokens` / `tag_cnt`), and conservative standing, answer directly from that strongest attested structure (and compose multiple clauses when different obligations are grounded by complementary attested claims);
+  2. When multiple senses are genuinely co-equal on an underspecified prompt or independent high-trust witnesses actively disagree, surface the primary attested senses or contested perspectives explicitly with their provenance; or
+  3. When a user action or narrow query requires disambiguation before proceeding, ask one concise clarifying question naming the alternatives.
+
+  Reserve `ABSTAIN` strictly for when **zero relevant witnessed evidence exists** in the authorized world (or when [16. Authority](Authority.md) forbids disclosure) ([30. Conflicts](Conflicts.md) Q5).
+- **Out:** the fact rule and non-silent ambiguity/partial-coverage dispositions.
+- **From:** [Personality firmware: The decision tree](../Semantics/Firmware.md#the-decision-tree); `docs/specs/39_Personality_Firmware.md` §3, ORIENT and REALIZE rows; [30. Conflicts](Conflicts.md) Q5.
 
 ### 18.13 Set the voice
 
-- **In:** the realization policy.
-- **Do:** register, form, verbosity, language preference, and how an abstention or a partial result is worded. Firmware never decides what is disclosed beyond realization authority, never reclassifies the selected act, and never turns an unresolved search into answer content.
-- **Out:** the voice.
+- **In:** the firmware's realization defaults and any turn-level `system`/`developer`/user style instructions from 18.3.
+- **Do:** set register, output format (prose, Markdown, JSON, code), verbosity, target language preference, and clear wording for contested evidence or genuine abstention. Turn-level style, language, verbosity, and persona instructions refine realization within the principal's realization authority without reclassifying unsupported guesses into facts.
+- **Out:** the voice and output-format contract.
 - **From:** `docs/specs/39_Personality_Firmware.md` §3, REALIZE row.
 
 ### 18.14 Record what it can never do
@@ -108,12 +115,12 @@ The world is the tool; firmware is the hand that uses it. Knowledge records what
 - **Out:** the nine prohibitions, enforced before any provider runs.
 - **From:** `docs/specs/39_Personality_Firmware.md` §4.
 
-### 18.15 Register the default first
+### 18.15 Ship baseline `.firmware` profiles
 
-- **In:** today's behaviour.
-- **Do:** until other images exist, the default firmware is today's behaviour, named: class default; coupling and routing at semantic hop limit 2 and fanout 8; the election order of the native comparator with the bound rating ∓ 2·RD, stride 5, steps 24 in the SQL defaults and 128 in the manifest; spread 0.7 or 0.6 and top_k 10 with the seed from the prompt; ambiguity or exhaustion finalizes without emission; realization through the chat scaffold templates. Registering it changes no output; it makes every current pass attributable, and it is the parent of every later image.
-- **Out:** the first image.
-- **From:** `docs/specs/39_Personality_Firmware.md` §10; `engine/manifest/firmware.toml`.
+- **In:** the governed directive set of [6. Registries](Registries.md) operation 6.9.
+- **Do:** ship `firmware/program.firmware` as the attributable baseline conversational profile alongside specialized profiles (`deductive`, `inductive`, `abductive`, `constructive`, `adversarial`, `chess`), each content-addressed: contextual + lexical-fallback POS role weights (18.8), top-standing hub traversal (`fanout` without hub dead-ends, 18.6), conservative standing `rating − k·RD`, multi-clause composition over attested claims and trajectories rather than rigid scaffold templates, non-silent polysemy/dispute handling (18.12), and `ABSTAIN` reserved strictly for zero relevant witnessed evidence.
+- **Out:** `program.firmware` and the shipped reasoning/domain `.firmware` suite.
+- **From:** [Reference: Firmware](../Reference/Firmware.md); `docs/specs/39_Personality_Firmware.md` §10.
 
 ### 18.16 Load it once per pass
 

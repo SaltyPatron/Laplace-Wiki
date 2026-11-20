@@ -10,12 +10,12 @@ Ingestion is the learning process. A training-corpus pass is admit, decompose, w
 
 ## Operations
 
-### 23.1 Run OODA over the forward program
+### 23.1 Run Gödel OODA over the forward program
 
 - **In:** a pass and what followed it.
-- **Do:** OBSERVE is RESOLVE: the exact observation, discourse, open obligations, prior consequences. ORIENT is COUPLE then ORIENT: the typed response field and the joint interpretation, under the firmware's goals. DECIDE is ROUTE, SCAN, COMPOSE, PROPOSE, STEER, SELECT, under the firmware's policy. ACT is REALIZE and any effect under the authority and effect envelope. OBSERVE CONSEQUENCE is WITNESS of what happened, and the later outcomes that bear on it. OODA controls action selection and consequence closure; it does not create a new calculus, source truth, or a reusable instruction by itself.
-- **Out:** the loop, `observe → couple/orient → decide/execute → realize → witness → update`, never retrieve-once-and-drain.
-- **From:** `docs/specs/39_Personality_Firmware.md` §8.1; `docs/INVENTION.md` §13.
+- **Do:** OBSERVE is `RESOLVE`: the exact in-memory observation, prior discourse referents, open obligations, and prior consequences. ORIENT is `COUPLE` then `ORIENT`: the typed response field and weighted joint interpretation under the firmware's goals, keeping `BELIEF ≠ RISK ≠ ACTION` ([16. Authority](Authority.md) operation 16.7). DECIDE is `ROUTE`, `SCAN`, `COMPOSE`, `PROPOSE`, `STEER`, `SELECT` under the firmware's policy, updating active clause and residual state in C memory without per-word database round-trip storms ([20. Forward](Forward.md) operation 20.12). ACT is `REALIZE` and any authorized external or verifier effect (such as a compiler/test run in [26. Code](Code.md) or a move transition in [27. Chess](Chess.md)). OBSERVE CONSEQUENCE is end-of-turn or post-verifier `WITNESS` of what actually happened, turning failures into negative attestations that steer the next iteration away from dead branches.
+- **Out:** the consequence-closed OODA loop (`observe → couple/orient → decide/compose → act/verify → witness`), fast in memory within a turn and durable across turns.
+- **From:** `docs/specs/39_Personality_Firmware.md` §8.1; `docs/INVENTION.md` §13; `docs/INVENTOR_RECORD.md` §Gödel engine.
 
 ### 23.2 Keep the three rates apart
 
@@ -76,7 +76,7 @@ Ingestion is the learning process. A training-corpus pass is admit, decompose, w
 ### 23.10 Activate by authority, fill by reality
 
 - **In:** a candidate that survived 23.9.
-- **Do:** it becomes active only by explicit activation authority, as a new version whose predecessor stays replayable. A predicted occupant does not fill its own vacancy: reality supplies an occurrence, testimony, or experiment outcome. A firmware version proposed this way is activated the same way and rated afterward by 23.4. Whether "Gödel engine" names this discovery lane alone or the whole self-referential loop is conflict C3.
+- **Do:** it becomes active only by explicit activation authority, as a new version whose predecessor stays replayable. A predicted occupant does not fill its own vacancy: reality supplies an occurrence, testimony, or experiment outcome. A firmware version proposed this way is activated the same way and rated afterward by 23.4. Together, runtime consequence-driven OODA (23.1–23.5) and structural fray/bridge discovery (`COMBINE`, 23.7–23.10) form Laplace's unified Gödel OODA architecture ([30. Conflicts](Conflicts.md) C3).
 - **Out:** the activated extension, or a rejected candidate kept as negative knowledge.
 - **From:** `docs/specs/39_Personality_Firmware.md` §8.3 items 4 and 5, §9 C3.
 

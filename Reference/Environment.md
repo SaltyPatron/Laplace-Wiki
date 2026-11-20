@@ -15,10 +15,11 @@ One file, `Laplace-Operations/laplace.env`, defines where everything is; every b
 | `LAPLACE_DEPS` | `/repos/deps` | `laplace.env` | installed dependencies |
 | `LAPLACE_DATA` | `/vault/Data` | recipe `root` lines (`$LAPLACE_DATA`), `laplace.env` | corpora and the Unicode data |
 | `LAPLACE_MODELS` | `/vault/models` | recipe `files` lines | model checkpoints and tokenizers |
-| `LAPLACE_NATIVE` | `$LAPLACE_SRC/Laplace-Native` | the extension's and engine's `CMakeLists.txt` | where to `add_subdirectory` the library from |
+| `LAPLACE_NATIVE` | `$LAPLACE_SRC/Laplace-Native` | `native-package.sh`, `build.sh` | the `Laplace-Native` source checkout packaged into `LaplaceNative_DIR` and consumed via `find_package(LaplaceNative CONFIG REQUIRED)` by `Laplace-postgres`, `Laplace-Engine`, and `Laplace-MCP` |
 | `LAPLACE_RECIPES` | `$LAPLACE_SRC/Laplace-Engine/recipes` | `laplace ingest`, `sources`, `tree`; `firmware_path()` | the recipes directory, holding `order` and one directory per source |
-| `LAPLACE_FIRMWARE` | `$LAPLACE_SRC/Laplace-Engine/firmware/program.firmware` | `laplace pull`, `turn`, `hop`, `translate`, `degrees` | the firmware a pull runs under; `--firmware FILE` overrides it per command |
+| `LAPLACE_FIRMWARE` | `$LAPLACE_SRC/Laplace-Engine/firmware/program.firmware` | `laplace firmware`, `pull`, `turn`, `hop`, `translate`, `degrees` | the firmware a pull runs under; `--firmware FILE` overrides it per command |
 | `LAPLACE_HIGHWAY` | `${LAPLACE_TIER0%.bin}.highway` | `lp_highway_path()` in every program and backend; `laplace highway` writes it | the highway perf-cache: the types the resources list, and the mappings between them |
+| `LAPLACE_CHESS` | `${LAPLACE_TIER0%.bin}.chess` | `chess_cache_path()` in the engine and `laplace.chess` in every backend; `laplace chess` writes it | the `LPPC0001` chess vocabulary and transition perf-cache |
 | `LAPLACE_MANIFEST` | Laplace-Native's `manifest` (compiled in, `LAPLACE_MANIFEST_DEFAULT`) | `laplace highway` | `banks.tsv` and the frozen slots `slots/LIST.tsv`, which the highway reads and writes back |
 | `LAPLACE_TIER0` | `$LAPLACE_WORK/tier0/tier0.bin`; compiled default `/repos/work/tier0/tier0.bin` | `lp_tier0_path()` in every program and backend; `laplace tier0` writes it | the tier-0 perf-cache |
 | `LAPLACE_FLAGS` | tier 0's path with `.flags` in place of its ending | `lp_flags_path()` | the flags that go with tier 0; its layout is the same path plus `.layout` |
@@ -58,7 +59,7 @@ One file, `Laplace-Operations/laplace.env`, defines where everything is; every b
 | Variable | Default | Read by | Effect |
 | --- | --- | --- | --- |
 | `OMP_NUM_THREADS`, `MKL_NUM_THREADS` | `nproc`, set by `laplace.env` | OpenMP and MKL kernels | how many cores the kernels use; a shell that sets them to 1 makes every kernel single-threaded, measured at 110.8 s against 19.9 s |
-| `LAPLACE_ISA` | unset | `lp_cpu_active()` | `scalar`, `sse2`, `avx2`, or `avx512` lowers the dispatch level, never raises it past what the CPU has; the native test suite runs the matching test at each level |
+| `LAPLACE_ISA` | unset | `lp_cpu_active()` | `scalar`, `sse2`, `avx2`, `avxvnni`, `avx512`, or `avx512vnni` lowers the dispatch level, never raises it past what the CPU has; the native test suite runs the matching tests across levels |
 | `LAPLACE_BATCH_MB` | 1024 | `laplace ingest` | the bytes of files decomposed per batch before the node table is written and emptied |
 | `LAPLACE_ROOM_FACTOR` | 65 | `laplace ingest` with no source named | for a source whose `source` file gives no `room`, the multiplier of its files' size taken as what it will take in the database |
 | `LAPLACE_TRUNKS` | unset | `laplace ingest` | when set, prints each file's trunk ID after the recompose check |
@@ -68,13 +69,14 @@ One file, `Laplace-Operations/laplace.env`, defines where everything is; every b
 
 | Setting | Set by | Value | Read by |
 | --- | --- | --- | --- |
-| `laplace.tier0` | `laplace deploy`: `ALTER DATABASE … SET laplace.tier0 = '<path>'` | `lp_tier0_path()` at deploy time | every backend, which memory-maps the file on first use; `laplace_fingerprint()` and `laplace status` report it |
-| `laplace.flags` | `laplace deploy`: `ALTER DATABASE … SET laplace.flags = '<path>'` | `lp_flags_path()` | the flag functions of [SQL](SQL.md#the-flags-that-go-with-tier-0) |
-| `laplace.highway` | `laplace deploy`: `ALTER DATABASE … SET laplace.highway = '<path>'` | `lp_highway_path()` | the highway's functions of [SQL](SQL.md) |
+| `laplace.tier0` | `laplace deploy --configure-server-cache`: `ALTER DATABASE … SET laplace.tier0 = '<path>'` | `lp_tier0_path()` at deploy time | every backend, which memory-maps the file on first use; `laplace_fingerprint()` and `laplace status` report it |
+| `laplace.flags` | `laplace deploy --configure-server-cache`: `ALTER DATABASE … SET laplace.flags = '<path>'` | `lp_flags_path()` | the flag functions of [SQL](SQL.md#the-flags-that-go-with-tier-0) |
+| `laplace.highway` | `laplace deploy --configure-server-cache`: `ALTER DATABASE … SET laplace.highway = '<path>'` | `lp_highway_path()` | the highway's functions of [SQL](SQL.md) |
+| `laplace.chess` | `laplace deploy --configure-server-cache`: `ALTER DATABASE … SET laplace.chess = '<path>'` | `chess_cache_path()` | the chess perf-cache functions (`laplace_chess_*`) of [SQL](SQL.md) |
 | `synchronous_commit` | every connection of `load()` | `off` | the bulk session |
 | `plan_cache_mode` | `db_ask()` on its first prepared statement per connection | `force_generic_plan` | the read commands' prepared statements, planned once per connection |
 | `client_min_messages` | `db_connect()` | `warning` | every connection |
-| `enable_parallel_append` | `laplace deploy` | `off` for the database | the planner |
+| `enable_parallel_append` | `laplace deploy` | `off` for the `laplace` database (while `tune-pg.sh` leaves `on` at cluster level and analytical sessions can `SET LOCAL enable_parallel_append = on`) | the planner |
 | `parallel_workers` | the extension's install script | 0 on every `physicality_t*` partition | the planner |
 | statistics on `physicality.path` | the extension's install script | 0 | `ANALYZE` |
 | `maintenance_work_mem` | `laplace index` | 8 GB for the session | index builds |

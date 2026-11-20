@@ -2,65 +2,45 @@
 
 The Engine reads PGN collections through its compiled chess grammar and Lichess opening tables through a TSV recipe with injected PGN move text.
 
-## Source
+## Sources
 
-The Engine's [`recipes/order`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/order) names four sources:
+[`recipes/order`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/order) admits five PGN and opening sources ahead of `syzygy` ([Syzygy](Syzygy.md)):
 
-| Source | Packaging | Recipe |
-| --- | --- | --- |
-| `chess-com` | Chess.com PGN | [Chess.com](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/chess-com) |
-| `twic` | The Week in Chess PGN | [TWIC](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/twic) |
-| `lumbras-gigabase` | Lumbras Gigabase PGN | [Lumbras Gigabase](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/lumbras-gigabase) |
-| `openings` | Lichess TSV tables a.tsv through e.tsv | [Openings](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/openings) |
+| Source | Witness & trust class | Packaging | Recipe |
+| --- | --- | --- | --- |
+| `chess-com` | `Chess.com` source trunk (`StructuredCorpus`) | Chess.com PGN archives | [`recipes/chess-com/`](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/chess-com) |
+| `twic` | `The Week in Chess` source trunk (`AcademicCurated` / OTB archive) | TWIC PGN issues | [`recipes/twic/`](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/twic) |
+| `lumbras-gigabase` | `Lumbra's Gigabase` source trunk (`StructuredCorpus`) | Lumbra's Gigabase PGN archives | [`recipes/lumbras-gigabase/`](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/lumbras-gigabase) |
+| `laplace-chess` | `Laplace` runtime witness (`AppDerived`) | PGN games played by Laplace in web, Lichess, Arena, and `fastchess` sessions | [`recipes/laplace-chess/`](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/laplace-chess) |
+| `openings` | `Lichess chess-openings` source trunk (`AcademicCurated`) | Lichess TSV tables `a.tsv` through `e.tsv` (`eco`, `name`, `pgn`) | [`recipes/openings/`](https://github.com/SaltyPatron/Laplace-Engine/tree/main/recipes/openings) |
 
-Each source has one corpus witness trunk. Players, event names, tags and annotations are content under its records; they do not create additional corpus witnesses. FIDE snapshots need their own recipe; endgame tablebases are the `syzygy` source ([Syzygy](Syzygy.md)).
+Each source has one corpus witness trunk; players, events, sites, clocks, and annotations are content under its records and never mint extra corpus witnesses. The compiled `tree-sitter-pgn` grammar feeds `Laplace-Engine/src/chess.c` and `src/chess_rules.c`, composing canonical BLAKE3 positions (`[board, turn, castling, ep]`), moves, `[P, M, P']` transitions, and full game trajectories (`[P0, M0, P1, …]`). Decisive and drawn completed games score their transition series by game outcome (`1-0`, `0-1`, `1/2-1/2`); unfinished games (`*`) record the trajectory without an outcome; opening rows bind an `[eco, name]` classification onto the replayed line and terminal `position` (`product position`) without inventing a game result.
 
-The compiled PGN grammar feeds the native chess reducer, which composes transitions from the before-position, move and after-position. Completed-game results supply the carriers' win, loss or draw outcomes. An unfinished result supplies no played outcome. Opening rows instead associate an ordered SAN line with its name and ECO code, using a chained PGN move-sequence grammar over the TSV field; no result marker or played-game outcome is invented.
-
-## Format
+## Format & player identity (`FIDE ID` highway node vs. literal PGN tags)
 
 | Record | Fields in order | What a record is | Specification |
 | --- | --- | --- | --- |
-| PGN game | Event, Site, Date, Round, White, Black, Result, then the movetext | A tag-pair section followed by a movetext section. For export format the Seven Tag Roster appears in that order before any other tag. Other tags may follow. The game termination marker concludes the movetext and matches Result. | [PGN specification](https://github.com/fsmosca/PGN-Standard/blob/master/PGN-Standard.txt) sections 8.1.1 and 8.2, opened as PGN-Standard.txt. |
-| opening row | eco, name, pgn | One opening: its ECO code, its English name, and a PGN move sequence. The README also describes uci and epd in a dist/ build that is not in this tarball. | README.md and a.tsv inside the Lichess openings tarball. The same header is on the TSV tables. |
-| FIDE player | FideId, Name, Federation, Sex, Title, Standard, Rapid, Blitz, BirthYear, Flag | One object in the Players array of the snapshot. What Standard, Rapid, and Blitz mean beyond those key names is not defined on a page opened for this row. | rating-list.snapshot.json.gz |
-| files-345.txt line | one URL | The download URL of one table file. | files-345.txt |
+| PGN game | Seven Tag Roster (`Event`, `Site`, `Date`, `Round`, `White`, `Black`, `Result`), optional supplemental tags (`FEN`, `Variant`, `WhiteElo`, `BlackElo`, `WhiteFideId`, `BlackFideId`, `TimeControl`, `ECO`), then movetext | Tag-pair metadata + replayed move trajectory (`[P0, M0, P1, …]`) and `[P, M, P']` transition attestations | [PGN Standard](https://github.com/fsmosca/PGN-Standard/blob/master/PGN-Standard.txt) §8.1.1, §8.2 |
+| Opening row (`a.tsv`..`e.tsv`) | `eco`, `name`, `pgn` | ECO code and English opening name bound to the replayed PGN move trajectory and resulting position | Lichess `chess-openings` TSV specification |
+| FIDE rating-list player (`Batch 3` recipe queue) | `FideId`, `Name`, `Federation`, `Sex`, `Title`, `Standard`, `Rapid`, `Blitz`, `BirthYear`, `Flag` | Official FIDE player record (`rating-list.snapshot.json.gz`), queued for declarative `.recipe` admission in `Batch 3` (`Laplace#833`) | FIDE Rating List snapshot |
 
-A FIDE ID is a publicly known identifier used across sources and languages, and so a highway node: the node for a player, as an ILI is for a concept. A player's `Name` in the rating list, the names a PGN writes in its `White` and `Black` tags, and the player's names in every other language and script are lexicalizations of that node, and the languages the player speaks are attested relations, [27. Chess](../Sequence/Chess.md).
+Under the Recording Law ([INVENTOR_RECORD](../Repositories/Laplace/docs/INVENTOR_RECORD.md), [27. Chess](../Sequence/Chess.md), [30. Conflicts](../Sequence/Conflicts.md) R4, S1), player identity and Elo ratings follow two clean rules with zero contradiction:
+
+1. **FIDE IDs as shared highway nodes vs. unlinked PGN name tags:** A `FideId` (`1503014`) is a publicly shared identifier across sources and scripts, and therefore a **highway node** for that human player—exactly as an `ILI` is for a concept. When `rating-list.snapshot.json.gz` (queued `.recipe`) or PGN `WhiteFideId`/`BlackFideId` tags are present, the player's `Name` in FIDE, localized script spellings, and PGN `"Carlsen, Magnus"` tag strings link as attested name lexicalizations onto that `FideId` node. Where an online or historical PGN game carries only `White` and `Black` strings and no `FideId`, the recipe records the exact literal tag text written in the PGN—never fabricating a synthetic player hash and never guessing entity merges on ambiguous strings.
+2. **Source Elo tags ≠ Laplace Glicko-2 `consensus`:** `WhiteElo`, `BlackElo`, and FIDE `Standard`/`Rapid`/`Blitz` numbers are **source-stated rating observations** (`INVENTOR_RECORD.md:223–225`), strictly separated from Laplace's Glicko-2 claim `consensus` over `[P, M, P']` transitions and from `fastchess` + `Ordo` engine-ladder Elo ([30. Conflicts](../Sequence/Conflicts.md) K1).
 
 ## Record kinds
 
-A PGN file can hold the kinds of record below. This table describes their intended meanings; the presence of a PGN recipe does not by itself verify every variant, annotation convention or puzzle behavior.
-
-| Kind | How the source marks it | What it is |
+| Kind | How the source marks it | Laplace representation |
 | --- | --- | --- |
-| Played game | the Seven Tag Roster and a result of `1-0`, `0-1` or `1/2-1/2` | A line (the ordered trajectory of positions and moves, shared by every game that plays it) and an occurrence: players, date, event, site, round, clocks and result. Every tag is a statement; none is dropped and none is hashed into an identity. |
-| Custom start | `[SetUp "1"]` with `[FEN "…"]` | The trajectory begins at that position instead of the standard one. |
-| Chess960 / freestyle | `[Variant "Chess960"]` with SetUp and FEN | The variant is a ruleset, and rules are firmware ([28. Games](../Sequence/Games.md)): it governs which moves are legal, castling above all, and is never part of a position's identity. The start position is P0. |
-| Rule variant | `[Variant "…"]` naming a law: Crazyhouse, King of the Hill, Three-check (chess.com writes `3-check`), Atomic, Antichess, Horde, Racing Kings, From Position | Each is a law in the Engine's `firmware/chess.firmware`, declared as axes (castling, drops, explodes, captures forced, king unroyal, king promotes, pawns double first, check forbidden, checks N, goal squares, start FEN) that one implementation, `src/chess_rules.c`, plays. The law is in no position's ID. What a law adds to a position is in the position, after its four parts and only when there is any: the pieces in hand (`QRBNP` then `qrbnp`), the promoted pieces' squares, the checks given (`+W+B`). So a crazyhouse position with empty hands is the Standard position it looks like. A drop is the move `[piece, @, square]`. A game under a variant no line names, or one with a move its law refuses, is kept as its text and said, and the source is not published. |
-| Incomplete | `[Result "*"]`, or a Termination of abandoned or forfeit | The trajectory is content; no outcome is claimed. Termination is a statement about how it ended. |
-| Study, lesson or annotated game | variations in parentheses, `{comments}`, numeric annotation glyphs (`$1`, `!?`) | Not a played game: the variations make a tree of lines, comments are text, and the glyphs are the annotator's judgments. All of it is the study's own testimony, under its source, with no occurrence of anyone playing it. |
-| Puzzle or composed problem | a start position and a solution line | The composer's claimed solution: testimony about a line from that position. |
+| Played game | Seven Tag Roster + `1-0`, `0-1`, or `1/2-1/2` | Canonical `[P0, M0, P1, …]` line shared across every game playing those moves, `[P, M, P']` transition claims scored for the side to move, and game occurrence tags |
+| Custom start | `[SetUp "1"]` + `[FEN "…"]` | Trajectory starts at `P0` decoded from the FEN's four canonical position fields |
+| Chess960 / rule variants | `[Variant "Chess960" \| "Crazyhouse" \| "Atomic" \| "Antichess" \| "King of the Hill" \| "3-check" \| "Horde" \| "Racing Kings"]` | Rulesets are declarative axes in `Laplace-Engine/firmware/chess.firmware` executed by `src/chess_rules.c` ([28. Games](../Sequence/Games.md)); variant names never pollute position hashes, and variant-extra state (pocket hands, promoted squares, check counters `+W+B`) enters the position composition only when non-empty |
+| Incomplete game | `[Result "*"]` or abandoned/forfeit termination | Trajectory and tags recorded as observed content with zero win/loss transition claim |
+| Annotated study / puzzle | Rav variations `(...)`, `{comments}`, NAG glyphs (`$1`, `!?`), or composed puzzle solution | Tree of candidate lines, commentary text, and annotator judgments under the study's witness, distinct from played OTB occurrences |
 
-The Engine's native PGN route is implemented under [Engine#46](https://github.com/SaltyPatron/Laplace-Engine/issues/46). The monorepo's chess family writes and reads through it, below.
+## Recording & reading games on the unified substrate
 
-## The games Laplace plays
+Games played by Laplace across the web Chess Lab, Lichess bot sessions, Arena matches, and `fastchess` gauntlets ([27. Chess](../Sequence/Chess.md)) are written as standard PGN files (with `[%clk]` annotations) under `$LAPLACE_DATA/Games/Chess/laplace`, named by content BLAKE3 so identical games deduplicate, and admitted through `Laplace-Engine` (`laplace witness --as Laplace --class AppDerived FILE` or `laplace ingest laplace-chess`). Ad-hoc single PGN files admit directly via `laplace ingest FILE` using stock `pgn.recipe`.
 
-A game Laplace plays (a play session in the browser, a Lichess game, a lab match, a self-play game) is recorded after it ends, [27. Chess](../Sequence/Chess.md) 27.9. The monorepo holds an open game's moves, clocks and tags in memory and writes one PGN file when the game ends (`ChessLiveGameHost`, `ChessGameRecorder`): the Seven Tag Roster, the tags the game was played under, each move's SAN and the mover's clock as a `[%clk]` comment. The file is kept under the `laplace-chess` source's root, `$LAPLACE_DATA/Games/Chess/laplace` (or `LAPLACE_CHESS_GAMES`), named by the BLAKE3 of its text, so the same game played twice is the same file.
-
-The Engine then reads the file as the runtime witness `Laplace` at the class `AppDerived`: `laplace witness --as Laplace --class AppDerived FILE`. The witness is the trunk `[Laplace, the file's trunk]`, its lineage its name, so a game stated again is no second voice. Nothing in the monorepo composes an identity or writes a row. A sample of a source's files (`laplace ingest -s laplace-chess FILE`) composes the games and publishes no witness; a whole-source run (`laplace ingest laplace-chess`) publishes the source's.
-
-A PGN the lab fetches from a provider, and a file given to `laplace-mono ingest chess PATH` or `laplace-mono chess record FILE`, is a file of no corpus: the generic `pgn.recipe` reads it and its trunk is its own witness.
-
-## Reading games back
-
-| Read | Where | What it answers |
-| --- | --- | --- |
-| The moves played from a position | monorepo `chess.transition_standings` (SQL catalog) over `public.laplace_standings` | Each legal move's `[position, move, position]` claim and its standing. The search's root bias (`SubstrateRootBias`) and `POST /chess/explore` read it. The monorepo computes the claim IDs with `ChessEngineIdentity`, pinned to the Engine's by `ChessEngineIdentityTests`. |
-| Players by name | Laplace-MCP `/v1/chess_players`, web `/api/chess/players?search=` | The names in `White` and `Black` tags that are the text searched or hold it, with the games recorded under each. |
-| One player | `/v1/chess_player`, `/api/chess/player?name=` | The record overall and by colour, the ratings the player's own `WhiteElo` or `BlackElo` tag wrote, the players met, and the games newest first. |
-| A witness's games | `/v1/chess_games`, `/api/chess/games?witness=Laplace` | The records under every trunk of the witness named. |
-| One game | `/v1/chess_game`, `/api/chess/game?id=` | The tags as written and the line replayed into SAN, UCI and FEN by the Engine's rules, each ply with the clock its comment wrote. |
-| Openings and tablebase verdicts of a position | `/v1/chess_position`, `/v1/chess_game_openings`, `/v1/chess_tablebase` | [Syzygy](Syzygy.md) and the opening rows above. |
-
-A player is a name as a tag writes it. No identity is minted from a name, and no standing is read for a player: a rating shown is the source's own Elo tag. The monorepo's chess pages call the web routes under `/modular`.
+All read surfaces—`Laplace-Engine` (`reader.h` / `program.c` under `chess.firmware`), `Laplace-MCP` (`/v1/chess_*`), and the `Laplace` web application (`Laplace.Native.Interop` over the canonical `laplace` database)—query the **same** 4 substrate tables (`entity`, `physicality`, `attestation`, `consensus`) for `[P, M, P']` transition standings, opening classifications, player game histories, and live `Syzygy` probes, with no separate monorepo SQL schema or `laplace-mono` CLI.

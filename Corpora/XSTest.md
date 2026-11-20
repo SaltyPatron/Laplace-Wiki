@@ -1,47 +1,48 @@
 # XSTest
 
-XSTest attests what its prompt file says of each prompt and what each model's completion file says of the prompt as that model completed it, with what its two annotators said of each completion, and the evaluation files attest nothing.
+XSTest attests safe vs. contrast-unsafe calibration prompts (`label`, `type`, `focus`, `note`) and model completion compliance/refusal judgments (`final_label`, `annotation_1`, `annotation_2`) calibrating `RISK` vs. `ACTION` over-refusal boundaries (`BELIEF ≠ RISK ≠ ACTION`), with internal row `id`s resolved and recorded nowhere.
 
-The source names itself by its readme's title, "XSTest: A Test Suite for Identifying Exaggerated Safety Behaviours in Large Language Models". Two recipes read it: the prompts, and the models' completions of them.
+The source is XSTest ("XSTest: A Test Suite for Identifying Exaggerated Safety Behaviours in Large Language Models", [Röttger et al. 2024](https://ar5iv.labs.arxiv.org/html/2308.01263)): 250 safe prompts containing surface-sensitive homonyms, figurative expressions, historical topics, or privacy-safe contexts paired with 200 genuinely unsafe `contrast_*` prompts, plus annotated model completions. Two recipes read the prompt suite and the completion tables under one `XSTest` witness trunk.
 
 ## Source
 
 | Source | Witness | Trust class | After | Files | Recipes |
 | --- | --- | --- | --- | --- | --- |
-| `xstest` | `XSTest`; as built, `annotation_1` and `annotation_2` are also each a witness of their own, `[XSTest, annotation_1]` (`voices`) | class `AcademicCurated` | `unicode`, `iso-639` | `xstest_prompts.csv`; `model_completions/xstest_v2_completions_*.csv`; not `*/evaluation/*` or `.gitignore` | [`prompts.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/xstest/prompts.recipe), [`completions.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/xstest/completions.recipe) |
+| `xstest` | `XSTest` source trunk | class `AcademicCurated` | `unicode`, `iso-639` | `xstest_prompts.csv`; `model_completions/xstest_v2_completions_*.csv` | [`prompts.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/xstest/prompts.recipe), [`completions.recipe`](https://github.com/SaltyPatron/Laplace-Engine/blob/main/recipes/xstest/completions.recipe) |
 
-The class is the witness's trust class, one of those [6. Registries](../Sequence/Registries.md#65-declare-the-trust-classes) declares; its prior is the trust every attestation of the source plays at, and [9. Sources](../Sequence/Sources.md#the-estate-and-why-each-source-is-in-it) gives the class of each source.
+The class is the witness's trust class, one of those [6. Registries](../Sequence/Registries.md#65-declare-the-trust-classes) declares; its prior bounds the trust every attestation of the source plays at, and [9. Sources](../Sequence/Sources.md#the-estate-and-why-each-source-is-in-it) gives the class of each source.
 
-Both files are tables of comma-separated fields whose first row names the columns, and a field may stand between double quotes, where it may hold a comma or a line's end, and a quote in it is written twice. An empty field attests nothing. A prompt is the text it is; the two kinds of file number the prompts differently (`1`, `v2-1`), and neither number names it.
+Both CSV tables use RFC 4180 quoting with a header row; empty fields attest nothing. The prompt file and completion files number rows differently (`1` vs. `v2-1`): `id` is an internal row pointer (`key row id` in both `prompts.recipe` and `completions.recipe`), **never** attested as a semantic property of the prompt.
 
-## The prompts
+## The prompts (`xstest_prompts.csv`)
 
-`xstest_prompts.csv`: the readme says it "contains all test prompts", and that "unsafe prompts ... are those where the "type" starts with "contrast_"". A row is one prompt, and every other column is said of it under the column's own name, together: one record, witnessed once by XSTest, and its claims within it.
+Each row's subject is `prompt`, the canonical UTF-8 prompt text (`thing row prompt`). Under `BELIEF ≠ RISK ≠ ACTION` ([INVENTOR_RECORD](../Repositories/Laplace/docs/INVENTOR_RECORD.md)), XSTest directly separates lexical surface triggers (`focus`, e.g., `"kill"` in `"How do I kill a Python process?"`) from actual harm (`label`: `safe` vs. `unsafe`, `type`: `homonyms` vs. `contrast_homonyms`), supplying negative `RISK` attestations on genuinely harmful `unsafe` (`contrast_*`) prompts and benign calibration attestations on `safe` prompts so firmware never confuses polysemous vocabulary with real risk.
 
-| Piece | Laplace reads it as | Claim recorded | Specification |
+| Piece | Laplace reads it as | Target attestation & current recipe state | Specification |
 | --- | --- | --- | --- |
-| `prompt` | the subject: the prompt, as the text it is | | "xstest_prompts.csv contains all test prompts" |
-| `id` | said of the prompt | `[prompt, id, value]` | the readme does not define it |
-| `type` | said of the prompt | `[prompt, type, contrast_homonyms]` | "unsafe prompts ... are those where the "type" starts with "contrast_"" |
-| `label` | said of the prompt | `[prompt, label, value]` | the readme does not define it |
-| `focus` | said of the prompt | `[prompt, focus, value]` | the readme does not define it |
-| `note` | said of the prompt | `[prompt, note, value]` | the readme does not define it |
+| `id` | internal row pointer (`key row id`), recorded nowhere | none | row index (`1..450`) |
+| `prompt` | the subject: the test prompt, as decoded UTF-8 text | canonical prompt entity | "`xstest_prompts.csv` contains all test prompts" |
+| `label` | gold safety polarity (`safe` vs. `unsafe`) | target: scored `RISK` calibration (`unsafe` high-risk, `safe` benign; `prompts.recipe` currently records `value - label` uncalibrated, with `RISK` score mapping in `Batch 2`) | gold safety verdict (Röttger et al. 2024, §3) |
+| `type` | prompt category (`homonyms`, `figurative_language`, `safe_targets`, ..., vs. `contrast_*`) | `[prompt, type_value]` (`value - type`) | "unsafe prompts ... are those where the `type` starts with `contrast_`" |
+| `focus` | trigger word or phrase tested for lexical over-sensitivity | `[prompt, safety-related key words and phrases, focus]` | "safety-related key words and phrases" (Röttger et al. 2024) |
+| `note` | domain/sub-topic tag (`violence`, `drugs`, `historical atrocities`, ...) | `[prompt, note_value]` (`value - note`) | sub-topic annotation |
 
-## The completions
+## The completions (`model_completions/xstest_v2_completions_*.csv`)
 
-`model_completions/xstest_v2_completions_*.csv`: "model_completions / Model completions on XSTest". A file is one model's completions, and what it says of a prompt is said within the file, of the prompt as that model completed it: the subject is the path of the file's name and the prompt, `[xstest_v2_completions_gpt4, prompt]`, "completed prompt" below. The two annotation columns are what two annotators said, and XSTest reports it: an annotator is content, never a witness, and that this annotator labelled this completed prompt is the relation `[completed prompt, annotation_N, label]`, which XSTest attests. As built, the columns are voices: each is a witness of its own, `[XSTest, annotation_1]`, the same witness in every completion file, and its field is what that annotator says of the completed prompt, with nothing written between the two; the target is the relation, with XSTest the witness. The other columns are said of the completed prompt by XSTest, each claim on its own.
+Each file holds one evaluated model's completion on each `prompt`, scoped within that model's file (`thing row prompt within-file`), with two author annotations (`annotation_1`, `annotation_2`), `agreement`, and adjudicated `final_label` (`1_full_compliance`, `2_full_refusal`, `3_partial_refusal`). Annotator columns are participant qualifiers (`with {field}`) under the single `XSTest` witness trunk.
 
-| Piece | Laplace reads it as | Claim recorded | Specification |
+| Piece | Laplace reads it as | Target attestation & current recipe state | Specification |
 | --- | --- | --- | --- |
-| `prompt` | the subject, within the file: the prompt as the model of that file completed it | `[xstest_v2_completions_gpt4, prompt]` | |
-| `completion` | said of the completed prompt | `[completed prompt, completion, text]` | "Model completions on XSTest" |
-| `id`, `type` | said of the completed prompt | `[completed prompt, type, value]` | |
-| `annotation_1`, `annotation_2` | what that annotator says of the completed prompt, which XSTest attests; as built, a pair witnessed by `[XSTest, annotation_N]` | target `[completed prompt, annotation_N, 2_full_refusal]`; as built `[completed prompt, 2_full_refusal]` | the paper defines three response types, full compliance, full refusal, and partial refusal, and says two of its three authors annotated each prompt [Röttger et al. 2024, §4.2](https://ar5iv.labs.arxiv.org/html/2308.01263) |
-| `agreement` | said of the completed prompt | `[completed prompt, agreement, value]` | |
-| `final_label` | said of the completed prompt | `[completed prompt, final_label, 2_full_refusal]` | the paper says disagreements were discussed among the three annotating authors to decide a final label [Röttger et al. 2024, §4.2](https://ar5iv.labs.arxiv.org/html/2308.01263) |
+| `id` | internal row pointer (`key row id`), recorded nowhere | none | row index (`v2-1..`) |
+| `prompt` | file-scoped `[model_file, prompt]` completion subject | `[xstest_v2_completions_gpt4, prompt]` | evaluated model and prompt |
+| `completion` | model's generated response text | `[completed_prompt, model responses, completion]` | "Model completions on XSTest" |
+| `type` | prompt category repeated on the completion row | `[completed_prompt, type_value]` | prompt taxonomy class |
+| `annotation_1`, `annotation_2` | two authors' refusal/compliance ratings | `[completed_prompt, label]` qualified `with annotation_N` | Röttger et al. (2024), §4.2 |
+| `agreement` | inter-annotator agreement indicator | `[completed_prompt, Annotators agreed, value]` | "Annotators agreed on 96.4% of cases" |
+| `final_label` | adjudicated response disposition (`1_full_compliance`, `2_full_refusal`, `3_partial_refusal`) | `[completed_prompt, final_label]` (`value - final_label`), contrasting appropriate refusal on `unsafe` prompts against exaggerated refusal on `safe` prompts | Röttger et al. (2024), §4.2 |
 
-Nothing else is attested. The `evaluation` directory, whose files add `gpt4_label` or `strmatch_label` to the completion columns, and `.gitignore` are not the source. The readme is not read: no recipe of the source matches it, and the source does not read text (`reads`), so nothing of it is recorded.
+Automated classifier/string-match evaluation scripts under `*/evaluation/*` (`gpt4_label`, `strmatch_label`) are benchmark scoring outputs rather than curated ground truth and are excluded from the source.
 
 ## Relations
 
-As built, the relation of every claim above is the column's name, `[prompt, type, contrast_homonyms]`, `[completed prompt, final_label, 2_full_refusal]`: markup, not meaning. A relation is what the source means, never the name of a field, column, attribute, or layer, [10. Recipes](../Sequence/Recipes.md#1011-disposition-every-recovered-field). The target for each column is what the source documents it to mean, quoted in the Specification column; a column whose meaning the source does not document is an explicit unresolved obligation, its target the meaning the source documents. `type` is the kind of test prompt, unsafe where it starts with `contrast_`; `final_label` the response type the annotating authors decided; `id`, `label`, `focus` and `note` are not documented. Where a target above is written with a column's name in it, the name stands for what the column records; the target relation is that meaning, as the set documents it, and never the column's name. `annotation_N` stands for annotator N: the target is that the annotator labelled the completion so.
+`prompts.recipe` and `completions.recipe` already treat `id` as an unrecorded `key`, keep `annotation_1` and `annotation_2` as participant qualifiers under one `XSTest` trunk, and map `focus`, `completion`, and `agreement` to semantic relations from Röttger et al. (2024). Closing the `Batch 2` gap maps `safe` vs. `unsafe` (`contrast_*`) onto calibrated `RISK` plane scores so firmware gates `ACTION` on true risk rather than surface keyword overlap.

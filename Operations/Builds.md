@@ -28,12 +28,12 @@ cmake --preset icx-release && cmake --build --preset icx-release && ctest --test
 cmake --preset gcc-release && cmake --build --preset gcc-release
 ```
 
-- **Outputs:** `liblaplace`, static and shared; `laplace_text` (needs ICU); `laplace_model` (needs MKL); the tests. The programs that use it are Laplace-Engine's `laplace` and the extension, each of which builds Laplace-Native as part of itself.
+- **Outputs:** `liblaplace` (static and shared, linked with `Laplace::math` over CORE-MATH), `laplace_text` (needs ICU), `laplace_model` (needs MKL and OpenMP), `laplace_linalg` (needs Eigen and Spectra headers), `Laplace.Native.Interop` (generated C# bindings from the public headers' AST), `laplace-tier0`, and the tests. `Laplace-Native` installs the `LaplaceNative` CMake package (`native-package.sh`), which `Laplace-postgres`, `Laplace-Engine`, and `Laplace-MCP` consume via `find_package(LaplaceNative CONFIG REQUIRED)` rather than `add_subdirectory`.
 - **Determinism:**
-  - `icx` defaults to fast floating-point math, and its `-fp-model=precise` still fuses multiplies and adds into FMAs, which round once where two operations round twice. The build turns fusing off (`-ffp-contract=off`) and never uses fast math.
+  - `icx` defaults to fast floating-point math, and its `-fp-model=precise` still fuses multiplies and adds into FMAs, which round once where two operations round twice. The build turns fusing off (`-ffp-contract=off -fno-fast-math`) and never uses black-box compiler auto-dispatch (`-ax…` or `-xHost`).
   - Every summation has one fixed order in every code path, so scalar and SIMD kernels agree bit for bit.
   - IDs and coordinates are exact integers or fixed point.
-- **ISA levels:** the baseline is x86-64-v2. Kernels are compiled per ISA level in their own translation units and chosen at run time, so one binary runs everywhere and uses everything. `LAPLACE_ISA=scalar|sse2|avx2` lowers the level to compare kernels.
+- **ISA levels:** the baseline is `x86-64-v2`. Explicit per-ISA translation units are compiled under `icx -fp-model=precise -ffp-contract=off` (`x86-64-v3` AVX2/BMI2, `avxvnni`, `x86-64-v4` AVX-512, `avx512vnni`) and `Laplace-Native/src/cpu.c` dispatches bit-identical kernels at run time, so one binary runs everywhere and uses everything. `LAPLACE_ISA=scalar|sse2|avx2|avxvnni|avx512|avx512vnni` lowers the active level to compare kernels.
 - **Model kernels:** `laplace_model` and its `lp_rowsig` kernel need MKL and OpenMP; a build without MKL's headers on its path (a gcc build outside the oneAPI environment) fails there. The core library and the PostgreSQL extension do not depend on them.
 - **The two compilers:** the `icx` and `gcc` builds must agree on every golden value, such as the tier-0 IDs and Hilbert values, bit for bit.
 - **BLAKE3:** its CMake recognizes gcc, clang, and MSVC but not `icx`, so Laplace-Native supplies BLAKE3's assembly sources itself, and enables C, C++, and assembly in its own project.

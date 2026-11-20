@@ -13,30 +13,49 @@ The firmware is never a record. The same records pulled under another firmware g
 | `k N` | `k` | how far below its rating a standing must still hold, in deviations |
 | `lambda N` | `lambda` | the tax on another hop |
 | `fan N` | `fan` | how many claims that hold an entity are read; one that holds more is reached, not crossed |
-| `hops N` | `hops` | how many hops a chain may run |
+| `hops N` | `hops` | how many hops a chain or scan may run |
 | `top always` / `top within N` | `top_within` | whether the top of a set is taken every time, or how near a tie has to be before another strand can be taken in its place |
+| `only predicate NAME...` | `only_predicate[32]` | ablation filter: read only strands of these relations |
 | `refuse predicate NAME...` | `refuse_predicate[32]` | kinds of strand refused before they are scored |
-| `refuse witness NAME...` | `refuse_witness[32]` | strands witnessed by these refused |
-| `fact N` | `fact` | a member of the set curated by a witness of at least this trust is returned as one fact, the rest held back; without the line no such branch fires |
+| `refuse witness NAME...` | `refuse_witness[32]` | strands witnessed by these source names refused |
+| `negate WORD...` | `negate[32]` | words that flip polarity within a local scope (`not`, `no`, `never`, `without`, `neither`, `nor`) |
+| `negate_relation REL...` | `negate_relation[32]` | relations whose edge reverses polarity (`antonym`, `excludes`, `contradicts`; supports `@RECIPE/FIELD`) |
+| `scope_stop TOKEN...` | `scope_stop[32]` | punctuation tokens closing a local negation scope (`. ; : ? ! ,`) |
+| `fact N` | `fact` | a member of the set curated by a witness of at least this trust is returned as one fact, the rest held back; above 1 means never |
 | `order witness` / `order standing` | `order_witness` | on a claim with a part left open, the witness's own order before the standing, or not |
-| `shape frechet` / `outliers N` / `dtw` / `edr N` | `shape`, `shape_n` | which shape of the tree to favour, and how many variable vertices a match may skip, or the EDR tolerance |
-| `for OPERATION` | | what follows holds for that operation only: `hop`, `search`, `translate`, `follows`, `pull` |
-| `emit N` | `emit` | how many constituents a turn may emit; 32 unless said |
-| `enough N` | `enough` | a turn is complete when no more than N (0 to 1) of what its obligations owed at the start, each word as hard as it pulls, is still owed; 0 unless said |
-| `take fact` / `take segment` / `take attestations N` / `take constituents N` | `take[16]` | under `for pull`, the segments a step takes, in order: the single fact when the fact branch fires; the rest of the branch the prompt is a run of, followed along what was observed; the N strongest strands of the prompt itself; the N strongest strands of each of its constituents |
-| `take chain N RELATION... [\| RELATION...]` | `take`, `chain` | under `for pull` (and in `turn`), from each of the N words that pull hardest, the relations followed in order, each by its witness's order then its standing: where the chain ends is the answer; alternatives parted by `\|` are tried in turn (at most 8 steps, 4 alternatives) |
-| `weigh N KIND...` | `weigh[128]` | strands of these kinds pull N as hard (0 to 1; 1 unless said); the firmware's reading, never a change to a standing |
-| `role by KIND` | `role_by` | how hard a word pulls is read from what is attested of it under KIND |
-| `role N VALUE...` | `role[128]` | a word of that VALUE pulls N as hard (0 to 1) |
-| `up RELATION...` | `up[8]` | under `for translate`, the relations from a word up to its concept, in order; translation follows them back down in another language |
-| `language HELD SAYS` | `language[2]` | under `for translate`, the language of what stands below the concept: what holds it under HELD, and what that says under SAYS |
-| `gloss RELATION` | `gloss` | under `for translate`, what is shown of a concept |
+| `prevalence RELATION \| pair` | `prevalence` | prevalence relation or pair reading |
+| `shape frechet` / `outliers N` / `dtw` / `edr N` | `shape`, `shape_n` | which 4D trajectory shape measure to favour, and how many interior outliers to skip or the EDR tolerance |
+| `rounds N` | `rounds` | coupling rounds a forward pass spends (`layers`, each carrying forward the hardest-responding entities of the round before) |
+| `breadth N` | `breadth` | how many of a round's hardest-responding entities the next round couples from |
+| `nearest N` | `nearest` | how many entities nearest a curve's centroid the 4D GiST nominates for shape comparison |
+| `walks N` | `walks` | BLAKE3-seeded random walkers launched from each position (`0`: none) |
+| `walkfan N` | `walk_fan` | hub cap for random walkers: a node holding more strands is reached and returns home |
+| `steps N` | `steps` | steps each walker takes |
+| `restart P` | `restart` | restart probability (`0` to `1`) at each walker step |
+| `sure N` | `sure` | standard-error margin separating two walk counts before one beats the other |
+| `lift N` | `lift` | minimum observed-over-base-rate co-occurrence ratio (`≥ 1`) for `CH_BESIDE` grounding |
+| `elect KEY...` | `elect[9]` | proposal comparison order across `grounds`, `continuity`, `agree`, `heads`, `cooccur`, `walks`, `shape`, `confidence`, `shared` |
+| `tie first` / `tie draw` / `tie ask` | `tie` | tie-break rule when proposals are indistinguishable across all `elect` keys: lowest ID, seeded draw, or ask |
+| `seed observation` / `seed session` | `seed_session` | derive the deterministic BLAKE3 seed from `(observation, firmware)` alone, or include `(session, turn)` |
+| `for OPERATION` | | begins an operation-specific block: `hop`, `search`, `translate`, `follows`, `pull` |
+| `emit N` | `emit` | maximum constituents a turn may emit; `32` unless said |
+| `enough N` | `enough` | a turn completes when no more than `N` (`0` to `1`) of initial role-weighted obligation remains open; `0` unless said |
+| `up RELATION...` | `up[8]` | under `for pull`, selective two-key relations (`@wn-lmf/Sense`) used to bubble past fan-limited word hubs (`up` is rejected under `for translate` in favor of `lexicalization`) |
+| `language HELD-BY SAYS` | `language[2]` | under `for pull`, language selector |
+| `lexicalization RECIPE THING LANGUAGE CONCEPT` | `lexical[4]` | under `for translate` and `for pull`, resolves lexicalization relations (`[lemma, language, ILI]`) directly from `RECIPE`'s declarations (`wn-lmf Sense language ili`) |
+| `gloss RECIPE NAME` | `gloss[2]` | under `for translate`, shows the relation `RECIPE` declares for `NAME` (`wn-lmf Definition`) |
+| `equivalent RECIPE NAME...` | `equiv[5]` | under `for translate`, joins ISO 639 code sets declared by `RECIPE` (`iso-639-3 Part1 Part2b Part2t`) |
+| `usages RECIPE NAME` | `usages[2]` | under `for translate` and `for pull`, orders senses by concordance game counts declared by `RECIPE` (`wordnet-cntlist tag_cnt`) ahead of witness order and standing |
+| `take fact` / `take segment` / `take attestations N` / `take constituents N` | `take[16]` | under `for pull`, the segments a pull takes in order |
+| `take chain N RELATION... [\| RELATION...]` | `take`, `chain` | under `for pull` (and `turn`), follows up to 8 relation steps across up to 4 `\|`-separated alternatives (`@RECIPE/FIELD` resolved against `$LAPLACE_RECIPES` before any DB call) |
+| `weigh N KIND...` | `weigh[128]` | strands of these kinds pull `N` as hard (`0` to `1`; `1` unless said) |
+| `role by KIND` / `role N VALUE...` | `role_by`, `role[128]` | reads each word's obligation weight (`0` to `1`) from what is attested of it under `KIND` (`UPOS`) |
 
-Reading: `firmware_for(path, op)` starts from the defaults, then applies every line that holds everywhere and every line under `for op`, skipping other operations' sets. At most 32 names per refuse list, 16 take steps, 128 weights and roles, 8 steps of a chain and 4 alternatives.
+Reading: `firmware_for(path, op)` starts from the defaults, then applies top-level lines and lines under `for op`, skipping other operations' blocks. `firmware_ids` decomposes the `.firmware` file itself via `lp_text_decompose` so every firmware carries its canonical content-addressed `image_id` (`laplace firmware` inspects its resolved `@RECIPE/FIELD` bindings and `firmware_id` as JSON).
 
 ## Defaults
 
-Compiled into `firmware_for` and applied before the file is read: `k` 2.0, `lambda` 0.05, `fan` 4096, or 512 for `search`, `hops` 8, `top always`, `fact` 2.0 (above 1: never), `order witness`, `shape frechet`.
+Compiled into `firmware_for` before reading the file: `k` `2.0`, `lambda` `0.05`, `fan` `4096` (`512` for `search`), `hops` `8`, `emit` `32`, `top always`, `fact` `2.0` (never), `order witness`, `shape frechet`, `rounds` `2`, `breadth` `64`, `nearest` `512`, `walks` `64`, `walkfan` `512`, `steps` `4`, `restart` `0.25`, `sure` `2.0`, `lift` `2.0`, `tie first`, `seed observation`, and `elect grounds continuity agree heads cooccur walks shape confidence shared`.
 
 ## The program's own firmware
 
@@ -53,44 +72,62 @@ role 1 NOUN ADJ NUM
 role 0.75 PROPN
 role 0.5 VERB ADV ADP PART
 role 0.25 PRON DET CCONJ PUNCT
-role 0.05 SCONJ
-role 0 AUX
+role 0.15 SCONJ
+role 0.10 AUX
+
 for hop
   fan 4096
 for search
   fan 512
 for translate
   fan 4096
-  up Sense synset ili
-  language Synset language
-  gloss Definition
+  lexicalization wn-lmf Sense language ili
+  gloss wn-lmf Definition
+  equivalent iso-639-3 Part1 Part2b Part2t
+  usages wordnet-cntlist tag_cnt
 for pull
   fan 4096
+  lexicalization wn-lmf Sense language ili
+  up @wn-lmf/Sense
+  usages wordnet-cntlist tag_cnt
+  rounds 2
+  breadth 64
+  nearest 512
+  walks 64
+  walkfan 512
+  steps 4
+  restart 0.25
+  sure 2
+  lift 2
+  elect grounds continuity agree heads cooccur walks shape confidence shared
+  tie first
+  seed observation
   refuse predicate BNC PENN GF PT NER WSL Target Other Sent Verb Noun Adj Prep Adv UPOS XPOS DEPREL FEATS MISC LEMMA type n f itype
-  take chain 1 Sense Definition | LEMMA Sense Definition
+  negate not no never without neither nor
+  negate_relation antonym excludes contradicts
+  scope_stop . ; : ? ! ,
+  take chain 1 @wn-lmf/Sense @wn-lmf/synset @wn-lmf/Definition | @conllu/LEMMA @wn-lmf/Sense @wn-lmf/synset @wn-lmf/Definition
   enough 0.5
   take segment
   take attestations 3
   take constituents 1
 ```
 
-This is the one set of decisions of [Personality firmware: One set of decisions](../Semantics/Firmware.md#one-set-of-decisions): *k* = 2, always the top, fan 4,096 on a hop and 512 on a search, 8 hops, λ = 0.05; and a pull that takes the rest of the branch, three strands of the prompt, and one of each constituent. Besides those, the file carries a word's pull by its part of speech (`role`, the role trust fitted on SemCor's held-out documents), the tag layers a pull refuses, a chain from a word through its sense to a definition, and `enough 0.5`; the file marks the last three as defaults to be ruled on.
+This implements [Personality firmware: One set of decisions](../Semantics/Firmware.md#one-set-of-decisions) together with SemCor-fitted `UPOS` role weights, recipe-bound `@RECIPE/FIELD` relation chains (`lexicalization`, `gloss`, `equivalent`, `usages`, `up`), multi-round coupling (`rounds`, `breadth`, `nearest`), BLAKE3-seeded random walks (`walks`, `walkfan`, `steps`, `restart`, `sure`, `lift`), negation scoping, and the typed `elect` order. Note that the `refuse predicate ... UPOS Verb Noun ...` line is a temporary text-predicate workaround scheduled for replacement in `Batch 2` by 64-bit `manifest/banks.tsv` mask-bank filtering and proper word-POS fallback handling.
 
 ## Where each decision acts
 
 | Decision | Acts in |
 | --- | --- |
-| `k` | `lp_confidence(r, k)` on every claim fetched by `claims_like`; `lp_cost(r, k, lambda)` in `degrees` |
-| `lambda` | `lp_cost` per hop in the frontier search |
-| `fan` | the `LIMIT fan + 1` of the claims fetch; `capped` is reported when more exist |
-| `hops` | the frontier's hop bound |
-| `top within N` | `take_top` in `pull`: among strands within `N` of the one above, one is drawn with `rand_r` from `--seed` or the clock |
-| `refuse` | refused predicates go into every claim read the database makes (`laplace_claims`, `laplace_claims_each`, `laplace_couple`) and are taken out before the fan; `refused()` takes out refused witnesses before the sort |
-| `fact` | the fact branch of `pull` |
-| `order witness` | `positions_of` and `claim_by_position` before `claim_by_conf` on an open claim |
-| `shape` | which of `lp_frechet4`, `lp_frechet4_outliers`, `lp_dtw4`, `lp_edr4` a shape comparison calls |
-| `take` | the steps of `cmd_pull`, in order |
+| `k`, `lambda` | `lp_confidence(r, k)` and `lp_cost(r, k, lambda)` across `hop`, `degrees`, `pull`, and `turn` |
+| `fan`, `hops` | `LIMIT fan + 1` hub cutoff (`holds_capped`, `laplace_claims*`) and frontier depth bound |
+| `up`, `lexicalization`, `usages`, `equivalent`, `gloss` | two-key hub bubbling in `program.c` and concept/sense resolution in `pull.c` (`laplace translate`) |
+| `rounds`, `breadth`, `nearest` | multi-round `COUPLE` expansion and 4D GiST curve-centroid nomination in `program.c` |
+| `walks`, `walkfan`, `steps`, `restart`, `sure`, `lift` | deterministic BLAKE3 random walks (`CH_WALK`) and co-occurrence lift (`CH_BESIDE`) in `program.c` |
+| `elect`, `tie`, `seed`, `top within N` | `STEER` / `SELECT` proposal ranking and deterministic tie-breaking (`program.c`, `forward.c`) |
+| `only`, `refuse`, `negate`, `negate_relation`, `scope_stop` | strand filtering and polarity tracking in `COUPLE`, `SCAN`, and `STEER` |
+| `fact`, `order witness`, `shape`, `take`, `emit`, `enough` | `cmd_pull` steps, witness-position ordering, 4D curve distance (`lp_frechet4*`/`lp_dtw4`/`lp_edr4`), and turn completion |
 
-## What is specified beyond this
+## Additional profiles and Gödel OODA (`Batch 2`)
 
-Spec 39 of the monorepo specifies the firmware as a content-addressed image over the operation ISA with a registry of policy kinds, an identity in every receipt, and rating by consequences; [18. Firmware](../Sequence/Firmware.md) documents that. The file above is what is built; the image, the registry, and the receipt are **specified** and not built in these repositories.
+Firmware in Laplace stays plain, detached, content-addressed `.firmware` text files (`program.firmware`, `chess.firmware`, and the epistemic/task profiles `deductive`..`adversarial` scheduled in `Batch 2` under `Laplace-Engine#10`, alongside Gödel OODA `BELIEF ≠ RISK ≠ ACTION` abstention/clarification gates and consequence rating in [18. Firmware](../Sequence/Firmware.md)) — never a separate compiled binary-blob registry.

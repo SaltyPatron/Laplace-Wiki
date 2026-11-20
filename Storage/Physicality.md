@@ -24,15 +24,15 @@ Compositions have a Hilbert value too. The Hilbert value maps to coordinates det
 
 Laplace exploits GiST and GIN indexing for novel mechanisms. GiST indexes the geometry. GIN indexes each trajectory's constituents, read from the IDs in its geometry, to find every container of any node, such as every sentence that contains a word.
 
-The coordinates of the bit-packed IDs in a physicality have no meaning as positions; they are an artist's rendition, a visualization of the 4D representation. Their bits are what record which constituents, in which order.
+The X, Y, Z, and M doubles of a `physicality.path` vertex have no meaning as spatial positions and are never rendered or passed directly into distance functions: X, Y, and Z pack `43 + 43 + 42 = 128` constituent ID bits plus `28` tagged spare bits in `[0.25, 0.5)`, and M packs `53` integer metadata bits, strictly so PostGIS `geometry` storage, TOAST, and GIN (`laplace_path_ops`) index exact constituent order, runs, roles, and containment without edge tables.
 
 ## Partitions
 
-Partitions go by the BLAKE3 ID (`entity_00`..`entity_ff` and `physicality_00`..`physicality_ff` by the first byte of the ID), not by Hilbert value and not by tier list with a default partition: remember the 4-ball against the 4-box. The Hilbert value covers only the 4-ball inside the 4-box and is used for ordering and clustering within each BLAKE3 ID partition, never for partitioning. See [Research: Engine Measurements](../Research/Engine.md#partitions).
+`entity` and `physicality` are range-partitioned by `tier` (`PARTITION BY RANGE (tier)` in `Laplace-postgres/sql/laplace.sql.in`: nine partitions `t0`..`t7` and `t8plus` on both tables, with composite primary keys `(tier, id)` and `(tier, entity)` and per-partition `UNIQUE (id)` / `UNIQUE (entity)` indexes) so upward containment and tier-bounded probes prune lower tiers cleanly; `attestation` and `consensus` are range-partitioned by `claim` into 16 hex-nibble partitions (`attestation_0`..`attestation_f` and `consensus_0`..`consensus_f`, `fillfactor = 80`). See [Reference: Schema](../Reference/Schema.md) and [30. Conflicts](../Sequence/Conflicts.md) P4. Partitions never go by Hilbert value — remember the 4-ball inside the 4-cube: the 64-bit `hilbert` key covers the 4-ball and is used for locality ordering and spatial B-tree pruning (`entity_hilbert`, `entity_tier_hilbert`, `laplace_hilbert_ball_ranges`) within partitions. See [Research: Engine Measurements](../Research/Engine.md#partitions).
 
 ## Centroids
 
-A centroid is generated and recorded for both the real coordinates and the bit-packed visualization, so it is never recomputed. The real centroid comes from the constituents' real coordinates; the visualization centroid comes from the bit-packed geometry of the path.
+One exact real 4D centroid (`entity.coord`, computed via `__int128` fixed-point average of the constituents' real coordinates truncated toward zero) is generated and stored once on `entity`, so it is never recomputed; no centroid is ever computed or stored over packed `physicality.path` carrier doubles. When trajectory shape (`laplace_frechet4d`, `laplace_dtw4d`, `laplace_edr4d`, `laplace_hausdorff4d`) or Glome curves (`laplace_curves`, `laplace_couple`) are evaluated, Laplace unpacks the constituent IDs from `physicality.path` and resolves each constituent's real 4D `entity.coord` (`laplace_project_path`).
 
 Centroids collide in the 4-ball: `[c,a,t]` and `[a,c,t]` have the same centroid. Their Fréchet distances are, mostly, different. The shape being compared is the tree, not the centroid of its text. A close Fréchet distance across trees is a semantic relation the ID does not record. See [Query: Shape](../Query.md#shape).
 

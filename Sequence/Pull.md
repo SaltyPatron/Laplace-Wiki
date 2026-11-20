@@ -19,10 +19,10 @@ Laplace finds content by computing its ID and coordinates on the client and look
 
 ### 19.2 Look up by ID
 
-- **In:** the ID of 19.1.
-- **Do:** the B-tree of [14. Indexes](Indexes.md) operation 14.1, pruned to one partition by the ID's first hex digit; then the entity's stored counts.
-- **Out:** the entity, its coordinate, its containers, and its occurrences, or not found.
-- **From:** [Query: Lookup by ID](../Query.md#lookup-by-id), [Research: Engine Measurements: Queries](../Research/Engine.md#queries).
+- **In:** the ID (and tier, when known) of 19.1.
+- **Do:** hit the B-trees of [14. Indexes](Indexes.md) operations 14.1 and 14.5: `(tier, id)` prunes directly to one of the 9 tier partitions on `entity` and `physicality`, while `claim` prunes to one of the 16 hex partitions on `consensus` and `attestation`.
+- **Out:** the entity, its real 4D coordinate, `mask`, packed trajectory, and standing/attestation series, or not found.
+- **From:** [Reference: Schema](../Reference/Schema.md#the-four-tables), [Query: Lookup by ID](../Query.md#lookup-by-id), [Research: Engine Measurements: Queries](../Research/Engine.md#queries).
 
 ### 19.3 Find every container
 
@@ -47,7 +47,7 @@ Laplace finds content by computing its ID and coordinates on the client and look
 
 ### 19.6 Compare shapes
 
-- **In:** an entity's tree, and the measure the firmware set in [18. Firmware](Firmware.md) operation 18.8.
+- **In:** an entity's tree, and the measure the firmware set in [18. Firmware](Firmware.md) operation 18.11.
 - **Do:** shape is the tree. A composition is a tree of constituents across tiers, and its trajectory is that tree recorded in order. Fréchet distance, Fréchet distance tolerant of *k* outliers, DTW, and EDR compare those trees, each answering a different kind of difference, on the real coordinates of the entities, never the packed mantissas. Discrete Fréchet is a dynamic program over the two vertex sequences with the 4D chord as ground distance, O(*pq*), a metric, invariant to duplicated vertices; the 4D GiST and the endpoint lower bounds form the candidate stage ahead of the exact recheck in C. Nearest neighbors in 4D come from the GiST on the real coordinates: the nearest word segments to `king` are `king`, then its anagrams, because order is carried by the path, not the centroid.
 - **Out:** matching shapes, and the content that has that shape.
 - **From:** [Query: Shape](../Query.md#shape), [Physicality: Centroids](../Storage/Physicality.md#centroids), `docs/specs/05_Substrate_Invariants.txt` Rule #2, [Research: Geometry: Fréchet distance](../Research/Geometry.md#fréchet-distance), [Research: Numerics: Trajectory measures](../Research/Numerics.md#trajectory-measures), [Research: Engine Measurements: Native operations](../Research/Engine.md#native-operations).
@@ -59,12 +59,12 @@ Laplace finds content by computing its ID and coordinates on the client and look
 - **Out:** the realized child-coordinate curve, inside the ball by convexity.
 - **From:** `docs/INVENTION.md` §4 "Packed trajectory is not realized geometry"; `docs/specs/05_Substrate_Invariants.txt` Rules #2, #4.
 
-### 19.8 Read a relation through a declared task shape
+### 19.8 Couple grammatical and lexical relation intent
 
-- **In:** a request's ordered surface and the declared relation-read shapes of the operational seed.
-- **Do:** a task shape is an authored, admitted declaration: an exemplar parse, a predicate, and token slots each with an accepted entity type and a binding mode, recorded as a type-8 structural trajectory `[schema, exemplar_parse, predicate, (slot, token_ref, accepted_type, binding_mode)*, slots_end]` under one source-file context, with `exemplar_parse IS_EXAMPLE_OF shape`, `shape CALLS predicate`, and `shape HAS_INPUT slot`. The matcher retains dependency topology, features, language, order, punctuation, and all undeclared lexical structure; only the declared slots may vary, and their current bindings must satisfy the declared type; additional unmatched content prevents a match. A new request need not have an observed parse: its complete ordered surface instantiates the declared substitutions as an inference with its own recipe identity, never recorded as a new parse. The program binds the current input ids and reads the actual predicate results; no expected answer is stored, competing complete interpretations remain ambiguous, and the receipt commits the shape, the parse identities, and the applicability witnesses. `define justice` and `The opposite of empty is` are the two bundled shapes; the runtime holds no English keyword dispatch.
-- **Out:** the predicate's actual results for the bound slots, or unresolved.
-- **From:** `seeds/operational/README.md` §Declared relation-read task shapes.
+- **In:** a request's decomposed constituents, role weights ([18. Firmware](Firmware.md) operation 18.8), and the lexical/highway web.
+- **Do:** resolve relation-seeking and explanatory prompts (`"What is the capital of France?"`, `"Please define justice."`, `"opposite of empty"`, `"How does lightning work?"`) through **general grammatical, role-weighted, and lexical relation coupling** tolerant of punctuation, politeness markers, determiners, and phrasing variants—never through brittle exact-punctuation or 2-exemplar surface templates. Role weights down-weight conversational framing (`please`, `?`, `.`, `what`, `is`, `the`, `of`, `does`) while predicate words and phrases (`capital`, `define` / `definition`, `opposite` / `antonym`, `author`, `cause`, `work`) couple through their lexicalizations and `highway.bin` crosswalks onto the predicates and claims holding the content anchors (`[France, capital, Paris]`, `[i_justice, definition, …]`, `[i_empty, antonym, i_full]`, causal/explanatory claims and trajectories around `lightning`). Authored or promoted structural skills ([23. Learning](Learning.md) operation 23.6) may accelerate recurring dependency patterns over role-weighted anchors, without ever rejecting a prompt because of trailing punctuation, polite framing, or novel phrasing, and without hardcoded English keyword `if/else` tables in C.
+- **Out:** the coupled predicate claims, highway hops, and explanatory trajectories satisfying the bound content anchors.
+- **From:** [18. Firmware](Firmware.md) operation 18.8; [20. Forward](Forward.md) operations 20.2 and 20.3; `docs/INVENTOR_RECORD.md` §The forward pass.
 
 ### 19.9 Look up a bundle's members and its subjects
 

@@ -12,16 +12,16 @@ The whole chain through [23. Learning](Learning.md). [10. Recipes](Recipes.md): 
 
 ### 24.1 Stage the checkpoint as a source generation
 
-- **In:** the model files.
-- **Do:** [9. Sources](Sources.md): enumerate the artifact graph, config, tokenizer, weight shards, sidecars, with dispositions; name each file by its trunk, as [11. Content](Content.md) operation 11.2 names any file, never by a hash of its bytes; the witness is the checkpoint's source trunk, its model name and revision content inside its source record, at trust class `AIModelProbe`, 0.50. Prefer safetensors: GGUF and AWQ are the MP3 of models. The checkpoint's trunks establish its identity and provenance without the payload becoming durable storage.
-- **Out:** the model as an active source generation with a witness.
+- **In:** the model files (Safetensors or GGUF).
+- **Do:** [9. Sources](Sources.md): enumerate the artifact graph—config, tokenizer, weight shards or GGUF container, sidecars—with dispositions; identify each file in the substrate by its canonical trunk ([11. Content](Content.md) operation 11.2, using raw file byte-hashes only in the ingest journal to skip unchanged completed runs); the witness is the checkpoint's source trunk, its model name and revision recorded as content inside its source record, at trust class `AIModelProbe`, 0.50. Prefer unquantized Safetensors when available (since quantized GGUF/AWQ lose precision like MP3), while supporting both Safetensors and GGUF natively so any local checkpoint can be assimilated cleanly. The checkpoint's trunks establish its identity and provenance with `raw_weight_bytes_retained = 0` in durable storage.
+- **Out:** the model as an active source generation with a witness trunk.
 - **From:** `docs/plan/MODEL_INGESTION_DESIGN.md` §1; `docs/INVENTOR_RECORD.md` §Conventional models.
 
 ### 24.2 Read the container natively
 
-- **In:** the safetensors files.
-- **Do:** a native, memory-mapped container reader parses the tensor metadata once and decodes values in bulk as transient operands over contiguous tiles. Managed code orchestrates recipe and lifecycle; it is never the tensor inner loop. Never one tensor cell, one token pair, one head, or one scalar per high-level call.
-- **Out:** the tensor descriptors, and bulk access to values.
+- **In:** the Safetensors or GGUF files.
+- **Do:** a native, memory-mapped C container reader (`src/model.c`) parses Safetensors or GGUF tensor metadata and embedded tokenizer/architecture keys once and decodes or dequantizes values in bulk as transient tile operands in memory. Managed code orchestrates lifecycle only; it is never the tensor inner loop, and raw weight blobs are never copied into PostgreSQL.
+- **Out:** tensor descriptors and transient bulk tile access.
 - **From:** `docs/plan/MODEL_INGESTION_DESIGN.md` §8; `docs/plan/ASSIMILATION_ROADMAP.md` workstream E1.
 
 ### 24.3 Decompose the tokenizer as one ordered composition
@@ -52,19 +52,19 @@ The whole chain through [23. Learning](Learning.md). [10. Recipes](Recipes.md): 
 - **Out:** one entity and one Projection physicality per circuit, with `raw_weight_bytes_retained = 0` in the receipt.
 - **From:** `docs/plan/MODEL_INGESTION_DESIGN.md` §1 and §9; `docs/specs/09_Substrate_LM_Synthesis.txt` §Checkpoint witnessing.
 
-### 24.7 Write only the significant claims
+### 24.7 Contract to empirically calibrated excitatory and inhibitory claims
 
-- **In:** each circuit's scores over the shared entities.
-- **Do:** which derived evidence carries information is decided by a declared calculation contract over the model's own statistics, the lottery ticket found rather than a constant floor or a top-k: each circuit writes its own significant pairs under a per-subject null, z against the subject's own score distribution, kept if and only if z ≥ √(2 ln N). Nothing below significance is written; nothing is refuted, because refutation cannot be inferred from a dot-product sign or from frequency. The claims are graded evidence between entities under the model witness, each a composition of the entities a circuit couples with the salience as score, and the model's learned relations as attestations; that a token appears in a circuit is read from the circuit's trajectory and never claimed, and no world-all-pairs is persisted. Recorded facts, tensor identity, dtype, shape, slice, and role, stay separate from calculated ones, and every calculated row names its analyzer and recipe.
-- **Out:** the model's testimony as attestations under its source trunk, [12. Attestations](Attestations.md) operation 12.9, and in the target as record paths under that trunk, folded by [13. Consensus](Consensus.md).
-- **From:** `docs/plan/ASSIMILATION_ROADMAP.md` laws 12, 13 and workstream E4, E5; `docs/INVENTIONS.md` #102, #106; `docs/specs/08_Record_vs_Calculate_Spec.txt`.
+- **In:** each circuit's coupling scores over the shared canonical entities.
+- **Do:** extract the model's lottery-ticket structure via an **empirically calibrated two-sided significance contract** over each operator's own empirical score distribution and spectral energy—rather than a fixed top-*k*, an arbitrary constant floor, or a dogmatic one-sided Gaussian `z ≥ +√(2 ln N)` cutoff that miscalibrates heavy-tailed rotated spectra and throws away negative/inhibitory circuits! Specifically, calibrate positive and negative tail thresholds (`|z|` / tail-FDR / spectral-energy knee) per operator family against the tensor's empirical distribution: strongly positive couplings emit affirmative graded scores (`score > 0.5`), and **verified strongly negative / inhibitory couplings** (copy-suppression heads, antonym/exclusion circuits, gating inhibitions) emit inhibitory/refuting circuit evidence (`score < 0.5` or typed inhibitory circuit polarity), while the uninformative near-zero bulk is discarded (`raw_weight_bytes_retained = 0`). Token membership in a circuit is read directly from the circuit's `physicality.path` trajectory rather than duplicated as membership rows, no dense all-pairs table is persisted, and every calculated claim names its assimilation recipe and analyzer version.
+- **Out:** calibrated excitatory and inhibitory model testimony under the checkpoint's witness trunk, folded by [13. Consensus](Consensus.md).
+- **From:** `docs/plan/ASSIMILATION_ROADMAP.md` laws 12, 13; `docs/INVENTIONS.md` #102, #106; `docs/specs/08_Record_vs_Calculate_Spec.txt`.
 
-### 24.8 Optionally, witness an execution as a calculation
+### 24.8 Optionally, trace deep contextual activations as a versioned calculation
 
-- **In:** a separately requested run of the source model.
-- **Do:** executing prompts through the model is not ingestion. If a forward pass is requested as a provider measurement, it is admitted like any versioned calculation when its complete result-affecting boundary is declared: the checkpoint content, the exact input, the operator and runtime recipe, the tokenizer and config generation, the numeric representation and precision, the implementation and provider generation, and the seed and decoding policy. If an omitted coordinate changes the result beyond the contract, it belongs in the recipe. Repeating the same closed calculation creates run occurrences, not independent corroboration.
-- **Out:** a calculated transformation trajectory with its receipt.
-- **From:** `docs/plan/MODEL_INGESTION_DESIGN.md` §5; `docs/INVENTIONS.md` #101.
+- **In:** the checkpoint and a pinned set of reference corpus trajectories (or a companion sparse dictionary / transcoder checkpoint).
+- **Do:** static weight contraction (24.6–24.7) extracts direct embedding, unembedding, shallow attention, and factor couplings with zero model inference, while deep residual-stream attention heads and MoE routers often operate in context-rotated subspaces. When deeper circuit recovery is wanted, **optional deterministic activation / circuit tracing** over pinned corpus trajectories (recording which deep heads, MLP factors, MoE experts, or sparse-autoencoder features activate and couple entities in context) runs on CPU under a fully pinned calculation recipe—recording checkpoint trunk, input trajectory IDs, numeric precision, and analyzer version—and deposits those deep contextual circuit physicalities and claims as `DerivedCalculation` / `AIModelProbe` testimony ([30. Conflicts](Conflicts.md) C8). Repeating an identical deterministic trace produces no duplicate corroboration.
+- **Out:** optional deep-layer contextual circuit trajectories and claims with reproducible calculation receipts.
+- **From:** `docs/INVENTION.md` §14; `docs/plan/MODEL_INGESTION_DESIGN.md` §5; [Research: Model Ingestion](../Research/Models.md); [30. Conflicts](Conflicts.md) C8.
 
 ### 24.9 Read the model as a witness
 
@@ -76,7 +76,7 @@ The whole chain through [23. Learning](Learning.md). [10. Recipes](Recipes.md): 
 ### 24.10 Seat every model at the round table
 
 - **In:** several ingested models.
-- **Do:** each contributes testimony to the same canonical entity and relation space; `King` from one model is `King` from another because both are the text entity. The pooled construction is one consensus program over every witness, one forward pass consuming the eligible pooled evidence and emitting one answer. It is not a tensor merge, not concatenated vocabularies, not runtime experts selected from original models, and not N answers followed by a judge; no adjudication is necessary. Architectures need not match: causal, encoder, reranker, mixture-of-experts, and multimodal sources coexist. Disagreements stay inspectable.
+- **Do:** each assimilated checkpoint contributes testimony to the exact same canonical entity and predicate space; `King` from `Qwen` is `King` from `Llama` and `DeepSeek` because all three resolve to the exact same text entity `lp_id`. Because independently trained model families have distinct causal lineages ([13. Consensus](Consensus.md) operation 13.3—never capped together as one witness merely because they share `AIModelProbe` trust class!), agreement across `Llama + Qwen + DeepSeek` genuinely strengthens `consensus` standing while curated standards and lexicons anchor factual truth above them. The pooled construction is one consensus substrate read by one forward pass emitting one answer—not a tensor average, not concatenated vocabularies, not runtime MoE routing over original weight blobs, and not *N* model completions judged by a hidden LLM. Architectures need not match: causal, encoder, reranker, MoE, and multimodal checkpoints compound in the same four tables, and disagreements stay inspectable per witness.
 - **Out:** one answer that is the models and more.
 - **From:** `docs/specs/09_Substrate_LM_Synthesis.txt` §Pooled heterogeneous-model consensus; `docs/specs/12_Mold_A_Model_Synthesis_Map.txt` §Round-table law; `docs/INVENTOR_RECORD.md` §Conventional models.
 

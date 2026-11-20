@@ -26,24 +26,24 @@ A running install: everything through [22. Users](Users.md).
 
 ### 29.3 Re-ingest idempotently
 
-- **In:** a source already admitted, run again.
-- **Do:** unchanged completed files are skipped by the byte check of [11. Content](Content.md) operation 11.2; an edited file admits its changed structure and keeps the previous content; existing attestation identities are excluded from repeated folding, so a retry never multiplies witnessing. Re-ingestion reproduces identities and source testimony exactly.
-- **Out:** nothing new, or only what changed.
-- **From:** `seeds/operational/README.md`; `docs/specs/08_Record_vs_Calculate_Spec.txt` §Acceptance.
+- **In:** a source or repository already admitted, run again.
+- **Do:** the ingest journal checks each file's raw byte-hash on disk (bound to the active recipe and grammar generation, [11. Content](Content.md) operation 11.2) to skip re-running Tree-sitter or UAX #29 on unchanged completed files while keeping canonical substrate file identity strictly as the Merkle trunk `lp_id`; modified files decompose and deduplicate `Trunk → Leaf` so unchanged subtrees stay shared; and existing `(claim, witness, lineage)` series update idempotently without multiplying standing. Re-ingestion reproduces canonical identities and source testimony bit-identically.
+- **Out:** nothing new, or only what genuinely changed.
+- **From:** [11. Content](Content.md) operation 11.2; `docs/specs/08_Record_vs_Calculate_Spec.txt` §Acceptance.
 
 ### 29.4 Regenerate the caches that depend on what changed
 
 - **In:** a changed generation: a recipe, a manifest, a lower cache, a hot set.
-- **Do:** rebuild the dependents named in each blob's dependency manifest of [7. Perfcaches](Perfcaches.md) operation 7.3 and no others; publish atomically; the loader refuses the stale generation until the new one is in place. A scalar canonicalization recipe change is a new number ROM generation; a relation manifest change is a new highway ROM; a new hot set is a new sparse image or chess generation.
+- **Do:** rebuild the dependents named in each blob's dependency manifest of [7. Perfcaches](Perfcaches.md) operation 7.3 and no others; publish atomically; the loader refuses the stale generation until the new one is in place. A scalar canonicalization recipe change is a new number ROM generation; a `manifest/banks.tsv` or `manifest/slots/` change is a new `highway.bin` ROM; a new hot set is a new sparse image or chess generation.
 - **Out:** consistent cache generations.
 - **From:** `docs/specs/33_Perfcache_Blob_Law.md`; `docs/guides/compositional-perfcache.md` §Cache dependency and invalidation.
 
 ### 29.5 Reseed only when semantics change
 
-- **In:** a change to a registry.
-- **Do:** adding a relation, a qualifier value, a trust class, or a vocabulary value appends a bit or a code and touches no existing mask; it owes no reseed. A reseed is owed when semantics change, a rank or family edit, or when historical rows must gain a new bit's coverage. The last bit-order reseed is the one that froze the layout, and a retired relation keeps its bit forever. When a reseed runs, the seeds apply the locally materialized rows rather than re-decomposing.
-- **Out:** a reseed, or none.
-- **From:** `docs/decisions/0001-highway-bit-order.md`; `docs/plan/ASSIMILATION_ROADMAP.md` workstream C.
+- **In:** a change to a governed manifest or recipe.
+- **Do:** introducing a new content predicate in a `.recipe` requires zero C manifest edits and zero reseeds ([6. Registries](Registries.md) operation 6.1). Appending a new slot to `manifest/slots/*.tsv` or a new trust class touches no existing `bit(64)` mask and owes no reseed. A reseed (or targeted per-source `laplace forget` + re-ingest under 29.1) is owed only when a recipe's semantic mapping changes or historical rows must populate a newly added `manifest/banks.tsv` bank. Retired slots keep their slot numbers forever so historical masks never decode against the wrong meaning.
+- **Out:** a targeted re-ingest/reseed only when semantics change, or none.
+- **From:** `Laplace-Native/manifest/banks.tsv`; [6. Registries](Registries.md) operations 6.1 and 6.2.
 
 ### 29.6 Upgrade the extension in place
 

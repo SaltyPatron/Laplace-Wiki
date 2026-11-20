@@ -25,18 +25,18 @@ Decomposers are pure content-to-change streams with no inline SQL, and they decl
 - **Out:** the provider's records, spans, fields, errors, and packaging facts, per artifact, with journal and resume accounting.
 - **From:** `docs/plan/INGEST_BOUNDARY_AND_RECIPE_LAW.md` §Whole working set versus streaming, §Benchmark lesson, §Resource ownership; `docs/specs/06_Engineering_Ruleset.txt` Rules #10 and #12.
 
-### 11.2 Name the file by its trunk
+### 11.2 Name the file by its trunk (and skip unchanged files via the ingest journal)
 
-- **In:** each artifact.
-- **Do:** a file is a trunk, `[metadata, content]`, in the DAG, and its ID is the hash of its constituents like any other node's. A file's bytes are never hashed to name it or to mark it, and file timestamps do not define file identity. Whether a file is already recorded is not known here: it is asked in 11.8, by the trunk's ID, once the client has decomposed the file and has that ID from 11.5.
-- **Out:** every artifact goes on to 11.3; none is passed over before its trunk ID exists.
-- **From:** [Compositions: Files](../Storage/Compositions.md#files); [Identity: Pure content](../Storage/Identity.md#pure-content); [Ingestion: Deduplication](../Storage/Ingestion.md#deduplication).
+- **In:** each artifact, and the ingest journal if resuming or re-ingesting.
+- **Do:** in the substrate, a file is a trunk, `[metadata, content]`, in the Merkle DAG, and its canonical `lp_id` is the hash of its constituents like any other node's—a raw file byte-hash or filesystem timestamp never replaces `lp_id` or enters any entity ID. Operationally, however, an ingest journal or incremental workspace state **may** check a file's raw byte-hash on disk (bound to the active recipe and grammar generation) to skip re-running Tree-sitter or UAX #29 on unchanged, already-completed files, reusing their previously verified file trunk `lp_id` directly ([29. Maintenance](Maintenance.md) operation 29.3). New or modified artifacts (or artifacts under an updated recipe/grammar) proceed to 11.3, and trunk-to-leaf deduplication against the database runs in 11.8 once their trunk `lp_id` is computed.
+- **Out:** unchanged journaled files resolved to their verified trunk `lp_id` in O(1); new or modified artifacts sent on to 11.3.
+- **From:** [Compositions: Files](../Storage/Compositions.md#files); [Identity: Pure content](../Storage/Identity.md#pure-content); [Ingestion: Deduplication](../Storage/Ingestion.md#deduplication); [29. Maintenance](Maintenance.md) operation 29.3.
 
 ### 11.3 Decompose on the client
 
 - **In:** the artifact and its recipe.
-- **Do:** the client breaks content down using the memory-mapped tier 0 and the ROMs of [7. Perfcaches](Perfcaches.md), in native code over a working set or batch, never one call per scalar, token, node, or record. Text goes through UAX #29 into sentences, words, graphemes, and codepoints; a grapheme of one codepoint is that codepoint. A composition is an n-ary, recursive sequence of constituents, each of which is a codepoint or another composition. Nothing is dropped: "The cat sat on the mat" is `[The, ' ', cat, ' ', sat, ' ', on, ' ', the, ' ', mat]`, and "Sherlock Holmes" is `[[S,h,e,r,l,o,c,k], ' ', [H,o,l,m,e,s]]`. Text is recorded as it arrives, without normalization: precomposed and decomposed forms are different content. Case is never folded: `King` is not `king`, and attestations link them. A number decomposes to its digit codepoints under the scalar recipe and composes to one reusable root; a pixel's channels reference number roots; a sample references a scalar root; a code file's syntax subtrees compose bottom-up with the gaps as text constituents; an image composes pixels into patches, regions, and the image, with every contiguous square substructure an occurrence of a global root; a checkpoint's tokenizer composes as one ordered vocabulary. Every core decomposes.
-- **Out:** the artifact's Merkle DAG, in memory on the client, under a source trunk, a file trunk, a metadata tree, and a content tree. [Corpora: Universal Dependencies](../Corpora/Universal-Dependencies.md) works the chain through from the corpus's one trunk to the codepoints.
+- **Do:** the client breaks content down using the memory-mapped tier 0 and the ROMs of [7. Perfcaches](Perfcaches.md), in native code over a working set or batch, never one call per scalar, token, node, or record. Text goes through UAX #29 into sentences, words, graphemes, and codepoints; a grapheme or word of one codepoint collapses to that Tier-0 codepoint (`n == 1 → child`). A composition is an n-ary, recursive sequence of constituents, each of which is a codepoint or another composition. Nothing is dropped: "The cat sat on the mat" is `[The, ' ', cat, ' ', sat, ' ', on, ' ', the, ' ', mat]`, and "Sherlock Holmes" is `[[S,h,e,r,l,o,c,k], ' ', [H,o,l,m,e,s]]`. Text is recorded as it arrives, without normalization: precomposed and decomposed forms are different content. Case is never folded: `King` is not `king`, and attestations plus `tier0.flags` link them. Under the universal scalar law ([10. Recipes](Recipes.md) operations 10.5 and 10.6), numbers decompose to Tier-0 digit/sign/radix codepoints (`'0'..'9'`, `'-'`, `'.'`) and compose **once** (O(1) via the Number ROM or node table) so `255 → ['2','5','5']` shares the exact same `lp_id` whether it occurs as a pixel channel intensity, a byte value, an IPv4 octet, a code literal, or prose text, while higher-tier `physicality.path` trajectories (`channel → pixel → patch → region → image/scene`, `sample → window → frame → track`, with `run` RLE in `M`) give each modality its structure without private `ByteAtoms` silos; a code file's syntax subtrees compose bottom-up with the gaps as text constituents; an image composes pixels into patches, regions, and the image, with every contiguous square substructure an occurrence of a global root; a checkpoint's tokenizer composes as one ordered vocabulary. Every core decomposes.
+- **Out:** the artifact's Merkle DAG, in memory on the client, under a source trunk, a file trunk, a metadata tree, and a content tree. [Corpora: Universal Dependencies](../Corpora/Universal-Dependencies.md) works the chain through from the corpus's trunk to the codepoints.
 - **From:** [Ingestion: Client-side](../Storage/Ingestion.md#client-side); [Compositions: Constituents](../Storage/Compositions.md#constituents); [Identity: Pure content](../Storage/Identity.md#pure-content); `docs/INVENTION.md` §3; `docs/invention/modality-ladder-law.md`; [Research: Engine Measurements: Ingestion](../Research/Engine.md#ingestion).
 
 ### 11.4 Assign tiers
@@ -91,9 +91,9 @@ Decomposers are pure content-to-change streams with no inline SQL, and they decl
 ### 11.11 Apply by COPY
 
 - **In:** the streams of 11.10.
-- **Do:** stream only new rows, by binary COPY, in a bulk session with `synchronous_commit = off`, in tier order, leaves first: entities, then physicalities, then statistics, then the source with its trunk, origin, format, size, content hash, and normalization form recorded as a filter, then the attestation rows of [12. Attestations](Attestations.md). PostgreSQL stores the rows and resolves key conflicts as set merges; it reads prior standing once per cell per source. Gigabytes should take seconds. If the system is operating properly, the counts of entities and physicalities match.
-- **Out:** the source recorded.
-- **From:** [Deployment](../Operations/Deployment.md); [Physicality: Entity and physicality](../Storage/Physicality.md#entity-and-physicality); [Research: Engine Measurements: Ingestion](../Research/Engine.md#ingestion); [Research: Engine Measurements: Storage at volume](../Research/Engine.md#storage-at-volume).
+- **Do:** stream only new rows, by binary `COPY` into `UNLOGGED` `stage.lp_*` buffers and set-based merge into the four persistent substrate tables (`entity`, `physicality`, `attestation`, `consensus`), in a bulk session with `synchronous_commit = off`, in tier order, leaves first: entities, then physicalities (with file trunks and the source trunk carrying their `kind` bits in `mask`), then folded `(claim, witness, lineage)` attestation series and `consensus` updates via `laplace_attest_series`. PostgreSQL stores the rows and resolves conflicts as set merges; prior standing is read once per touched claim per witness series. Gigabytes take seconds, and every admitted composition has matching `entity` and `physicality` rows.
+- **Out:** the source recorded in the four substrate tables.
+- **From:** [Deployment](../Operations/Deployment.md); [Reference: Schema](../Reference/Schema.md); [Physicality: Entity and physicality](../Storage/Physicality.md#entity-and-physicality); [Research: Engine Measurements: Ingestion](../Research/Engine.md#ingestion).
 
 ### 11.12 Fold and complete
 
@@ -126,7 +126,7 @@ These are architecture smells in repeated ingest work, and each is a defect even
 
 ## What this stage leaves behind
 
-Entities, physicalities, sources, and statistics, and every observation the trajectory carries, with a receipt and a resumable journal, admitted by a plan that provably does not change what exists.
+Entities and physicalities (including file and source trunks with their `bit(64)` masks) and every observation their trajectories carry, with a receipt and a resumable journal, admitted by a plan that provably does not change what exists.
 
 ## Without this stage
 
