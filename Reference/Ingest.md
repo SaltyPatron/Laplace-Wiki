@@ -32,15 +32,15 @@ Then `file_take` keeps what each file witnessed for its content and `file_close`
 
 ### Trunk to leaf
 
-The files' trunks are probed first: a file whose trunk is recorded is recorded with everything under it and everything it attested, and nothing of it is looked for, played, or written again. Then the frontier proceeds **trunk to leaf** across logical domain boundaries (File Trunk $\rightarrow$ Section/Record Trunks $\rightarrow$ Sentences $\rightarrow$ Words), skipping synthetic binary-tree (`blocks_of`) spine nodes. Each round, `recorded()` asks the database which of the frontier's IDs it already has (and skips any ID already present in `tier0.bin`, `highway.bin`, or the client's `writer.known` cache). Because `entity` and `physicality` are partitioned 256 ways by the first byte of the BLAKE3 ID (`entity_00`..`entity_ff`, `physicality_00`..`physicality_ff`), the ID's first byte names the one partition the ID can be in. The IDs of a partition go to that partition as one set, in ID order, `SELECT u.i, e.tier, e.lexical, e.kind, e.tier IS NOT NULL FROM unnest($1::blake3[]) WITH ORDINALITY AS u(id, i) LEFT JOIN entity_xx e ON e.id = u.id WHERE e.id IS NOT NULL`, in chunks of 500,000 on every connection at once. No statement names more than one partition, and no tier is searched. A hit marks the node recorded (`keep = 2`), caches its published metadata (`tier`, `lexical`, `kind`) in `writer.known` so it is never re-staged across subsequent batches, and nothing below it is checked (amputating the entire already-recorded subtree on the client); a miss marks it new (`keep = 1`) and its logical children join the next round. Rounds continue until the frontier is empty. `--whole` puts every node in the first frontier instead. Counters: rounds, IDs checked, subtrees already recorded, new nodes.
+The files' trunks are probed first: a file whose trunk is recorded is recorded with everything under it and everything it attested, and nothing of it is looked for, played, or written again. Then `prune()` (`src/db.c`) walks **trunk to leaf** by tier (`255` down to `1`), skipping synthetic `blocks_of` spine nodes and pruning any node already present in `tier0.bin`, an admitted chess cache, or `writer.known`. Each round, `recorded()` probes the frontier's candidate IDs in set-oriented batches through `pg_contract.c` (`laplace_present_stage` / partition index probes). A hit marks the node and its entire descendant DAG recorded (`keep = 2`), caching it in `writer.known` so its subtree is amputated on the client and never re-queried; a miss marks it new (`keep = 1`) and queues its logical children for the next tier. `--whole` puts every node in the initial frontier instead. Counters: rounds, IDs checked, subtrees already recorded, new nodes.
 
 ### COPY
 
-New nodes from each batch or grammar-bounded section are bucketed by the first byte of their BLAKE3 ID (`00`..`ff`), sorted in Hilbert order, and streamed via binary `COPY` into **`UNLOGGED` `stage.*` tables** (`stage.entity_00`..`stage.entity_ff`, `stage.physicality_00`..`stage.physicality_ff`) using bounded connection concurrency (`min(cores, max_pool_size - headroom)`), without two-phase commit (`PREPARE TRANSACTION`) and without committing partial sections directly into live `public.*` partitions while a file is mid-stream. `mask` is 256 bits: its length as an `int32`, then 32 bytes, bit *b* in byte *b* >> 3 under `0x80 >> (b & 7)`. Once the entire file (or source) and its trunk are staged in `stage.*`, one unified database-side merge moves novel rows from `stage.*` into `public.*` in Hilbert order.
+New nodes (and existing carriers gaining mask or spare annotations) are ordered by topological wave, lane, and Hilbert key (`hilbert_order`), then streamed via binary `COPY` into per-run, per-lane `UNLOGGED` `stage.lp_entity_<xid>_<lane>` and `stage.lp_physicality_<xid>_<lane>` tables (`lanes = min(cores, pool, available)`), without two-phase commit (`PREPARE TRANSACTION`) and without writing partial sections directly into `public.*` while a file is mid-stream. Both `entity.mask` and `physicality.mask` are 64-bit carriers (`bit(64)`, serialized as a 4-byte bit length `64` followed by 8 bytes). Each window merges set-wise inside PostgreSQL through `laplace_merge_stage` and `laplace_enrich_stage`, preserving Hilbert locality and parent-table invariants.
 
 ### Records and the series
 
-What a source says is held by containment ([Attestations: Witnesses](../Semantics/Attestations.md#witnesses)): there is no table of attestations. Every part a recipe speaks of whole is a record, composed where it is read (`say.c`, `records_of`), a path in its file's content tree:
+What a source says is recorded both by containment in its content tree ([Attestations: Witnesses](../Semantics/Attestations.md#witnesses)) and in `public.attestation` (`(claim, witness, lineage)`): every part a recipe speaks of whole is a record (`say.c`), a path in its file's content tree:
 
 - the part's thing first (the sentence, the row), its rows' layers and tree where the recipe gives them (`layers`, `tree`), then each claim it says, in the order said, a vertex said to be a claim (`LP_SAID_CLAIM`) whose run is how many times the record says it, and whose M says how: the outcome (a win; a draw; a loss; or a score, carried in the vertex's spare bits) and its position among the claims said together (`together`), [Physicality](../Storage/Physicality.md#physicality);
 - who in the record says a claim (a column of annotators, a speaker: `voices`, `by`, `voice`), a vertex said to be a voice (`LP_SAID_VOICE`) right before the claim: content of the record, never a witness;
@@ -74,19 +74,16 @@ stated by `--as alice --class UserPromptContent`, the record holds: the content 
 
 Every statement the ingest issues, all parameters binary, all sets:
 
-| Phase | Statement |
+| Phase | Operation (`pg_contract.c` / `Laplace-postgres`) |
 | --- | --- |
-| trunk known | `SELECT 1 FROM entity WHERE id = ANY($1::blake3[])`; a long file read in stretches also asks, per partition, whether up to 4,096 of a stretch's claims are all recorded (`db_all_recorded`) |
-| session | `SET synchronous_commit = off` on every connection |
-| atoms | `SELECT count(*) FROM entity WHERE tier = 0` |
-| dedup | per-byte partition `SELECT u.i, e.tier, e.lexical, e.kind, e.tier IS NOT NULL FROM unnest($1::blake3[]) WITH ORDINALITY AS u(id, i) LEFT JOIN entity_xx e ON e.id = u.id WHERE e.id IS NOT NULL` |
-| COPY (`stage.*`) | per section/batch: `COPY stage.entity_00..ff (id, tier, lexical, kind, coord, hilbert) FROM STDIN (FORMAT binary)`, `COPY stage.physicality_00..ff (entity, tier, hilbert, path, mask) FROM STDIN (FORMAT binary)` |
-| unified merge | once the whole file/source and its trunk are in `stage.*`: set-based `INSERT INTO public.entity_00..ff SELECT … FROM stage.entity_00..ff ORDER BY hilbert` and `INSERT INTO public.physicality_00..ff SELECT … FROM stage.physicality_00..ff ORDER BY hilbert` |
-| standings | once a source, per partition of the claim's first hex digit: stage `(claim, games, score)` deltas and fold inside PostgreSQL via `laplace_attest_series` into `public.consensus_<h>` |
-| the witness | `INSERT INTO witness (id, lineage, trust) SELECT … WHERE NOT EXISTS (SELECT 1 FROM witness WHERE id = …)`: the source's trunk, after merge |
-| end | the GIN indexes from `pg_index`, largest first; `SELECT gin_clean_pending_list($1::regclass)` for each, on every connection at once |
+| trunk & frontier probe | `SELECT 1 FROM entity WHERE id = ANY($1::blake3[])` and `laplace_present_stage` per tier frontier |
+| session | `SET synchronous_commit = off` on loader connections; `laplace_ensure_stage` allocates per-run `UNLOGGED` `stage.lp_*` lanes |
+| COPY (`stage.*`) | binary `COPY` into `stage.lp_entity_<xid>_<lane>` and `stage.lp_physicality_<xid>_<lane>` with 64-bit `mask` (`bit(64)`) and binary EWKB `coord`/`path` |
+| stage merge | `laplace_merge_stage` and `laplace_enrich_stage` merge novel entities, paths, and mask/spare enrichments in Hilbert order |
+| series & witness | `laplace_accumulate_series` folds per-batch events; once the source trunk `[record, file trunks]` is merged, `laplace_attest_stage` writes `public.attestation` `(claim, witness, lineage, games, tokens, score, "position", trust)` and folds `public.consensus` |
+| GIN cleanup | `laplace_clean_stage` / `laplace_clean_partitions` drains GIN pending lists across touched partitions |
 
-No `ON CONFLICT`, no per-row statement, no cursor, no function call in a predicate.
+No inline SQL outside `pg_contract.c`, no per-row statement, no cursor, no function call in a predicate.
 
 ## Measured
 
