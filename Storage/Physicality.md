@@ -4,7 +4,7 @@ Every entity has a full, real 4D coordinate, and every composition's content is 
 
 ## Entity and physicality
 
-Every entity is its own record, with its [ID](Identity.md) and its real coordinate. Every entity also has a physicality, related to it by foreign key, so the physicality needs nothing special for an ID. If the system is operating properly, the counts of entities and physicalities match.
+Every entity is its own record, with its [ID](Identity.md) and its real coordinate: `entity` is the universal, scale-free 4D address handle inside the bounded 4-ball (`[-1, 1]^4`), letting any granularity of concept—a Tier-0 codepoint on $S^3$, `"255"`, a Tier-2 UAX #29 word, a Tier-3 idiom or C statement, a function AST, a book, or an entire `.git` repository root—sit at one deterministic point in finite geometric space and serve directly as a first-class compositional "token" at any tier. `entity.mask` carries strictly the 64-bit highway and grammatical bank bits (`manifest/banks.tsv`), never turn origin or channel. Every entity also has a physicality, related to it by foreign key, where ordered shape, direction, and constituent metadata live. If the system is operating properly, the counts of entities and physicalities match.
 
 ## Physicality
 
@@ -34,13 +34,13 @@ The X, Y, Z, and M doubles of a `physicality.path` vertex have no meaning as spa
 
 One exact real 4D centroid (`entity.coord`, computed via `__int128` fixed-point average of the constituents' real coordinates truncated toward zero) is generated and stored once on `entity`, so it is never recomputed; no centroid is ever computed or stored over packed `physicality.path` carrier doubles. When trajectory shape (`laplace_frechet4d`, `laplace_dtw4d`, `laplace_edr4d`, `laplace_hausdorff4d`) or Glome curves (`laplace_curves`, `laplace_couple`) are evaluated, Laplace unpacks the constituent IDs from `physicality.path` and resolves each constituent's real 4D `entity.coord` (`laplace_project_path`).
 
-Centroids collide in the 4-ball: `[c,a,t]` and `[a,c,t]` have the same centroid. Their Fréchet distances are, mostly, different. The shape being compared is the tree, not the centroid of its text. A close Fréchet distance across trees is a semantic relation the ID does not record. See [Query: Shape](../Query.md#shape).
+Centroids collide in the 4-ball by commutativity, while trajectories separate wiring and causal/sequential direction without learned weights: `[c,a,t]` (`"cat"`), `[a,c,t]` (`"act"`), and `[t,a,c]` (`"tac"`) all share the exact same deterministic 4D centroid `(coord('c') + coord('a') + coord('t')) / 3`, grouping rearrangements in $O(\log N)$ via GiST. `"cat"` (`c — a — t`) and `"act"` (`a — c — t`) trace distinct 4D segments, whereas `"cat"` (`c → a → t`) and `"tac"` (`t → a → c`) trace the exact same geometric polyline in opposite directions: an undirected set metric (`laplace_hausdorff4d`) scores `0`, while monotone-forward trajectory metrics (`laplace_frechet4d`, `laplace_dtw4d`, `laplace_edr4d`) enforce `0 → n − 1` traversal (`frechet4d("cat", "tac") >= ‖coord('c') − coord('t')‖ > 0`), absorb rate or repetition along the same forward path (`"cat"` vs `"caaat"`), and detect exact inversions explicitly via `reverse()`. See [Query: Shape](../Query.md#shape).
 
 ## Trajectories
 
 Content is stored as physicality trajectories on geometry ZM. The physical trajectory records the order of the constituents, so no ordinal is needed in the metadata.
 
-The trajectory alone gives precedes, contains, co-occurrence, and more.
+The trajectory and its GIN index (`laplace_path_ops`) give containment, precedes, follows, co-occurrence, gap distance, and **microsecond salience** ([19. Pull](../Sequence/Pull.md) operation 19.11)—intrinsic self-information $I(e)$ from GIN posting cardinalities, joint span contraction and multi-tier promotion, and `M`-outcome `WIN`/`LOSS` causal contrast—without edge tables or separate stat tables.
 
 ## Hop and fanout
 

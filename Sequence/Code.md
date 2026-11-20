@@ -61,17 +61,17 @@ Everything is an AST, and the substrate is a Merkle DAG AST; that is why the tre
 
 ### 26.8 Witness every outcome
 
-- **In:** the results of 26.7.
-- **Do:** each is a typed, calculated outcome attached to the exact code, toolchain, environment, and target identities plus any derived projection, with its analyzer identity and version, [12. Attestations](Attestations.md) operation 12.10. A failure is reusable negative evidence: "compile failed, negative attestation, next iteration; oh wait, we tried this, it failed hard, abort, rethink." A success is an evidence-backed transition explaining which obligation failed, which structure changed, and which verification closed it. Toolchain failures are never disposable stderr appended to a prompt.
+- **In:** the results of 26.7 and any `InternalMonologue` (`0.10`) planning/edit steps that led to `R1`.
+- **Do:** coding is the same OODA observation-decision-action loop as conversation, editing multi-tier internal AST records (`R0 + Δ → R1`) rather than blindly predicting BPE text. Every compile, link, typecheck, or test run commits under `ToolchainVerification` (`0.90` in `trust_classes.toml`, [12. Attestations](Attestations.md) operation 12.10), decomposing compiler/test diagnostics into canonical entities and attaching `WIN` (`score = 1.0`) or `LOSS` (`score = 0.0`) to the exact modified AST constituents, callee/datatype bindings, toolchain, and target environment. Toolchain failures are never disposable stderr strings thrown away after one prompt: across attempts, GIN `WIN`/`LOSS` differential salience ([19. Pull](Pull.md) operation 19.11) induces durable structural rules (*"every time this datatype is passed to this function, compile fails"*) that drop standing below `1500` with full provenance receipts.
 - **Out:** the witnessed trajectory `R0 → Δ1 → failures → Δ2 → … → verified R1`.
 - **From:** `docs/guides/software-construction.md` §Development is a witnessed trajectory; `docs/INVENTOR_RECORD.md` §Gödel engine; `docs/INVENTIONS.md` #116.
 
 ### 26.9 Repair the smallest divergent subtree
 
-- **In:** a failure.
-- **Do:** attach the failure to the exact divergent structure and context, "one of these things is not like the others"; tug artifact identity, structure, dependencies, toolchain and runtime versions, target hardware, input, execution path, environment, and prior repair trajectories; avoid transformations already witnessed to fail under matching structure; mutate the smallest subtree; repeat from 26.5 until obligations close or a WHY_NOT remains, with the residual explicit when the current model cannot explain it.
-- **Out:** the next Δ, or the WHY_NOT.
-- **From:** `docs/guides/software-construction.md` §"One of these things is not like the others".
+- **In:** a failure from 26.7–26.8.
+- **Do:** use decomposed compiler/LSP diagnostics plus microsecond GIN `LOSS` vs `WIN` trajectory salience (`laplace_salience`, [19. Pull](Pull.md) operation 19.11) to localize the failure to the smallest divergent AST subtree—canceling out the 99% of surrounding function scaffolding that appears in passing trajectories while isolating the offending constituent or `[datatype, function]` call ("one of these things is not like the others"); prune transformations already witnessed as `LOSS` under matching structure; splice a candidate replacement subtree (`R0 + Δ' → R2`); and repeat from 26.5 until verification closes or an explicit `WHY_NOT` residual remains.
+- **Out:** the next Δ, or the `WHY_NOT` receipt.
+- **From:** `docs/guides/software-construction.md` §"One of these things is not like the others"; [19. Pull](Pull.md) operation 19.11.
 
 ### 26.10 Couple the repair across repositories
 
