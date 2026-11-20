@@ -13,7 +13,7 @@ A running install: everything through [22. Users](Users.md).
 ### 29.1 Forget a source
 
 - **In:** a witness to correct or remove.
-- **Do:** correcting a source is per-witness replacement, never a database recreate: remove the source's attestations and its trunk, sweep what nothing references any more, replay the standings it touched, and re-ingest the corrected generation, whose files give it a trunk of its own. The engine's forget removes a source's contributions; observed testimony from other witnesses stays. With provenance by containment, the target, removing the trunk is the whole of the forget, once a working prototype shows containment replays exactly what the attestation table does. Old evidence remains addressable rather than being overwritten. Never reset or drop the database without explicit authorization for that action.
+- **Do:** correcting a source is per-witness replacement, never a database recreate: remove the source's attestations and its trunk, sweep what nothing references any more, replay the standings it touched, and re-ingest the corrected generation, whose files give it a trunk of its own. The engine's forget removes a source's contributions; observed testimony from other witnesses stays. With provenance by containment, the target, removing the trunk is the whole of the forget, once a working prototype shows containment replays exactly what the attestation table does. Old evidence remains addressable rather than being overwritten. Do not drop or recreate the entire database merely to fix a single source.
 - **Out:** the world without that witness's testimony, standings refolded.
 - **From:** `docs/plan/ASSIMILATION_ROADMAP.md` workstream C; `docs/specs/06_Engineering_Ruleset.txt` §Operational constraints; `docs/INVENTION.md` §11.
 
@@ -48,7 +48,7 @@ A running install: everything through [22. Users](Users.md).
 ### 29.6 Upgrade the extension in place
 
 - **In:** a new Laplace-postgres version.
-- **Do:** after an engine rebuild, rebuild and install the extensions before verification; until a release is deployed there are no update paths, so a database holding another version of the extension is recreated, and `laplace deploy` refuses it until it is. The extension is never dropped out of a database that is kept, because dropping the extension drops every index built on its functions. Validate the installed extension, not an edited template. PostgreSQL's lifecycle is service-managed.
+- **Do:** after an engine or extension rebuild, install the module and run `laplace deploy` before verification. Because `Laplace-postgres` hashes persistent storage table DDL (`laplace-storage:<hash>`) separately from replaceable C and SQL routines (`laplace.reconcile.sql`), compatible databases upgrade in place (`ALTER EXTENSION laplace UPDATE TO ...`) with all data and indexes preserved; recreate (`laplace deploy --recreate`) only when persistent table storage layout changes. The extension is never dropped out of a database that is kept, because dropping the extension drops every column and index built on its types and functions. Validate the installed extension, not an edited template. PostgreSQL's lifecycle is service-managed.
 - **Out:** the extension at the new version, indexes intact.
 - **From:** [Builds: Laplace-postgres](../Operations/Builds.md#laplace-postgres); `docs/specs/06_Engineering_Ruleset.txt` §Operational constraints.
 
@@ -76,7 +76,7 @@ A running install: everything through [22. Users](Users.md).
 ### 29.10 Keep the operating rules
 
 - **In:** every day.
-- **Do:** one ingest at a time; never kill an ingest or backend owned by another task; the CLI is a server workload with server GC, bounded memory, structured progress, and cancellation-safe journals; summary output is not verification; diagnose with independent evidence, wall time, CPU, waits, allocations, plans, lock state, and phase throughput at the layer that owns the claim; never validate a populated-system claim with an empty fixture; preserve unrelated worktree changes.
+- **Do:** one ingest at a time per database; never kill an ingest or backend owned by another active run; the CLI is a server workload with server GC, bounded memory, structured progress, and cancellation-safe journals; summary output is not verification; diagnose with independent evidence, wall time, CPU, waits, allocations, plans, lock state, and phase throughput at the layer that owns the claim; never validate a populated-system claim with an empty fixture; evaluate leftover agent worktree changes against the invention rather than stranding broken partial work.
 - **Out:** an install that stays measurable.
 - **From:** `docs/specs/06_Engineering_Ruleset.txt` Rules #9, #11 and §Operational constraints.
 

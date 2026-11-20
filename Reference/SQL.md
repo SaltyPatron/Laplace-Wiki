@@ -66,7 +66,7 @@ Each takes two paths' real-coordinate vertex sequences, POINT ZM or LINESTRING Z
 
 ## Tier 0 in place
 
-Coordinates from the memory-mapped tier 0 at `laplace.tier0`, computed in the backend, so a lookup by computed Hilbert key prunes to the one partition that can hold the entity:
+Coordinates from the memory-mapped tier 0 at `laplace.tier0`, computed in the backend, so a constant expression folds at plan time into a direct B-tree or GiST index lookup:
 
 | Function | Returns | Computes | Native |
 | --- | --- | --- | --- |

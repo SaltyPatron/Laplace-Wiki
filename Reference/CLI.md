@@ -1,6 +1,6 @@
 # CLI
 
-Laplace is one program, `laplace`, with thirty commands: the generators of tier 0 and its flags, the deployment of a database, ingestion and its inverses, the indexes, the read commands, and the measurements.
+Laplace is one program, `laplace`, with thirty-one commands: the generators of tier 0 and its flags, the deployment of a database, ingestion and its inverses, the indexes, the read commands, and the measurements.
 
 `laplace` with no command prints the commands and where it will look: the database, tier 0, the recipes, the grammars, the firmware. Where things are comes from the environment, [Environment](Environment.md), else from what the engine was built with. Every command that touches the database takes `-d conninfo`. A command exits 0 when it did what it says, 1 on a failure it reports, 2 on a usage error or a broken recipe or firmware.
 
@@ -18,7 +18,7 @@ Laplace is one program, `laplace`, with thirty commands: the generators of tier 
 
 ## laplace deploy
 
-`laplace deploy [-d conninfo]`. Makes the database if the server has none of that name, asking `postgres` over the same connection parameters; then `CREATE EXTENSION IF NOT EXISTS` for `postgis`, `laplace`, `pg_stat_statements`, `pg_buffercache`; a stop, saying to recreate the database, when it holds another version of `laplace` than the installed one (there is no update path before release); `ALTER DATABASE … SET laplace.tier0`, `laplace.flags` and `laplace.highway` to this engine's paths; the tables a database had before the extension owned them made the extension's (`ALTER EXTENSION laplace ADD TABLE`); `SELECT laplace_schema_indexes()`; the highway's identifier entities registered directly from the mapped highway perf-cache (`tier0.highway`); `enable_parallel_append` off for the database; then `laplace status`. Each statement is timed on stdout. Idempotent.
+`laplace deploy [-d conninfo] [--schema name] [--configure-server-cache | --prepare] [--recreate]`. Makes the database if the server has none of that name, asking `postgres` over the same connection parameters; creates `postgis`, `laplace`, `pg_stat_statements`, and `pg_buffercache`; when the database holds an earlier build of `laplace` whose `laplace-storage:<hash>` matches, transitions it in place through `laplace.reconcile.sql` (`ALTER EXTENSION laplace UPDATE TO ...`) without dropping data, recreating only when `--recreate` is passed or persistent storage table DDL changed; sets `laplace.tier0`, `laplace.flags` and `laplace.highway` when `--configure-server-cache` or standalone deploy runs; makes pre-existing tables the extension's (`ALTER EXTENSION laplace ADD TABLE`); runs `SELECT laplace_schema_indexes()`; registers the highway's identifier entities directly from the mapped highway perf-cache; sets `enable_parallel_append` off for the database; then runs `laplace status`. Each statement is timed on stdout. Idempotent.
 
 ## laplace sources
 

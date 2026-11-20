@@ -14,7 +14,7 @@ Laplace does not require a GPU. Third-party tools that produce input for Laplace
 
 PostgreSQL has defaults that are tuned to the hardware.
 
-Development favors observability and benchmarks over a heavy focus on tests and gates: the invention should speak for itself.
+Every capability is built, deployed to the installed stack, and executed end to end against real data, with native observability and benchmarks proving real throughput rather than mock test harnesses or gate ceremony substituting for delivery.
 
 Bit-perfect determinism across hardware and operating systems requires a specific build configuration. Every build has a fingerprint. See [Research: Numerics](Research/Numerics.md).
 

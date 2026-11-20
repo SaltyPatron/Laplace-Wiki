@@ -2,7 +2,7 @@
 
 After a bulk load the indexes are built, the planner is told what the columns really are, and the install is measured and checked against itself.
 
-Laplace exploits GiST and GIN indexing for novel mechanisms. Development favors observability and benchmarks over a heavy focus on tests and gates: the invention should speak for itself.
+Laplace exploits GiST and GIN indexing for novel mechanisms, measured end to end on the deployed server against loaded content rather than simulated in mock harnesses.
 
 ## Before this stage
 

@@ -3,7 +3,7 @@
 Architecture boundaries state which layer owns which law: the native engine owns every semantic operation, and SQL and C# orchestrate generated typed bindings to it.
 
 > [!IMPORTANT]
-> These boundaries are binding on every active Laplace repository. They were authored in the frozen `Laplace-Refactor` workstream and are promoted here from [the original](../Repositories/Laplace-Refactor/docs/architecture/BOUNDARIES.md). The text below the summary is unchanged.
+> These boundaries apply across every active Laplace repository (`Laplace-Native`, `Laplace-postgres`, `Laplace-Engine`, `Laplace-MCP`, `Laplace-UCI`, and `Laplace`). `Laplace` (the product application) is completing its `one-substrate` convergence onto the modular `Laplace-Native` + `Laplace-postgres` + `Laplace-Engine` packages so every semantic law has exactly one native implementation.
 
 ## Authority flow
 

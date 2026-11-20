@@ -4,14 +4,14 @@ A Laplace database is made, empty, by `deploy.sh` and filled by `ingest.sh`, bot
 
 1. **Deploy:** `./deploy.sh` (Laplace-Operations), on a push by the Operations workflow, or by hand.
    - The build (`build.sh install`); tier 0 and its flags when missing; the highway, always, its slots frozen by Laplace-Native's manifest; the grammars when `$LAPLACE_GRAMMARS` is empty.
-   - `laplace deploy`: the database when missing, the extensions `postgis`, `laplace`, `pg_stat_statements` and `pg_buffercache`, a refusal when the database holds another version of `laplace` than the installed one (it is recreated; there is no update path before release), the settings `laplace.tier0`, `laplace.flags` and `laplace.highway` (each backend memory-maps the perf-caches on first use), the schema and every index (`CREATE EXTENSION laplace` and `laplace_schema_indexes()`), and the highway's own records.
+   - `laplace deploy`: the database when missing, the extensions `postgis`, `laplace`, `pg_stat_statements` and `pg_buffercache`, an automatic in-place transition via `laplace.reconcile.sql` (`ALTER EXTENSION laplace UPDATE TO ...`) when the database's `laplace-storage:<hash>` matches (recreating with `--recreate` only when persistent table storage DDL changed), the settings `laplace.tier0`, `laplace.flags` and `laplace.highway` (each backend memory-maps the perf-caches on first use), the schema and every index (`CREATE EXTENSION laplace` and `laplace_schema_indexes()`), and the highway's own records.
    - `laplace status`.
    - It holds a lock per database and leaves while an ingest of it runs. `./deploy.sh drop` drops the database first, through the role, and deploys it again, empty; the workflow does that when dispatched with `drop`.
    - In the Operations workflow (`laplace.yml`) the deployment is followed by `checks` (`verify.sh deployment`: the extension's version and tables, and Engine and PostgreSQL on the same tier 0 and highway), `tests` (`verify.sh tests`: every database check of the deployed revisions, against the deployed database; see [Checks](../Reference/Checks.md#the-database-checks)) and `reads` (`verify.sh reads`). The components' own CI starts no server and makes no database: a deployment is what their database checks run against.
 
 2. **Schema:** made by `CREATE EXTENSION laplace` itself (Laplace-postgres's install script).
-   - Entities and paths are range-partitioned 256 ways by the first byte of their BLAKE3 ID (`entity_00`..`entity_ff`, `physicality_00`..`physicality_ff`). An ID is a cryptographic hash, so the partitions stay equal, and a lookup by ID prunes to one partition.
-   - Standings (`consensus`) are partitioned 16 ways by the first hex digit of the claim's ID (`consensus_0`..`consensus_f`).
+   - `entity` and `physicality` are range-partitioned (`entity_t0`..`entity_t8plus` and `physicality_t0`..`physicality_t8plus` in `sql/laplace.sql.in`; see [30. Conflicts](../Sequence/Conflicts.md) P4 on tier vs ID-byte partitioning).
+   - Attestations (`attestation`) and standings (`consensus`) are range-partitioned 16 ways by the first hex digit of the claim's ID (`0`..`f`).
    - The schema also applies the planning settings for paths from [Database](Database.md#planning).
 
 3. **Ingest:** `./ingest.sh [source...]`, or the `Laplace-Ingest` workflow (dispatched, with the sources as its input).

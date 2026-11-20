@@ -2,200 +2,77 @@
 
 These standards keep implementation choices subordinate to the complete invention.
 
-They apply to native code, PostgreSQL server integration, SQL, C#, generators, source
-recipes, tests, packages, and delivery automation. Passing formatting or compiling is
-not sufficient; the implementation must preserve the product laws.
+They apply across every active Laplace repository: `Laplace-Native`, `Laplace-postgres`, `Laplace-Engine`, `Laplace-MCP`, `Laplace-UCI`, `Laplace-Operations`, and `Laplace`. Compiling or passing unit checks is never sufficient on its own: every change must preserve the invention's laws, deploy cleanly onto the installed stack, and work end to end against real data.
 
 > [!IMPORTANT]
-> These standards are binding on every active Laplace repository. They were authored in the frozen `Laplace-Refactor` workstream and are promoted here from [the original](../Repositories/Laplace-Refactor/docs/architecture/ENGINEERING_STANDARDS.md). The wording is unchanged; identifiers such as the ISA and generated contracts name the law, not a current file.
+> Where code, a test, a workflow, or a live database disagrees with the documented invention ([The Invention](../Repositories/Laplace/docs/INVENTION.md), [the inventor's record](../Repositories/Laplace/docs/INVENTOR_RECORD.md), and the decided entries of [30. Conflicts](../Sequence/Conflicts.md)), change the code to match the invention — never downgrade the specification to match agent drift.
 
 ## 1. Begin with the whole operation
 
-Before implementing a component, identify the complete product behavior, its typed
-AST inputs and outputs, recipe, ISA instructions, immutable context, semantic owner,
-physical providers, persistent and derived effects, receipts, and acceptance defects.
-The current branch, one source format, one issue, or one convenient demonstration
-cannot define the abstraction.
+Before changing a component, trace the complete end-to-end operation across every layer it touches: its grammar or codec input, compiled recipe, native C execution, PostgreSQL 4D extension surface, Engine/MCP/C# orchestration, persistent and derived effects, receipts, and post-deployment behavior. A leaf spring is not the whole watch: never stop at an isolated helper, thin vertical slice, benchmark stub, or partial route while leaving the end-to-end product path unwired.
 
 Every change answers:
 
-- why the behavior exists in the transformer-replacement machine;
+- how the behavior serves the GPU-free transformer-replacement substrate;
 - which exact distinctions it consumes, preserves, calculates, witnesses, or realizes;
-- how it participates in the persistent Merkle-DAG world model;
-- how SQL composes it and the native engine executes it;
-- how it behaves in vector, batch, PostgreSQL, replay, cancellation, and failure paths;
-- which deliberate defect proves the test detects a wrong mechanism.
+- how it participates in the universal content-addressed Merkle-DAG world model;
+- how SQL and C# orchestrate it and Native C executes it;
+- how it behaves in batch, parallel, PostgreSQL, replay, cancellation, and failure paths;
+- how it is deployed and verified end to end on the installed runtime without unnecessary database drops or reseeds.
 
-Component success is not product success. A lookup that returns rows, a renderer that
-reconstructs content, a target artifact that loads, a database containing millions of
-entities, or a feature-specific endpoint that responds proves only its declared
-boundary. A capability is admitted only after its complete public route passes through
-the shared registry, context, recipe compiler, ISA, batch, presence, deposition,
-receipt, and exception lifecycle.
-
-At least three materially unrelated whole operations must prove that lifecycle. A
-deliberate mutation routes one through a private dispatcher, staging path, persistence
-boundary, or opaque internal-error translation and must fail. This is the cohesion
-proof that distinguishes one machine from a collection of reusable-looking islands.
+Component compilation is not product completion. A capability is done when its complete public route builds cleanly, reconciles onto the installed stack, executes against real inputs, and produces the expected durable and observable result.
 
 ## 2. One semantic implementation
 
-C/C++ and PostgreSQL server integration own every semantic operation. SQL and C# only
-orchestrate generated typed surfaces. A transport, source adapter, parser binding,
-cache, database serializer, test helper, CLI, HTTP endpoint, or target exporter cannot
-contain a second implementation of identity, AST lowering, composition, physicality,
-evidence, cognition, realization, or model semantics.
+Native C and the PostgreSQL 4D integration (`Laplace-Native` and `Laplace-postgres`, driven by `Laplace-Engine`) own every semantic operation. SQL and C# only orchestrate typed surfaces (`pg_contract.c`, `sql_catalog.def`). A transport, source adapter, parser binding, cache, database serializer, test helper, CLI, HTTP endpoint, script, or target exporter must never contain a second implementation of identity, AST lowering, composition, physicality, mantissa packing, Hilbert encoding, Glicko-2 standing, cognition, realization, or model semantics.
 
-Scalar operations lower to the vector-first implementation. Serial, partitioned,
-parallel, direct-native, PostgreSQL, SQL, and managed routes produce identical logical
-results and receipt meaning. An optimization may change a physical plan, never the
-operation.
+Scalar operations lower to the deterministic vector-first implementation. Serial, partitioned, parallel, direct-native, PostgreSQL, SQL, and managed routes produce identical logical results and bit-exact canonical identities across supported x86-64 ISA levels (`scalar`, `sse2`, `avx2`, `avx512`).
 
 ## 3. Generics, interfaces, and reuse
 
-Stable repeated behavior belongs in typed generic abstractions, interfaces, concepts,
-abstract lifecycle bases, or generated contracts as appropriate to the language. The
-common framework owns registry, complete-program validation, immutable context,
-canonical vector/set/run/AST batches, working-set planning, sinks and providers,
-resources, cancellation, replay, merge, progress, epochs, activation, and receipts.
+Each functional layer is isolated as a clean, reusable modular component (`Laplace-Native` → `Laplace-postgres` → `Laplace-Engine` → `Laplace-MCP` → product consumers) consumed as a versioned package rather than copied across repositories.
 
-A module supplies only the varying law: grammar/codec metadata, typed validation,
-lowering or recomposition rules, a semantic kernel, persistence schema declarations,
-an access law, and conformance vectors. Source, language, modality, and model names may
-select declarations or witnessed state; they may not select another engine branch.
-
-Inheritance or templates are not goals by themselves. An abstraction is admitted when
-at least two materially different consumers retain the same invariant and a deliberate
-provider substitution proves the shared lifecycle. A generic abstraction cannot erase
-type, order, authority, evidence, loss, or completion distinctions.
+Within the engine, stable repeated behavior belongs in shared generic pipelines: compilation, immutable context, lock-free node tables, bounded per-worker arenas, $O(\text{tier})$ top-down deduplication, staged binary `COPY`, set-wise merges, perf-cache mapping, cancellation, and receipts. A source or modality supplies only its varying declarations (Tree-sitter grammar or edge codec, `.format`, `.recipe`, manifest slots, firmware parameters). Source, language, modality, and model names select declarations or witnessed state; they never select a separate bespoke engine branch or per-format C/C# walker.
 
 ## 4. Grammars, recipes, and the universal AST
 
-Every digital structure lowers to the typed universal AST whose canonical persistent
-form is the Merkle DAG. Tree-sitter parsers, external scanners, standards parsers, and
-media codecs are replaceable concrete-syntax providers. Laplace-native grammars are
-first-class product languages. None can mint private identity or own semantic state.
+Every digital structure lowers to the universal content-addressed Merkle DAG. Tree-sitter parsers, standards readers, and media codecs are concrete-syntax providers; recipes (`Laplace-Engine/recipes/`) are compiled declarative bytecode (`recipe_program.h`) stating what each recovered field becomes (content, key, reference, type, metadata, omit, perf-cache, claim, voice, or relation). Opaque callbacks, hardcoded English relation switches, and hand-rolled per-source scanners are forbidden.
 
-Recipes are immutable typed executable laws. They declare grammar inputs, lowering and
-recomposition, validation, canonicalization, loss, inverse data, required epochs,
-authority, effects, resources, vectors, completion, and receipts. Recipes compile to
-the shared ISA before execution. Opaque callbacks and importer-owned semantic switches
-are forbidden.
-
-Exact round trips reproduce original bytes. Intentional transformations create new
-content, preserve unchanged subtree identities, and record typed edits and relations.
-Unknown nodes, fields, errors, ambiguities, unsupported operations, and lossy paths are
-explicit outcomes.
+Exact round trips reproduce original bytes from PostgreSQL alone. Intentional transformations create new canonical compositions, preserve unchanged subtree identities, and record provenance. Unhandled fields or malformed inputs fail loudly rather than silently dropping data.
 
 ## 5. Native code and ABI
 
-- Use fixed-width types at persisted, generated, wire, and ABI boundaries.
-- Make ownership, lifetime, nullability, optionality, capacity, alignment, byte order,
-  overflow behavior, and error atomicity explicit.
-- C ABI structures are versioned and generated where contracts define them. C++
-  internals use RAII and typed spans/containers without leaking exceptions across C or
-  PostgreSQL boundaries.
-- Warnings required by the repository are errors. Narrowing, sign conversion, shadowing,
-  aliasing, undefined behavior, and unchecked arithmetic require explicit treatment.
-- Numeric recipes declare compiler/provider constraints; ambient fast-math or nested
-  thread settings cannot change semantics.
-- Resource use derives from the conserved topology grant. Libraries, workers, and
-  tools cannot independently oversubscribe the machine.
+- Use fixed-width types at every persisted, generated, wire, and ABI boundary.
+- Make ownership, lifetime, nullability, capacity, alignment, byte order, overflow behavior, and error atomicity explicit.
+- Keep floating-point determinism exact (`icx` with `-fp-model=precise` and `-ffp-contract=off`, CORE-MATH `cr_sin`/`cr_cos`, fixed summation order across SIMD widths); fast-math and FMA contraction are forbidden in canonical math.
+- Bound concurrency to hardware topology so OpenMP, MKL, TBB, PostgreSQL workers, and managed callers never oversubscribe the host.
 
 ## 6. PostgreSQL and SQL
 
-PostgreSQL extension and SPI code are normal native engine surfaces. Plans are
-schema-qualified, prepared, parameterized, set-oriented, reusable, and measured at
-representative cardinality. Per-row SQL, SPI, process, language, network, or
-transaction crossings are forbidden on primary batch paths.
+PostgreSQL extension C routines and SPI plans are schema-qualified, prepared, parameterized, and set-oriented. Database crossings are $O(\text{tiers})$, never $O(\text{rows})$; per-row SQL, SPI, process, or network crossings on batch paths are forbidden.
 
-SQL owns transactions, constraints, indexes, set routing, program composition, and
-result projection. It does not implement recursive semantic algorithms in SQL text.
-Public functions use explicit namespaces and typed generated bindings, avoid hidden
-session settings, expose planner-visible structure where required, and retain exact
-`EXPLAIN (ANALYZE, BUFFERS, WAL)` evidence for performance claims.
+SQL owns transactions, constraints, partitions, indexes, set routing, and result projection. It never implements recursive semantic walks, cursors, RBAR loops, string-hacked identity, or consensus math in SQL text.
 
-For typed filtered indexed cognition/search, the database path is filter-first and
-frontier-set-oriented. The compiled program chooses only admissible transition-provider
-families and pushes semantically safe source, context, time, world, authority, evidence,
-relation, direction, structural, and standing predicates into candidate generation
-before expansion. PostgreSQL indexes, PostGIS/GiST paths, partitions, and immutable
-perfcaches are candidate providers; exact native validation remains semantic authority.
-
-The primary cognition/search path must reject cursor/RBAR traversal, one SQL/SPI query
-per frontier state when set-wise expansion is possible, recursive SQL or CTEs as the
-search engine, dynamic SQL generated per candidate/frontier/relation, silent scalar
-fallback from failed batch/indexed execution, giant pre-filter adjacency/world scans,
-unbounded in-memory edge loading, per-row semantic cache maintenance, and an
-accelerator miss treated as authoritative absence. Semantic repair, deferred-write
-completion, cache-building, or vacuum-like maintenance cannot be required before an
-otherwise valid admitted state is usable by an interactive query. The separate
-perfcache epoch-pinned reader drain after an atomic generation handoff remains a valid
-concurrency lifecycle.
-
-A logically correct result reached by a forbidden physical plan fails implementation
-acceptance. Representative PostgreSQL cognition receipts identify the selected plan,
-indexes/partitions/perfcache generations, frontier in/out, generated/rejected/accepted
-candidates, rows examined, heap/table fetches, SPI/native crossings, CPU, memory,
-I/O/buffers, elapsed time, and A*/best-first completion disposition.
+For indexed cognition and retrieval, push containment (`laplace_path_ops`), 64-bit bank masks (`laplace_mask_ops`), 4D GiST boxes (`laplace_point4d_ops`, `laplace_angular4d_ops`), Hilbert intervals, and partition bounds into candidate generation first, then run exact native C verification, trajectory comparison, and series math over bounded sets. Never pass packed `physicality.path` carrier doubles into spatial distance functions without realizing constituent coordinates first, and never add silent scalar fallbacks when an indexed path is misconfigured — fail loudly and fix the root cause.
 
 ## 7. Managed orchestration
 
-C# owns source, session, service, product API, and external-system lifecycle. It uses
-generated types and a generic transport/lifecycle spine, batches work, applies
-backpressure, propagates cancellation and authority, and preserves native receipts.
-It does not normalize semantics, reinterpret errors, rebuild ASTs, or implement a
-private cognition path.
+C# owns service hosting, HTTP/OpenAI/MCP/UCI transport, authentication, workspace tenancy, billing/entitlement orchestration, and Web UI delivery. All managed database access runs through `sql_catalog.def` and `NpgsqlCatalog` with zero handwritten SQL strings in `.cs` files. C# never computes substrate identities, case-folds or normalizes content, chunks text or code, blends heuristic ranking weights, or maintains a private substrate copy.
 
-## 8. Persistence, acceleration, and effects
+## 8. Persistence, perf-caches, and in-place lifecycle
 
-Canonical content/AST state, occurrences/testimony, reproducible derived epochs,
-retained inference/working state, acceleration artifacts, and external effects have
-separate authorities and publication boundaries. Presence is proven set-wise over the
-whole working set. Durable mutation is transactional, idempotent under its declared
-replay law, and never inferred from row count alone.
+Persistent world state lives in four substrate tables (`entity`, `physicality`, `attestation`, `consensus`), separate from conventional operational/billing tables (`app.*`). Perf-caches (`tier0.bin`, `tier0.flags`, `highway.bin`, `chess.bin`) are fingerprinted, memory-mapped ROM accelerators derived deterministically from the same canonical law; they never define a second identity space.
 
-Perfcaches are typed compiled execution planes with module-specific access laws. They
-must retain canonical semantic parity, whole-artifact validation, coherent activation,
-reader pinning, and independent replacement. They cannot become a second authority.
+Routine C kernel, SQL function, operator, opclass, firmware, Engine, and application updates reconcile **in place** (`laplace.reconcile.sql` / `laplace deploy` / idempotent `db/schema/*.sql`) while preserving loaded corpora and indexes. Source corrections use per-witness `laplace forget` + `laplace sweep` + idempotent re-ingest. Database recreation (`--recreate`) is reserved strictly for persistent table storage-layout or `tier0.bin` coordinate changes and is never triggered automatically by build CI.
 
-Sparse state is the default. Absence, unobserved state, unknown, contradiction, and a
-small numeric value remain distinct; code may not allocate an all-pairs surface to
-erase that distinction. Every proposed index, materialization, and perfcache includes
-a representative paired with/without workload, selected plan, build/write/WAL/storage/
-bloat cost, read CPU/I/O/latency benefit, work avoided, rebuild law, observation
-window, and removal condition. Acceleration removal may fail a performance budget but
-must preserve semantics and receipt meaning.
+## 9. Deployed verification and real evidence
 
-## 9. Tests and evidence
+Verify against the real installed PostgreSQL 18 server and deployed services (`laplace-ops deploy`, `laplace-ops verify -Installed`, `deployed.sh`, `tests/deployed/run.sh`) — never spin up disposable private PostgreSQL clusters (`initdb`, `postgres_regress`, `laplace_regress_*`) or mock substrates.
 
-Tests execute the production implementation at the boundary they claim. Important
-tests have a deliberate mutant that changes the mechanism and must fail for the exact
-reason. Mocks may isolate a physical provider but cannot establish engine semantics,
-PostgreSQL integration, installation, conversation, model behavior, or performance.
+Measure both correctness and physical execution (`EXPLAIN (ANALYZE, BUFFERS)`, `laplace bench`, `laplace status --joins`, phase timings, buffer hits, partition pruning) on real inputs so O(rows) regressions, hub blowups, or plan defects are caught immediately.
 
-Receipts reconcile inputs, outputs, losses, unknowns, persistent effects, derived
-effects, resources, timings, and completion. Performance evidence includes the command,
-machine, real input, samples, timing boundary, CPU, memory, I/O, database calls, WAL,
-and durable output counts. Small-fixture extrapolation is prohibited.
+## 10. Package, worktree, and repository discipline
 
-Complexity is an acceptance contract, not an implementation anecdote. For cognition,
-search, decomposition, composition, source admission, and other scalable paths, tests
-must prove both the logical result and the physical work law. Result parity alone is
-insufficient when the implementation performed RBAR, unbounded traversal, an avoidable
-whole-world scan, repeated database crossings, duplicated canonical work, or another
-forbidden mechanism. Required counters and plan evidence must make that defect visible.
+Shared contracts (`manifest/banks.tsv`, `manifest/slots/*.tsv`, `manifest/trust_classes.toml`, `manifest/function_bindings.tsv`, `sql_catalog.def`, `components.lock.tsv`) are defined once and consumed or generated deterministically rather than hand-copied.
 
-## 10. Build, generation, and repository discipline
-
-Contracts generate identifiers, ABI declarations, bindings, documentation tables, and
-other repeated authority. Generated files identify their generator and exact source
-contract and are reproducible. Dependency inputs come only from verified locks and
-checksums. Builds are out of tree; packages install into versioned roots; activation is
-atomic and independently verified.
-
-Historical implementation stays outside build, include, package, and test discovery.
-New code is authored from product requirements, independent standards, and verified
-upstream dependencies. Unrelated work is preserved. Isolated worktrees are used only
-as temporary concurrency boundaries; accepted work is folded into the owning
-integration line promptly instead of accumulating overlapping partial PRs.
+Builds run out of tree (`$LAPLACE_BUILD`). Keep `main` cohesive across repositories: fold worktree branches promptly instead of stranding partial branches, evaluate leftover agent WIP critically against the invention rather than preserving broken state, and synchronize `Laplace-Wiki` and `Laplace-Operations/agents/` (`sync.ps1`) whenever architecture, commands, or schemas change.
